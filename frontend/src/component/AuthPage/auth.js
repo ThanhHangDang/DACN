@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { NavLink,useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { registerUser } from "../../redux/actions/authAction";
 
 export default function Auth() {
   const dispatch = useDispatch();
-
+  const { isLogin } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
   //Data để tạo tài khoản
   const [dataRegister, setDataRegister] = useState({
     username: "",
@@ -13,7 +14,7 @@ export default function Auth() {
     phone: "",
     email: "",
     password: "",
-    role: "3",
+    role: "2",
   });
 
   //Check validation
@@ -108,13 +109,16 @@ export default function Auth() {
     } else {
       setFormValid(false); // Đảm bảo formValid là false nếu bất kỳ trường nào không có dữ liệu
     }
+    if (isLogin) {
+      navigate("/");
+    }
   }, [
     usernameValid,
     nameValid,
     passwordValid,
     phoneValid,
     emailValid,
-    ...Object.values(dataRegister),
+    dataRegister,isLogin
   ]);
 
   return (
