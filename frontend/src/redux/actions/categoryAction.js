@@ -14,7 +14,6 @@ import {
 
 import axios from "axios";
 import domain from "../../config/domain";
-import { toast } from "react-toastify";
 
 export const getCategoryIndustry = () => {
   return async (dispatch) => {
@@ -24,9 +23,7 @@ export const getCategoryIndustry = () => {
       );
       dispatch({ type: GET_CATEGORY_INDUSTRY, payload: response.data.result });
     } catch (err) {
-      toast.error(
-        err.response?.data?.message || "Lỗi khi lấy danh sách ngành nghề!"
-      );
+      console.log(err);
     }
   };
 };
@@ -42,9 +39,7 @@ export const getCategoryJobFunction = () => {
         payload: response.data.result,
       });
     } catch (err) {
-      toast.error(
-        err.response?.data?.message || "Lỗi khi lấy danh sách chức vụ!"
-      );
+      console.log(err);
     }
   };
 };
@@ -57,9 +52,7 @@ export const getCategoryBenefit = () => {
       );
       dispatch({ type: GET_CATEGORY_BENEFIT, payload: response.data.result });
     } catch (err) {
-      toast.error(
-        err.response?.data?.message || "Lỗi khi lấy danh sách phúc lợi!"
-      );
+      console.log(err);
     }
   };
 };
@@ -72,9 +65,7 @@ export const getCategoryNation = () => {
       );
       dispatch({ type: GET_CATEGORY_NATION, payload: response.data.result });
     } catch (err) {
-      toast.error(
-        err.response?.data?.message || "Lỗi khi lấy danh sách quốc gia!"
-      );
+      console.log(err);
     }
   };
 };
@@ -91,9 +82,7 @@ export const getCategoryCity = (nation) => {
       console.log(response.data);
       dispatch({ type: GET_CATEGORY_CITY, payload: response.data.result });
     } catch (err) {
-      toast.error(
-        err.response?.data?.message || "Lỗi khi lấy danh sách thành phố!"
-      );
+      console.log(err);
     }
   };
 };
@@ -106,9 +95,7 @@ export const getCategoryDistrict = () => {
       );
       dispatch({ type: GET_CATEGORY_DISTRICT, payload: response.data.result });
     } catch (err) {
-      toast.error(
-        err.response?.data?.message || "Lỗi khi lấy danh sách quận huyện!"
-      );
+      console.log(err);
     }
   };
 };
@@ -121,9 +108,7 @@ export const getCategoryLanguage = () => {
       );
       dispatch({ type: GET_CATEGORY_LANGUAGE, payload: response.data.result });
     } catch (err) {
-      toast.error(
-        err.response?.data?.message || "Lỗi khi lấy danh sách ngôn ngữ!"
-      );
+      console.log(err);
     }
   };
 };
@@ -136,9 +121,7 @@ export const getCategoryLevel = () => {
       );
       dispatch({ type: GET_CATEGORY_LEVEL, payload: response.data.result });
     } catch (err) {
-      toast.error(
-        err.response?.data?.message || "Lỗi khi lấy danh sách trình độ!"
-      );
+      console.log(err);
     }
   };
 };
@@ -151,9 +134,7 @@ export const getCategoryScale = () => {
       );
       dispatch({ type: GET_CATEGORY_SCALE, payload: response.data.result });
     } catch (err) {
-      toast.error(
-        err.response?.data?.message || "Lỗi khi lấy danh sách quy mô!"
-      );
+      console.log(err);
     }
   };
 };
@@ -166,9 +147,7 @@ export const getCategoryEdu = () => {
       );
       dispatch({ type: GET_CATEGORY_EDU, payload: response.data.result });
     } catch (err) {
-      toast.error(
-        err.response?.data?.message || "Lỗi khi lấy danh sách trình độ học vấn!"
-      );
+      console.log(err);
     }
   };
 };
@@ -181,7 +160,7 @@ export const getCategoryTags = () => {
       );
       dispatch({ type: GET_CATEGORY_TAGS, payload: response.data.result });
     } catch (err) {
-      toast.error(err.response?.data?.message || "Lỗi khi lấy danh sách tags!");
+      console.log(err);
     }
   };
 };
