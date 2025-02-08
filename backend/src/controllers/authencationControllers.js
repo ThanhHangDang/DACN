@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const {
   findUserByUsername,
-  loginExecute,
+  loginExecute,register_user
 } = require("../models/authencationModels.js");
 
 const login = async (req, res) => {
@@ -68,9 +68,32 @@ const logout = (req, res) => {
   });
 };
 
+
 const register = async (req, res) => {
-  const { dataRegister } = req.body.params;
-  console.log(dataRegister);
+  
+  const { username, name, phone, email, password, role } = req.body.params.dataRegister|| {};  
+  console.log(username, name, phone, email, password, role);
+  try {
+    // Tìm người dùng trong cơ sở dữ liệu
+    const userLogin = await register_user(username, name, phone, email, password, role );
+    if (userLogin ===0 ) 
+    {    
+    return res.status(400).json({ message: "Tài khoản không tạo thành công, vui lòng kiểm tra lại" });
+    }
+    req.session.userLogin = {
+      id: userLogin.user_id,
+      username: userLogin.username,
+      role: userLogin.role_id,
+      create_date: userLogin.create_date,
+    };
+
+    res
+      .status(200)
+      .json({ message: "Đã tạo tài khoản thành công.", user: req.session.userLogin });
+  } 
+  catch (error) {
+    res.status(500).json({ message: "Có lỗi khi tạo tài khoản." });
+  }
 };
 
 module.exports = {
