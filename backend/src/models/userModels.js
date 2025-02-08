@@ -171,21 +171,17 @@ WHERE
   );
   return certificate;
 };
-
 const queryGetJobAppliedByID = async (id) => {
   const [jobApplied] = await db.query(
-    `
-    SELECT 
-    ja.*
-FROM
-    jobseeker js
-JOIN
-    user_ u ON js.jobseeker_id = u.user_id
-JOIN
-    jjobseeker_apply_job ja ON u.user_id = ja.jobseeker_id
-WHERE
-    u.user_id = ?;
-    `,
+    `    
+SELECT * from 
+    (select job_id as id, date_appy from jobseeker_apply_job where jobseeker_id=?) as A 
+join  
+    (select job_id, employer_id, title, date_post, status_, work_location from job) as B 
+    ON A.id = B.job_id 
+join 
+    (SELECT company_id, company_name, logo from company) as C ON B.employer_id = C.company_id;
+    `,    
     [id]
   );
   return jobApplied;
@@ -194,19 +190,17 @@ WHERE
 const queryGetJobSavedByID = async (id) => {
   const [jobSaved] = await db.query(
     `
-    SELECT 
-    jsj.*
-FROM
-    jobseeker js
-JOIN
-    user_ u ON js.jobseeker_id = u.user_id
-JOIN
-    jobseeker_save_job jsj ON u.user_id = jsj.jobseeker_id
-WHERE
-    u.user_id = ?;
+SELECT * from 
+    (select job_id as id from jobseeker_save_job where jobseeker_id=?) as A 
+join  
+    (select job_id, employer_id, title, date_post, status_, work_location from job) as B 
+    ON A.id = B.job_id 
+join 
+    (SELECT company_id, company_name, logo from company) as C ON B.employer_id = C.company_id;
     `,
     [id]
   );
+  // chưa tôi ưu query, xem xét trả về id job rồi truy vấn for each.
   return jobSaved;
 };
 
@@ -221,6 +215,8 @@ JOIN
     user_ u ON js.jobseeker_id = u.user_id
 JOIN
     jobseeker_follow_employer fc ON u.user_id = fc.jobseeker_id
+join 
+    (SELECT company_id, company_name, logo from company) as C ON B.employer_id = C.company_id;
 WHERE
     u.user_id = ?;
     `,
