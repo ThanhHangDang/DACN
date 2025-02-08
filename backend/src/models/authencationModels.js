@@ -20,6 +20,7 @@ const loginExecute = async (username, password) => {
 const register_user = async (username, full_name, phone_number, email, password, role ) => {
   const connection = await db.getConnection(); 
   try {
+    console.log("role",role);
     await connection.beginTransaction();
     if (role==="3")     
       { await db.query( 'CALL create_user_jobseeker(?,?,?,?,?,@p_status);',
