@@ -1,0 +1,17 @@
+https://www.youtube.com/watch?v=v4IA6oZkelk&ab_channel=H%E1%BB%8FiD%C3%A2nIT
+
+https://www.youtube.com/watch?v=m2UgGPU0GcU&ab_channel=H%E1%BB%8FiD%C3%A2nIT
+
+import React, { useEffect } from "react";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+
+const { isLogin, user } = useSelector((state) => state.auth);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isLogin && !(user?.user.role === 2)) {
+      navigate("/login");
+    }
+  }, [isLogin, navigate, user]);

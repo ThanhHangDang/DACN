@@ -1,0 +1,209 @@
+import axios from "axios";
+import domain from "../../config/domain.js";
+
+import {
+  SET_USER_INFORMATION,
+  GET_LIST_CERTIFICATION,
+  GET_LIST_EDUCATION,
+  GET_LIST_EXP,
+  GET_LIST_LANGUAGE,
+  GET_LIST_SKILL,
+  GET_LIST_PROJECT,
+  GET_JOB_APPLY,
+  GET_JOB_SAVE,
+  GET_FOLLOW_EMPLOYER,
+} from "../contants/jobseekerContants.js";
+
+// Action creator
+export const getUserInformationByID = (id) => async (dispatch) => {
+  try {
+    const response = await axios.get(
+      `http://${domain}:4000/user/user-information`,
+      {
+        params: { id: id },
+      }
+    );
+    if (response.status === 200) {
+      dispatch({
+        type: SET_USER_INFORMATION,
+        payload: response.data.userInfor,
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching user information:", error);
+  }
+};
+
+export const getListExp = (id) => async (dispatch) => {
+  try {
+    const response = await axios.get(
+      `http://${domain}:4000/user/get-experience`,
+      {
+        params: { id: id },
+      }
+    );
+    if (response.status === 200) {
+      console.log("List experience:", response.data);
+      dispatch({
+        type: GET_LIST_EXP,
+        payload: response.data.experience,
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching list experience:", error);
+  }
+};
+
+export const getListEducation = (id) => async (dispatch) => {
+  try {
+    const response = await axios.get(
+      `http://${domain}:4000/user/get-education`,
+      {
+        params: { id: id },
+      }
+    );
+    if (response.status === 200) {
+      console.log("List education:", response.data);
+      dispatch({
+        type: GET_LIST_EDUCATION,
+        payload: response.data.education,
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching list education:", error);
+  }
+};
+
+export const getListProject = (id) => async (dispatch) => {
+  try {
+    const response = await axios.get(`http://${domain}:4000/user/get-project`, {
+      params: { id: id },
+    });
+    if (response.status === 200) {
+      console.log("List project:", response.data);
+      dispatch({
+        type: GET_LIST_PROJECT,
+        payload: response.data.project,
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching list project:", error);
+  }
+};
+
+export const getListSkill = (id) => async (dispatch) => {
+  try {
+    const response = await axios.get(`http://${domain}:4000/user/get-skill`, {
+      params: { id: id },
+    });
+    if (response.status === 200) {
+      console.log("List skill:", response.data);
+      dispatch({
+        type: GET_LIST_SKILL,
+        payload: response.data.skill,
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching list skill:", error);
+  }
+};
+
+export const getListLanguage = (id) => async (dispatch) => {
+  try {
+    const response = await axios.get(
+      `http://${domain}:4000/user/get-language`,
+      {
+        params: { id: id },
+      }
+    );
+    if (response.status === 200) {
+      console.log("List language:", response.data);
+      dispatch({
+        type: GET_LIST_LANGUAGE,
+        payload: response.data.language,
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching list language:", error);
+  }
+};
+
+export const getListCertification = (id) => async (dispatch) => {
+  try {
+    const response = await axios.get(
+      `http://${domain}:4000/user/get-certification`,
+      {
+        params: { id: id },
+      }
+    );
+    if (response.status === 200) {
+      console.log("List certification:", response.data);
+      dispatch({
+        type: GET_LIST_CERTIFICATION,
+        payload: response.data.certificate,
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching list certification:", error);
+  }
+};
+
+export const getJobApply = (id) => async (dispatch) => {
+  try {
+    const response = await axios.get(
+      `http://${domain}:4000/user/get-job-applied`,
+      {
+        params: { id: id },
+      }
+    );
+    if (response.status === 200) {
+      console.log("List job apply:", response.data);
+      dispatch({
+        type: GET_JOB_APPLY,
+        payload: response.data.jobApplied,
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching list job apply:", error);
+  }
+};
+
+export const getJobSave = (id) => async (dispatch) => {
+  try {
+    const response = await axios.get(
+      `http://${domain}:4000/user/get-job-saved`,
+      {
+        params: { id: id },
+      }
+    );
+    if (response.status === 200) {
+      console.log("List job save:", response.data);
+      dispatch({
+        type: GET_JOB_SAVE,
+        payload: response.data.jobSaved,
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching list job save:", error);
+  }
+};
+
+export const getFollowEmployer = (id) => async (dispatch) => {
+  try {
+    const response = await axios.get(
+      `http://${domain}:4000/user/get-followed-company`,
+      {
+        params: { id: id },
+      }
+    );
+    if (response.status === 200) {
+      console.log("List follow employer:", response.data);
+      dispatch({
+        type: GET_FOLLOW_EMPLOYER,
+        payload: response.data.companySaved,
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching list follow employer:", error);
+  }
+};

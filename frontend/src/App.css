@@ -1,0 +1,109 @@
+/* CSS cho thanh header */
+@media (min-width: 992px) {
+  .dropdown-menu-define {
+    width: 80% !important; /* Điều chỉnh chiều rộng dropdown tùy ý */
+    position: fixed !important;
+    top: 21% !important;    /* Đặt dropdown ở giữa chiều dọc */
+    left: 50% !important;   /* Đặt dropdown ở giữa chiều ngang */
+    transform: translate(-50%, -50%) !important; /* Dịch chuyển để căn chính xác vào giữa */
+    z-index: 1050; 
+    border: 3px solid rgb(13 110 253) !important;
+    animation:forwards !important;
+    transition: 0.4s ease-in-out !important;
+  }
+
+  .dropdown-menu-define p{
+    cursor: pointer;
+  }
+
+  .dropdown-menu-define p:hover{
+    cursor: pointer;
+    text-shadow: 0 0 40px blue;
+    transition: 0.6s ease-in-out;
+  }
+
+  .vertical-line {
+    width: 0.5px !important; /* Độ rộng của đường thẳng */
+    height: 30px !important; /* Chiều cao của đường thẳng */
+    /* background-color: black; */
+  }
+}
+
+.carousel-indicators [data-bs-target]{
+  border-radius: 50%;
+  border: 1px solid rgb(13 110 253) !important;
+  width: 15px !important;
+  height: 15px !important;
+}
+
+.main-border{
+  border-radius: 2% !important;
+}
+
+/* CSS cho thanh search */
+@media (max-width: 992px){
+  .md-display-none{
+    display: none !important;
+  }
+}
+
+/* CSS cho nút chuyển trang của việc làm mới nhất */
+.pagination .dot {
+  width: 12px;           /* Kích thước vòng tròn */
+  height: 12px;
+  border-radius: 50%;    /* Tạo hình tròn */
+  background-color: #ddd; /* Màu nền mặc định */
+  border: none;
+  padding: 0;
+  border: 1px solid rgb(13 110 253) !important;
+}
+
+.pagination .dot:hover {
+  background-color: #007bff; /* Màu khi hover */
+}
+
+.pagination .active .dot {
+  background-color: #007bff; /* Màu cho trạng thái active */
+}
+
+/* CSS cho background của section thông tin thị trường */
+.backgound-item-info{
+  background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+/* CSS cho background item của tổng quan người tìm việc */
+.backgound-item-overview-seeker{
+  background-color: #D2E2FC !important;
+}
+
+.backgound-item-overview-seeker-2{
+  background-color: #ff7e56 !important;
+}
+
+/* CSS cho lúc active của item trong sidebar */
+/* .active{
+  border: 2px solid rgb(13 110 253) !important;
+} */
+.background-opacity{
+  background-color: bisque;
+}
+
+.custom-hover:hover{
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
+.custom-hover-2:hover{
+  cursor: pointer;
+  filter: brightness(1.5); /* Tăng độ sáng 20% */
+  transition: filter 0.3s ease; /* Hiệu ứng mượt */
+}
+
+.post-detail-bg{
+  background-color: #D2E2FC;
+}
+
+.text-color{
+  color: orangered;
+}
+
