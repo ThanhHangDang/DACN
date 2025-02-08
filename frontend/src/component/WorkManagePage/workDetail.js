@@ -92,9 +92,11 @@ export default function WorkDetail() {
                   <section className="mb-4">
                     <h5>Yêu cầu công việc</h5>
                     <ul>
-                      {postDetail.more_requirement.map((requirement, index) => (
-                        <li key={index}>{requirement}</li>
-                      ))}
+                      {postDetail?.more_requirement.map(
+                        (requirement, index) => (
+                          <li key={index}>{requirement}</li>
+                        )
+                      )}
                     </ul>
                   </section>
                 )}
@@ -136,7 +138,7 @@ export default function WorkDetail() {
               <div className="d-flex ">
                 <div className="col-md-6">
                   <h6 className="fw-bold text-secondary">Ngày Đăng</h6>
-                  <p>{formatDateToDDMMYYYY(postDetail.date_post)}</p>
+                  <p>{formatDateToDDMMYYYY(postDetail?.date_post)}</p>
                 </div>
                 <div>
                   <h6 className="fw-bold text-secondary">Cấp bậc</h6>

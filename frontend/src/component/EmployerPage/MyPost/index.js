@@ -412,7 +412,7 @@ export default function EmployerPost() {
                   <ul className="list-group">
                     {lang
                       ?.filter((language) =>
-                        language.language_name
+                        language.metric_display
                           .toLowerCase()
                           .includes(languageInput.toLowerCase())
                       )
@@ -424,7 +424,7 @@ export default function EmployerPost() {
                               className="list-group-item list-group-item-action ms-2 mr-2"
                               onClick={() => handleAddLanguage(language)}
                             >
-                              {language.language_name}
+                              {language.metric_display}
                             </li>
                           )}
                         </>
@@ -438,7 +438,7 @@ export default function EmployerPost() {
                         style={{ cursor: "pointer" }}
                         onClick={() => handleRemoveLanguage(language)}
                       >
-                        {language.language_name}{" "}
+                        {language.metric_display}{" "}
                         <span className="ms-1">&times;</span>
                       </span>
                     ))}
