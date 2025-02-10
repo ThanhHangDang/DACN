@@ -13,20 +13,18 @@ export default function Auth() {
     phone: "",
     email: "",
     password: "",
-    role: 1,
+    role: "3",
   });
 
   //Check validation
   const [usernameValidMess, setUsernameValidMess] = useState("");
   const [nameValidMess, setNameValidMess] = useState("");
-  const [ageValidMess, setAgeValidMess] = useState("");
   const [passwordValidMess, setPasswordValidMess] = useState("");
   const [phoneValidMess, setPhoneValidMess] = useState("");
   const [emailValidMess, setEmailValidMess] = useState("");
 
   const [usernameValid, setUsernameValid] = useState(true);
   const [nameValid, setNameValid] = useState(true);
-  const [ageValid, setAgeValid] = useState(true);
   const [passwordValid, setPasswordValid] = useState(true);
   const [phoneValid, setPhoneValid] = useState(true);
   const [emailValid, setEmailValid] = useState(true);
@@ -59,10 +57,12 @@ export default function Auth() {
         break;
       case "password":
         setPasswordValid(mess === "" ? true : false);
-        if (value && !value.match("^(?=.*[A-Z])(?=.*[0-9!@#$%^&*])(?=.{8,})")) {
-          mess =
-            "Mật khẩu phải bắt đầu bằng chữ hoa, có ít nhất 1 chữ số hoặc ký tự đặc biệt, và ít nhất 8 ký tự.";
+        if (value && value.length < 8) {
+          mess = "Mật khẩu phải có ít nhất 8 ký tự.";
           setPasswordValid(false);
+        } else {
+          // Nếu cần kiểm tra thêm các điều kiện khác, có thể thêm vào đây.
+          setPasswordValid(true);
         }
         setPasswordValidMess(mess);
         break;
@@ -134,7 +134,26 @@ export default function Auth() {
           </p>
         </div>
         <form method="post">
-          <p>Tên đăng nhập*</p>
+          <p>Bạn là:*</p>
+          <select
+            class="form-select mb-3"
+            aria-label="Default select example"
+            value={dataRegister.role}
+            onChange={(e) => {
+              setDataRegister({ ...dataRegister, role: e.target.value });
+            }}
+          >
+            <option value="3" selected>
+              Người tìm việc
+            </option>
+            <option value="2">Nhà tuyển dụng</option>
+          </select>
+
+          {dataRegister.role === "2" ? (
+            <p>Tên công ty</p>
+          ) : (
+            <p>Tên đăng nhập</p>
+          )}
           <input
             type="text"
             className="form-control mb-3"
@@ -219,20 +238,6 @@ export default function Auth() {
           ) : (
             ""
           )}
-          <p>Bạn là:*</p>
-          <select
-            class="form-select mb-3"
-            aria-label="Default select example"
-            value={dataRegister.role}
-            onChange={(e) => {
-              setDataRegister({ ...dataRegister, role: e.target.value });
-            }}
-          >
-            <option value="3" selected>
-              Người tìm việc
-            </option>
-            <option value="2">Nhà tuyển dụng</option>
-          </select>
 
           <div className="row">
             <div className="col">
