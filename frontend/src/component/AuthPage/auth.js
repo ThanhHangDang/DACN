@@ -149,11 +149,7 @@ export default function Auth() {
             <option value="2">Nhà tuyển dụng</option>
           </select>
 
-          {dataRegister.role === "2" ? (
-            <p>Tên công ty</p>
-          ) : (
-            <p>Tên đăng nhập</p>
-          )}
+          <p>Tên đăng nhập*</p>
           <input
             type="text"
             className="form-control mb-3"
@@ -170,7 +166,7 @@ export default function Auth() {
           ) : (
             ""
           )}
-          <p>Họ và tên*</p>
+          {dataRegister.role === "2" ? <p>Tên công ty</p> : <p>Họ và tên*</p>}
           <input
             type="text"
             className="form-control mb-3"
