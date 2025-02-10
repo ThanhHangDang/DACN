@@ -43,7 +43,7 @@ export const getListExp = (id) => async (dispatch) => {
       }
     );
     if (response.status === 200) {
-      console.log("List experience:", response.data);
+      // console.log("List experience:", response.data);
       dispatch({
         type: GET_LIST_EXP,
         payload: response.data.experience,
@@ -63,7 +63,7 @@ export const getListEducation = (id) => async (dispatch) => {
       }
     );
     if (response.status === 200) {
-      console.log("List education:", response.data);
+      // console.log("List education:", response.data);
       dispatch({
         type: GET_LIST_EDUCATION,
         payload: response.data.education,
@@ -80,7 +80,7 @@ export const getListProject = (id) => async (dispatch) => {
       params: { id: id },
     });
     if (response.status === 200) {
-      console.log("List project:", response.data);
+      // console.log("List project:", response.data);
       dispatch({
         type: GET_LIST_PROJECT,
         payload: response.data.project,
@@ -97,7 +97,7 @@ export const getListSkill = (id) => async (dispatch) => {
       params: { id: id },
     });
     if (response.status === 200) {
-      console.log("List skill:", response.data);
+      // console.log("List skill:", response.data);
       dispatch({
         type: GET_LIST_SKILL,
         payload: response.data.skill,
@@ -117,7 +117,7 @@ export const getListLanguage = (id) => async (dispatch) => {
       }
     );
     if (response.status === 200) {
-      console.log("List language:", response.data);
+      // console.log("List language:", response.data);
       dispatch({
         type: GET_LIST_LANGUAGE,
         payload: response.data.language,
@@ -137,7 +137,7 @@ export const getListCertification = (id) => async (dispatch) => {
       }
     );
     if (response.status === 200) {
-      console.log("List certification:", response.data);
+      // console.log("List certification:", response.data);
       dispatch({
         type: GET_LIST_CERTIFICATION,
         payload: response.data.certificate,
@@ -157,7 +157,7 @@ export const getJobApply = (id) => async (dispatch) => {
       }
     );
     if (response.status === 200) {
-      console.log("List job apply:", response.data);
+      // console.log("List job apply:", response.data);
       dispatch({
         type: GET_JOB_APPLY,
         payload: response.data.jobApplied,
@@ -177,7 +177,7 @@ export const getJobSave = (id) => async (dispatch) => {
       }
     );
     if (response.status === 200) {
-      console.log("List job save:", response.data);
+      // console.log("List job save:", response.data);
       dispatch({
         type: GET_JOB_SAVE,
         payload: response.data.jobSaved,
@@ -197,7 +197,7 @@ export const getFollowEmployer = (id) => async (dispatch) => {
       }
     );
     if (response.status === 200) {
-      console.log("List follow employer:", response.data);
+      // console.log("List follow employer:", response.data);
       dispatch({
         type: GET_FOLLOW_EMPLOYER,
         payload: response.data.companySaved,

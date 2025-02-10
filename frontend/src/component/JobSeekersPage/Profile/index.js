@@ -7,6 +7,7 @@ import {
   getUserInformationByID,
   getListExp,
 } from "../../../redux/actions/jobseekerAction.js";
+import { getCategoryCity } from "../../../redux/actions/categoryAction.js";
 
 export default function JobSeekerProfile() {
   const dispatch = useDispatch();
@@ -14,8 +15,7 @@ export default function JobSeekerProfile() {
   const { hideStatus, setHideStatus } = useState(false);
 
   const { isLogin, user } = useSelector((state) => state.auth);
-
-  console.log(userInformation);
+  const { city } = useSelector((state) => state.category);
 
   const [expectedJob, setExpectedJob] = useState({
     workCityPlace: "",
@@ -33,6 +33,11 @@ export default function JobSeekerProfile() {
       navigate("/login");
     }
     dispatch(getUserInformationByID(user?.user.id));
+    dispatch(getCategoryCity(84));
+    setExpectedJob({
+      workCityPlace: userInformation?.city_id,
+      salary: userInformation?.salary_expect,
+    });
   }, [dispatch, isLogin, navigate, user]);
 
   return (
@@ -68,6 +73,11 @@ export default function JobSeekerProfile() {
                     <select
                       className="form-select"
                       id="field"
+                      value={
+                        expectedJob.workCityPlace
+                          ? expectedJob.workCityPlace
+                          : userInformation?.city_id
+                      }
                       onChange={(e) =>
                         setExpectedJob({
                           ...expectedJob,
@@ -75,12 +85,11 @@ export default function JobSeekerProfile() {
                         })
                       }
                     >
-                      <option value="Hồ Chí Minh" selected>
-                        Hồ Chí Minh
-                      </option>
-                      <option value="Đà Nẵng">Đà Nằng</option>
-                      <option Value="Huế">Huế</option>
-                      <option value="Hà Nội">Hà Nội</option>
+                      {city?.map((option) => (
+                        <option value={option.city_id} key={option.city_id}>
+                          {option.city_name}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>
@@ -91,9 +100,15 @@ export default function JobSeekerProfile() {
                   <input
                     type="number"
                     step="1000000"
+                    min="1000000"
                     className="form-control"
                     id="postTitle"
                     placeholder="Nhập mức lương mong muốn"
+                    value={
+                      expectedJob.salary
+                        ? expectedJob.salary
+                        : userInformation?.salary_expect
+                    }
                     onChange={(e) =>
                       setExpectedJob({ ...expectedJob, salary: e.target.value })
                     }

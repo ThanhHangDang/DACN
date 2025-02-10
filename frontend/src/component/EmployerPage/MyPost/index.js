@@ -31,7 +31,7 @@ export default function EmployerPost() {
     employer_id: user?.user?.id,
     title: "",
     date_post: new Date().toISOString(),
-    industry: 1,
+    industry: 50,
     job_function: 1,
     quantity: 1,
     salary_min: 500000,
@@ -135,7 +135,7 @@ export default function EmployerPost() {
     dispatch(getCategoryEdu());
     dispatch(getCategoryLanguage());
     dispatch(getPostsByUser(user?.user?.id));
-  }, [isLogin, navigate, user]);
+  }, [isLogin, navigate, user, postsByUser]);
 
   return (
     <>

@@ -61,7 +61,7 @@ export default function YourCVwithUs() {
     dispatch(getListSkill(userInformation?.jobseeker_id));
     dispatch(getListLanguage(userInformation?.jobseeker_id));
     dispatch(getListCertification(userInformation?.jobseeker_id));
-  }, [dispatch]);
+  }, [dispatch, userInformation]);
 
   return (
     <div>

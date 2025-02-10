@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { registerUser } from "../../redux/actions/authAction";
 
 export default function Auth() {
@@ -60,9 +60,6 @@ export default function Auth() {
         if (value && value.length < 8) {
           mess = "Mật khẩu phải có ít nhất 8 ký tự.";
           setPasswordValid(false);
-        } else {
-          // Nếu cần kiểm tra thêm các điều kiện khác, có thể thêm vào đây.
-          setPasswordValid(true);
         }
         setPasswordValidMess(mess);
         break;
@@ -95,7 +92,6 @@ export default function Auth() {
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(registerUser(dataRegister));
-    // console.log(dataRegister);
   };
 
   useEffect(() => {
@@ -118,7 +114,7 @@ export default function Auth() {
     passwordValid,
     phoneValid,
     emailValid,
-    dataRegister,
+    ...Object.values(dataRegister),
   ]);
 
   return (
@@ -240,7 +236,6 @@ export default function Auth() {
               <button
                 type="submit"
                 className="form-control btn btn-outline-danger mt-3 mb-3"
-                // disabled={loading}
                 disabled={!formValid}
                 onClick={handleSubmit}
               >

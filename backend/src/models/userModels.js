@@ -23,7 +23,8 @@ const queryGetUserInformation = async (id) => {
     p.nationality,
     p.percent_complete,
     p.last_modify_date,
-    c.city_name
+    c.city_name,
+    c.city_id
 FROM 
     jobseeker js
 JOIN 
