@@ -697,7 +697,7 @@ export default function YourCVwithUs() {
           <span className="text-muted">Tương đối hoàn chỉnh</span>
           <span className="text-muted">Hoàn chỉnh</span>
         </div>
-        <div
+        {/* <div
           className="progress mt-3"
           style={{ height: "20px", backgroundColor: "#e9ecef" }}
         >
@@ -725,6 +725,18 @@ export default function YourCVwithUs() {
               {userInformation?.percent_complete}
             </span>
           </div>
+        </div> */}
+        <div className="progress">
+          <div
+            className="progress-bar"
+            role="progressbar"
+            style={{ width: `${userInformation.percent_complete}%` }}
+            // aria-valuenow={userInformation?.percent_complete}
+            aria-valuemin={0}
+            aria-valuemax={100}
+          >
+            {userInformation?.percent_complete}%
+          </div>
         </div>
       </div>
 
@@ -739,16 +751,6 @@ export default function YourCVwithUs() {
         </span>
 
         <ul>
-          {/* <li>
-            Là sinh viên mới tốt nghiệp ra trường với chuyên ngành Hệ thống
-            Thông tin Quản lý, nắm vững các kiến thức, kỹ năng chuyên môn cao.
-          </li>
-          <li>
-            Mong muốn được làm việc tại công ty với vị trí nhân viên phân tích
-            hệ thống, có thể vận dụng những kiến thức đã được trao dồi và không
-            ngừng học hỏi để phát triển bản thân, cũng như hoàn thành tốt nhất
-            công việc được giao.
-          </li> */}
           <li>{userInformation.career_target}</li>
         </ul>
       </div>

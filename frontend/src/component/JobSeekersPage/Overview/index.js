@@ -1,15 +1,64 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useNavigate, NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserInformationByID } from "../../../redux/actions/jobseekerAction.js";
 
 export default function JobSeekerOverview() {
   const dispatch = useDispatch();
   const { userInformation } = useSelector((state) => state.jobseeker);
+  const { suitablePosts } = useSelector((state) => state.post);
 
   const { isLogin, user } = useSelector((state) => state.auth);
 
   const navigate = useNavigate();
+
+  const formatNumberToTr = (number) => `${(number / 1e6).toFixed(0)}tr`;
+
+  const renderSuitableWork = () => {
+    return suitablePosts?.map((work, index) => {
+      return (
+        <div
+          key={work.job_id}
+          className="card mb-3 col-lg-3 col-sm-10 m-2"
+          style={{ maxWidth: 540 }}
+        >
+          <div className="row g-0">
+            <div className="col-md-4 align-self-center">
+              <img
+                src={work.company_logo}
+                className="img-fluid rounded-2"
+                alt="..."
+              />
+            </div>
+            <div className="col-md-8">
+              <div className="card-body">
+                <NavLink
+                  to={`/post-detail/${work.job_id}`}
+                  className="text-decoration-none"
+                >
+                  <h5 className="card-title text-truncate">{work.title}</h5>
+                </NavLink>
+                {/* <h5 className="card-title text-truncate">{work.title}</h5> */}
+                <div
+                  className="card-text"
+                  style={{ padding: "0px !important" }}
+                >
+                  <p className="text-truncate">{work.company_name}</p>
+                  <p className="text-truncate text-danger">
+                    {formatNumberToTr(work?.salary_min)}-
+                    {formatNumberToTr(work?.salary_max)} đ/tháng
+                  </p>
+                  <p className="card-text text-truncate">
+                    {work.work_location_name}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    });
+  };
 
   useEffect(() => {
     if (!isLogin || user?.user.role !== 3) {
@@ -39,77 +88,26 @@ export default function JobSeekerOverview() {
             <h4 className="text-primary">0</h4> Việc làm đã ứng tuyển
           </div>
           <div className="col-md-3 col-sm-11 border border-primary p-2">
-            <h4 className="text-warning">0</h4> Lượt xem việc làm
+            <h4 className="text-warning">0</h4> Lượt xem hồ sơ
           </div>
           <div className="col-md-3 col-sm-11 border border-primary p-2">
-            <h4 className="text-danger">0</h4>Lượt tim việc làm
+            <h4 className="text-danger">0</h4>Lượt lưu hồ sơ
           </div>
         </div>
       </div>
 
       <div className="bg-light rounded-2 me-2 my-2 p-2">
-        <h3>Hồ sơ đính kèm của bạn</h3>
-        <div className="border border-primary rounded-2 p-2 d-flex justify-content-between">
-          <span>
-            <i class="bi bi-paperclip"></i>ThanhHangDang_Intern_CV.pdf
-          </span>
-          <span>Tải lên: 9/11/2024</span>
-        </div>
-      </div>
-
-      <div className="d-flex justify-content-md-between justify-content-sm-center me-2 my-2">
-        <div className="col-md-4 col-sm-0 bg-light rounded-2 text-center">
-          <h4 className="">Công ty quan tâm đến hồ sơ của bạn</h4>
-          <div className="row d-flex justify-content-center text-start">
-            <div className="col-10 bg-secondary rounded-2 mb-2 pt-3 pb-3">
-              <span className="d-flex justify-content-between fw-bold text-white">
-                Lượt xem hồ sơ<i class="bi bi-chevron-right"></i>
-              </span>
-            </div>
-            <div className="col-10 bg-secondary rounded-2 mb-2 pt-3 pb-3">
-              <span className="d-flex justify-content-between fw-bold text-white">
-                Lượt lưu hồ sơ
-                <i class="bi bi-chevron-right"></i>
-              </span>
-            </div>
-          </div>
+        <div className="d-flex justify-content-between align-items-center mb-2">
+          <h3>Công việc phù hợp</h3>
+          <NavLink to="/post" className="text-primary">
+            Xem tất cả
+          </NavLink>
         </div>
 
-        <div className="col-md-4 col-sm-0 bg-light rounded-2 text-center">
-          <h4>Ứng viên có cùng chức danh</h4>
-          <div className="row d-flex justify-content-center">
-            <div className="col-10 backgound-item-overview-seeker-2 rounded-2 pt-3 pb-3">
-              <p>48 ứng viên</p>
-              <p className="text-primary">
-                Chuẩn bị phỏng vấn
-                <i class="bi bi-chevron-right"></i>
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="col-md-3 col-sm-0 bg-light rounded-2 text-center">
-          <h4>Việc làm phù hợp</h4>
-          <div className="row d-flex justify-content-center">
-            <div className="col-10 backgound-item-overview-seeker rounded-2 pt-3 pb-3">
-              <p>200 công việc</p>
-              <p className="text-primary">
-                Xem việc làm phù hợp
-                <i class="bi bi-chevron-right"></i>
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-light rounded-2 me-2 my-2 p-2 d-flex justify-content-md-around justify-content-sm-around">
-        <div className="col-md-5 col-sm-0 border border-primary rounded-2 text-center">
-          <h4>Khoảng lương phổ biến</h4>
-          <p>20 triệu VNĐ/tháng</p>
-        </div>
-        <div className="col-md-5 col-sm-0  border border-primary rounded-2 text-center">
-          <h4>Lương trung bình</h4>
-          <p>20 triệu VNĐ/tháng</p>
+        <div className="row  rounded-2 p-2 d-flex justify-content-between">
+          {renderSuitableWork()
+            ? renderSuitableWork()
+            : "Không có công việc nào"}
         </div>
       </div>
     </>

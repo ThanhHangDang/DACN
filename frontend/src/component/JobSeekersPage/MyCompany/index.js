@@ -41,12 +41,6 @@ export default function JobSeekerCompany() {
             <Outlet />
           </div>
         </div>
-        <a
-          href="#"
-          className="text-primary text-decoration-primary d-block mt-2"
-        >
-          Ẩn hồ sơ của bạn
-        </a>
       </div>
     </div>
   );

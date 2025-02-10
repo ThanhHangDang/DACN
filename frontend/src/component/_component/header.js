@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
 
 import { useSelector, useDispatch } from "react-redux";
 import { logout, checkLoginStatus } from "../../redux/actions/authAction.js";
@@ -30,47 +29,47 @@ export default function Header() {
     }
   };
 
-  const renderNotification = () => {
-    return isLogin ? (
-      <div className="navbar-nav mb-2 mb-lg-0">
-        <a
-          className="nav-link border rounded-pill me-lg-3 text-primary bg-light"
-          href="#aa"
-          id="navbarDropdown"
-          role="button"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        >
-          <i class="bi bi-bell-fill ms-2 me-2"></i>
-        </a>
-        <ul
-          className="dropdown-menu dropdown-menu-end me-1"
-          aria-labelledby="navbarDropdown"
-        >
-          <li>
-            <a className="dropdown-item" href="#aaa">
-              Action
-            </a>
-          </li>
-          <li>
-            <a className="dropdown-item" href="#aaa">
-              Another action
-            </a>
-          </li>
-          <li>
-            <hr className="dropdown-divider" />
-          </li>
-          <li>
-            <a className="dropdown-item" href="#aaa">
-              Something else here
-            </a>
-          </li>
-        </ul>
-      </div>
-    ) : (
-      ""
-    );
-  };
+  // const renderNotification = () => {
+  //   return isLogin ? (
+  //     <div className="navbar-nav mb-2 mb-lg-0">
+  //       <a
+  //         className="nav-link border rounded-pill me-lg-3 text-primary bg-light"
+  //         href="#aa"
+  //         id="navbarDropdown"
+  //         role="button"
+  //         data-bs-toggle="dropdown"
+  //         aria-expanded="false"
+  //       >
+  //         <i class="bi bi-bell-fill ms-2 me-2"></i>
+  //       </a>
+  //       <ul
+  //         className="dropdown-menu dropdown-menu-end me-1"
+  //         aria-labelledby="navbarDropdown"
+  //       >
+  //         <li>
+  //           <a className="dropdown-item" href="#aaa">
+  //             Action
+  //           </a>
+  //         </li>
+  //         <li>
+  //           <a className="dropdown-item" href="#aaa">
+  //             Another action
+  //           </a>
+  //         </li>
+  //         <li>
+  //           <hr className="dropdown-divider" />
+  //         </li>
+  //         <li>
+  //           <a className="dropdown-item" href="#aaa">
+  //             Something else here
+  //           </a>
+  //         </li>
+  //       </ul>
+  //     </div>
+  //   ) : (
+  //     ""
+  //   );
+  // };
 
   const renderProfile = () => {
     return isLogin ? (
@@ -108,7 +107,6 @@ export default function Header() {
 
   return (
     <>
-      <ToastContainer />
       <nav className="navbar navbar-expand-lg navbar-light bg-light shadow-sm sticky-top">
         <div className="container-fluid">
           <NavLink className="navbar-brand ms-lg-4" to="/">
@@ -178,7 +176,7 @@ export default function Header() {
             </div>
 
             <p class="navbar-nav vertical-line me-3 bg-secondary"></p>
-            {renderNotification()}
+            {/* {renderNotification()} */}
             <div className="navbar-nav mb-2 mb-lg-0">
               <a
                 className="nav-link border rounded-pill me-lg-3 text-primary bg-light"

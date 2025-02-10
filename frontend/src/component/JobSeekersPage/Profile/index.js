@@ -11,6 +11,7 @@ import {
 export default function JobSeekerProfile() {
   const dispatch = useDispatch();
   const { userInformation } = useSelector((state) => state.jobseeker);
+  const { hideStatus, setHideStatus } = useState(false);
 
   const { isLogin, user } = useSelector((state) => state.auth);
 
@@ -125,7 +126,16 @@ export default function JobSeekerProfile() {
       {/* End modal công việc mong muốn */}
 
       <div className="bg-light rounded-2 me-2 my-2 p-2">
-        <h3>Hồ sơ của bạn</h3>
+        <div className="d-flex justify-content-start align-items-center mb-2">
+          <h3 className="me-2">Hồ sơ của bạn</h3>
+          <NavLink to="/post" className="text-primary">
+            {hideStatus ? (
+              <i class="bi bi-eye"></i>
+            ) : (
+              <i class="bi bi-eye-slash"></i>
+            )}
+          </NavLink>
+        </div>
       </div>
 
       <div className="bg-light rounded-2 me-2 my-2 p-2">

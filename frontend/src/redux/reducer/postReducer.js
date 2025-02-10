@@ -15,6 +15,7 @@ const initialState = {
   error: null,
   allPosts: null,
   postsByUser: null,
+  suitablePosts: null,
 };
 
 const postReducer = (state = initialState, action) => {
