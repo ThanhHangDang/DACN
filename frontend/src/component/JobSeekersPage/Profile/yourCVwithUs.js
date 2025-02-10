@@ -692,40 +692,45 @@ export default function YourCVwithUs() {
       <div className="bg-light rounded-2 me-2 my-2 p-4">
         <h5 className="fw-bold">Hoàn chỉnh hồ sơ</h5>
         <div className="d-flex justify-content-between align-items-center mt-3">
-          <span className="text-muted">Cơ bản</span>
-          <span className="text-danger fw-bold">Trung bình</span>
-          <span className="text-muted">Tương đối hoàn chỉnh</span>
-          <span className="text-muted">Hoàn chỉnh</span>
-        </div>
-        {/* <div
-          className="progress mt-3"
-          style={{ height: "20px", backgroundColor: "#e9ecef" }}
-        >
-          <div
-            className="progress-bar"
-            role="progressbar"
-            style={{
-              width: `${userInformation.percent_complete}%`,
-              backgroundColor: "#FF865E",
-              borderRadius: "10px",
-            }}
-            aria-valuenow={userInformation.percent_complete}
-            aria-valuemin="0"
-            aria-valuemax="100"
+          <span
+            className={
+              userInformation?.percent_complete < 50
+                ? "text-danger fw-bold"
+                : "text-muted"
+            }
           >
-            <span
-              style={{
-                position: "absolute",
-                color: "#fff",
-                fontSize: "12px",
-                left: "52%", //+ 5% nhé
-                fontWeight: "Bold",
-              }}
-            >
-              {userInformation?.percent_complete}
-            </span>
-          </div>
-        </div> */}
+            Cơ bản
+          </span>
+          <span
+            className={
+              userInformation?.percent_complete >= 50 &&
+              userInformation?.percent_complete < 80
+                ? "text-danger fw-bold"
+                : "text-muted"
+            }
+          >
+            Trung bình
+          </span>
+          <span
+            className={
+              userInformation?.percent_complete >= 80 &&
+              userInformation?.percent_complete < 99
+                ? "text-danger fw-bold"
+                : "text-muted"
+            }
+          >
+            Tương đối hoàn chỉnh
+          </span>
+          <span
+            className={
+              userInformation?.percent_complete >= 99
+                ? "text-danger fw-bold"
+                : "text-muted"
+            }
+          >
+            Hoàn chỉnh
+          </span>
+        </div>
         <div className="progress">
           <div
             className="progress-bar"
