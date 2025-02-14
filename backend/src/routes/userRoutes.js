@@ -12,6 +12,8 @@ const {
   getJobSavedByID,
   getFollowedCompanyByID,
   getCompanyInformation,
+  updateExpectedJob,
+  updateCareerTarget,
 } = require("../controllers/userControllers.js");
 
 const userRoutes = express.Router();
@@ -28,5 +30,8 @@ userRoutes.get("/get-job-saved", getJobSavedByID);
 userRoutes.get("/get-followed-company", getFollowedCompanyByID);
 
 userRoutes.get("/get-employer-information", getCompanyInformation);
+
+userRoutes.post("/update-expected-job", updateExpectedJob);
+userRoutes.post("/update-career-target", updateCareerTarget);
 
 module.exports = userRoutes;

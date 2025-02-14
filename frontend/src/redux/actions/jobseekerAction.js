@@ -1,5 +1,6 @@
 import axios from "axios";
 import domain from "../../config/domain.js";
+import { toast } from "react-toastify";
 
 import {
   SET_USER_INFORMATION,
@@ -197,7 +198,6 @@ export const getFollowEmployer = (id) => async (dispatch) => {
       }
     );
     if (response.status === 200) {
-      // console.log("List follow employer:", response.data);
       dispatch({
         type: GET_FOLLOW_EMPLOYER,
         payload: response.data.companySaved,
@@ -205,5 +205,41 @@ export const getFollowEmployer = (id) => async (dispatch) => {
     }
   } catch (error) {
     console.error("Error fetching list follow employer:", error);
+  }
+};
+
+export const updateExpectedJob = (id, expectedJob) => async (dispatch) => {
+  try {
+    const response = await axios.post(
+      `http://${domain}:4000/user/update-expected-job`,
+      {
+        id: id,
+        expectedJob: expectedJob,
+      }
+    );
+    if (response.status === 200) {
+      console.log("Add expected job successfully");
+      toast.success("Cập nhật công việc mong muốn thành công");
+    }
+  } catch (error) {
+    console.error("Error adding expected job:", error);
+  }
+};
+
+export const updateCareerTarget = (id, careerTarget) => async (dispatch) => {
+  try {
+    const response = await axios.post(
+      `http://${domain}:4000/user/update-career-target`,
+      {
+        id: id,
+        careerTarget: careerTarget,
+      }
+    );
+    if (response.status === 200) {
+      console.log("Add career target successfully");
+      toast.success("Cập nhật mục tiêu nghề nghiệp thành công");
+    }
+  } catch (error) {
+    console.error("Error adding career target:", error);
   }
 };

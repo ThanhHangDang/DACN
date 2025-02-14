@@ -5,7 +5,7 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getUserInformationByID,
-  getListExp,
+  updateExpectedJob,
 } from "../../../redux/actions/jobseekerAction.js";
 import { getCategoryCity } from "../../../redux/actions/categoryAction.js";
 
@@ -24,8 +24,9 @@ export default function JobSeekerProfile() {
 
   const navigate = useNavigate();
 
-  const handleUpdateExpectedJob = () => {
-    console.log("Expected Job: ", expectedJob);
+  const handleUpdateExpectedJob = async () => {
+    await dispatch(updateExpectedJob(user?.user.id, expectedJob));
+    dispatch(getUserInformationByID(user?.user.id));
   };
 
   useEffect(() => {
@@ -34,11 +35,16 @@ export default function JobSeekerProfile() {
     }
     dispatch(getUserInformationByID(user?.user.id));
     dispatch(getCategoryCity(84));
-    setExpectedJob({
-      workCityPlace: userInformation?.city_id,
-      salary: userInformation?.salary_expect,
-    });
-  }, [dispatch, isLogin, navigate, user]);
+  }, [isLogin, navigate, user, dispatch]);
+
+  useEffect(() => {
+    if (userInformation) {
+      setExpectedJob({
+        workCityPlace: userInformation?.city_id,
+        salary: userInformation?.salary_expect,
+      });
+    }
+  }, [userInformation]);
 
   return (
     <div>

@@ -10,6 +10,8 @@ const {
   queryGetJobSavedByID,
   queryGetFollowedCompanyByID,
   queryGetCompanyInformation,
+  queryUpdateExpectedJob,
+  queryUpdateCareerTarget,
 } = require("../models/userModels.js");
 
 const getUserInformation = async (req, res) => {
@@ -181,6 +183,40 @@ const getCompanyInformation = async (req, res) => {
   }
 };
 
+const updateExpectedJob = async (req, res) => {
+  try {
+    const { id, expectedJob } = req.body;
+    console.log(id, expectedJob);
+    const affectedRows = await queryUpdateExpectedJob(id, expectedJob);
+    if (affectedRows) {
+      return res
+        .status(200)
+        .json({ message: "Cập nhật công việc mong muốn thành công." });
+    }
+  } catch (err) {
+    console.error("Có lỗi khi thêm công việc mong muốn:", err);
+    res.status(500).json({ message: "Có lỗi khi thêm công việc mong muốn." });
+  }
+};
+
+const updateCareerTarget = async (req, res) => {
+  try {
+    const { id, careerTarget } = req.body;
+    console.log(req.body);
+    const affectedRows = await queryUpdateCareerTarget(id, careerTarget);
+    if (affectedRows) {
+      return res
+        .status(200)
+        .json({ message: "Cập nhật mục tiêu công việc thành công." });
+    }
+  } catch (err) {
+    console.error("Có lỗi khi cập nhật mục tiêu công việc:", err);
+    res
+      .status(500)
+      .json({ message: "Có lỗi khi cập nhật mục tiêu công việc." });
+  }
+};
+
 module.exports = {
   getUserInformation,
   getExperienceByID,
@@ -193,4 +229,7 @@ module.exports = {
   getJobSavedByID,
   getFollowedCompanyByID,
   getCompanyInformation,
+
+  updateExpectedJob,
+  updateCareerTarget,
 };

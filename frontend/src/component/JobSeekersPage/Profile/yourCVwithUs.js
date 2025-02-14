@@ -8,6 +8,8 @@ import {
   getListSkill,
   getListLanguage,
   getListCertification,
+  updateCareerTarget,
+  getUserInformationByID,
 } from "../../../redux/actions/jobseekerAction.js";
 
 export default function YourCVwithUs() {
@@ -46,6 +48,16 @@ export default function YourCVwithUs() {
     endYear: "",
   });
 
+  const [careerTarget, setCareerTarget] = useState("");
+
+  const handleUpdateCarreerTarget = async () => {
+    // console.log("Update career target: ", careerTarget);
+    await dispatch(
+      updateCareerTarget(userInformation?.jobseeker_id, careerTarget)
+    );
+    dispatch(getUserInformationByID(user?.user.id));
+  };
+
   const handleAddExperience = () => {
     console.log("Add experience: ", experience);
   };
@@ -62,6 +74,12 @@ export default function YourCVwithUs() {
     dispatch(getListLanguage(userInformation?.jobseeker_id));
     dispatch(getListCertification(userInformation?.jobseeker_id));
   }, [dispatch, userInformation]);
+
+  useEffect(() => {
+    if (userInformation) {
+      setCareerTarget(userInformation?.career_target);
+    }
+  }, [userInformation]);
 
   return (
     <div>
@@ -97,7 +115,12 @@ export default function YourCVwithUs() {
                     id="benefits"
                     rows={4}
                     placeholder="Nhập mục tiêu nghề nghiệp"
-                    defaultValue={""}
+                    defaultValue={
+                      careerTarget
+                        ? careerTarget
+                        : userInformation?.career_target
+                    }
+                    onChange={(e) => setCareerTarget(e.target.value)}
                   />
                 </div>
               </form>
@@ -111,7 +134,13 @@ export default function YourCVwithUs() {
               >
                 Hủy
               </button>
-              <button type="button" className="btn btn-primary">
+              <button
+                type="button"
+                className="btn btn-primary"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                onClick={handleUpdateCarreerTarget}
+              >
                 Cập nhật
               </button>
             </div>
@@ -776,7 +805,7 @@ export default function YourCVwithUs() {
                     {formatDateToDDMMYYYY(exp.exp_from)} đến{" "}
                     {formatDateToDDMMYYYY(exp.exp_to)}
                   </span>
-                  <a href="#" className="text-primary text-decoration-none">
+                  <a href="#aaa" className="text-primary text-decoration-none">
                     Xóa
                   </a>
                 </div>
@@ -808,7 +837,7 @@ export default function YourCVwithUs() {
                     {formatDateToDDMMYYYY(edu.from_)} đến{" "}
                     {formatDateToDDMMYYYY(edu.to_)}
                   </span>
-                  <a href="#" className="text-primary text-decoration-none">
+                  <a href="#aaa" className="text-primary text-decoration-none">
                     Xóa
                   </a>
                 </div>
@@ -840,7 +869,7 @@ export default function YourCVwithUs() {
                     {formatDateToDDMMYYYY(pro.project_from)} đến{" "}
                     {formatDateToDDMMYYYY(pro.project_to)}
                   </span>
-                  <a href="#" className="text-primary text-decoration-none">
+                  <a href="#aaaa" className="text-primary text-decoration-none">
                     Xóa
                   </a>
                 </div>
@@ -870,7 +899,10 @@ export default function YourCVwithUs() {
               <div className="bg-white rounded-2 me-2 my-2 p-2 col-4">
                 <div className="d-flex justify-content-between align-items-center rounded-2">
                   <span className="col-md-3">{skl.skill}</span>
-                  <a href="#" className="text-primary text-decoration-none">
+                  <a
+                    href="#aaaaa"
+                    className="text-primary text-decoration-none"
+                  >
                     Xóa
                   </a>
                 </div>
@@ -915,7 +947,7 @@ export default function YourCVwithUs() {
                   <span className="col-md-3">
                     {formatDateToDDMMYYYY(cer.month_)}
                   </span>
-                  <a href="#" className="text-primary text-decoration-none">
+                  <a href="#aaaa" className="text-primary text-decoration-none">
                     Xóa
                   </a>
                 </div>

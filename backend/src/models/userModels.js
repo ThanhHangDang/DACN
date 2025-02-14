@@ -244,6 +244,35 @@ const queryGetCompanyInformation = async (id) => {
   return finalResult;
 };
 
+const queryUpdateExpectedJob = async (id, job) => {
+  const [affectedRows] = await db.query(
+    `
+    UPDATE 
+    profile_jobseeker
+    SET 
+      work_place = ?,
+      salary_expect = ?
+    WHERE profile_id = ?;
+    `,
+    [job.workCityPlace, job.salary, id]
+  );
+  return affectedRows;
+};
+
+const queryUpdateCareerTarget = async (id, career_target) => {
+  const [affectedRows] = await db.query(
+    `
+    Update
+    profile_jobseeker
+    set
+      career_target = ?
+    where profile_id = ?
+    `,
+    [career_target, id]
+  );
+  return affectedRows;
+};
+
 module.exports = {
   queryGetUserInformation,
   queryGetExperienceByID,
@@ -255,4 +284,6 @@ module.exports = {
   queryGetFollowedCompanyByID,
   queryGetJobSavedByID,
   queryGetCompanyInformation,
+  queryUpdateExpectedJob,
+  queryUpdateCareerTarget,
 };
