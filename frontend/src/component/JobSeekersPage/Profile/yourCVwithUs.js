@@ -10,6 +10,7 @@ import {
   getListCertification,
   updateCareerTarget,
   getUserInformationByID,
+  addExperience,
 } from "../../../redux/actions/jobseekerAction.js";
 
 export default function YourCVwithUs() {
@@ -58,8 +59,10 @@ export default function YourCVwithUs() {
     dispatch(getUserInformationByID(user?.user.id));
   };
 
-  const handleAddExperience = () => {
+  const handleAddExperience = async () => {
     console.log("Add experience: ", experience);
+    await dispatch(addExperience(userInformation?.jobseeker_id, experience));
+    dispatch(getListExp(userInformation?.jobseeker_id));
   };
 
   const handleAddEducation = () => {
@@ -211,7 +214,7 @@ export default function YourCVwithUs() {
                       Từ
                     </label>
                     <input
-                      type="number"
+                      type="date"
                       min="1960"
                       className="form-control"
                       id="startYear"
@@ -229,7 +232,7 @@ export default function YourCVwithUs() {
                       Đến
                     </label>
                     <input
-                      type="number"
+                      type="date"
                       min="1960"
                       className="form-control"
                       id="endYear"

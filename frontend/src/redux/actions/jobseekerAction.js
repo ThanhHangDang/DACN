@@ -219,10 +219,11 @@ export const updateExpectedJob = (id, expectedJob) => async (dispatch) => {
     );
     if (response.status === 200) {
       console.log("Add expected job successfully");
-      toast.success("Cập nhật công việc mong muốn thành công");
+      toast.success("Cập nhật công việc mong muốn thành công.");
     }
   } catch (error) {
     console.error("Error adding expected job:", error);
+    toast.error("Cập nhật công việc mong muốn thất bại.");
   }
 };
 
@@ -237,9 +238,28 @@ export const updateCareerTarget = (id, careerTarget) => async (dispatch) => {
     );
     if (response.status === 200) {
       console.log("Add career target successfully");
-      toast.success("Cập nhật mục tiêu nghề nghiệp thành công");
+      toast.success("Cập nhật mục tiêu nghề nghiệp thành công.");
     }
   } catch (error) {
     console.error("Error adding career target:", error);
+    toast.error("Cập nhật mục tiêu nghề nghiệp thất bại.");
+  }
+};
+
+export const addExperience = (id, experience) => async (dispatch) => {
+  try {
+    const response = await axios.post(
+      `http://${domain}:4000/user/add-experience`,
+      {
+        id: id,
+        experience: experience,
+      }
+    );
+    if (response.status === 200) {
+      toast.success(response.message || "Thêm kinh nghiệm thành công.");
+    }
+  } catch (error) {
+    console.log(error);
+    toast.error("Thêm kinh nghiệm thất bại.");
   }
 };

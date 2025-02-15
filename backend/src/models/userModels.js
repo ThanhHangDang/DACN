@@ -273,6 +273,26 @@ const queryUpdateCareerTarget = async (id, career_target) => {
   return affectedRows;
 };
 
+const queryAddExperience = async (id, experience) => {
+  const [affectedRows] = await db.query(
+    `
+    insert into profile_experience(profile_id, exp_title, exp_from, exp_to, exp_company, exp_description)
+    values(?, ?, ?, ?, ?, ?)
+    `,
+    [
+      id,
+      experience.job,
+      experience.startYear,
+      experience.endYear,
+      experience.company,
+      experience.description,
+      id,
+    ]
+  );
+  console.log(affectedRows);
+  return affectedRows;
+};
+
 module.exports = {
   queryGetUserInformation,
   queryGetExperienceByID,
@@ -286,4 +306,5 @@ module.exports = {
   queryGetCompanyInformation,
   queryUpdateExpectedJob,
   queryUpdateCareerTarget,
+  queryAddExperience,
 };

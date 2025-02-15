@@ -12,6 +12,7 @@ const {
   queryGetCompanyInformation,
   queryUpdateExpectedJob,
   queryUpdateCareerTarget,
+  queryAddExperience,
 } = require("../models/userModels.js");
 
 const getUserInformation = async (req, res) => {
@@ -136,7 +137,6 @@ const getJobAppliedByID = async (req, res) => {
 
 const getJobSavedByID = async (req, res) => {
   const id = req.query.id;
-  console.log(id);
   try {
     const jobSaved = await queryGetJobSavedByID(id);
     if (jobSaved) {
@@ -153,11 +153,9 @@ const getJobSavedByID = async (req, res) => {
 
 const getFollowedCompanyByID = async (req, res) => {
   const id = req.query.id;
-  console.log(id);
   try {
     const companySaved = await queryGetFollowedCompanyByID(id);
     if (companySaved) {
-      console.log(companySaved);
       return res.status(200).json({ companySaved });
     }
   } catch (err) {
@@ -171,7 +169,6 @@ const getFollowedCompanyByID = async (req, res) => {
 const getCompanyInformation = async (req, res) => {
   try {
     const id = req.query.id;
-    console.log(id);
     const companyInfor = await queryGetCompanyInformation(id);
     if (companyInfor) {
       console.log(companyInfor);
@@ -202,7 +199,6 @@ const updateExpectedJob = async (req, res) => {
 const updateCareerTarget = async (req, res) => {
   try {
     const { id, careerTarget } = req.body;
-    console.log(req.body);
     const affectedRows = await queryUpdateCareerTarget(id, careerTarget);
     if (affectedRows) {
       return res
@@ -214,6 +210,20 @@ const updateCareerTarget = async (req, res) => {
     res
       .status(500)
       .json({ message: "Có lỗi khi cập nhật mục tiêu công việc." });
+  }
+};
+
+const addExperience = async (req, res) => {
+  try {
+    const { id, experience } = req.body;
+    console.log(req.body);
+    const affectedRows = await queryAddExperience(id, experience);
+    if (affectedRows) {
+      return res.status(200).json({ message: "Thêm kinh nghiệm thành công." });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Thêm kinh nghiệm thất bại." });
   }
 };
 
@@ -232,4 +242,5 @@ module.exports = {
 
   updateExpectedJob,
   updateCareerTarget,
+  addExperience,
 };
