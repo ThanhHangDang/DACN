@@ -9,6 +9,10 @@ import {
   GET_JOB_APPLY,
   GET_JOB_SAVE,
   GET_FOLLOW_EMPLOYER,
+  UPDATE_EXPECTED_JOB,
+  UPDATE_CAREER_TARGET,
+  ADD_EDUCATION,
+  ADD_EXPERIENCE,
 } from "../contants/jobseekerContants.js";
 
 const initialState = {
@@ -46,6 +50,14 @@ const jobseekerReducer = (state = initialState, action) => {
       return { ...state, listJobSave: action.payload };
     case GET_FOLLOW_EMPLOYER:
       return { ...state, listFollowEmployer: action.payload };
+    case UPDATE_EXPECTED_JOB:
+      return { ...state, userInformation: action.payload };
+    case UPDATE_CAREER_TARGET:
+      return { ...state, userInformation: action.payload };
+    case ADD_EXPERIENCE:
+      return { ...state, listExp: action.payload };
+    case ADD_EDUCATION:
+      return { ...state, listEducation: action.payload };
     default:
       return state;
   }

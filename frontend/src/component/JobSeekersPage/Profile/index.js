@@ -24,9 +24,8 @@ export default function JobSeekerProfile() {
 
   const navigate = useNavigate();
 
-  const handleUpdateExpectedJob = async () => {
-    await dispatch(updateExpectedJob(user?.user.id, expectedJob));
-    dispatch(getUserInformationByID(user?.user.id));
+  const handleUpdateExpectedJob = () => {
+    dispatch(updateExpectedJob(user?.user.id, expectedJob));
   };
 
   useEffect(() => {

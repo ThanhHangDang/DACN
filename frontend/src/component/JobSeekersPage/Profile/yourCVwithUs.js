@@ -11,7 +11,9 @@ import {
   updateCareerTarget,
   getUserInformationByID,
   addExperience,
+  addEducation,
 } from "../../../redux/actions/jobseekerAction.js";
+import { getCategoryEdu } from "../../../redux/actions/categoryAction.js";
 
 export default function YourCVwithUs() {
   const dispatch = useDispatch();
@@ -21,10 +23,11 @@ export default function YourCVwithUs() {
     listEducation,
     listProject,
     listSkill,
-    listLanguage,
+    // listLanguage,
     listCertification,
   } = useSelector((state) => state.jobseeker);
   const { user } = useSelector((state) => state.auth);
+  const { edu } = useSelector((state) => state.category);
 
   const formatDateToDDMMYYYY = (isoDateString) => {
     const date = new Date(isoDateString); // Tạo đối tượng Date từ chuỗi ISO
@@ -47,26 +50,23 @@ export default function YourCVwithUs() {
     school: "",
     startYear: "",
     endYear: "",
+    education_id: "1",
   });
 
   const [careerTarget, setCareerTarget] = useState("");
 
-  const handleUpdateCarreerTarget = async () => {
+  const handleUpdateCarreerTarget = () => {
     // console.log("Update career target: ", careerTarget);
-    await dispatch(
-      updateCareerTarget(userInformation?.jobseeker_id, careerTarget)
-    );
-    dispatch(getUserInformationByID(user?.user.id));
+    dispatch(updateCareerTarget(userInformation?.jobseeker_id, careerTarget));
   };
 
-  const handleAddExperience = async () => {
-    console.log("Add experience: ", experience);
-    await dispatch(addExperience(userInformation?.jobseeker_id, experience));
-    dispatch(getListExp(userInformation?.jobseeker_id));
+  const handleAddExperience = () => {
+    dispatch(addExperience(userInformation?.jobseeker_id, experience));
   };
 
   const handleAddEducation = () => {
     console.log("Add education: ", education);
+    dispatch(addEducation(userInformation?.jobseeker_id, education));
   };
 
   useEffect(() => {
@@ -76,11 +76,16 @@ export default function YourCVwithUs() {
     dispatch(getListSkill(userInformation?.jobseeker_id));
     dispatch(getListLanguage(userInformation?.jobseeker_id));
     dispatch(getListCertification(userInformation?.jobseeker_id));
+    dispatch(getCategoryEdu());
   }, [dispatch, userInformation]);
 
+  // useEffect(() => {
+  //   dispatch(getCategoryEdu());
+  // }, [dispatch]);
+
   useEffect(() => {
-    if (userInformation) {
-      setCareerTarget(userInformation?.career_target);
+    if (userInformation && userInformation.career_target) {
+      setCareerTarget(userInformation.career_target);
     }
   }, [userInformation]);
 
@@ -345,12 +350,36 @@ export default function YourCVwithUs() {
                   </div>
                 </div>
                 <div className="row">
+                  <div className="col-md-4">
+                    <label htmlFor="field" className="form-label">
+                      Cấp bậc
+                    </label>
+                    <select
+                      className="form-select"
+                      id="field"
+                      onChange={(e) => {
+                        setEducation({
+                          ...education,
+                          education_id: e.target.value,
+                        });
+                      }}
+                    >
+                      {edu?.map((option) => (
+                        <option
+                          value={option.education_id}
+                          key={option.education_id}
+                        >
+                          {option.education_title}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                   <div className="col-md-4 mb-3">
                     <label htmlFor="startYear" className="form-label">
                       Từ
                     </label>
                     <input
-                      type="number"
+                      type="date"
                       className="form-control"
                       id="startYear"
                       placeholder="Nhập năm bắt đầu"
@@ -368,7 +397,7 @@ export default function YourCVwithUs() {
                       Đến
                     </label>
                     <input
-                      type="number"
+                      type="date"
                       className="form-control"
                       id="endYear"
                       placeholder="Nhập năm kết thúc"
@@ -799,8 +828,8 @@ export default function YourCVwithUs() {
             Mô tả kinh nghiệm làm việc của bạn càng chi tiết càng tốt
           </p>
           {listExp &&
-            listExp?.map((exp) => (
-              <div className="bg-white rounded-2 me-2 my-2 p-2">
+            listExp?.map((exp, index) => (
+              <div className="bg-white rounded-2 me-2 my-2 p-2" key={index}>
                 <div className="d-flex justify-content-between align-items-center rounded-2">
                   <span className="col-md-3">{exp.exp_title}</span>
                   <span className="col-md-3">{exp.exp_company}</span>
@@ -831,10 +860,11 @@ export default function YourCVwithUs() {
         <span className="">
           <h3>Học vấn</h3>
           {listEducation &&
-            listEducation?.map((edu) => (
-              <div className="bg-white rounded-2 me-2 my-2 p-2">
+            listEducation?.map((edu, index) => (
+              <div className="bg-white rounded-2 me-2 my-2 p-2" key={index}>
                 <div className="d-flex justify-content-between align-items-center rounded-2">
                   <span className="col-md-3">{edu.major}</span>
+                  <span className="col-md-2">{edu.education_title}</span>
                   <span className="col-md-3">{edu.school}</span>
                   <span className="col-md-3">
                     {formatDateToDDMMYYYY(edu.from_)} đến{" "}
@@ -863,8 +893,8 @@ export default function YourCVwithUs() {
           <h3>Dự án</h3>
           <p className="fst-italic">Mô tả dự án để thu hút nhà tuyển dụng</p>
           {listProject &&
-            listProject?.map((pro) => (
-              <div className="bg-white rounded-2 me-2 my-2 p-2">
+            listProject?.map((pro, index) => (
+              <div className="bg-white rounded-2 me-2 my-2 p-2" key={index}>
                 <div className="d-flex justify-content-between align-items-center rounded-2">
                   <span className="col-md-3">{pro.project_name}</span>
                   <span className="col-md-3"></span>
@@ -898,8 +928,11 @@ export default function YourCVwithUs() {
             Mô tả kỹ năng làm việc của bạn càng chi tiết càng tốt
           </p>
           {listSkill &&
-            listSkill?.map((skl) => (
-              <div className="bg-white rounded-2 me-2 my-2 p-2 col-4">
+            listSkill?.map((skl, index) => (
+              <div
+                className="bg-white rounded-2 me-2 my-2 p-2 col-4"
+                key={index}
+              >
                 <div className="d-flex justify-content-between align-items-center rounded-2">
                   <span className="col-md-3">{skl.skill}</span>
                   <a
@@ -942,8 +975,8 @@ export default function YourCVwithUs() {
         <span className="">
           <h3>Chứng chỉ</h3>
           {listCertification &&
-            listCertification?.map((cer) => (
-              <div className="bg-white rounded-2 me-2 my-2 p-2">
+            listCertification?.map((cer, index) => (
+              <div className="bg-white rounded-2 me-2 my-2 p-2" key={index}>
                 <div className="d-flex justify-content-between align-items-center rounded-2">
                   <span className="col-md-3">{cer.certifications}</span>
                   <span className="col-md-3"></span>

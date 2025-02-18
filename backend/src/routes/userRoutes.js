@@ -15,6 +15,7 @@ const {
   updateExpectedJob,
   updateCareerTarget,
   addExperience,
+  addEducation,
 } = require("../controllers/userControllers.js");
 
 const userRoutes = express.Router();
@@ -35,5 +36,6 @@ userRoutes.get("/get-employer-information", getCompanyInformation);
 userRoutes.post("/update-expected-job", updateExpectedJob);
 userRoutes.post("/update-career-target", updateCareerTarget);
 userRoutes.post("/add-experience", addExperience);
+userRoutes.post("/add-education", addEducation);
 
 module.exports = userRoutes;

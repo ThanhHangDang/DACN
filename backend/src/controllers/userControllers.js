@@ -13,6 +13,7 @@ const {
   queryUpdateExpectedJob,
   queryUpdateCareerTarget,
   queryAddExperience,
+  queryAddEducation,
 } = require("../models/userModels.js");
 
 const getUserInformation = async (req, res) => {
@@ -186,9 +187,11 @@ const updateExpectedJob = async (req, res) => {
     console.log(id, expectedJob);
     const affectedRows = await queryUpdateExpectedJob(id, expectedJob);
     if (affectedRows) {
-      return res
-        .status(200)
-        .json({ message: "Cập nhật công việc mong muốn thành công." });
+      const userInfor = await queryGetUserInformation(id);
+      return res.status(200).json({
+        userInfor,
+        message: "Cập nhật công việc mong muốn thành công.",
+      });
     }
   } catch (err) {
     console.error("Có lỗi khi thêm công việc mong muốn:", err);
@@ -201,9 +204,11 @@ const updateCareerTarget = async (req, res) => {
     const { id, careerTarget } = req.body;
     const affectedRows = await queryUpdateCareerTarget(id, careerTarget);
     if (affectedRows) {
-      return res
-        .status(200)
-        .json({ message: "Cập nhật mục tiêu công việc thành công." });
+      const userInfor = await queryGetUserInformation(id);
+      return res.status(200).json({
+        userInfor,
+        message: "Cập nhật mục tiêu công việc thành công.",
+      });
     }
   } catch (err) {
     console.error("Có lỗi khi cập nhật mục tiêu công việc:", err);
@@ -219,11 +224,30 @@ const addExperience = async (req, res) => {
     console.log(req.body);
     const affectedRows = await queryAddExperience(id, experience);
     if (affectedRows) {
-      return res.status(200).json({ message: "Thêm kinh nghiệm thành công." });
+      const experience = await queryGetExperienceByID(id);
+      return res
+        .status(200)
+        .json({ experience, message: "Thêm kinh nghiệm thành công." });
     }
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Thêm kinh nghiệm thất bại." });
+  }
+};
+
+const addEducation = async (req, res) => {
+  try {
+    const { id, education } = req.body;
+    const affectedRows = await queryAddEducation(id, education);
+    if (affectedRows) {
+      const education = await queryGetEducationByID(id);
+      return res
+        .status(200)
+        .json({ education, message: "Thêm học vấn thành công." });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Thêm học vấn thất bại." });
   }
 };
 
@@ -243,4 +267,5 @@ module.exports = {
   updateExpectedJob,
   updateCareerTarget,
   addExperience,
+  addEducation,
 };

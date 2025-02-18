@@ -68,7 +68,8 @@ const queryGetEducationByID = async (id) => {
   const [education] = await db.query(
     `
     SELECT 
-    edu.*
+    edu.*,
+    c.education_title
 FROM
     jobseeker js
 JOIN
@@ -77,6 +78,8 @@ JOIN
     profile_jobseeker p ON js.jobseeker_id = p.profile_id
 LEFT JOIN
     profile_education edu ON p.profile_id = edu.profile_id
+JOIN 
+    catalog_education c ON c.education_id = edu.education_id
 WHERE
     u.user_id = ?;
     `,
@@ -286,7 +289,25 @@ const queryAddExperience = async (id, experience) => {
       experience.endYear,
       experience.company,
       experience.description,
+    ]
+  );
+  console.log(affectedRows);
+  return affectedRows;
+};
+
+const queryAddEducation = async (id, education) => {
+  const [affectedRows] = await db.query(
+    `
+    insert into profile_education(profile_id, education_id, major, school, from_, to_)
+    values(?, ?, ?, ?, ?, ?)
+    `,
+    [
       id,
+      education.education_id,
+      education.major,
+      education.school,
+      education.startYear,
+      education.endYear,
     ]
   );
   console.log(affectedRows);
@@ -307,4 +328,5 @@ module.exports = {
   queryUpdateExpectedJob,
   queryUpdateCareerTarget,
   queryAddExperience,
+  queryAddEducation,
 };

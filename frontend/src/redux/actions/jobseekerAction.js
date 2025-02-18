@@ -13,6 +13,10 @@ import {
   GET_JOB_APPLY,
   GET_JOB_SAVE,
   GET_FOLLOW_EMPLOYER,
+  UPDATE_EXPECTED_JOB,
+  UPDATE_CAREER_TARGET,
+  ADD_EDUCATION,
+  ADD_EXPERIENCE,
 } from "../contants/jobseekerContants.js";
 
 // Action creator
@@ -218,6 +222,10 @@ export const updateExpectedJob = (id, expectedJob) => async (dispatch) => {
       }
     );
     if (response.status === 200) {
+      dispatch({
+        type: UPDATE_EXPECTED_JOB,
+        payload: response.data.userInfor,
+      });
       console.log("Add expected job successfully");
       toast.success("Cập nhật công việc mong muốn thành công.");
     }
@@ -237,6 +245,10 @@ export const updateCareerTarget = (id, careerTarget) => async (dispatch) => {
       }
     );
     if (response.status === 200) {
+      dispatch({
+        type: UPDATE_CAREER_TARGET,
+        payload: response.data.userInfor,
+      });
       console.log("Add career target successfully");
       toast.success("Cập nhật mục tiêu nghề nghiệp thành công.");
     }
@@ -256,10 +268,35 @@ export const addExperience = (id, experience) => async (dispatch) => {
       }
     );
     if (response.status === 200) {
+      dispatch({
+        type: ADD_EXPERIENCE,
+        payload: response.data.experience,
+      });
       toast.success(response.message || "Thêm kinh nghiệm thành công.");
     }
   } catch (error) {
     console.log(error);
     toast.error("Thêm kinh nghiệm thất bại.");
+  }
+};
+export const addEducation = (id, education) => async (dispatch) => {
+  try {
+    const response = await axios.post(
+      `http://${domain}:4000/user/add-education`,
+      {
+        id: id,
+        education: education,
+      }
+    );
+    if (response.status === 200) {
+      dispatch({
+        type: ADD_EDUCATION,
+        payload: response.data.education,
+      });
+      toast.success(response.message || "Thêm học vấn thành công.");
+    }
+  } catch (error) {
+    console.log(error);
+    toast.error("Thêm học vấn thất bại.");
   }
 };

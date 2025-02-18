@@ -22,7 +22,7 @@ export default function JobSeekerAccountSetting() {
       console.log("check2222", isLogin);
       navigate("/login");
     }
-  }, [isLogin, navigate, user]);
+  }, [navigate, user]);
 
   return (
     <div>
@@ -118,12 +118,12 @@ export default function JobSeekerAccountSetting() {
         </div>
       </div>
       <div className="d-flex justify-content-end me-2 my-2 p-2">
-        <a
+        <p
           onClick={handleLogout}
           className="text-primary text-decoration-primary d-block mt-2 pe-3 border-end border-primary"
         >
           Đăng xuất
-        </a>
+        </p>
 
         <span
           className="text-primary text-decoration-underline text-decoration-primary d-block mt-2 me-4 ms-3 custom-hover-2"
