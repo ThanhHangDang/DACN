@@ -17,6 +17,7 @@ import {
   UPDATE_CAREER_TARGET,
   ADD_EDUCATION,
   ADD_EXPERIENCE,
+  ADD_PROJECT,
 } from "../contants/jobseekerContants.js";
 
 // Action creator
@@ -298,5 +299,27 @@ export const addEducation = (id, education) => async (dispatch) => {
   } catch (error) {
     console.log(error);
     toast.error("Thêm học vấn thất bại.");
+  }
+};
+
+export const addProject = (id, project) => async (dispatch) => {
+  try {
+    const response = await axios.post(
+      `http://${domain}:4000/user/add-project`,
+      {
+        id: id,
+        project: project,
+      }
+    );
+    if (response.status === 200) {
+      dispatch({
+        type: ADD_PROJECT,
+        payload: response.data.project,
+      });
+      toast.success(response.message || "Thêm dự án thành công.");
+    }
+  } catch (error) {
+    console.log(error);
+    toast.error("Thêm dự án thất bại.");
   }
 };

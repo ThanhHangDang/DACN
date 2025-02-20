@@ -314,6 +314,23 @@ const queryAddEducation = async (id, education) => {
   return affectedRows;
 };
 
+const queryAddProject = async (id, project) => {
+  const [affectedRows] = await db.query(
+    `
+    insert into profile_project(profile_id, project_name, project_from, project_to, project_description)
+    values(?, ?, ?, ?, ?)
+    `,
+    [
+      id,
+      project.project_name,
+      project.project_from,
+      project.project_to,
+      project.project_description,
+    ]
+  );
+  return affectedRows;
+};
+
 module.exports = {
   queryGetUserInformation,
   queryGetExperienceByID,
@@ -329,4 +346,5 @@ module.exports = {
   queryUpdateCareerTarget,
   queryAddExperience,
   queryAddEducation,
+  queryAddProject,
 };

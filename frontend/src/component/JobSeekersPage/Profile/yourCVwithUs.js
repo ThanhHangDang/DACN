@@ -12,6 +12,7 @@ import {
   getUserInformationByID,
   addExperience,
   addEducation,
+  addProject,
 } from "../../../redux/actions/jobseekerAction.js";
 import { getCategoryEdu } from "../../../redux/actions/categoryAction.js";
 
@@ -53,7 +54,20 @@ export default function YourCVwithUs() {
     education_id: "1",
   });
 
+  const [dataDeleteModal, setDataDeleteModal] = useState({
+    modalID: "",
+    id: "",
+    id_delete: "",
+  });
+
   const [careerTarget, setCareerTarget] = useState("");
+
+  const [project, setProject] = useState({
+    project_name: "",
+    project_from: "",
+    project_to: "",
+    project_description: "",
+  });
 
   const handleUpdateCarreerTarget = () => {
     // console.log("Update career target: ", careerTarget);
@@ -65,8 +79,43 @@ export default function YourCVwithUs() {
   };
 
   const handleAddEducation = () => {
-    console.log("Add education: ", education);
+    // console.log("Add education: ", education);
     dispatch(addEducation(userInformation?.jobseeker_id, education));
+  };
+
+  const handleAddProject = () => {
+    // console.log(project);
+    dispatch(addProject(userInformation?.jobseeker_id, project));
+  };
+
+  const handleDeleteProfileItem = () => {
+    const modalID = dataDeleteModal.modalID;
+    switch (modalID) {
+      case 1: //Xóa experience
+        console.log(dataDeleteModal.id);
+        console.log(dataDeleteModal.id_delete);
+        break;
+      case 2: //Xóa education
+        console.log(dataDeleteModal.id);
+        console.log(dataDeleteModal.id_delete);
+        break;
+      case 3: //Xóa project
+        console.log(dataDeleteModal.id);
+        console.log(dataDeleteModal.id_delete);
+        break;
+      case 4: //Xóa skill
+        console.log(dataDeleteModal.id);
+        console.log(dataDeleteModal.id_delete);
+        break;
+      case 5: //Xóa language
+        break;
+      case 6: //xóa Certification
+        console.log(dataDeleteModal.id);
+        console.log(dataDeleteModal.id_delete);
+        break;
+      default:
+        break;
+    }
   };
 
   useEffect(() => {
@@ -97,7 +146,7 @@ export default function YourCVwithUs() {
         id="careerTarget"
         tabIndex={-1}
         aria-labelledby="modalTitle"
-        aria-hidden="true"
+        // aria-hidden="true"
       >
         <div className="modal-dialog modal-lg">
           <div className="modal-content">
@@ -163,7 +212,7 @@ export default function YourCVwithUs() {
         id="addExperience"
         tabIndex={-1}
         aria-labelledby="modalTitle"
-        aria-hidden="true"
+        // aria-hidden="true"
       >
         <div className="modal-dialog modal-lg">
           <div className="modal-content">
@@ -302,7 +351,7 @@ export default function YourCVwithUs() {
         id="addEducation"
         tabIndex={-1}
         aria-labelledby="modalTitle"
-        aria-hidden="true"
+        // aria-hidden="true"
       >
         <div className="modal-dialog modal-lg">
           <div className="modal-content">
@@ -440,7 +489,7 @@ export default function YourCVwithUs() {
         id="addProject"
         tabIndex={-1}
         aria-labelledby="modalTitle"
-        aria-hidden="true"
+        // aria-hidden="true"
       >
         <div className="modal-dialog modal-lg">
           <div className="modal-content">
@@ -458,7 +507,7 @@ export default function YourCVwithUs() {
             <div className="modal-body">
               <form>
                 <div className="row mb-3">
-                  <div className="col-md-7">
+                  <div className="">
                     <label htmlFor="postTitle" className="form-label">
                       Dự án
                     </label>
@@ -467,17 +516,12 @@ export default function YourCVwithUs() {
                       className="form-control"
                       id="postTitle"
                       placeholder="Nhập dự án"
-                    />
-                  </div>
-                  <div className="col-md-5">
-                    <label htmlFor="postTitle" className="form-label">
-                      Công ty
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="postTitle"
-                      placeholder="Nhập công ty"
+                      onChange={(e) => {
+                        setProject({
+                          ...project,
+                          project_name: e.target.value,
+                        });
+                      }}
                     />
                   </div>
                 </div>
@@ -487,10 +531,16 @@ export default function YourCVwithUs() {
                       Từ
                     </label>
                     <input
-                      type="number"
+                      type="date"
                       className="form-control"
                       id="startYear"
                       placeholder="Nhập năm bắt đầu"
+                      onChange={(e) => {
+                        setProject({
+                          ...project,
+                          project_from: e.target.value,
+                        });
+                      }}
                     />
                   </div>
                   <div className="col-md-4 mb-3">
@@ -498,10 +548,16 @@ export default function YourCVwithUs() {
                       Đến
                     </label>
                     <input
-                      type="number"
+                      type="date"
                       className="form-control"
                       id="endYear"
                       placeholder="Nhập năm kết thúc"
+                      onChange={(e) => {
+                        setProject({
+                          ...project,
+                          project_to: e.target.value,
+                        });
+                      }}
                     />
                   </div>
                 </div>
@@ -516,6 +572,12 @@ export default function YourCVwithUs() {
                     rows={4}
                     placeholder="Nhập mô tả dự án"
                     // defaultValue={""}
+                    onChange={(e) => {
+                      setProject({
+                        ...project,
+                        project_description: e.target.value,
+                      });
+                    }}
                   />
                 </div>
               </form>
@@ -529,7 +591,11 @@ export default function YourCVwithUs() {
               >
                 Hủy
               </button>
-              <button type="button" className="btn btn-primary">
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleAddProject}
+              >
                 Cập nhật
               </button>
             </div>
@@ -544,7 +610,7 @@ export default function YourCVwithUs() {
         id="addSkill"
         tabIndex={-1}
         aria-labelledby="modalTitle"
-        aria-hidden="true"
+        // aria-hidden="true"
       >
         <div className="modal-dialog modal-lg">
           <div className="modal-content">
@@ -611,7 +677,7 @@ export default function YourCVwithUs() {
         id="addLanguage"
         tabIndex={-1}
         aria-labelledby="modalTitle"
-        aria-hidden="true"
+        // aria-hidden="true"
       >
         <div className="modal-dialog modal-lg">
           <div className="modal-content">
@@ -690,7 +756,7 @@ export default function YourCVwithUs() {
         id="addCer"
         tabIndex={-1}
         aria-labelledby="modalTitle"
-        aria-hidden="true"
+        // aria-hidden="true"
       >
         <div className="modal-dialog modal-lg">
           <div className="modal-content">
@@ -719,12 +785,12 @@ export default function YourCVwithUs() {
                   />
                 </div>
 
-                <div className="mb-3">
+                <div className="mb-3 col-md-4">
                   <label htmlFor="jobTitle" className="form-label">
                     Ngày cấp
                   </label>
                   <input
-                    type="text"
+                    type="date"
                     className="form-control"
                     id="jobTitle"
                     placeholder="Nhập chứng chỉ"
@@ -749,6 +815,52 @@ export default function YourCVwithUs() {
         </div>
       </div>
       {/* End modal thêm chứng chỉ */}
+
+      {/* Modal delete */}
+      <div
+        className="modal fade"
+        id="confirmDeleteModal"
+        tabIndex={-1}
+        // aria-hidden="true"
+      >
+        <div className="modal-dialog modal-dialog-centered modal-sm">
+          {" "}
+          {/* Căn giữa và nhỏ lại */}
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="modalTitle">
+                Xác nhận xóa
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              />
+            </div>
+            <div className=" modal-body justify-content-center align-items-center modal-dialog-centered">
+              {/* Căn giữa hai nút */}
+              <button
+                type="button"
+                className="btn btn-secondary me-3"
+                data-bs-dismiss="modal"
+              >
+                Hủy
+              </button>
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={handleDeleteProfileItem}
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              >
+                Xác nhận
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* End modal delete */}
 
       <div className="bg-light rounded-2 me-2 my-2 p-4">
         <h5 className="fw-bold">Hoàn chỉnh hồ sơ</h5>
@@ -837,7 +949,20 @@ export default function YourCVwithUs() {
                     {formatDateToDDMMYYYY(exp.exp_from)} đến{" "}
                     {formatDateToDDMMYYYY(exp.exp_to)}
                   </span>
-                  <a href="#aaa" className="text-primary text-decoration-none">
+                  <a
+                    href="#aaa"
+                    className="text-primary text-decoration-none"
+                    data-bs-toggle="modal"
+                    data-bs-target="#confirmDeleteModal"
+                    onClick={() => {
+                      setDataDeleteModal({
+                        ...dataDeleteModal,
+                        modalID: 1,
+                        id: userInformation?.jobseeker_id,
+                        id_delete: exp.profile_experience_id,
+                      });
+                    }}
+                  >
                     Xóa
                   </a>
                 </div>
@@ -870,7 +995,20 @@ export default function YourCVwithUs() {
                     {formatDateToDDMMYYYY(edu.from_)} đến{" "}
                     {formatDateToDDMMYYYY(edu.to_)}
                   </span>
-                  <a href="#aaa" className="text-primary text-decoration-none">
+                  <a
+                    href="#aaa"
+                    className="text-primary text-decoration-none"
+                    data-bs-toggle="modal"
+                    data-bs-target="#confirmDeleteModal"
+                    onClick={() => {
+                      setDataDeleteModal({
+                        ...dataDeleteModal,
+                        modalID: 2,
+                        id: userInformation?.jobseeker_id,
+                        id_delete: edu.profile_education_id,
+                      });
+                    }}
+                  >
                     Xóa
                   </a>
                 </div>
@@ -902,7 +1040,20 @@ export default function YourCVwithUs() {
                     {formatDateToDDMMYYYY(pro.project_from)} đến{" "}
                     {formatDateToDDMMYYYY(pro.project_to)}
                   </span>
-                  <a href="#aaaa" className="text-primary text-decoration-none">
+                  <a
+                    href="#aaaa"
+                    className="text-primary text-decoration-none"
+                    data-bs-toggle="modal"
+                    data-bs-target="#confirmDeleteModal"
+                    onClick={() => {
+                      setDataDeleteModal({
+                        ...dataDeleteModal,
+                        modalID: 3,
+                        id: userInformation?.jobseeker_id,
+                        id_delete: pro.profile_project_id,
+                      });
+                    }}
+                  >
                     Xóa
                   </a>
                 </div>
@@ -938,6 +1089,16 @@ export default function YourCVwithUs() {
                   <a
                     href="#aaaaa"
                     className="text-primary text-decoration-none"
+                    data-bs-toggle="modal"
+                    data-bs-target="#confirmDeleteModal"
+                    onClick={() => {
+                      setDataDeleteModal({
+                        ...dataDeleteModal,
+                        modalID: 4,
+                        id: userInformation?.jobseeker_id,
+                        id_delete: skl.profile_skill_id,
+                      });
+                    }}
                   >
                     Xóa
                   </a>
@@ -983,7 +1144,20 @@ export default function YourCVwithUs() {
                   <span className="col-md-3">
                     {formatDateToDDMMYYYY(cer.month_)}
                   </span>
-                  <a href="#aaaa" className="text-primary text-decoration-none">
+                  <a
+                    href="#aaaa"
+                    className="text-primary text-decoration-none"
+                    data-bs-toggle="modal"
+                    data-bs-target="#confirmDeleteModal"
+                    onClick={() => {
+                      setDataDeleteModal({
+                        ...dataDeleteModal,
+                        modalID: 6,
+                        id: userInformation?.jobseeker_id,
+                        id_delete: cer.profile_certifications_id,
+                      });
+                    }}
+                  >
                     Xóa
                   </a>
                 </div>

@@ -14,6 +14,7 @@ const {
   queryUpdateCareerTarget,
   queryAddExperience,
   queryAddEducation,
+  queryAddProject,
 } = require("../models/userModels.js");
 
 const getUserInformation = async (req, res) => {
@@ -251,6 +252,21 @@ const addEducation = async (req, res) => {
   }
 };
 
+const addProject = async (req, res) => {
+  try {
+    const { id, project } = req.body;
+    const affectedRows = await queryAddProject(id, project);
+    if (affectedRows) {
+      const project = await queryGetProjectByID(id);
+      return res
+        .status(200)
+        .json({ project, message: "Thêm dự án thành công." });
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 module.exports = {
   getUserInformation,
   getExperienceByID,
@@ -268,4 +284,5 @@ module.exports = {
   updateCareerTarget,
   addExperience,
   addEducation,
+  addProject,
 };
