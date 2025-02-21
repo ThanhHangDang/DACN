@@ -168,6 +168,7 @@ join
 join 
     (SELECT company_id, company_name, logo from company) as C ON B.employer_id = C.company_id;
     `,    
+<<<<<<< HEAD
     `    
 SELECT * from 
     (select job_id as id, date_appy from jobseeker_apply_job where jobseeker_id=?) as A 
@@ -177,6 +178,8 @@ join
 join 
     (SELECT company_id, company_name, logo from company) as C ON B.employer_id = C.company_id;
     `,    
+=======
+>>>>>>> fa1e1e364f7b62b76b04d7f0cb70faf71cf69211
     [id]
   );
   return jobApplied;
@@ -192,6 +195,7 @@ join
     ON A.id = B.job_id 
 join 
     (SELECT company_id, company_name, logo from company) as C ON B.employer_id = C.company_id;
+<<<<<<< HEAD
 SELECT * from 
     (select job_id as id from jobseeker_save_job where jobseeker_id=?) as A 
 join  
@@ -199,11 +203,16 @@ join
     ON A.id = B.job_id 
 join 
     (SELECT company_id, company_name, logo from company) as C ON B.employer_id = C.company_id;
+=======
+>>>>>>> fa1e1e364f7b62b76b04d7f0cb70faf71cf69211
     `,
     [id]
   );
   // chưa tôi ưu query, xem xét trả về id job rồi truy vấn for each.
+<<<<<<< HEAD
   // chưa tôi ưu query, xem xét trả về id job rồi truy vấn for each.
+=======
+>>>>>>> fa1e1e364f7b62b76b04d7f0cb70faf71cf69211
   return jobSaved;
 };
 
@@ -220,8 +229,11 @@ JOIN
     jobseeker_follow_employer fc ON u.user_id = fc.jobseeker_id
 join 
     (SELECT company_id, company_name, logo from company) as C ON B.employer_id = C.company_id;
+<<<<<<< HEAD
 join 
     (SELECT company_id, company_name, logo from company) as C ON B.employer_id = C.company_id;
+=======
+>>>>>>> fa1e1e364f7b62b76b04d7f0cb70faf71cf69211
 WHERE
     u.user_id = ?;
     `,
@@ -230,6 +242,7 @@ WHERE
   return followedCompany;
 };
 
+<<<<<<< HEAD
 const queryGetCompanyInformation = async (id) => {
   const [result] = await db.query(
     `SELECT * FROM (Select * FROM company where company_id = ?) as table1 JOIN catalog_scale on scale_id= scale  JOIN company_location ON company_location.company_id = table1.company_id JOIN catalog_industry where catalog_industry.industry_id=table1.industry_id`,
@@ -297,6 +310,8 @@ const queryAddExperience = async (id, experience) => {
   return affectedRows;
 };
 
+=======
+>>>>>>> fa1e1e364f7b62b76b04d7f0cb70faf71cf69211
 module.exports = {
   queryGetUserInformation,
   queryGetExperienceByID,
@@ -307,8 +322,12 @@ module.exports = {
   queryGetCertificateByID,
   queryGetFollowedCompanyByID,
   queryGetJobSavedByID,
+<<<<<<< HEAD
   queryGetCompanyInformation,
   queryUpdateExpectedJob,
   queryUpdateCareerTarget,
   queryAddExperience,
+=======
+  queryGetJobAppliedByID
+>>>>>>> fa1e1e364f7b62b76b04d7f0cb70faf71cf69211
 };
