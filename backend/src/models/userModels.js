@@ -68,8 +68,7 @@ const queryGetEducationByID = async (id) => {
   const [education] = await db.query(
     `
     SELECT 
-    edu.*,
-    c.education_title
+    edu.*
 FROM
     jobseeker js
 JOIN
@@ -78,8 +77,6 @@ JOIN
     profile_jobseeker p ON js.jobseeker_id = p.profile_id
 LEFT JOIN
     profile_education edu ON p.profile_id = edu.profile_id
-JOIN 
-    catalog_education c ON c.education_id = edu.education_id
 WHERE
     u.user_id = ?;
     `,
@@ -91,18 +88,7 @@ WHERE
 const queryGetProjectByID = async (id) => {
   const [project] = await db.query(
     `
-    SELECT 
-    pro.*
-FROM
-    jobseeker js
-JOIN
-    user_ u ON js.jobseeker_id = u.user_id
-JOIN
-    profile_jobseeker p ON js.jobseeker_id = p.profile_id
-LEFT JOIN
-    profile_project pro ON p.profile_id = pro.profile_id
-WHERE
-    u.user_id = ?;
+    SELECT     * FROM    u.user_id = ?;
     `,
     [id]
   );
@@ -182,6 +168,15 @@ join
 join 
     (SELECT company_id, company_name, logo from company) as C ON B.employer_id = C.company_id;
     `,    
+    `    
+SELECT * from 
+    (select job_id as id, date_appy from jobseeker_apply_job where jobseeker_id=?) as A 
+join  
+    (select job_id, employer_id, title, date_post, status_, work_location from job) as B 
+    ON A.id = B.job_id 
+join 
+    (SELECT company_id, company_name, logo from company) as C ON B.employer_id = C.company_id;
+    `,    
     [id]
   );
   return jobApplied;
@@ -197,9 +192,17 @@ join
     ON A.id = B.job_id 
 join 
     (SELECT company_id, company_name, logo from company) as C ON B.employer_id = C.company_id;
+SELECT * from 
+    (select job_id as id from jobseeker_save_job where jobseeker_id=?) as A 
+join  
+    (select job_id, employer_id, title, date_post, status_, work_location from job) as B 
+    ON A.id = B.job_id 
+join 
+    (SELECT company_id, company_name, logo from company) as C ON B.employer_id = C.company_id;
     `,
     [id]
   );
+  // chưa tôi ưu query, xem xét trả về id job rồi truy vấn for each.
   // chưa tôi ưu query, xem xét trả về id job rồi truy vấn for each.
   return jobSaved;
 };
@@ -215,6 +218,8 @@ JOIN
     user_ u ON js.jobseeker_id = u.user_id
 JOIN
     jobseeker_follow_employer fc ON u.user_id = fc.jobseeker_id
+join 
+    (SELECT company_id, company_name, logo from company) as C ON B.employer_id = C.company_id;
 join 
     (SELECT company_id, company_name, logo from company) as C ON B.employer_id = C.company_id;
 WHERE
@@ -285,25 +290,7 @@ const queryAddExperience = async (id, experience) => {
       experience.endYear,
       experience.company,
       experience.description,
-    ]
-  );
-  console.log(affectedRows);
-  return affectedRows;
-};
-
-const queryAddEducation = async (id, education) => {
-  const [affectedRows] = await db.query(
-    `
-    insert into profile_education(profile_id, education_id, major, school, from_, to_)
-    values(?, ?, ?, ?, ?, ?)
-    `,
-    [
       id,
-      education.education_id,
-      education.major,
-      education.school,
-      education.startYear,
-      education.endYear,
     ]
   );
   console.log(affectedRows);
@@ -324,5 +311,4 @@ module.exports = {
   queryUpdateExpectedJob,
   queryUpdateCareerTarget,
   queryAddExperience,
-  queryAddEducation,
 };
