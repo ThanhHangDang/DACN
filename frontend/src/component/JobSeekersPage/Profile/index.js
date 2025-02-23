@@ -53,7 +53,7 @@ export default function JobSeekerProfile() {
         id="expectedJob"
         tabIndex={-1}
         aria-labelledby="modalTitle"
-        aria-hidden="true"
+        // aria-hidden="true"
       >
         <div className="modal-dialog modal-lg">
           <div className="modal-content">

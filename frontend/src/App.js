@@ -43,6 +43,9 @@ import WorkDetail from "./component/WorkManagePage/workDetail.js";
 import EmployeeMaganePage from "./component/EmployeeMaganePage/index.js";
 import EmployeeDetail from "./component/EmployeeMaganePage/employeeDetail.js";
 
+import ListCompany from "./component/companyManage/index.js";
+import CompanyDetail from "./component/companyManage/companyDetail.js";
+
 import PageNotFound from "./component/PageNotFound/index.js";
 
 function App() {
@@ -116,6 +119,10 @@ function App() {
           <Route path="/employee" Component={EmployeeMaganePage} />
 
           <Route path="/employee-detail/:id" Component={EmployeeDetail} />
+
+          {/* Anh Đạt làm 2 cái này */}
+          <Route path="/list-company" Component={ListCompany} />
+          <Route path="/company-detail" Component={CompanyDetail} />
 
           <Route path="*" Component={PageNotFound} />
         </Routes>

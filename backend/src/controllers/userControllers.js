@@ -267,6 +267,13 @@ const addProject = async (req, res) => {
   }
 };
 
+const deleteExperience = (req, res) => {
+  try {
+    const { id, id_delete } = req.query;
+    console.log("dasdasdsadasdsadsad", req.query);
+  } catch (error) {}
+};
+
 module.exports = {
   getUserInformation,
   getExperienceByID,
@@ -285,4 +292,6 @@ module.exports = {
   addExperience,
   addEducation,
   addProject,
+
+  deleteExperience,
 };
