@@ -195,19 +195,14 @@ WHERE
   return jobSaved;
 };
 
-const queryGetFollowedCompanyByID = async (id) => {
+const queryGetFollowedCompanyByID = async (id) => { // tot nhat chia lam 2 part, part nay chi lay ID, sau do dung vong for dde lay queryGetCompanyInformation 
   const [followedCompany] = await db.query(
     `
-    SELECT 
-    fc.*  
+    SELECT employer_id 
 FROM
-    jobseeker js
-JOIN
-    user_ u ON js.jobseeker_id = u.user_id
-JOIN
-    jobseeker_follow_employer fc ON u.user_id = fc.jobseeker_id
+    jobseeker_follow_employer
 WHERE
-    u.user_id = ?;
+    jobseeker_id = ?;
     `,
     [id]
   );
@@ -216,12 +211,23 @@ WHERE
 
 const queryGetCompanyInformation = async (id) => {
   const [result] = await db.query(
-    `SELECT * FROM (Select * FROM company where company_id = ?) as table1 JOIN catalog_scale on scale_id= scale  JOIN company_location ON company_location.company_id = table1.company_id JOIN catalog_industry where catalog_industry.industry_id=table1.industry_id`,
+    `Select * from 
+        (Select company_id,company_name,logo,phone_number,describle,scale_min,scale_max,address,industry_name,district_name,city_id from 
+            (SELECT table1.company_id,company_name,logo,phone_number,describle,scale_min,scale_max,address,industry_name,district_id FROM 
+                (Select * FROM company where company_id = 222000005) as table1 
+            JOIN catalog_scale on catalog_scale.scale_id= table1.scale  
+            JOIN company_location ON company_location.company_id = table1.company_id 
+            JOIN catalog_industry on catalog_industry.industry_id = table1.industry_id
+            where catalog_industry.industry_id=table1.industry_id
+            ) as table2 
+        join catalog_district on catalog_district.district_id = table2.district_id
+        ) as table3 
+    join catalog_city on catalog_city.city_id = table3.city_id`,
     [id]
   );
   const [result2] = await db.query(
     `
-                    SELECT DISTINCT catalog_benefit.benefit_name
+                    SELECT DISTINCT benefit_name,benefit_value
                     FROM company_benifit 
                     JOIN catalog_benefit ON catalog_benefit.benefit_id = company_benifit.benefit_id
                     WHERE company_benifit.company_id = ?
@@ -232,6 +238,7 @@ const queryGetCompanyInformation = async (id) => {
   return finalResult;
 };
 
+///////////////////////////////////////////////////////// CRUB ///////////////////////////////////////////////////////////
 
 const queryUpdateExpectedJob = async (id, job) => {
   const [affectedRows] = await db.query(
@@ -245,7 +252,7 @@ const queryUpdateExpectedJob = async (id, job) => {
     `,
     [job.workCityPlace, job.salary, id]
   );
-  return affectedRows;
+  return affectedRows[0];
 };
 
 const queryUpdateCareerTarget = async (id, career_target) => {
@@ -262,7 +269,7 @@ const queryUpdateCareerTarget = async (id, career_target) => {
   return affectedRows;
 };
 
-const queryAddExperience = async (id, experience) => {
+const queryAddExperience = async (id, experience) => { // OK
   const [affectedRows] = await db.query(
     `
     insert into profile_experience(profile_id, exp_title, exp_from, exp_to, exp_company, exp_description)
@@ -280,7 +287,23 @@ const queryAddExperience = async (id, experience) => {
   console.log(affectedRows);
   return affectedRows;
 };
-
+const queryUpDateExperience = async (id, experience) => { // chỉ cần lấy id của experience
+  const [affectedRows] = await db.query(
+    `
+    update profile_experience set exp_title=?, exp_from=?, exp_to=?, exp_company=?, exp_description=? where profile_experience_id = ?
+    `,
+    [
+      experience.job,
+      experience.startYear,
+      experience.endYear,
+      experience.company,
+      experience.description,
+      experience.experience_id
+    ]
+  );
+  console.log(affectedRows);
+  return affectedRows;
+};
 const queryAddEducation = async (id, education) => {
   const [affectedRows] = await db.query(
     `
@@ -298,19 +321,49 @@ const queryAddEducation = async (id, education) => {
   );
   return affectedRows;
 };
+const queryUpdateEducation = async (id, education) => {
+  const [affectedRows] = await db.query(
+    `
+    update profile_education set education_id=?, major=?, school=?, from_=?, to_=? where profile_education_id = ?
+    `,
+    [
+      education.education_id,
+      education.major,
+      education.school,
+      education.startYear,
+      education.endYear,
+      education.profile_education_id
+    ]
+  );
+  return affectedRows;
+};
 
 const queryAddProject = async (id, project) => {
   const [affectedRows] = await db.query(
     `
-    insert into profile_project(profile_id, project_name, project_from, project_to, project_description)
-    values(?, ?, ?, ?, ?)
+    update profile_project set profile_id=?, project_name=?, project_from=?, project_to=?, project_description=? where project_id = ?  
     `,
     [
-      id,
       project.project_name,
       project.project_from,
       project.project_to,
       project.project_description,
+      id
+    ]
+  );
+  return affectedRows;
+};
+const queryUpdateProject = async (id, project) => {
+  const [affectedRows] = await db.query(
+    `
+    update profile_project set profile_id =?, project_name =?, project_from =?, project_to =?, project_description=? where project_id = ?
+    `,
+    [
+      project.project_name,
+      project.project_from,
+      project.project_to,
+      project.project_description,
+      id
     ]
   );
   return affectedRows;
@@ -329,6 +382,9 @@ module.exports = {
   queryUpdateExpectedJob,
   queryUpdateCareerTarget,
   queryAddExperience,
+  queryUpDateExperience,
   queryAddEducation,
+  queryUpdateEducation,
   queryAddProject,
+  queryUpdateProject,
 };

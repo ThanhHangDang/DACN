@@ -153,12 +153,16 @@ const getJobSavedByID = async (req, res) => {
   }
 };
 
-const getFollowedCompanyByID = async (req, res) => {
+const getFollowedCompanyByID = async (req, res) => { // xử lý lại, hàm trả về danh sách của các công ty đã theo dõi, với toàn bộ thông tin của công ty trong mỗi phần tử
   const id = req.query.id;
   try {
-    const companySaved = await queryGetFollowedCompanyByID(id);
-    if (companySaved) {
-      return res.status(200).json({ companySaved });
+    const company_id_Saved = await queryGetFollowedCompanyByID(id);
+    array_company = [];
+    if (company_id_Saved) {
+      company_id_Saved.forEach(element => {
+        array_company.push(getCompanyInformation(element));
+      });
+      return res.status(200).json({ companySaved: array_company });
     }
   } catch (err) {
     console.error("Có lỗi khi lấy thông tin công ty đã theo dõi:", err);
