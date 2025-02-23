@@ -17,6 +17,7 @@ const {
   addExperience,
   addEducation,
   addProject,
+  deleteExperience,
 } = require("../controllers/userControllers.js");
 
 const userRoutes = express.Router();
@@ -39,5 +40,7 @@ userRoutes.post("/update-career-target", updateCareerTarget);
 userRoutes.post("/add-experience", addExperience);
 userRoutes.post("/add-education", addEducation);
 userRoutes.post("/add-project", addProject);
+
+userRoutes.delete("/delete-experience", deleteExperience);
 
 module.exports = userRoutes;

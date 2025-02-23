@@ -18,6 +18,12 @@ import {
   ADD_EDUCATION,
   ADD_EXPERIENCE,
   ADD_PROJECT,
+  DELETE_EXPERIENCE,
+  DELETE_EDUCATION,
+  DELETE_CERTIFICATION,
+  DELETE_LANGUAGE,
+  DELETE_SKILL,
+  DELETE_PROJECT,
 } from "../contants/jobseekerContants.js";
 
 // Action creator
@@ -321,5 +327,28 @@ export const addProject = (id, project) => async (dispatch) => {
   } catch (error) {
     console.log(error);
     toast.error("Thêm dự án thất bại.");
+  }
+};
+
+export const deleteProfileExperience = (id, id_delete) => async (dispatch) => {
+  try {
+    const response = await axios.delete(
+      `http://${domain}:4000/user/delete-experience`,
+
+      {
+        params: { id: id, id_delete: id_delete },
+      },
+      { withCredentials: true }
+    );
+    if (response.status === 200) {
+      dispatch({
+        type: DELETE_EXPERIENCE,
+        payload: response.data.experience,
+      });
+    }
+    toast.success(response.message || "Xóa kinh nghiệm thành công.");
+  } catch (error) {
+    console.log(error);
+    toast.error("Xóa kinh nghiệm thất bại.");
   }
 };

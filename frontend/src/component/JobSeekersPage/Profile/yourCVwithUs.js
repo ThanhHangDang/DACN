@@ -13,6 +13,7 @@ import {
   addExperience,
   addEducation,
   addProject,
+  deleteProfileExperience,
 } from "../../../redux/actions/jobseekerAction.js";
 import { getCategoryEdu } from "../../../redux/actions/categoryAction.js";
 
@@ -88,35 +89,38 @@ export default function YourCVwithUs() {
     dispatch(addProject(userInformation?.jobseeker_id, project));
   };
 
-  const handleDeleteProfileItem = () => {
-    const modalID = dataDeleteModal.modalID;
-    switch (modalID) {
-      case 1: //Xóa experience
-        console.log(dataDeleteModal.id);
-        console.log(dataDeleteModal.id_delete);
-        break;
-      case 2: //Xóa education
-        console.log(dataDeleteModal.id);
-        console.log(dataDeleteModal.id_delete);
-        break;
-      case 3: //Xóa project
-        console.log(dataDeleteModal.id);
-        console.log(dataDeleteModal.id_delete);
-        break;
-      case 4: //Xóa skill
-        console.log(dataDeleteModal.id);
-        console.log(dataDeleteModal.id_delete);
-        break;
-      case 5: //Xóa language
-        break;
-      case 6: //xóa Certification
-        console.log(dataDeleteModal.id);
-        console.log(dataDeleteModal.id_delete);
-        break;
-      default:
-        break;
-    }
-  };
+  // const handleDeleteProfileItem = () => {
+  //   const modalID = dataDeleteModal.modalID;
+  //   switch (modalID) {
+  //     case 1: //Xóa experience
+  //       dispatch(
+  //         deleteProfileExperience(dataDeleteModal.id, dataDeleteModal.id_delete)
+  //       );
+  //       break;
+  //     case 2: //Xóa education
+  //       console.log(dataDeleteModal.id);
+  //       console.log(dataDeleteModal.id_delete);
+  //       break;
+  //     case 3: //Xóa project
+  //       console.log(dataDeleteModal.id);
+  //       console.log(dataDeleteModal.id_delete);
+  //       break;
+  //     case 4: //Xóa skill
+  //       console.log(dataDeleteModal.id);
+  //       console.log(dataDeleteModal.id_delete);
+  //       break;
+  //     case 5: //Xóa language
+  //       break;
+  //     case 6: //xóa Certification
+  //       console.log(dataDeleteModal.id);
+  //       console.log(dataDeleteModal.id_delete);
+  //       break;
+  //     default:
+  //       break;
+  //   }
+  // };
+
+  const handleDeleteProfileItem = () => {};
 
   useEffect(() => {
     dispatch(getListExp(userInformation?.jobseeker_id));
@@ -821,7 +825,7 @@ export default function YourCVwithUs() {
         className="modal fade"
         id="confirmDeleteModal"
         tabIndex={-1}
-        // aria-hidden="true"
+        aria-hidden="true"
       >
         <div className="modal-dialog modal-dialog-centered modal-sm">
           {" "}
