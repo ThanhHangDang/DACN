@@ -331,6 +331,72 @@ const queryAddProject = async (id, project) => {
   return affectedRows;
 };
 
+const queryDeleteExperience = async (id, id_delete) => {
+  const [affectedRows] = await db.query(
+    `
+    DELETE FROM profile_experience
+    WHERE profile_id = ? AND profile_experience_id = ?;
+    `,
+    [id, id_delete]
+  );
+  return affectedRows;
+};
+
+const queryDeleteEducation = async (id, id_delete) => {
+  const [affectedRows] = await db.query(
+    `
+    DELETE FROM profile_education
+    WHERE profile_id = ? AND profile_education_id = ?;
+    `,
+    [id, id_delete]
+  );
+  return affectedRows;
+};
+
+const queryDeleteProject = async (id, id_delete) => {
+  const [affectedRows] = await db.query(
+    `
+    DELETE FROM profile_project
+    WHERE profile_id = ? AND profile_project_id = ?;
+    `,
+    [id, id_delete]
+  );
+  return affectedRows;
+};
+
+const queryDeleteSkill = async (id, id_delete) => {
+  const [affectedRows] = await db.query(
+    `
+    DELETE FROM profile_skill
+    WHERE profile_id = ? AND profile_skill_id = ?;
+    `,
+    [id, id_delete]
+  );
+  return affectedRows;
+};
+
+const queryDeleteLanguage = async (id, id_delete) => {
+  const [affectedRows] = await db.query(
+    `
+    DELETE FROM profile_language
+    WHERE profile_id = ? AND profile_language_id = ?;
+    `,
+    [id, id_delete]
+  );
+  return affectedRows;
+};
+
+const queryDeleteCertification = async (id, id_delete) => {
+  const [affectedRows] = await db.query(
+    `
+    DELETE FROM profile_certification
+    WHERE profile_id = ? AND profile_certification_id = ?;
+    `,
+    [id, id_delete]
+  );
+  return affectedRows;
+};
+
 module.exports = {
   queryGetUserInformation,
   queryGetExperienceByID,
@@ -347,4 +413,11 @@ module.exports = {
   queryAddExperience,
   queryAddEducation,
   queryAddProject,
+
+  queryDeleteExperience,
+  queryDeleteEducation,
+  queryDeleteProject,
+  queryDeleteSkill,
+  queryDeleteLanguage,
+  queryDeleteCertification,
 };

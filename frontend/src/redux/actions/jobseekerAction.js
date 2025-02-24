@@ -330,25 +330,122 @@ export const addProject = (id, project) => async (dispatch) => {
   }
 };
 
-export const deleteProfileExperience = (id, id_delete) => async (dispatch) => {
-  try {
-    const response = await axios.delete(
-      `http://${domain}:4000/user/delete-experience`,
-
-      {
-        params: { id: id, id_delete: id_delete },
-      },
-      { withCredentials: true }
-    );
-    if (response.status === 200) {
-      dispatch({
-        type: DELETE_EXPERIENCE,
-        payload: response.data.experience,
-      });
+export const deleteProfileItem =
+  (modalID, id, id_delete) => async (dispatch) => {
+    switch (modalID) {
+      case 1:
+        deleteProfileItemChild(
+          id,
+          id_delete,
+          "delete-experience",
+          DELETE_EXPERIENCE,
+          modalID,
+          "Xóa kinh nghiệm thành công.",
+          "Xóa kinh nghiệm thất bại"
+        )(dispatch);
+        break;
+      case 2:
+        deleteProfileItemChild(
+          id,
+          id_delete,
+          "delete-education",
+          DELETE_EDUCATION, // Define this constant appropriately
+          modalID,
+          "Xóa giáo dục thành công.",
+          "Xóa giáo dục thất bại"
+        )(dispatch);
+        break;
+      case 3:
+        deleteProfileItemChild(
+          id,
+          id_delete,
+          "delete-project",
+          DELETE_PROJECT, // Define this constant appropriately
+          modalID,
+          "Xóa dự án thành công.",
+          "Xóa dự án thất bại"
+        )(dispatch);
+        break;
+      case 4:
+        deleteProfileItemChild(
+          id,
+          id_delete,
+          "delete-skill",
+          DELETE_SKILL, // Define this constant appropriately
+          modalID,
+          "Xóa kỹ năng thành công.",
+          "Xóa kỹ năng thất bại"
+        )(dispatch);
+        break;
+      case 5:
+        deleteProfileItemChild(
+          id,
+          id_delete,
+          "delete-language",
+          DELETE_LANGUAGE, // Define this constant appropriately
+          modalID,
+          "Xóa ngôn ngữ thành công.",
+          "Xóa ngôn ngữ thất bại"
+        )(dispatch);
+        break;
+      case 6:
+        deleteProfileItemChild(
+          id,
+          id_delete,
+          "delete-certification",
+          DELETE_CERTIFICATION, // Define this constant appropriately
+          modalID,
+          "Xóa chứng chỉ thành công.",
+          "Xóa chứng chỉ thất bại"
+        )(dispatch);
+        break;
+      default:
+        return; // Exit if modalID is not recognized
     }
-    toast.success(response.message || "Xóa kinh nghiệm thành công.");
-  } catch (error) {
-    console.log(error);
-    toast.error("Xóa kinh nghiệm thất bại.");
-  }
-};
+  };
+
+export const deleteProfileItemChild =
+  (id, id_delete, host, type, modalID, messageSuccess, messageFail) =>
+  async (dispatch) => {
+    try {
+      const response = await axios.delete(
+        `http://${domain}:4000/user/${host}`,
+        {
+          params: { id: id, id_delete: id_delete }, // Correctly pass data object for DELETE
+        }
+      );
+      if (response.status === 200) {
+        let payload = ""; // Use let to allow reassignment
+        switch (modalID) {
+          case 1: // Xóa experience
+            payload = response.data.experience;
+            break;
+          case 2: // Xóa education
+            payload = response.data.education;
+            break;
+          case 3: // Xóa project
+            payload = response.data.project;
+            break;
+          case 4: // Xóa skill
+            payload = response.data.skill;
+            break;
+          case 5: // Xóa language
+            payload = response.data.language; // Assuming you want to handle this case
+            break;
+          case 6: // Xóa certification
+            payload = response.data.certification;
+            break;
+          default:
+            break;
+        }
+        dispatch({
+          type: type,
+          payload: payload,
+        });
+        toast.success(messageSuccess);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(messageFail);
+    }
+  };

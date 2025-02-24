@@ -15,6 +15,13 @@ const {
   queryAddExperience,
   queryAddEducation,
   queryAddProject,
+
+  queryDeleteExperience,
+  queryDeleteEducation,
+  queryDeleteProject,
+  queryDeleteSkill,
+  queryDeleteLanguage,
+  queryDeleteCertification,
 } = require("../models/userModels.js");
 
 const getUserInformation = async (req, res) => {
@@ -264,14 +271,105 @@ const addProject = async (req, res) => {
     }
   } catch (err) {
     console.log(err);
+    res.status(500).json({ message: "Thêm dự án thất bại." });
   }
 };
 
-const deleteExperience = (req, res) => {
+const deleteExperience = async (req, res) => {
   try {
     const { id, id_delete } = req.query;
     console.log("dasdasdsadasdsadsad", req.query);
-  } catch (error) {}
+    const affectedRows = await queryDeleteExperience(id, id_delete);
+    if (affectedRows) {
+      const experience = await queryGetExperienceByID(id);
+      return res
+        .status(200)
+        .json({ experience, message: "Xóa kinh nghiệm thành công." });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Xóa kinh nghiệm thất bại." });
+  }
+};
+
+const deleteEducation = async (req, res) => {
+  try {
+    const { id, id_delete } = req.query;
+    const affectedRows = await queryDeleteEducation(id, id_delete);
+    if (affectedRows) {
+      const education = await queryGetEducationByID(id);
+      return res
+        .status(200)
+        .json({ education, message: "Xóa học vấn thành công." });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Xóa học vấn thất bại." });
+  }
+};
+
+const deleteProject = async (req, res) => {
+  try {
+    const { id, id_delete } = req.query;
+    const affectedRows = await queryDeleteProject(id, id_delete);
+    if (affectedRows) {
+      const project = await queryGetProjectByID(id);
+      return res
+        .status(200)
+        .json({ project, message: "Xóa dự án thành công." });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Xóa dự án thất bại." });
+  }
+};
+
+const deleteSkill = async (req, res) => {
+  try {
+    const { id, id_delete } = req.query;
+    const affectedRows = await queryDeleteSkill(id, id_delete);
+    if (affectedRows) {
+      const skill = await queryGetSkillByID(id);
+      return res
+        .status(200)
+        .json({ skill, message: "Xóa kỹ năng thành công." });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Xóa kỹ năng thất bại." });
+  }
+};
+
+const deleteLanguage = async (req, res) => {
+  try {
+    const { id, id_delete } = req.query;
+    const affectedRows = await queryDeleteLanguage(id, id_delete);
+    if (affectedRows) {
+      const language = await queryGetLanguageByID(id);
+      return res
+        .status(200)
+        .json({ language, message: "Xóa ngôn ngữ thành công." });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Xóa ngôn ngữ thất bại." });
+  }
+};
+
+const deleteCertification = async (req, res) => {
+  try {
+    const { id, id_delete } = req.query;
+    const affectedRows = await queryDeleteCertification(id, id_delete);
+    if (affectedRows) {
+      const certificate = await queryGetCertificateByID(id);
+      return res
+        .status(200)
+        .json({ certificate, message: "Xóa chứng chỉ thành công." });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Xóa chứng chỉ thất bại." });
+  }
 };
 
 module.exports = {
@@ -294,4 +392,9 @@ module.exports = {
   addProject,
 
   deleteExperience,
+  deleteEducation,
+  deleteProject,
+  deleteSkill,
+  deleteLanguage,
+  deleteCertification,
 };
