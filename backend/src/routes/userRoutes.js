@@ -24,6 +24,8 @@ const {
   deleteSkill,
   deleteLanguage,
   deleteCertification,
+
+  getNotificationByID,
 } = require("../controllers/userControllers.js");
 
 const userRoutes = express.Router();
@@ -53,5 +55,7 @@ userRoutes.delete("/delete-project", deleteProject);
 userRoutes.delete("/delete-skill", deleteSkill);
 userRoutes.delete("/delete-language", deleteLanguage);
 userRoutes.delete("/delete-certification", deleteCertification);
+
+userRoutes.get("/get-notification-by-user-id", getNotificationByID);
 
 module.exports = userRoutes;

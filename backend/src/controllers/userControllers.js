@@ -22,7 +22,11 @@ const {
   queryDeleteSkill,
   queryDeleteLanguage,
   queryDeleteCertification,
+
+  queryGetNotificationByID,
 } = require("../models/userModels.js");
+
+const { queryGetWorkDetail } = require("../models/workModel.js");
 
 const getUserInformation = async (req, res) => {
   const id = req.query.id;
@@ -132,9 +136,15 @@ const getJobAppliedByID = async (req, res) => {
   console.log(id);
   try {
     const jobApplied = await queryGetJobAppliedByID(id);
+    console.log(jobApplied);
     if (jobApplied) {
-      console.log(jobApplied);
-      return res.status(200).json({ jobApplied });
+      const jobPromises = jobApplied.map(async (element) => {
+        return await queryGetWorkDetail(element.job_id);
+      });
+      const array_job = await Promise.all(jobPromises);
+      return res.status(200).json({ jobApplied: array_job });
+    } else {
+      return res.status(200).json({ jobApplied: [] });
     }
   } catch (err) {
     console.error("Có lỗi khi lấy thông tin công việc đã ứng tuyển:", err);
@@ -149,8 +159,13 @@ const getJobSavedByID = async (req, res) => {
   try {
     const jobSaved = await queryGetJobSavedByID(id);
     if (jobSaved) {
-      console.log(jobSaved);
-      return res.status(200).json({ jobSaved });
+      const jobPromises = jobSaved.map(async (element) => {
+        return await queryGetWorkDetail(element.job_id);
+      });
+      const array_job = await Promise.all(jobPromises);
+      return res.status(200).json({ jobSaved: array_job });
+    } else {
+      return res.status(200).json({ jobSaved: [] });
     }
   } catch (err) {
     console.error("Có lỗi khi lấy thông tin công việc đã lưu:", err);
@@ -163,9 +178,21 @@ const getJobSavedByID = async (req, res) => {
 const getFollowedCompanyByID = async (req, res) => {
   const id = req.query.id;
   try {
-    const companySaved = await queryGetFollowedCompanyByID(id);
-    if (companySaved) {
-      return res.status(200).json({ companySaved });
+    const company_id_Saved = await queryGetFollowedCompanyByID(id);
+
+    if (company_id_Saved) {
+      // Create an array of promises
+      const companyPromises = company_id_Saved.map(async (element) => {
+        return await queryGetCompanyInformation(element.employer_id);
+      });
+
+      // Wait for all promises to resolve
+      const array_company = await Promise.all(companyPromises);
+      console.log(array_company); // This will now log the populated array
+      return res.status(200).json({ companySaved: array_company });
+    } else {
+      // Handle case where there are no saved companies
+      return res.status(200).json({ companySaved: [] });
     }
   } catch (err) {
     console.error("Có lỗi khi lấy thông tin công ty đã theo dõi:", err);
@@ -182,6 +209,8 @@ const getCompanyInformation = async (req, res) => {
     if (companyInfor) {
       console.log(companyInfor);
       return res.status(200).json({ companyInfor });
+    } else {
+      return res.status(200).json({ companyInfor: {} });
     }
   } catch (err) {
     console.error("Có lỗi khi lấy thông tin công ty:", err);
@@ -372,6 +401,20 @@ const deleteCertification = async (req, res) => {
   }
 };
 
+const getNotificationByID = async (req, res) => {
+  const id = req.query.id;
+  try {
+    const notification = await queryGetNotificationByID(id);
+    if (notification) {
+      console.log(notification);
+      return res.status(200).json({ notification });
+    }
+  } catch (err) {
+    console.error("Có lỗi khi lấy thông tin thông báo:", err);
+    res.status(500).json({ message: "Có lỗi khi lấy thông tin thông báo." });
+  }
+};
+
 module.exports = {
   getUserInformation,
   getExperienceByID,
@@ -397,4 +440,6 @@ module.exports = {
   deleteSkill,
   deleteLanguage,
   deleteCertification,
+
+  getNotificationByID,
 };

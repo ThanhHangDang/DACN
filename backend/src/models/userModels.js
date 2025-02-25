@@ -182,7 +182,7 @@ FROM
 JOIN
     user_ u ON js.jobseeker_id = u.user_id
 JOIN
-    jjobseeker_apply_job ja ON u.user_id = ja.jobseeker_id
+    jobseeker_apply_job ja ON u.user_id = ja.jobseeker_id
 WHERE
     u.user_id = ?;
     `,
@@ -211,21 +211,18 @@ WHERE
 };
 
 const queryGetFollowedCompanyByID = async (id) => {
+  console.log(id);
   const [followedCompany] = await db.query(
     `
-    SELECT 
-    fc.*  
+    SELECT employer_id 
 FROM
-    jobseeker js
-JOIN
-    user_ u ON js.jobseeker_id = u.user_id
-JOIN
-    jobseeker_follow_employer fc ON u.user_id = fc.jobseeker_id
+    jobseeker_follow_employer 
 WHERE
-    u.user_id = ?;
+    jobseeker_id = ?;
     `,
     [id]
   );
+  console.log(followedCompany);
   return followedCompany;
 };
 
@@ -397,6 +394,20 @@ const queryDeleteCertification = async (id, id_delete) => {
   return affectedRows;
 };
 
+const queryGetNotificationByID = async (id) => {
+  const [notification] = await db.query(
+    `
+    SELECT m.*,
+    u.username,
+    FROM messenger m
+    Join user_ u ON m.sender_id = u.user_id
+    WHERE receiver_id = ?;
+    `,
+    [id]
+  );
+  return notification;
+};
+
 module.exports = {
   queryGetUserInformation,
   queryGetExperienceByID,
@@ -407,6 +418,7 @@ module.exports = {
   queryGetCertificateByID,
   queryGetFollowedCompanyByID,
   queryGetJobSavedByID,
+  queryGetJobAppliedByID,
   queryGetCompanyInformation,
   queryUpdateExpectedJob,
   queryUpdateCareerTarget,

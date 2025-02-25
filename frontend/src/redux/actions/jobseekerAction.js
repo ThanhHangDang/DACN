@@ -169,7 +169,7 @@ export const getJobApply = (id) => async (dispatch) => {
       }
     );
     if (response.status === 200) {
-      // console.log("List job apply:", response.data);
+      console.log("List job apply:", response.data);
       dispatch({
         type: GET_JOB_APPLY,
         payload: response.data.jobApplied,

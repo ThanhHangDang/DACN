@@ -19,10 +19,9 @@ export default function JobSeekerAccountSetting() {
 
   useEffect(() => {
     if (!isLogin || user?.user?.role !== 3) {
-      console.log("check2222", isLogin);
       navigate("/login");
     }
-  }, [navigate, user]);
+  }, [user, isLogin]);
 
   return (
     <div>
@@ -38,7 +37,7 @@ export default function JobSeekerAccountSetting() {
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title" id="modalTitle">
-                Đỗi mật khẩu
+                Đổi mật khẩu
               </h5>
               <button
                 type="button"

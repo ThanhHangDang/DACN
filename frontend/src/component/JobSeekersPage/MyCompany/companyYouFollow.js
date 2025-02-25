@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 
+import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getFollowEmployer } from "../../../redux/actions/jobseekerAction.js";
 
@@ -10,11 +11,9 @@ export default function CompanyYouFollow() {
   );
 
   useEffect(() => {
+    console.log("Uaaaaa");
     dispatch(getFollowEmployer(userInformation?.jobseeker_id));
-  }, [dispatch]);
-
-  // console.log("List follow employer:", listFollowEmployer);
-  // console.log("User information:", userInformation.jobseeker_id);
+  }, []);
 
   return (
     <>
@@ -25,11 +24,19 @@ export default function CompanyYouFollow() {
               key={company.company_id}
               className="d-flex justify-content-between align-items-center bg-white p-3 mb-2 rounded-2"
             >
+              <span>
+                <img
+                  src={company.logo}
+                  alt="logo"
+                  style={{ height: 50, width: 50 }}
+                  className="rounded-circle me-2"
+                />
+              </span>
               <span>{company.company_name}</span>
-              {/* <span>{company.date_follow}</span> */}
-              <a href="#" className="text-primary text-decoration-none">
+
+              <NavLink to="" className="text-primary text-decoration-none">
                 Xem
-              </a>
+              </NavLink>
             </div>
           ))}
         </>

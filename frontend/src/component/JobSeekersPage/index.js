@@ -22,19 +22,19 @@ export default function JobSeekerPage() {
       <div className="row d-flex">
         <div className="col-auto col-md-3 col-xl-2 px-sm-2 px-0">
           <div className="row rounded-2 bg-primary text-center m-2 pt-2 d-fex justify-content-center">
-            <div className="col-md-2 me-3">
+            <div className="col-md-12 me-3">
               {userInformation?.avatar ? (
                 <img
                   src={userInformation.avatar}
                   alt="logo"
-                  style={{ height: 60, width: 60 }}
+                  style={{ height: 80, width: 80 }}
                   className="rounded-circle me-2"
                 />
               ) : (
                 <i class="bi bi-person-circle me-2 text-white fs-2"></i>
               )}
             </div>
-            <div className="col-md-8">
+            <div className="col-md-12">
               <h5>{userInformation.full_name}</h5>
               <p className="mb-0 pb-2">{userInformation.email}</p>
             </div>
