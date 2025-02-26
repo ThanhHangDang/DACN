@@ -19,7 +19,7 @@ export const getCategoryIndustry = () => {
   return async (dispatch) => {
     try {
       const response = await axios.get(
-        `http://${domain}:4000/category/getCategory_Industry`
+        `${domain}/category/getCategory_Industry`
       );
       dispatch({ type: GET_CATEGORY_INDUSTRY, payload: response.data.result });
     } catch (err) {
@@ -32,7 +32,7 @@ export const getCategoryJobFunction = () => {
   return async (dispatch) => {
     try {
       const response = await axios.get(
-        `http://${domain}:4000/category/getCategory_Jobfunction`
+        `${domain}/category/getCategory_Jobfunction`
       );
       dispatch({
         type: GET_CATEGORY_JOBFUNCTION,
@@ -47,9 +47,7 @@ export const getCategoryJobFunction = () => {
 export const getCategoryBenefit = () => {
   return async (dispatch) => {
     try {
-      const response = await axios.get(
-        `http://${domain}:4000/category/getCatalog_Benefit`
-      );
+      const response = await axios.get(`${domain}/category/getCatalog_Benefit`);
       dispatch({ type: GET_CATEGORY_BENEFIT, payload: response.data.result });
     } catch (err) {
       console.log(err);
@@ -60,9 +58,7 @@ export const getCategoryBenefit = () => {
 export const getCategoryNation = () => {
   return async (dispatch) => {
     try {
-      const response = await axios.get(
-        `http://${domain}:4000/category/getCategory_Nation`
-      );
+      const response = await axios.get(`${domain}/category/getCategory_Nation`);
       dispatch({ type: GET_CATEGORY_NATION, payload: response.data.result });
     } catch (err) {
       console.log(err);
@@ -73,12 +69,9 @@ export const getCategoryNation = () => {
 export const getCategoryCity = (nation) => {
   return async (dispatch) => {
     try {
-      const response = await axios.get(
-        `http://${domain}:4000/category/getCategory_City`,
-        {
-          params: { nation: nation },
-        }
-      );
+      const response = await axios.get(`${domain}/category/getCategory_City`, {
+        params: { nation: nation },
+      });
       console.log(response.data);
       dispatch({ type: GET_CATEGORY_CITY, payload: response.data.result });
     } catch (err) {
@@ -91,7 +84,7 @@ export const getCategoryDistrict = () => {
   return async (dispatch) => {
     try {
       const response = await axios.get(
-        `http://${domain}:4000/category/getCategory_District`
+        `${domain}/category/getCategory_District`
       );
       dispatch({ type: GET_CATEGORY_DISTRICT, payload: response.data.result });
     } catch (err) {
@@ -104,7 +97,7 @@ export const getCategoryLanguage = () => {
   return async (dispatch) => {
     try {
       const response = await axios.get(
-        `http://${domain}:4000/category/getCategory_Language`
+        `${domain}/category/getCategory_Language`
       );
       dispatch({ type: GET_CATEGORY_LANGUAGE, payload: response.data.result });
     } catch (err) {
@@ -116,9 +109,7 @@ export const getCategoryLanguage = () => {
 export const getCategoryLevel = () => {
   return async (dispatch) => {
     try {
-      const response = await axios.get(
-        `http://${domain}:4000/category/getCategory_Level`
-      );
+      const response = await axios.get(`${domain}/category/getCategory_Level`);
       dispatch({ type: GET_CATEGORY_LEVEL, payload: response.data.result });
     } catch (err) {
       console.log(err);
@@ -129,9 +120,7 @@ export const getCategoryLevel = () => {
 export const getCategoryScale = () => {
   return async (dispatch) => {
     try {
-      const response = await axios.get(
-        `http://${domain}:4000/category/getCategory_Scale`
-      );
+      const response = await axios.get(`${domain}/category/getCategory_Scale`);
       dispatch({ type: GET_CATEGORY_SCALE, payload: response.data.result });
     } catch (err) {
       console.log(err);
@@ -143,7 +132,7 @@ export const getCategoryEdu = () => {
   return async (dispatch) => {
     try {
       const response = await axios.get(
-        `http://${domain}:4000/category/getCategory_Education`
+        `${domain}/category/getCategory_Education`
       );
       dispatch({ type: GET_CATEGORY_EDU, payload: response.data.result });
     } catch (err) {
@@ -155,9 +144,7 @@ export const getCategoryEdu = () => {
 export const getCategoryTags = () => {
   return async (dispatch) => {
     try {
-      const response = await axios.get(
-        `http://${domain}:4000/category/getCategory_Tags`
-      );
+      const response = await axios.get(`${domain}/category/getCategory_Tags`);
       dispatch({ type: GET_CATEGORY_TAGS, payload: response.data.result });
     } catch (err) {
       console.log(err);

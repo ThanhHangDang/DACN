@@ -25,7 +25,7 @@ export default function Login() {
     } else {
       dispatch(checkLoginStatus());
     }
-  }, [isLogin, navigate]);
+  }, [isLogin]);
 
   return (
     <div>

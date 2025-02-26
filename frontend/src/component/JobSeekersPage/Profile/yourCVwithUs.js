@@ -930,8 +930,7 @@ export default function YourCVwithUs() {
                     {formatDateToDDMMYYYY(exp.exp_from)} đến{" "}
                     {formatDateToDDMMYYYY(exp.exp_to)}
                   </span>
-                  <a
-                    href="#aaa"
+                  <div
                     className="text-primary text-decoration-none"
                     data-bs-toggle="modal"
                     data-bs-target="#confirmDeleteModal"
@@ -944,8 +943,8 @@ export default function YourCVwithUs() {
                       });
                     }}
                   >
-                    Xóa
-                  </a>
+                    <i class="bi bi-trash"></i>
+                  </div>
                 </div>
                 <p>{exp.exp_description}</p>
               </div>
@@ -976,8 +975,7 @@ export default function YourCVwithUs() {
                     {formatDateToDDMMYYYY(edu.from_)} đến{" "}
                     {formatDateToDDMMYYYY(edu.to_)}
                   </span>
-                  <a
-                    href="#aaa"
+                  <div
                     className="text-primary text-decoration-none"
                     data-bs-toggle="modal"
                     data-bs-target="#confirmDeleteModal"
@@ -990,8 +988,8 @@ export default function YourCVwithUs() {
                       });
                     }}
                   >
-                    Xóa
-                  </a>
+                    <i class="bi bi-trash"></i>
+                  </div>
                 </div>
               </div>
             ))}
@@ -1021,8 +1019,7 @@ export default function YourCVwithUs() {
                     {formatDateToDDMMYYYY(pro.project_from)} đến{" "}
                     {formatDateToDDMMYYYY(pro.project_to)}
                   </span>
-                  <a
-                    href="#aaaa"
+                  <div
                     className="text-primary text-decoration-none"
                     data-bs-toggle="modal"
                     data-bs-target="#confirmDeleteModal"
@@ -1035,8 +1032,8 @@ export default function YourCVwithUs() {
                       });
                     }}
                   >
-                    Xóa
-                  </a>
+                    <i class="bi bi-trash"></i>
+                  </div>
                 </div>
                 <p>{pro.project_description}</p>
               </div>
@@ -1067,8 +1064,7 @@ export default function YourCVwithUs() {
               >
                 <div className="d-flex justify-content-between align-items-center rounded-2">
                   <span className="col-md-3">{skl.skill}</span>
-                  <a
-                    href="#aaaaa"
+                  <div
                     className="text-primary text-decoration-none"
                     data-bs-toggle="modal"
                     data-bs-target="#confirmDeleteModal"
@@ -1081,8 +1077,8 @@ export default function YourCVwithUs() {
                       });
                     }}
                   >
-                    Xóa
-                  </a>
+                    <i class="bi bi-trash"></i>
+                  </div>
                 </div>
               </div>
             ))}
@@ -1125,8 +1121,7 @@ export default function YourCVwithUs() {
                   <span className="col-md-3">
                     {formatDateToDDMMYYYY(cer.month_)}
                   </span>
-                  <a
-                    href="#aaaa"
+                  <div
                     className="text-primary text-decoration-none"
                     data-bs-toggle="modal"
                     data-bs-target="#confirmDeleteModal"
@@ -1139,8 +1134,8 @@ export default function YourCVwithUs() {
                       });
                     }}
                   >
-                    Xóa
-                  </a>
+                    <i class="bi bi-trash"></i>
+                  </div>
                 </div>
               </div>
             ))}

@@ -32,7 +32,7 @@ export const getPostDetails = (postId) => {
     dispatch(postDetailsRequest());
     try {
       const response = await axios.get(
-        `http://${domain}:4000/work/get-work-detail/`,
+        `${domain}/work/get-work-detail/`,
         {
           params: { postId },
         },
@@ -69,10 +69,9 @@ export const getAllPosts = () => {
   return async (dispatch) => {
     dispatch(getAllPostsRequest());
     try {
-      const response = await axios.get(
-        `http://${domain}:4000/work/get-all-works`,
-        { withCredentials: true }
-      );
+      const response = await axios.get(`${domain}/work/get-all-works`, {
+        withCredentials: true,
+      });
       dispatch(getAllPostsSuccess(response.data.work));
     } catch (err) {
       dispatch(
@@ -91,7 +90,7 @@ export const getPostsByUser = (userId) => {
   return async (dispatch) => {
     try {
       const response = await axios.get(
-        `http://${domain}:4000/work/get-works-by-user`,
+        `${domain}/work/get-works-by-user`,
         {
           params: { userId },
         },
@@ -108,13 +107,11 @@ export const getPostsByUser = (userId) => {
 };
 
 export const getPostsSearch = (data) => {
-  console.log("check data", data);
   return async (dispatch) => {
     try {
-      const response = await axios.get(
-        `http://${domain}:4000/work/get-works-by-search`,
-        { params: data }
-      );
+      const response = await axios.get(`${domain}/work/get-works-by-search`, {
+        params: data,
+      });
       dispatch({
         type: GET_POSTS_SEARCH,
         payload: response.data.work,

@@ -10,7 +10,7 @@ import axios from "axios";
 export const getCompanyInformation = (id) => async (dispatch) => {
   try {
     const response = await axios.get(
-      `http://${domain}:4000/user/get-employer-information`,
+      `${domain}/user/get-employer-information`,
       {
         params: { id: id },
       }
@@ -34,10 +34,7 @@ export const postNewWork = (data1) => async (dispatch) => {
   };
   // console.log("data", data);
   try {
-    const response = await axios.post(
-      `http://${domain}:4000/company/post-job`,
-      data
-    );
+    const response = await axios.post(`${domain}/company/post-job`, data);
     if (response.status === 200) {
       dispatch({
         type: POST_NEW_WORK,
