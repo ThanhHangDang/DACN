@@ -234,10 +234,23 @@ const queryGetWorkBySearch = async (filter) => {
   return result;
 };
 
+const queryDeleteWorkByUser = async (id, postId) => {
+  const [result] = await db.query(
+    `
+      DELETE FROM job WHERE job_id = ? AND employer_id = ?;
+    `,
+    [postId, id]
+  );
+
+  return result.affectedRows > 0; // Trả về true nếu có hàng bị xóa
+};
+
 module.exports = {
   queryGetLatestWork,
   queryGetWorkDetail,
   queryGetAllWorks,
   queryGetWorkByUser,
   queryGetWorkBySearch,
+
+  queryDeleteWorkByUser,
 };

@@ -4,6 +4,8 @@ const {
   queryGetAllWorks,
   queryGetWorkByUser,
   queryGetWorkBySearch,
+
+  queryDeleteWorkByUser,
 } = require("../models/workModel.js");
 
 const getLatestWork = async (req, res) => {
@@ -76,10 +78,31 @@ const getWorkBySearch = async (req, res) => {
   }
 };
 
+const deleteWorkByUser = async (req, res) => {
+  const { postID, id } = req.query;
+  console.log("postId", postID);
+  console.log("id", id);
+  try {
+    const work = await queryDeleteWorkByUser(id, postID);
+    if (work) {
+      const work = await queryGetWorkByUser(id);
+      return res.status(200).json({
+        message: "Xóa bài đăng thành công.",
+        work,
+      });
+    }
+  } catch (error) {
+    console.log("Delete Work By User error:", error);
+    res.status(500);
+  }
+};
+
 module.exports = {
   getLatestWork,
   getWorkDetail,
   getAllWorks,
   getWorkByUser,
   getWorkBySearch,
+
+  deleteWorkByUser,
 };

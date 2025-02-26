@@ -8,6 +8,7 @@ import {
   GET_ALL_POSTS_SUCCESS,
   GET_POSTS_BY_USER,
   GET_POSTS_SEARCH,
+  DELETE_POST_BY_USER,
 } from "../contants/postContants.js";
 import domain from "../../config/domain";
 import { toast } from "react-toastify";
@@ -118,6 +119,27 @@ export const getPostsSearch = (data) => {
       });
     } catch (error) {
       console.error("Error fetching posts search:", error);
+    }
+  };
+};
+export const deletePostByUser = (id, postID) => {
+  return async (dispatch) => {
+    try {
+      const response = await axios.delete(
+        `${domain}/work/delete-work-by-user`,
+        {
+          params: { id, postID },
+        },
+        { withCredentials: true }
+      );
+      dispatch({
+        type: DELETE_POST_BY_USER,
+        payload: response.data.work,
+      });
+      toast.success("Xóa bài viết thành công.");
+    } catch (error) {
+      console.error("Error deleting post by user:", error);
+      toast.error("Xóa bài viết thất bại.");
     }
   };
 };

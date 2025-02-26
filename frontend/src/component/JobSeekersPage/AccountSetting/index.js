@@ -134,12 +134,9 @@ export default function JobSeekerAccountSetting() {
       </div>
 
       <div className="d-flex justify-content-start me-2 my-2 p-2">
-        <a
-          href="#aaa"
-          className="text-danger text-decoration-none d-block mt-2 ms-3"
-        >
+        <p className="text-danger text-decoration-none d-block mt-2 ms-3">
           <i class="bi bi-dash-circle-fill me-2"></i>Xóa tài khoản
-        </a>
+        </p>
       </div>
     </div>
   );

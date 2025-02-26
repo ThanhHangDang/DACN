@@ -147,9 +147,7 @@ export default function HomePage() {
             >
               {company.company_name}
             </h5>
-            <a href="#aa" className="btn btn-primary">
-              Việc mới
-            </a>
+            <p className="btn btn-primary">Việc mới</p>
           </div>
         </div>
       );
