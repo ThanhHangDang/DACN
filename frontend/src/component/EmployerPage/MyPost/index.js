@@ -10,11 +10,10 @@ import {
   getCategoryLanguage,
 } from "../../../redux/actions/categoryAction";
 
-import { postNewWork } from "../../../redux/actions/companyAction";
-
 import {
   getPostsByUser,
   deletePostByUser,
+  postNewWork,
 } from "../../../redux/actions/postAction";
 
 export default function EmployerPost() {
@@ -25,9 +24,6 @@ export default function EmployerPost() {
     (state) => state.category
   );
   const { postsByUser } = useSelector((state) => state.post);
-
-  console.log(user);
-  console.log(postsByUser);
 
   const [newPost, setNewPost] = useState({
     job_id: 0,
@@ -68,18 +64,10 @@ export default function EmployerPost() {
     "Tiếng Trung",
   ];
 
-  const genderOptions = ["không yêu cầu", "nam", "nữ"];
   const martialStatusOptions = ["không yêu cầu", "đã kết hôn", "độc thân"];
   const workingTypeOptions = ["full-time", "part-time", "flexible"];
 
   const navigate = useNavigate();
-
-  const handleChange = (field, value) => {
-    setNewPost((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
 
   const handleSkillInputChange = (e) => {
     setSkillInput(e.target.value);

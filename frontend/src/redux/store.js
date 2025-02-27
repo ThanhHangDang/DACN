@@ -7,6 +7,7 @@ import postReducer from "./reducer/postReducer.js";
 import companyReducer from "./reducer/companyReducer.js";
 import categoryReducer from "./reducer/categoryReducer.js";
 import notificationReducer from "./reducer/notificationReducer.js";
+import userReducer from "./reducer/userReducer.js";
 
 import storage from "redux-persist/lib/storage"; // Lưu vào localStorage
 import { persistStore, persistReducer } from "redux-persist";
@@ -24,6 +25,7 @@ const rootReducer = combineReducers({
   company: companyReducer,
   category: categoryReducer,
   notification: notificationReducer,
+  user: userReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

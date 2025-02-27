@@ -1,4 +1,6 @@
 const {
+  queryGetListEmployee,
+
   queryGetUserInformation,
   queryGetExperienceByID,
   queryGetEducationByID,
@@ -27,6 +29,20 @@ const {
 } = require("../models/userModels.js");
 
 const { queryGetWorkDetail } = require("../models/workModel.js");
+
+const getListEmployee = async (req, res) => {
+  try {
+    const listEmployee = await queryGetListEmployee();
+    if (listEmployee) {
+      return res.status(200).json({ listEmployee });
+    } else {
+      return res.status(200).json({ listEmployee: [] });
+    }
+  } catch (err) {
+    console.error("Có lỗi khi lấy danh sách nhân viên:", err);
+    res.status(500).json({ message: "Có lỗi khi lấy danh sách nhân viên." });
+  }
+};
 
 const getUserInformation = async (req, res) => {
   const id = req.query.id;
@@ -416,6 +432,8 @@ const getNotificationByID = async (req, res) => {
 };
 
 module.exports = {
+  getListEmployee,
+
   getUserInformation,
   getExperienceByID,
   getEducationByID,

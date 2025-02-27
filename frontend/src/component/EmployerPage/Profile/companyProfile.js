@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { getCompanyInformation } from "../../../redux/actions/companyAction";
 
@@ -8,14 +8,24 @@ export default function CompanyProfile() {
   const { isLogin, user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const { companyInformation } = useSelector((state) => state.company);
-  console.log(companyInformation);
+
+  const [updateCompany, setUpdateCompany] = useState({
+    company_name: "",
+    phone_number: "",
+    address: "",
+    scale_min: "",
+    scale_max: "",
+    industry_name: "",
+    describle: "",
+    logo: "",
+  });
 
   useEffect(() => {
     if (!isLogin && !(user?.user.role === 2)) {
       navigate("/login");
     }
     dispatch(getCompanyInformation(user?.user.id));
-  }, [isLogin, navigate, user]);
+  }, [isLogin, user]);
 
   return (
     <div>
@@ -75,12 +85,6 @@ export default function CompanyProfile() {
               placeholder="Ví dụ: 130 Sương Nguyệt Ánh, Phường Bến Thành, Quận 1"
               value={`từ ${companyInformation.scale_min} đến ${companyInformation.scale_max}`}
             />
-            {/* <select className="form-select">
-              <option>Vui lòng chọn</option>
-              <option>Nhỏ</option>
-              <option>Trung bình</option>
-              <option>Lớn</option>
-            </select> */}
           </div>
         </div>
 
@@ -144,23 +148,6 @@ export default function CompanyProfile() {
             </div>
           </div>
         </div>
-
-        {/* Hình ảnh công ty */}
-        {/* <div>
-          <label className="form-label fw-bold">Hình ảnh công ty</label>
-          <div
-            className="border rounded d-flex align-items-center justify-content-center"
-            style={{ height: "100px", borderColor: "#ccc" }}
-          >
-            <div className="text-center">
-              <i
-                className="bi bi-image"
-                style={{ fontSize: "2rem", color: "#888" }}
-              ></i>
-              <p className="mt-2 text-muted">Upload ảnh ở đây</p>
-            </div>
-          </div>
-        </div> */}
       </div>
       <div className="mb-3">
         <button className="btn btn-primary text-end">Cập nhật</button>

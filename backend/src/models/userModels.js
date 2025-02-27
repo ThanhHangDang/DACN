@@ -1,5 +1,21 @@
 const db = require("../config/databaseConfig.js");
 
+const queryGetListEmployee = async () => {
+  const [listEmployee] = await db.query(
+    `
+    select 
+      js.avatar,
+      js.jobseeker_id,
+      pjs.full_name,
+      pjs.year_exp,
+      pjs.title
+    from jobseeker js
+    join profile_jobseeker pjs on js.jobseeker_id = pjs.profile_id;
+    `
+  );
+  return listEmployee;
+};
+
 const queryGetUserInformation = async (id) => {
   const [userInfor] = await db.query(
     `
@@ -409,6 +425,8 @@ const queryGetNotificationByID = async (id) => {
 };
 
 module.exports = {
+  queryGetListEmployee,
+
   queryGetUserInformation,
   queryGetExperienceByID,
   queryGetEducationByID,
