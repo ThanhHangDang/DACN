@@ -109,10 +109,6 @@ export default function YourCVwithUs() {
     dispatch(getCategoryEdu());
   }, [dispatch, userInformation]);
 
-  // useEffect(() => {
-  //   dispatch(getCategoryEdu());
-  // }, [dispatch]);
-
   useEffect(() => {
     if (userInformation && userInformation.career_target) {
       setCareerTarget(userInformation.career_target);

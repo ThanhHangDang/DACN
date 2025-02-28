@@ -2,6 +2,7 @@ const express = require("express");
 
 const {
   getListEmployee,
+  getEmployeeDetail,
 
   getUserInformation,
   getExperienceByID,
@@ -33,6 +34,7 @@ const {
 const userRoutes = express.Router();
 
 userRoutes.get("/get-list-employee", getListEmployee);
+userRoutes.get("/get-employee-detail", getEmployeeDetail);
 
 userRoutes.get("/user-information", getUserInformation);
 userRoutes.get("/get-experience", getExperienceByID);

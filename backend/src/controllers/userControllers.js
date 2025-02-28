@@ -1,5 +1,6 @@
 const {
   queryGetListEmployee,
+  queryGetEmployeeDetail,
 
   queryGetUserInformation,
   queryGetExperienceByID,
@@ -41,6 +42,19 @@ const getListEmployee = async (req, res) => {
   } catch (err) {
     console.error("Có lỗi khi lấy danh sách nhân viên:", err);
     res.status(500).json({ message: "Có lỗi khi lấy danh sách nhân viên." });
+  }
+};
+
+const getEmployeeDetail = async (req, res) => {
+  const id = req.query.id;
+  try {
+    const employeeDetail = await queryGetEmployeeDetail(id);
+    if (employeeDetail) {
+      return res.status(200).json({ employeeDetail });
+    }
+  } catch (err) {
+    console.error("Có lỗi khi lấy thông tin nhân viên:", err);
+    res.status(500).json({ message: "Có lỗi khi lấy thông tin nhân viên." });
   }
 };
 
@@ -433,6 +447,7 @@ const getNotificationByID = async (req, res) => {
 
 module.exports = {
   getListEmployee,
+  getEmployeeDetail,
 
   getUserInformation,
   getExperienceByID,
