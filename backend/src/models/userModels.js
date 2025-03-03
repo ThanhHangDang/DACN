@@ -167,19 +167,7 @@ join
     ON A.id = B.job_id 
 join 
     (SELECT company_id, company_name, logo from company) as C ON B.employer_id = C.company_id;
-    `,    
-<<<<<<< HEAD
-    `    
-SELECT * from 
-    (select job_id as id, date_appy from jobseeker_apply_job where jobseeker_id=?) as A 
-join  
-    (select job_id, employer_id, title, date_post, status_, work_location from job) as B 
-    ON A.id = B.job_id 
-join 
-    (SELECT company_id, company_name, logo from company) as C ON B.employer_id = C.company_id;
-    `,    
-=======
->>>>>>> fa1e1e364f7b62b76b04d7f0cb70faf71cf69211
+    `,
     [id]
   );
   return jobApplied;
@@ -195,24 +183,9 @@ join
     ON A.id = B.job_id 
 join 
     (SELECT company_id, company_name, logo from company) as C ON B.employer_id = C.company_id;
-<<<<<<< HEAD
-SELECT * from 
-    (select job_id as id from jobseeker_save_job where jobseeker_id=?) as A 
-join  
-    (select job_id, employer_id, title, date_post, status_, work_location from job) as B 
-    ON A.id = B.job_id 
-join 
-    (SELECT company_id, company_name, logo from company) as C ON B.employer_id = C.company_id;
-=======
->>>>>>> fa1e1e364f7b62b76b04d7f0cb70faf71cf69211
     `,
     [id]
   );
-  // chưa tôi ưu query, xem xét trả về id job rồi truy vấn for each.
-<<<<<<< HEAD
-  // chưa tôi ưu query, xem xét trả về id job rồi truy vấn for each.
-=======
->>>>>>> fa1e1e364f7b62b76b04d7f0cb70faf71cf69211
   return jobSaved;
 };
 
@@ -221,18 +194,7 @@ const queryGetFollowedCompanyByID = async (id) => { // tot nhat chia lam 2 part,
     `
     SELECT employer_id 
 FROM
-    jobseeker js
-JOIN
-    user_ u ON js.jobseeker_id = u.user_id
-JOIN
-    jobseeker_follow_employer fc ON u.user_id = fc.jobseeker_id
-join 
-    (SELECT company_id, company_name, logo from company) as C ON B.employer_id = C.company_id;
-<<<<<<< HEAD
-join 
-    (SELECT company_id, company_name, logo from company) as C ON B.employer_id = C.company_id;
-=======
->>>>>>> fa1e1e364f7b62b76b04d7f0cb70faf71cf69211
+    jobseeker_follow_employer 
 WHERE
     jobseeker_id = ?;
     `,
@@ -240,8 +202,6 @@ WHERE
   );
   return followedCompany;
 };
-
-<<<<<<< HEAD
 const queryGetCompanyInformation = async (id) => {
   const [result] = await db.query(
     `Select * from 
@@ -315,7 +275,25 @@ const queryAddExperience = async (id, experience) => { // OK
       experience.endYear,
       experience.company,
       experience.description,
+    ]
+  );
+  console.log(affectedRows);
+  return affectedRows;
+};
+
+const queryAddEducation = async (id, education) => {
+  const [affectedRows] = await db.query(
+    `
+    insert into profile_education(profile_id, education_id, major, school, from_, to_)
+    values(?, ?, ?, ?, ?, ?)
+    `,
+    [
       id,
+      education.education_id,
+      education.major,
+      education.school,
+      education.startYear,
+      education.endYear,
     ]
   );
   return affectedRows;
@@ -337,8 +315,6 @@ const queryUpdateEducation = async (id, education) => {
   return affectedRows;
 };
 
-=======
->>>>>>> fa1e1e364f7b62b76b04d7f0cb70faf71cf69211
 module.exports = {
   queryGetUserInformation,
   queryGetExperienceByID,
@@ -349,12 +325,9 @@ module.exports = {
   queryGetCertificateByID,
   queryGetFollowedCompanyByID,
   queryGetJobSavedByID,
-<<<<<<< HEAD
   queryGetCompanyInformation,
   queryUpdateExpectedJob,
   queryUpdateCareerTarget,
   queryAddExperience,
-=======
-  queryGetJobAppliedByID
->>>>>>> fa1e1e364f7b62b76b04d7f0cb70faf71cf69211
+  queryAddEducation,
 };

@@ -153,16 +153,25 @@ const getJobSavedByID = async (req, res) => {
   }
 };
 
-const getFollowedCompanyByID = async (req, res) => { // xử lý lại, hàm trả về danh sách của các công ty đã theo dõi, với toàn bộ thông tin của công ty trong mỗi phần tử
+const getFollowedCompanyByID = async (req, res) => {
   const id = req.query.id;
+  console.log(id);
   try {
     const company_id_Saved = await queryGetFollowedCompanyByID(id);
-    array_company = [];
+
     if (company_id_Saved) {
-      company_id_Saved.forEach(element => {
-        array_company.push(getCompanyInformation(element));
+      // Create an array of promises
+      const companyPromises = company_id_Saved.map(async (element) => {
+        return await queryGetCompanyInformation(element.employer_id);
       });
+
+      // Wait for all promises to resolve
+      const array_company = await Promise.all(companyPromises);
+      console.log(array_company); // This will now log the populated array
       return res.status(200).json({ companySaved: array_company });
+    } else {
+      // Handle case where there are no saved companies
+      return res.status(200).json({ companySaved: [] });
     }
   } catch (err) {
     console.error("Có lỗi khi lấy thông tin công ty đã theo dõi:", err);
@@ -171,6 +180,7 @@ const getFollowedCompanyByID = async (req, res) => { // xử lý lại, hàm tr�
       .json({ message: "Có lỗi khi lấy thông tin công ty đã theo dõi." });
   }
 };
+
 
 const getCompanyInformation = async (req, res) => {
   try {
