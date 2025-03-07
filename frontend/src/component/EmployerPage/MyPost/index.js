@@ -10,9 +10,11 @@ import {
   getCategoryLanguage,
 } from "../../../redux/actions/categoryAction";
 
-import { postNewWork } from "../../../redux/actions/companyAction";
-
-import { getPostsByUser } from "../../../redux/actions/postAction";
+import {
+  getPostsByUser,
+  deletePostByUser,
+  postNewWork,
+} from "../../../redux/actions/postAction";
 
 export default function EmployerPost() {
   const dispatch = useDispatch();
@@ -22,9 +24,6 @@ export default function EmployerPost() {
     (state) => state.category
   );
   const { postsByUser } = useSelector((state) => state.post);
-
-  console.log(user);
-  console.log(postsByUser);
 
   const [newPost, setNewPost] = useState({
     job_id: 0,
@@ -65,18 +64,10 @@ export default function EmployerPost() {
     "Tiếng Trung",
   ];
 
-  const genderOptions = ["không yêu cầu", "nam", "nữ"];
   const martialStatusOptions = ["không yêu cầu", "đã kết hôn", "độc thân"];
   const workingTypeOptions = ["full-time", "part-time", "flexible"];
 
   const navigate = useNavigate();
-
-  const handleChange = (field, value) => {
-    setNewPost((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
 
   const handleSkillInputChange = (e) => {
     setSkillInput(e.target.value);
@@ -124,6 +115,12 @@ export default function EmployerPost() {
     dispatch(postNewWork(newPost));
   };
 
+  const [postID, setPostID] = useState(0);
+
+  const handleDeletePost = () => {
+    dispatch(deletePostByUser(user?.user?.id, postID));
+  };
+
   useEffect(() => {
     if (!isLogin || user?.user?.role !== 2) {
       navigate("/login");
@@ -135,7 +132,7 @@ export default function EmployerPost() {
     dispatch(getCategoryEdu());
     dispatch(getCategoryLanguage());
     dispatch(getPostsByUser(user?.user?.id));
-  }, [isLogin, navigate, user, postsByUser]);
+  }, []);
 
   return (
     <>
@@ -639,6 +636,53 @@ export default function EmployerPost() {
         </div>
       </div>
       {/* End modal thêm bài đăng */}
+
+      {/* Modal delete */}
+      <div
+        className="modal fade"
+        id="confirmDeletePostModal"
+        tabIndex={-1}
+        // aria-hidden="true"
+      >
+        <div className="modal-dialog modal-dialog-centered modal-sm">
+          {" "}
+          {/* Căn giữa và nhỏ lại */}
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="modalTitle">
+                Xác nhận xóa
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              />
+            </div>
+            <div className=" modal-body justify-content-center align-items-center modal-dialog-centered">
+              {/* Căn giữa hai nút */}
+              <button
+                type="button"
+                className="btn btn-secondary me-3"
+                data-bs-dismiss="modal"
+              >
+                Hủy
+              </button>
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={handleDeletePost}
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              >
+                Xác nhận
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* End modal delete */}
+
       <div>
         <div className="bg-light rounded-2 me-2 my-2 p-2">
           <h3>Quản lý tin tuyển dụng</h3>
@@ -677,13 +721,20 @@ export default function EmployerPost() {
                   <td>{post.quantity}</td>
                   <td>{new Date(post.date_post).toLocaleDateString()}</td>
                   <td>
-                    <a className="text-primary">Sửa</a>
+                    <p className="text-primary">Sửa</p>
                   </td>
                   <td>
-                    <a className="text-primary">Gia hạn</a>
+                    <p className="text-primary">Gia hạn</p>
                   </td>
                   <td>
-                    <a className="text-danger">Xóa</a>
+                    <p
+                      className="text-danger"
+                      data-bs-toggle="modal"
+                      data-bs-target="#confirmDeletePostModal"
+                      onClick={() => setPostID(post.job_id)}
+                    >
+                      Xóa
+                    </p>
                   </td>
                 </tr>
               ))}

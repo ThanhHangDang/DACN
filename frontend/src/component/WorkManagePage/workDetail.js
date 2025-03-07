@@ -24,17 +24,11 @@ export default function WorkDetail() {
     return `${day}/${month}/${year}`; // Trả về định dạng DD/MM/YYYY
   };
 
-  // Ví dụ sử dụng
-  const isoDate = "2025-01-29T17:00:00.000Z";
-  const formattedDate = formatDateToDDMMYYYY(isoDate);
-  console.log(formattedDate); // In ra: 29/01/2025
-
   const postDetail = useSelector((state) => state.post.postDetail);
   console.log(id);
   useEffect(() => {
     dispatch(getPostDetails(id));
-  }, [dispatch, id]);
-  console.log(postDetail);
+  }, [id]);
 
   return (
     <div>

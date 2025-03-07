@@ -8,6 +8,8 @@ import {
   GET_ALL_POSTS_SUCCESS,
   GET_POSTS_BY_USER,
   GET_POSTS_SEARCH,
+  DELETE_POST_BY_USER,
+  POST_NEW_WORK,
 } from "../contants/postContants.js";
 import domain from "../../config/domain";
 import { toast } from "react-toastify";
@@ -32,7 +34,7 @@ export const getPostDetails = (postId) => {
     dispatch(postDetailsRequest());
     try {
       const response = await axios.get(
-        `http://${domain}:4000/work/get-work-detail/`,
+        `${domain}/work/get-work-detail/`,
         {
           params: { postId },
         },
@@ -69,10 +71,9 @@ export const getAllPosts = () => {
   return async (dispatch) => {
     dispatch(getAllPostsRequest());
     try {
-      const response = await axios.get(
-        `http://${domain}:4000/work/get-all-works`,
-        { withCredentials: true }
-      );
+      const response = await axios.get(`${domain}/work/get-all-works`, {
+        withCredentials: true,
+      });
       dispatch(getAllPostsSuccess(response.data.work));
     } catch (err) {
       dispatch(
@@ -91,7 +92,7 @@ export const getPostsByUser = (userId) => {
   return async (dispatch) => {
     try {
       const response = await axios.get(
-        `http://${domain}:4000/work/get-works-by-user`,
+        `${domain}/work/get-works-by-user`,
         {
           params: { userId },
         },
@@ -108,13 +109,11 @@ export const getPostsByUser = (userId) => {
 };
 
 export const getPostsSearch = (data) => {
-  console.log("check data", data);
   return async (dispatch) => {
     try {
-      const response = await axios.get(
-        `http://${domain}:4000/work/get-works-by-search`,
-        { params: data }
-      );
+      const response = await axios.get(`${domain}/work/get-works-by-search`, {
+        params: data,
+      });
       dispatch({
         type: GET_POSTS_SEARCH,
         payload: response.data.work,
@@ -123,4 +122,47 @@ export const getPostsSearch = (data) => {
       console.error("Error fetching posts search:", error);
     }
   };
+};
+export const deletePostByUser = (id, postID) => {
+  return async (dispatch) => {
+    try {
+      const response = await axios.delete(
+        `${domain}/work/delete-work-by-user`,
+        {
+          params: { id, postID },
+        },
+        { withCredentials: true }
+      );
+      dispatch({
+        type: DELETE_POST_BY_USER,
+        payload: response.data.work,
+      });
+      toast.success("Xóa bài viết thành công.");
+    } catch (error) {
+      console.error("Error deleting post by user:", error);
+      toast.error("Xóa bài viết thất bại.");
+    }
+  };
+};
+
+export const postNewWork = (data1) => async (dispatch) => {
+  let data = {
+    ...data1,
+    require_skill: data1.require_skill.map((skill) => skill.content),
+    require_language: data1.require_language.map((lang) => lang.language_id),
+  };
+  // console.log("data", data);
+  try {
+    const response = await axios.post(`${domain}/company/post-job`, data);
+    if (response.status === 200) {
+      dispatch({
+        type: POST_NEW_WORK,
+        payload: response.data.work,
+      });
+      toast.success("Đăng bài thành công!");
+    }
+  } catch (error) {
+    console.error("Error posting new work:", error);
+    toast.error("Đăng bài thất bại!");
+  }
 };

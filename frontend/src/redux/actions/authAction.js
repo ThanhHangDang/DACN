@@ -31,7 +31,7 @@ export const loginUser = (username, password) => {
     dispatch(loginRequest());
     try {
       const response = await axios.post(
-        `http://${domain}:4000/auth/login`,
+        `${domain}/auth/login`,
         {
           params: { username, password },
         },
@@ -51,7 +51,7 @@ export const loginUser = (username, password) => {
 export const checkLoginStatus = () => {
   return async (dispatch) => {
     try {
-      const response = await axios.get(`http://${domain}:4000/auth/`, {
+      const response = await axios.get(`${domain}/auth/`, {
         withCredentials: true,
       });
       dispatch({ type: CHECK_LOGIN_STATUS, payload: response.data });
@@ -65,7 +65,7 @@ export const logout = () => {
   return (dispatch) => {
     // Gửi request đến API để đăng xuất
     axios
-      .delete(`http://${domain}:4000/auth/logout`, { withCredentials: true })
+      .delete(`${domain}/auth/logout`, { withCredentials: true })
       .then((res) => {
         if (res.status === 200) {
           dispatch({ type: LOGOUT }); // Dispatch action LOGOUT
@@ -105,7 +105,7 @@ export const registerUser = (dataRegister) => {
     dispatch(registerRequest());
     try {
       const response = await axios.post(
-        `http://${domain}:4000/auth/register`,
+        `${domain}/auth/register`,
         { params: { dataRegister } },
         { withCredentials: true }
       );

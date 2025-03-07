@@ -1,76 +1,54 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { NavLink } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+
+import { getListEmployee } from "../../redux/actions/userAction.js";
 
 export default function EmployeeMaganePage() {
-  const candidates = [
-    {
-      name: "Nguyễn Văn A",
-      position: "Software Developer",
-      experience: "Kinh nghiệm 2 năm",
-    },
-    {
-      name: "Nguyễn Quang Huy",
-      position: "Mobile Developer",
-      experience: "Kinh nghiệm 3 năm",
-    },
-    {
-      name: "Trần Thị Minh Thư",
-      position: "Web Developer",
-      experience: "Kinh nghiệm 1 năm",
-    },
-    {
-      name: "Phạm Thị Hồng Nhung",
-      position: "UI/UX Designer",
-      experience: "Kinh nghiệm 4 năm",
-    },
-    {
-      name: "Võ Văn Bình",
-      position: "Data Analyst",
-      experience: "Kinh nghiệm 2 năm",
-    },
-    {
-      name: "Hoàng Minh Đạt",
-      position: "Fullstack Developer",
-      experience: "Kinh nghiệm 5 năm",
-    },
-    {
-      name: "Trần Thanh Trúc",
-      position: "Backend Developer",
-      experience: "Kinh nghiệm 3 năm",
-    },
-    {
-      name: "Dương Văn Phúc",
-      position: "Frontend Developer",
-      experience: "Kinh nghiệm 2 năm",
-    },
-    {
-      name: "Lê Gia Khánh",
-      position: "DevOps Engineer",
-      experience: "Kinh nghiệm 1 năm",
-    },
-  ];
+  const dispatch = useDispatch();
+  const { listEmployee } = useSelector((state) => state.user);
+
+  console.log("asdsdasdad", listEmployee);
+
+  useEffect(() => {
+    dispatch(getListEmployee());
+  }, []);
 
   const renderEmployee = () => {
     return (
       <div className="container mt-5">
         <div className="row">
-          {candidates.map((candidate, index) => (
+          {listEmployee?.map((candidate, index) => (
             <div className="col-md-4 mb-4" key={index}>
               <div className="card d-flex">
                 <div className="card-body">
-                  <div className="me-3">
+                  <div className="me-3 d-flex">
                     <img
-                      src={candidate.logo}
-                      alt={candidate.name}
-                      className="img-fluid"
+                      src={candidate.avatar}
+                      alt={candidate.full_name}
+                      className="img-fluid me-2 rounded-circle"
+                      style={{ width: 150, height: 150 }}
                     />
-                  </div>
-                  <div>
-                    <h5 className="card-title">{candidate.name}</h5>
-                    <p className="card-text">{candidate.position}</p>
-                    <p className="text-muted">{candidate.experience}</p>
-                    <a href="#aa" className="btn btn-primary">
-                      Chi tiết
-                    </a>
+                    <div>
+                      <h5
+                        className="text-truncate card-title"
+                        style={{ maxWidth: "200px" }}
+                      >
+                        {candidate.full_name}
+                      </h5>
+                      <p className="card-text">{candidate.title}</p>
+                      <p className="text-muted">
+                        {candidate.year_exp
+                          ? `${candidate.year_exp} năm kinh nghiệm`
+                          : "Chưa có kinh nghiệm"}
+                      </p>
+                      <NavLink
+                        to={`/employee-detail/${candidate.jobseeker_id}`}
+                        className="btn btn-primary"
+                      >
+                        Chi tiết
+                      </NavLink>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -196,7 +174,13 @@ export default function EmployeeMaganePage() {
 
       <div className="container mt-4">
         <h5>Danh sách ứng viên</h5>
-        {renderEmployee()}
+        {listEmployee.length === 0 ? (
+          <div className="alert alert-warning" role="alert">
+            Không có ứng viên nào
+          </div>
+        ) : (
+          renderEmployee()
+        )}
       </div>
     </div>
   );

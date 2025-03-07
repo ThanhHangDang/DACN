@@ -29,12 +29,9 @@ import {
 // Action creator
 export const getUserInformationByID = (id) => async (dispatch) => {
   try {
-    const response = await axios.get(
-      `http://${domain}:4000/user/user-information`,
-      {
-        params: { id: id },
-      }
-    );
+    const response = await axios.get(`${domain}/user/user-information`, {
+      params: { id: id },
+    });
     if (response.status === 200) {
       dispatch({
         type: SET_USER_INFORMATION,
@@ -48,12 +45,9 @@ export const getUserInformationByID = (id) => async (dispatch) => {
 
 export const getListExp = (id) => async (dispatch) => {
   try {
-    const response = await axios.get(
-      `http://${domain}:4000/user/get-experience`,
-      {
-        params: { id: id },
-      }
-    );
+    const response = await axios.get(`${domain}/user/get-experience`, {
+      params: { id: id },
+    });
     if (response.status === 200) {
       // console.log("List experience:", response.data);
       dispatch({
@@ -68,12 +62,9 @@ export const getListExp = (id) => async (dispatch) => {
 
 export const getListEducation = (id) => async (dispatch) => {
   try {
-    const response = await axios.get(
-      `http://${domain}:4000/user/get-education`,
-      {
-        params: { id: id },
-      }
-    );
+    const response = await axios.get(`${domain}/user/get-education`, {
+      params: { id: id },
+    });
     if (response.status === 200) {
       // console.log("List education:", response.data);
       dispatch({
@@ -88,7 +79,7 @@ export const getListEducation = (id) => async (dispatch) => {
 
 export const getListProject = (id) => async (dispatch) => {
   try {
-    const response = await axios.get(`http://${domain}:4000/user/get-project`, {
+    const response = await axios.get(`${domain}/user/get-project`, {
       params: { id: id },
     });
     if (response.status === 200) {
@@ -105,7 +96,7 @@ export const getListProject = (id) => async (dispatch) => {
 
 export const getListSkill = (id) => async (dispatch) => {
   try {
-    const response = await axios.get(`http://${domain}:4000/user/get-skill`, {
+    const response = await axios.get(`${domain}/user/get-skill`, {
       params: { id: id },
     });
     if (response.status === 200) {
@@ -122,12 +113,9 @@ export const getListSkill = (id) => async (dispatch) => {
 
 export const getListLanguage = (id) => async (dispatch) => {
   try {
-    const response = await axios.get(
-      `http://${domain}:4000/user/get-language`,
-      {
-        params: { id: id },
-      }
-    );
+    const response = await axios.get(`${domain}/user/get-language`, {
+      params: { id: id },
+    });
     if (response.status === 200) {
       // console.log("List language:", response.data);
       dispatch({
@@ -142,12 +130,9 @@ export const getListLanguage = (id) => async (dispatch) => {
 
 export const getListCertification = (id) => async (dispatch) => {
   try {
-    const response = await axios.get(
-      `http://${domain}:4000/user/get-certification`,
-      {
-        params: { id: id },
-      }
-    );
+    const response = await axios.get(`${domain}/user/get-certification`, {
+      params: { id: id },
+    });
     if (response.status === 200) {
       // console.log("List certification:", response.data);
       dispatch({
@@ -162,14 +147,11 @@ export const getListCertification = (id) => async (dispatch) => {
 
 export const getJobApply = (id) => async (dispatch) => {
   try {
-    const response = await axios.get(
-      `http://${domain}:4000/user/get-job-applied`,
-      {
-        params: { id: id },
-      }
-    );
+    const response = await axios.get(`${domain}/user/get-job-applied`, {
+      params: { id: id },
+    });
     if (response.status === 200) {
-      // console.log("List job apply:", response.data);
+      console.log("List job apply:", response.data);
       dispatch({
         type: GET_JOB_APPLY,
         payload: response.data.jobApplied,
@@ -182,12 +164,9 @@ export const getJobApply = (id) => async (dispatch) => {
 
 export const getJobSave = (id) => async (dispatch) => {
   try {
-    const response = await axios.get(
-      `http://${domain}:4000/user/get-job-saved`,
-      {
-        params: { id: id },
-      }
-    );
+    const response = await axios.get(`${domain}/user/get-job-saved`, {
+      params: { id: id },
+    });
     if (response.status === 200) {
       // console.log("List job save:", response.data);
       dispatch({
@@ -202,12 +181,9 @@ export const getJobSave = (id) => async (dispatch) => {
 
 export const getFollowEmployer = (id) => async (dispatch) => {
   try {
-    const response = await axios.get(
-      `http://${domain}:4000/user/get-followed-company`,
-      {
-        params: { id: id },
-      }
-    );
+    const response = await axios.get(`${domain}/user/get-followed-company`, {
+      params: { id: id },
+    });
     if (response.status === 200) {
       dispatch({
         type: GET_FOLLOW_EMPLOYER,
@@ -221,13 +197,10 @@ export const getFollowEmployer = (id) => async (dispatch) => {
 
 export const updateExpectedJob = (id, expectedJob) => async (dispatch) => {
   try {
-    const response = await axios.post(
-      `http://${domain}:4000/user/update-expected-job`,
-      {
-        id: id,
-        expectedJob: expectedJob,
-      }
-    );
+    const response = await axios.post(`${domain}/user/update-expected-job`, {
+      id: id,
+      expectedJob: expectedJob,
+    });
     if (response.status === 200) {
       dispatch({
         type: UPDATE_EXPECTED_JOB,
@@ -244,13 +217,10 @@ export const updateExpectedJob = (id, expectedJob) => async (dispatch) => {
 
 export const updateCareerTarget = (id, careerTarget) => async (dispatch) => {
   try {
-    const response = await axios.post(
-      `http://${domain}:4000/user/update-career-target`,
-      {
-        id: id,
-        careerTarget: careerTarget,
-      }
-    );
+    const response = await axios.post(`${domain}/user/update-career-target`, {
+      id: id,
+      careerTarget: careerTarget,
+    });
     if (response.status === 200) {
       dispatch({
         type: UPDATE_CAREER_TARGET,
@@ -267,13 +237,10 @@ export const updateCareerTarget = (id, careerTarget) => async (dispatch) => {
 
 export const addExperience = (id, experience) => async (dispatch) => {
   try {
-    const response = await axios.post(
-      `http://${domain}:4000/user/add-experience`,
-      {
-        id: id,
-        experience: experience,
-      }
-    );
+    const response = await axios.post(`${domain}/user/add-experience`, {
+      id: id,
+      experience: experience,
+    });
     if (response.status === 200) {
       dispatch({
         type: ADD_EXPERIENCE,
@@ -288,13 +255,10 @@ export const addExperience = (id, experience) => async (dispatch) => {
 };
 export const addEducation = (id, education) => async (dispatch) => {
   try {
-    const response = await axios.post(
-      `http://${domain}:4000/user/add-education`,
-      {
-        id: id,
-        education: education,
-      }
-    );
+    const response = await axios.post(`${domain}/user/add-education`, {
+      id: id,
+      education: education,
+    });
     if (response.status === 200) {
       dispatch({
         type: ADD_EDUCATION,
@@ -310,13 +274,10 @@ export const addEducation = (id, education) => async (dispatch) => {
 
 export const addProject = (id, project) => async (dispatch) => {
   try {
-    const response = await axios.post(
-      `http://${domain}:4000/user/add-project`,
-      {
-        id: id,
-        project: project,
-      }
-    );
+    const response = await axios.post(`${domain}/user/add-project`, {
+      id: id,
+      project: project,
+    });
     if (response.status === 200) {
       dispatch({
         type: ADD_PROJECT,
@@ -330,25 +291,119 @@ export const addProject = (id, project) => async (dispatch) => {
   }
 };
 
-export const deleteProfileExperience = (id, id_delete) => async (dispatch) => {
-  try {
-    const response = await axios.delete(
-      `http://${domain}:4000/user/delete-experience`,
-
-      {
-        params: { id: id, id_delete: id_delete },
-      },
-      { withCredentials: true }
-    );
-    if (response.status === 200) {
-      dispatch({
-        type: DELETE_EXPERIENCE,
-        payload: response.data.experience,
-      });
+export const deleteProfileItem =
+  (modalID, id, id_delete) => async (dispatch) => {
+    switch (modalID) {
+      case 1:
+        deleteProfileItemChild(
+          id,
+          id_delete,
+          "delete-experience",
+          DELETE_EXPERIENCE,
+          modalID,
+          "Xóa kinh nghiệm thành công.",
+          "Xóa kinh nghiệm thất bại"
+        )(dispatch);
+        break;
+      case 2:
+        deleteProfileItemChild(
+          id,
+          id_delete,
+          "delete-education",
+          DELETE_EDUCATION, // Define this constant appropriately
+          modalID,
+          "Xóa giáo dục thành công.",
+          "Xóa giáo dục thất bại"
+        )(dispatch);
+        break;
+      case 3:
+        deleteProfileItemChild(
+          id,
+          id_delete,
+          "delete-project",
+          DELETE_PROJECT, // Define this constant appropriately
+          modalID,
+          "Xóa dự án thành công.",
+          "Xóa dự án thất bại"
+        )(dispatch);
+        break;
+      case 4:
+        deleteProfileItemChild(
+          id,
+          id_delete,
+          "delete-skill",
+          DELETE_SKILL, // Define this constant appropriately
+          modalID,
+          "Xóa kỹ năng thành công.",
+          "Xóa kỹ năng thất bại"
+        )(dispatch);
+        break;
+      case 5:
+        deleteProfileItemChild(
+          id,
+          id_delete,
+          "delete-language",
+          DELETE_LANGUAGE, // Define this constant appropriately
+          modalID,
+          "Xóa ngôn ngữ thành công.",
+          "Xóa ngôn ngữ thất bại"
+        )(dispatch);
+        break;
+      case 6:
+        deleteProfileItemChild(
+          id,
+          id_delete,
+          "delete-certification",
+          DELETE_CERTIFICATION, // Define this constant appropriately
+          modalID,
+          "Xóa chứng chỉ thành công.",
+          "Xóa chứng chỉ thất bại"
+        )(dispatch);
+        break;
+      default:
+        return; // Exit if modalID is not recognized
     }
-    toast.success(response.message || "Xóa kinh nghiệm thành công.");
-  } catch (error) {
-    console.log(error);
-    toast.error("Xóa kinh nghiệm thất bại.");
-  }
-};
+  };
+
+export const deleteProfileItemChild =
+  (id, id_delete, host, type, modalID, messageSuccess, messageFail) =>
+  async (dispatch) => {
+    try {
+      const response = await axios.delete(`${domain}/user/${host}`, {
+        params: { id: id, id_delete: id_delete }, // Correctly pass data object for DELETE
+      });
+      if (response.status === 200) {
+        let payload = ""; // Use let to allow reassignment
+        switch (modalID) {
+          case 1: // Xóa experience
+            payload = response.data.experience;
+            break;
+          case 2: // Xóa education
+            payload = response.data.education;
+            break;
+          case 3: // Xóa project
+            payload = response.data.project;
+            break;
+          case 4: // Xóa skill
+            payload = response.data.skill;
+            break;
+          case 5: // Xóa language
+            payload = response.data.language; // Assuming you want to handle this case
+            break;
+          case 6: // Xóa certification
+            payload = response.data.certification;
+            break;
+          default:
+            break;
+        }
+        dispatch({
+          type: type,
+          payload: payload,
+        });
+        toast.success(messageSuccess);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(messageFail);
+    }
+  };

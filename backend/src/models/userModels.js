@@ -1,5 +1,85 @@
 const db = require("../config/databaseConfig.js");
 
+const queryGetListEmployee = async () => {
+  const [listEmployee] = await db.query(
+    `
+    select 
+      js.avatar,
+      js.jobseeker_id,
+      pjs.full_name,
+      pjs.year_exp,
+      pjs.title
+    from jobseeker js
+    join profile_jobseeker pjs on js.jobseeker_id = pjs.profile_id;
+    `
+  );
+  return listEmployee;
+};
+
+const queryGetEmployeeDetail = async (id) => {
+  const [employeeDetail] = await db.query(
+    `
+    select
+    js.avatar,
+    pjs.*,
+    u.email,
+    u.phone_number,
+    cl.level_name,
+    cc.city_name as work_expected_place,
+    -- group_concat(concat(pe.major, " ,", pe.school, " ,", pe.from_, " ,", pe.to_)) as education,
+    JSON_ARRAYAGG(
+            JSON_OBJECT(
+                'major', pe.major,
+                'school', pe.school,
+                'from_', pe.from_,
+                'to_', pe.to_
+            )
+        ) AS education_info,
+    JSON_ARRAYAGG(
+            JSON_OBJECT(
+                'certification', pcer.certifications,
+                'month', pcer.month_
+            )
+        ) AS certification_info,  
+    JSON_ARRAYAGG(
+            JSON_OBJECT(
+                'exp_title', pexp.exp_title,
+                'exp_from', pexp.exp_from,
+                'exp_to', pexp.exp_to,
+                'exp_company', pexp.exp_company,
+                'exp_description', pexp.exp_description
+            )
+        ) AS experience_info,
+    JSON_ARRAYAGG(
+            JSON_OBJECT(
+                'project_name', ppro.project_name,
+                'project_from', ppro.project_from,
+                'project_to', ppro.project_to,
+                'project_description', ppro.project_description
+            )
+        ) AS project_info,
+    JSON_ARRAYAGG(
+            JSON_OBJECT(
+                'skill', pski.skill
+            )
+        ) AS skill_info
+    from jobseeker js
+    join profile_jobseeker pjs on js.jobseeker_id = pjs.profile_id
+    join user_ u on js.jobseeker_id = u.user_id
+    join catalog_level cl on pjs.level_id = cl.level_id
+    join catalog_city cc on pjs.work_place = cc.city_id
+    left join profile_education pe on js.jobseeker_id = pe.profile_id
+    left join profile_certification pcer on js.jobseeker_id = pcer.profile_id
+    left join profile_experience pexp on js.jobseeker_id = pexp.profile_id
+    left join profile_skill pski on js.jobseeker_id = pski.profile_id
+    left join profile_project ppro on js.jobseeker_id = ppro.profile_id
+    where js.jobseeker_id = ?;
+    `,
+    [id]
+  );
+  return employeeDetail;
+};
+
 const queryGetUserInformation = async (id) => {
   const [userInfor] = await db.query(
     `
@@ -159,14 +239,17 @@ WHERE
 };
 const queryGetJobAppliedByID = async (id) => {
   const [jobApplied] = await db.query(
-    `    
-SELECT * from 
-    (select job_id as id, date_appy from jobseeker_apply_job where jobseeker_id=?) as A 
-join  
-    (select job_id, employer_id, title, date_post, status_, work_location from job) as B 
-    ON A.id = B.job_id 
-join 
-    (SELECT company_id, company_name, logo from company) as C ON B.employer_id = C.company_id;
+    `
+    SELECT 
+    ja.*
+FROM
+    jobseeker js
+JOIN
+    user_ u ON js.jobseeker_id = u.user_id
+JOIN
+    jobseeker_apply_job ja ON u.user_id = ja.jobseeker_id
+WHERE
+    u.user_id = ?;
     `,
     [id]
   );
@@ -189,7 +272,8 @@ join
   return jobSaved;
 };
 
-const queryGetFollowedCompanyByID = async (id) => { // tot nhat chia lam 2 part, part nay chi lay ID, sau do dung vong for dde lay queryGetCompanyInformation 
+const queryGetFollowedCompanyByID = async (id) => {
+  console.log(id);
   const [followedCompany] = await db.query(
     `
     SELECT employer_id 
@@ -200,6 +284,7 @@ WHERE
     `,
     [id]
   );
+  console.log(followedCompany);
   return followedCompany;
 };
 const queryGetCompanyInformation = async (id) => {
@@ -315,7 +400,90 @@ const queryUpdateEducation = async (id, education) => {
   return affectedRows;
 };
 
+const queryDeleteExperience = async (id, id_delete) => {
+  const [affectedRows] = await db.query(
+    `
+    DELETE FROM profile_experience
+    WHERE profile_id = ? AND profile_experience_id = ?;
+    `,
+    [id, id_delete]
+  );
+  return affectedRows;
+};
+
+const queryDeleteEducation = async (id, id_delete) => {
+  const [affectedRows] = await db.query(
+    `
+    DELETE FROM profile_education
+    WHERE profile_id = ? AND profile_education_id = ?;
+    `,
+    [id, id_delete]
+  );
+  return affectedRows;
+};
+
+const queryDeleteProject = async (id, id_delete) => {
+  const [affectedRows] = await db.query(
+    `
+    DELETE FROM profile_project
+    WHERE profile_id = ? AND profile_project_id = ?;
+    `,
+    [id, id_delete]
+  );
+  return affectedRows;
+};
+
+const queryDeleteSkill = async (id, id_delete) => {
+  const [affectedRows] = await db.query(
+    `
+    DELETE FROM profile_skill
+    WHERE profile_id = ? AND profile_skill_id = ?;
+    `,
+    [id, id_delete]
+  );
+  return affectedRows;
+};
+
+const queryDeleteLanguage = async (id, id_delete) => {
+  const [affectedRows] = await db.query(
+    `
+    DELETE FROM profile_language
+    WHERE profile_id = ? AND profile_language_id = ?;
+    `,
+    [id, id_delete]
+  );
+  return affectedRows;
+};
+
+const queryDeleteCertification = async (id, id_delete) => {
+  const [affectedRows] = await db.query(
+    `
+    DELETE FROM profile_certification
+    WHERE profile_id = ? AND profile_certification_id = ?;
+    `,
+    [id, id_delete]
+  );
+  return affectedRows;
+};
+
+const queryGetNotificationByID = async (id) => {
+  const [notification] = await db.query(
+    `
+    SELECT m.*,
+    u.username,
+    FROM messenger m
+    Join user_ u ON m.sender_id = u.user_id
+    WHERE receiver_id = ?;
+    `,
+    [id]
+  );
+  return notification;
+};
+
 module.exports = {
+  queryGetListEmployee,
+  queryGetEmployeeDetail,
+
   queryGetUserInformation,
   queryGetExperienceByID,
   queryGetEducationByID,
@@ -325,9 +493,18 @@ module.exports = {
   queryGetCertificateByID,
   queryGetFollowedCompanyByID,
   queryGetJobSavedByID,
+  queryGetJobAppliedByID,
   queryGetCompanyInformation,
   queryUpdateExpectedJob,
   queryUpdateCareerTarget,
   queryAddExperience,
   queryAddEducation,
+  queryAddProject,
+
+  queryDeleteExperience,
+  queryDeleteEducation,
+  queryDeleteProject,
+  queryDeleteSkill,
+  queryDeleteLanguage,
+  queryDeleteCertification,
 };

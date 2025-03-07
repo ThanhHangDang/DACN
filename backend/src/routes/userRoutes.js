@@ -1,6 +1,9 @@
 const express = require("express");
 
 const {
+  getListEmployee,
+  getEmployeeDetail,
+
   getUserInformation,
   getExperienceByID,
   getEducationByID,
@@ -17,10 +20,21 @@ const {
   addExperience,
   addEducation,
   addProject,
+
   deleteExperience,
+  deleteEducation,
+  deleteProject,
+  deleteSkill,
+  deleteLanguage,
+  deleteCertification,
+
+  getNotificationByID,
 } = require("../controllers/userControllers.js");
 
 const userRoutes = express.Router();
+
+userRoutes.get("/get-list-employee", getListEmployee);
+userRoutes.get("/get-employee-detail", getEmployeeDetail);
 
 userRoutes.get("/user-information", getUserInformation);
 userRoutes.get("/get-experience", getExperienceByID);
@@ -42,5 +56,12 @@ userRoutes.post("/add-education", addEducation);
 userRoutes.post("/add-project", addProject);
 
 userRoutes.delete("/delete-experience", deleteExperience);
+userRoutes.delete("/delete-education", deleteEducation);
+userRoutes.delete("/delete-project", deleteProject);
+userRoutes.delete("/delete-skill", deleteSkill);
+userRoutes.delete("/delete-language", deleteLanguage);
+userRoutes.delete("/delete-certification", deleteCertification);
+
+userRoutes.get("/get-notification-by-user-id", getNotificationByID);
 
 module.exports = userRoutes;

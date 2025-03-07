@@ -13,7 +13,7 @@ import {
   addExperience,
   addEducation,
   addProject,
-  deleteProfileExperience,
+  deleteProfileItem,
 } from "../../../redux/actions/jobseekerAction.js";
 import { getCategoryEdu } from "../../../redux/actions/categoryAction.js";
 
@@ -89,38 +89,15 @@ export default function YourCVwithUs() {
     dispatch(addProject(userInformation?.jobseeker_id, project));
   };
 
-  // const handleDeleteProfileItem = () => {
-  //   const modalID = dataDeleteModal.modalID;
-  //   switch (modalID) {
-  //     case 1: //Xóa experience
-  //       dispatch(
-  //         deleteProfileExperience(dataDeleteModal.id, dataDeleteModal.id_delete)
-  //       );
-  //       break;
-  //     case 2: //Xóa education
-  //       console.log(dataDeleteModal.id);
-  //       console.log(dataDeleteModal.id_delete);
-  //       break;
-  //     case 3: //Xóa project
-  //       console.log(dataDeleteModal.id);
-  //       console.log(dataDeleteModal.id_delete);
-  //       break;
-  //     case 4: //Xóa skill
-  //       console.log(dataDeleteModal.id);
-  //       console.log(dataDeleteModal.id_delete);
-  //       break;
-  //     case 5: //Xóa language
-  //       break;
-  //     case 6: //xóa Certification
-  //       console.log(dataDeleteModal.id);
-  //       console.log(dataDeleteModal.id_delete);
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  // };
-
-  const handleDeleteProfileItem = () => {};
+  const handleDeleteProfileItem = () => {
+    dispatch(
+      deleteProfileItem(
+        dataDeleteModal.modalID,
+        dataDeleteModal.id,
+        dataDeleteModal.id_delete
+      )
+    );
+  };
 
   useEffect(() => {
     dispatch(getListExp(userInformation?.jobseeker_id));
@@ -131,10 +108,6 @@ export default function YourCVwithUs() {
     dispatch(getListCertification(userInformation?.jobseeker_id));
     dispatch(getCategoryEdu());
   }, [dispatch, userInformation]);
-
-  // useEffect(() => {
-  //   dispatch(getCategoryEdu());
-  // }, [dispatch]);
 
   useEffect(() => {
     if (userInformation && userInformation.career_target) {
@@ -953,8 +926,7 @@ export default function YourCVwithUs() {
                     {formatDateToDDMMYYYY(exp.exp_from)} đến{" "}
                     {formatDateToDDMMYYYY(exp.exp_to)}
                   </span>
-                  <a
-                    href="#aaa"
+                  <div
                     className="text-primary text-decoration-none"
                     data-bs-toggle="modal"
                     data-bs-target="#confirmDeleteModal"
@@ -967,8 +939,8 @@ export default function YourCVwithUs() {
                       });
                     }}
                   >
-                    Xóa
-                  </a>
+                    <i class="bi bi-trash"></i>
+                  </div>
                 </div>
                 <p>{exp.exp_description}</p>
               </div>
@@ -999,8 +971,7 @@ export default function YourCVwithUs() {
                     {formatDateToDDMMYYYY(edu.from_)} đến{" "}
                     {formatDateToDDMMYYYY(edu.to_)}
                   </span>
-                  <a
-                    href="#aaa"
+                  <div
                     className="text-primary text-decoration-none"
                     data-bs-toggle="modal"
                     data-bs-target="#confirmDeleteModal"
@@ -1013,8 +984,8 @@ export default function YourCVwithUs() {
                       });
                     }}
                   >
-                    Xóa
-                  </a>
+                    <i class="bi bi-trash"></i>
+                  </div>
                 </div>
               </div>
             ))}
@@ -1044,8 +1015,7 @@ export default function YourCVwithUs() {
                     {formatDateToDDMMYYYY(pro.project_from)} đến{" "}
                     {formatDateToDDMMYYYY(pro.project_to)}
                   </span>
-                  <a
-                    href="#aaaa"
+                  <div
                     className="text-primary text-decoration-none"
                     data-bs-toggle="modal"
                     data-bs-target="#confirmDeleteModal"
@@ -1058,8 +1028,8 @@ export default function YourCVwithUs() {
                       });
                     }}
                   >
-                    Xóa
-                  </a>
+                    <i class="bi bi-trash"></i>
+                  </div>
                 </div>
                 <p>{pro.project_description}</p>
               </div>
@@ -1090,8 +1060,7 @@ export default function YourCVwithUs() {
               >
                 <div className="d-flex justify-content-between align-items-center rounded-2">
                   <span className="col-md-3">{skl.skill}</span>
-                  <a
-                    href="#aaaaa"
+                  <div
                     className="text-primary text-decoration-none"
                     data-bs-toggle="modal"
                     data-bs-target="#confirmDeleteModal"
@@ -1104,8 +1073,8 @@ export default function YourCVwithUs() {
                       });
                     }}
                   >
-                    Xóa
-                  </a>
+                    <i class="bi bi-trash"></i>
+                  </div>
                 </div>
               </div>
             ))}
@@ -1148,8 +1117,7 @@ export default function YourCVwithUs() {
                   <span className="col-md-3">
                     {formatDateToDDMMYYYY(cer.month_)}
                   </span>
-                  <a
-                    href="#aaaa"
+                  <div
                     className="text-primary text-decoration-none"
                     data-bs-toggle="modal"
                     data-bs-target="#confirmDeleteModal"
@@ -1162,8 +1130,8 @@ export default function YourCVwithUs() {
                       });
                     }}
                   >
-                    Xóa
-                  </a>
+                    <i class="bi bi-trash"></i>
+                  </div>
                 </div>
               </div>
             ))}

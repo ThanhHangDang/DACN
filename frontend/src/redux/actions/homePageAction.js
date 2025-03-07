@@ -35,7 +35,7 @@ export const getCurrentDate = () => (dispatch) => {
 
 export const getLeadingCompany = () => (dispatch) => {
   axios
-    .get(`http://${domain}:4000/company/get-leading-company`)
+    .get(`${domain}/company/get-leading-company`)
     .then((res) => {
       dispatch(setLeadingCompany(res.data.company));
     })
@@ -44,7 +44,7 @@ export const getLeadingCompany = () => (dispatch) => {
 
 export const getLatestWork = () => (dispatch) => {
   axios
-    .get(`http://${domain}:4000/work/get-latest-work`)
+    .get(`${domain}/work/get-latest-work`)
     .then((res) => {
       dispatch(setLatestWork(res.data.work));
     })

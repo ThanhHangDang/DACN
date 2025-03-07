@@ -103,7 +103,7 @@ export default function Header() {
 
   useEffect(() => {
     dispatch(checkLoginStatus());
-  }, [dispatch]);
+  }, [isLogin]);
 
   return (
     <>

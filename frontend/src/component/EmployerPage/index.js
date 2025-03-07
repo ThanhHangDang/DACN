@@ -15,26 +15,26 @@ export default function EmployerPage() {
       navigate("/login");
     }
     dispatch(getCompanyInformation(user?.user.id));
-  }, [isLogin, navigate, user]);
+  }, [isLogin, user]);
 
   return (
     <div className="container-fluid">
       <div className="row d-flex">
         <div className="col-auto col-md-3 col-xl-2 px-sm-2 px-0">
           <div className="row rounded-2 bg-primary text-center m-2 pt-2 d-fex justify-content-center">
-            <div className="col-md-2 me-3 mb-2">
+            <div className="col-md-12 me-3 mb-2">
               {companyInformation?.logo ? (
                 <img
                   src={companyInformation.logo}
                   alt="logo"
-                  style={{ height: 40, width: 40 }}
+                  style={{ height: 80, width: 80 }}
                   className="rounded-circle me-2"
                 />
               ) : (
                 <i class="bi bi-person-circle me-2 text-white fs-2"></i>
               )}
             </div>
-            <div className="col-md-8 text-start">
+            <div className="col-md-12">
               <p className="fw-bold lh-1">{companyInformation?.company_name}</p>
               <p className="mb-0 pb-2 lh-1">
                 {companyInformation?.email ? companyInformation.email : ""}
@@ -68,14 +68,6 @@ export default function EmployerPage() {
                 <i class="bi bi-postcard me-2"></i>Quản lý tin tuyển dụng
               </span>
             </NavLink>
-            {/* <NavLink
-              className="nav-link rounded-2 bg-light m-2"
-              to="/employer-manage-employee"
-            >
-              <span className="ms-3">
-                <i class="bi bi-journal-check me-2"></i>Quản lý hồ sơ ứng viên
-              </span>
-            </NavLink> */}
             <NavLink
               className="nav-link rounded-2 bg-light m-2"
               to="/employer-notification"

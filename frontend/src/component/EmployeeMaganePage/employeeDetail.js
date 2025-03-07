@@ -1,37 +1,51 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useParams } from "react-router-dom";
+import { getJobseekerDetail } from "../../redux/actions/userAction.js";
 
 export default function EmployeeDetail() {
+  const dispatch = useDispatch();
+  const { jobseekerDetail } = useSelector((state) => state.user);
+  const { id } = useParams();
+
+  const formatNumberToTr = (number) => `${(number / 1e6).toFixed(0)}tr`;
+
+  useEffect(() => {
+    dispatch(getJobseekerDetail(id));
+  }, [id]);
+
   return (
     <div>
       <div className="container mt-4 mb-4">
         <div className="card">
           <div className="card-header post-detail-bg">
-            <h3>Trần Văn A</h3>
-            <p className="me-5">Software Engineer - 1 năm kinh nghiệm</p>
+            <h3>{jobseekerDetail?.full_name}</h3>
+            <p className="me-5">{jobseekerDetail?.title}</p>
             <div className="d-flex justify-content-start">
               <p className="me-5 col-4">
-                <i class="bi bi-briefcase-fill me-2"></i>Thực tập sinh/Sinh viên
+                <i class="bi bi-briefcase-fill me-2"></i>
+                {jobseekerDetail?.level_name}
               </p>
               <p className="me-4">
-                <i class="bi bi-mortarboard-fill me-2"></i>Cử nhân
+                <i class="bi bi-mortarboard-fill me-2"></i>
+                {jobseekerDetail?.education_title}
               </p>
             </div>
             <div className="d-flex justify-content-start">
               <p className="me-5 col-4">
-                <i class="bi bi-envelope-fill me-2"></i>tranvana@gmail.com
+                <i class="bi bi-envelope-fill me-2"></i>
+                {jobseekerDetail?.email}
               </p>
               <p className="me-4">
-                <i class="bi bi-telephone-fill me-2"></i>0123456789
+                <i class="bi bi-telephone-fill me-2"></i>
+                {jobseekerDetail?.phone_number}
               </p>
             </div>
             <div className="d-flex justify-content-start">
               <p className="me-5 col-4">
-                <i class="bi bi-envelope-fill me-2"></i>138/34/5 Lê Văn Việt,
-                Quận 9, TPHCM
+                <i class="bi bi-envelope-fill me-2"></i>
+                {jobseekerDetail?.address}
               </p>
-              {/* <p className="me-4">
-                <i class="bi bi-telephone-fill me-2"></i>0123456789
-              </p> */}
             </div>
 
             <button className="btn btn-primary mb-3 mt-2">Liên hệ</button>
@@ -42,23 +56,16 @@ export default function EmployeeDetail() {
               <h5>Hồ sơ ứng viên</h5>
               <section className="mb-4 p-2">
                 <h6 className="fw-bold text-secondary">Công việc mong muốn</h6>
-                <p>Nơi làm việc: Hồ Chí minh</p>
-                <p className="mt-0">Mức lương: 10tr-15tr</p>
+                <p>Nơi làm việc: {jobseekerDetail?.work_expected_place}</p>
+                <p className="mt-0">
+                  Mức lương: {formatNumberToTr(jobseekerDetail?.salary_expect)}{" "}
+                  đ/tháng
+                </p>
               </section>
               <section className="mb-4 p-2">
                 <h6 className="fw-bold text-secondary">Mục tiêu nghề nghiệp</h6>
                 <ul>
-                  <li>
-                    Sinh viên mới tốt nghiệp ra trường với chuyên ngành Hệ thống
-                    Thông tin Quản lý, nắm vững các kiến thức, kỹ năng chuyên
-                    môn.
-                  </li>
-                  <li>
-                    Mong muốn được vào làm việc tại công ty với vị trí nhân viên
-                    phân tích hệ thống, có thể vận dụng những kiến thức đã được
-                    trau dồi và không ngừng học hỏi để phát triển bản thân, cũng
-                    như hoàn thành tốt nhất công việc được giao
-                  </li>
+                  <li>{jobseekerDetail?.career_target}</li>
                 </ul>
               </section>
               <section className="mb-4 p-2">
@@ -69,46 +76,70 @@ export default function EmployeeDetail() {
                   </div>
                   <div className="col-md-4">
                     <h6 className="fw-bold text-secondary">Giới tính</h6>
-                    <p>Nam</p>
+                    <p>{jobseekerDetail?.gender}</p>
                   </div>
                   <div>
                     <h6 className="fw-bold text-secondary">
                       Tình trạng hôn nhân
                     </h6>
-                    <p>Độc thân</p>
+                    <p>{jobseekerDetail?.marital_status}</p>
                   </div>
                 </div>
 
                 <div className="d-flex ">
                   <div className="col-md-4">
                     <h6 className="fw-bold text-secondary">Kinh ngiệm</h6>
-                    <p>1 năm</p>
+                    <p>{jobseekerDetail?.year_exp} năm</p>
                   </div>
                   <div className="col-md-4">
                     <h6 className="fw-bold text-secondary">Học vấn</h6>
-                    <p>Cử nhân</p>
+                    <p>{jobseekerDetail?.education_title}</p>
                   </div>
                   <div></div>
                 </div>
               </section>
               <section className="mb-4 p-2">
                 <h6 className="fw-bold text-secondary">Dự án</h6>
-                <p>
-                  Xây dựng website tìm kiếm việc làm tích hợp các công cụ AI
-                </p>
+                <ul>
+                  {jobseekerDetail?.project_info?.map((project) => (
+                    <li>
+                      <p>{project.project_name}</p>
+                      <p>
+                        {project.project_from} - {project.project_to}
+                      </p>
+                      <p>
+                        {project.project_description}
+                        {" - "}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
               </section>
 
               <section className="mb-4 p-2">
                 <h6 className="fw-bold text-secondary">Kỹ năng</h6>
                 <p>
-                  C++, Python, Javascript, ReactJs, NodeJs, Git, mySQL, Java,
-                  String Boot
+                  {jobseekerDetail?.skill_info?.map((skill) => (
+                    <span>
+                      {skill.skill}
+                      {", "}
+                    </span>
+                  ))}
+                  ...
                 </p>
               </section>
 
               <section className="mb-4 p-2">
                 <h6 className="fw-bold text-secondary">Ngoại ngữ</h6>
-                <p>Tiếng Anh TOEIC 750, tiếng Nhật N2</p>
+                <p>
+                  {jobseekerDetail?.language_info?.map((language) => (
+                    <span>
+                      {language.language}
+                      {", "}
+                    </span>
+                  ))}
+                  ...
+                </p>
               </section>
 
               <section className="mb-4 p-2">
@@ -118,7 +149,14 @@ export default function EmployeeDetail() {
 
               <section className="mb-4 p-2">
                 <h6 className="fw-bold text-secondary">Chứng chỉ</h6>
-                <p>Không</p>
+                <ul>
+                  {jobseekerDetail?.certification_info?.map((certificate) => (
+                    <li>
+                      <p>{certificate.certification}</p>
+                      <p>{certificate.month}</p>
+                    </li>
+                  ))}
+                </ul>
               </section>
             </section>
           </div>
