@@ -9,6 +9,7 @@ import {
   GET_POSTS_SEARCH,
   DELETE_POST_BY_USER,
   POST_NEW_WORK,
+  EDIT_POST_BY_USER,
 } from "../contants/postContants.js";
 
 const initialState = {
@@ -41,6 +42,8 @@ const postReducer = (state = initialState, action) => {
     case DELETE_POST_BY_USER:
       return { ...state, postsByUser: action.payload };
     case POST_NEW_WORK:
+      return { ...state, postsByUser: action.payload };
+    case EDIT_POST_BY_USER:
       return { ...state, postsByUser: action.payload };
     default:
       return state;

@@ -13,3 +13,4 @@ export const GET_POSTS_SEARCH = "GET_POSTS_SEARCH";
 export const DELETE_POST_BY_USER = "DELETE_POST_BY_USER";
 
 export const POST_NEW_WORK = "POST_NEW_WORK";
+export const EDIT_POST_BY_USER = "EDIT_POST_BY_USER";

@@ -6,7 +6,7 @@ export const getNotificationByUserID = (id) => {
   return async (dispatch) => {
     try {
       const response = await axios.get(
-        `${domain}/notification/get-notification-by-user-id/`,
+        `${domain}/user/get-notification-by-user-id/`,
         {
           params: { id },
         },

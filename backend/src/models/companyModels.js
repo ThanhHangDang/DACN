@@ -151,6 +151,8 @@ const queryPostJob = async (data) => {
   }
 };
 
+const queryEditJob = async (data) => {};
+
 const queryGetCompanySaveJobseeker = async (id) => {
   const [company] = await db.query("", [id]);
 };

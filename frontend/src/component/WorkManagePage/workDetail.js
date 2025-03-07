@@ -98,32 +98,6 @@ export default function WorkDetail() {
 
             <section className="mb-4 border border-primany rounded-3 p-2">
               <h5>Quyền lợi</h5>
-              {/* <section className="mb-4 border border-primany rounded-3 p-2">
-                <h6 className="fw-bold text-secondary">Thưởng</h6>
-                <p>1 năm/1 lần - Tăng ca chi trả riêng.</p>
-              </section>
-              <section className="mb-4 border border-primany rounded-3 p-2">
-                <h6 className="fw-bold text-secondary">Chăm sóc sức khỏe</h6>
-                <p>
-                  Bảo hiểm xả hội (bảo hiểm y tế cho người lao động), bảo hiểm
-                  thất nghiệp, khám sức khỏe định kỳ.
-                </p>
-              </section>
-              <section className="mb-4 border border-primany rounded-3 p-2">
-                <h6 className="fw-bold text-secondary">Nghỉ phép có lương</h6>
-                <p>
-                  Hơn 120 ngày nghĩ lễ trong năm (thứ Bảy, Chủ Nhật, Tết nguyên
-                  đán, Golden Week, kỳ nghỉ hè,...)
-                </p>
-              </section>
-              <section className="mb-4 border border-primany rounded-3 p-2">
-                <h6 className="fw-bold text-secondary">Khác</h6>
-                <p>
-                  Công ty cung cấp nhà ở và thiết bị, hỗ trợ việc làm, hỗ trợ
-                  sinh hoạt, quản lý kỹ sư. Nếu bạn đến Nhật Bản cùng gia đình,
-                  công ty sẽ hỗ trợ thủ tục xin visa và nhập cảnh.
-                </p>
-              </section> */}
               <p>{postDetail?.catalog_benefit}</p>
             </section>
 

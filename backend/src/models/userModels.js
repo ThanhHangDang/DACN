@@ -478,7 +478,7 @@ const queryGetNotificationByID = async (id) => {
   const [notification] = await db.query(
     `
     SELECT m.*,
-    u.username,
+    u.username
     FROM messenger m
     Join user_ u ON m.sender_id = u.user_id
     WHERE receiver_id = ?;
@@ -515,4 +515,6 @@ module.exports = {
   queryDeleteSkill,
   queryDeleteLanguage,
   queryDeleteCertification,
+
+  queryGetNotificationByID,
 };

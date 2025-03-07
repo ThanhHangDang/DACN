@@ -29,7 +29,7 @@ export default function JobSeekerNotification() {
           <>
             {notification.map((noti) => (
               <div
-                className="accordion accordion-flush"
+                className="accordion accordion-flush border border-2"
                 id="accordionFlushExample"
                 key={noti.messenger_id}
               >
@@ -39,23 +39,23 @@ export default function JobSeekerNotification() {
                       className="accordion-button collapsed"
                       type="button"
                       data-bs-toggle="collapse"
-                      data-bs-target="#flush-collapseOne"
+                      data-bs-target={`#flush-collapseOne${noti.messenger_id}`}
                       aria-expanded="false"
-                      aria-controls="flush-collapseOne"
+                      aria-controls={`flush-collapseOne${noti.messenger_id}`}
                     >
-                      Bạn nhận thông báo từ {notification?.username}
+                      Bạn nhận thông báo từ {noti?.username} lúc{" "}
+                      {noti?.date_time}
                     </button>
                   </h2>
                   <div
-                    id="flush-collapseOne"
+                    id={`flush-collapseOne${noti.messenger_id}`}
                     className="accordion-collapse collapse"
-                    aria-labelledby="flush-headingOne"
+                    aria-labelledby={`flush-headingOne${noti.messenger_id}`}
                     data-bs-parent="#accordionFlushExample"
                   >
                     <div className="accordion-body">
-                      <p>{notification?.content}</p>
+                      <p>{noti?.content}</p>
                       <br />
-                      <p>{notification?.date_time}</p>
                     </div>
                   </div>
                 </div>

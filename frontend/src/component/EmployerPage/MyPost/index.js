@@ -14,6 +14,7 @@ import {
   getPostsByUser,
   deletePostByUser,
   postNewWork,
+  editPostByUser,
 } from "../../../redux/actions/postAction";
 
 export default function EmployerPost() {
@@ -25,12 +26,14 @@ export default function EmployerPost() {
   );
   const { postsByUser } = useSelector((state) => state.post);
 
+  const [isAddPost, setIsAddPost] = useState(true);
+
   const [newPost, setNewPost] = useState({
-    job_id: 0,
+    job_id: "0",
     employer_id: user?.user?.id,
     title: "",
     date_post: new Date().toISOString(),
-    industry: 50,
+    industry: 20,
     job_function: 1,
     quantity: 1,
     salary_min: 500000,
@@ -112,7 +115,39 @@ export default function EmployerPost() {
   };
 
   const handleAddPost = () => {
-    dispatch(postNewWork(newPost));
+    if (isAddPost) {
+      dispatch(postNewWork(newPost));
+    } else {
+      dispatch(editPostByUser(newPost));
+    }
+    setNewPost({
+      ...newPost,
+      job_id: 0,
+      employer_id: user?.user?.id,
+      title: "",
+      date_post: new Date().toISOString(),
+      industry: 20,
+      job_function: 1,
+      quantity: 1,
+      salary_min: 500000,
+      salary_max: 1000000,
+      describle: "",
+      require_experience: 0,
+      require_skill: [],
+      require_language: [],
+      require_age_min: 18,
+      require_age_max: 18,
+      address: "",
+      work_location: 1,
+      require_gender: "không yêu cầu",
+      require_martial_status: "không yêu cầu",
+      education_at_least: 1,
+      level_id: 1,
+      working_type: "full-time",
+      working_time: "",
+      more_requirement: "",
+      require_certification: [],
+    });
   };
 
   const [postID, setPostID] = useState(0);
@@ -142,7 +177,7 @@ export default function EmployerPost() {
         id="addPostModal"
         tabIndex={-1}
         aria-labelledby="modalTitle"
-        aria-hidden="true"
+        // aria-hidden="true"
       >
         <div className="modal-dialog modal-lg">
           <div className="modal-content">
@@ -169,6 +204,7 @@ export default function EmployerPost() {
                       className="form-control"
                       id="postTitle"
                       placeholder="Nhập tiêu đề bài đăng"
+                      value={newPost.title}
                       onChange={(e) =>
                         setNewPost({ ...newPost, title: e.target.value })
                       }
@@ -183,6 +219,7 @@ export default function EmployerPost() {
                     <select
                       className="form-select"
                       id="field"
+                      value={newPost.industry}
                       onChange={(e) =>
                         setNewPost({ ...newPost, industry: e.target.value })
                       }
@@ -204,6 +241,7 @@ export default function EmployerPost() {
                     <select
                       className="form-select"
                       id="field"
+                      value={newPost.job_function}
                       onChange={(e) =>
                         setNewPost({ ...newPost, job_function: e.target.value })
                       }
@@ -230,6 +268,7 @@ export default function EmployerPost() {
                       className="form-control me-2"
                       placeholder="1"
                       min={1}
+                      value={newPost.quantity}
                       onChange={(e) =>
                         setNewPost({ ...newPost, quantity: e.target.value })
                       }
@@ -244,6 +283,7 @@ export default function EmployerPost() {
                         placeholder="Từ"
                         step={1000000}
                         min={1000000}
+                        value={newPost.salary_min}
                         onChange={(e) =>
                           setNewPost({ ...newPost, salary_min: e.target.value })
                         }
@@ -254,6 +294,7 @@ export default function EmployerPost() {
                         placeholder="Đến"
                         step={1000000}
                         min={1000000}
+                        value={newPost.salary_max}
                         onChange={(e) =>
                           setNewPost({ ...newPost, salary_max: e.target.value })
                         }
@@ -271,6 +312,7 @@ export default function EmployerPost() {
                     id="benefits"
                     rows={3}
                     placeholder="Nhập mô tả công việc"
+                    value={newPost.describle}
                     onChange={(e) =>
                       setNewPost({ ...newPost, describle: e.target.value })
                     }
@@ -291,6 +333,7 @@ export default function EmployerPost() {
                       placeholder="Năm kinh nghiệm"
                       step={1}
                       min={0}
+                      value={newPost.require_experience}
                       onChange={(e) =>
                         setNewPost({
                           ...newPost,
@@ -306,6 +349,7 @@ export default function EmployerPost() {
                     <select
                       className="form-select"
                       id="field"
+                      value={newPost.education_at_least}
                       onChange={(e) =>
                         setNewPost({
                           ...newPost,
@@ -453,6 +497,7 @@ export default function EmployerPost() {
                         className="form-control me-2"
                         placeholder="Từ"
                         min={18}
+                        value={newPost.require_age_min}
                         onChange={(e) =>
                           setNewPost({
                             ...newPost,
@@ -465,6 +510,7 @@ export default function EmployerPost() {
                         className="form-control"
                         placeholder="Đến"
                         min={18}
+                        value={newPost.require_age_max}
                         onChange={(e) =>
                           setNewPost({
                             ...newPost,
@@ -481,6 +527,7 @@ export default function EmployerPost() {
                     <select
                       className="form-select"
                       id="field"
+                      selected={newPost.require_gender}
                       onChange={(e) =>
                         setNewPost({
                           ...newPost,
@@ -505,6 +552,7 @@ export default function EmployerPost() {
                     <select
                       className="form-select"
                       id="field"
+                      selected={newPost.require_martial_status}
                       onChange={(e) =>
                         setNewPost({
                           ...newPost,
@@ -526,6 +574,7 @@ export default function EmployerPost() {
                     <select
                       className="form-select"
                       id="field"
+                      selected={newPost.working_type}
                       onChange={(e) =>
                         setNewPost({ ...newPost, working_type: e.target.value })
                       }
@@ -549,6 +598,7 @@ export default function EmployerPost() {
                       className="form-control"
                       id="postTitle"
                       placeholder="Nhập thời gian làm việc"
+                      value={newPost.working_time}
                       onChange={(e) =>
                         setNewPost({ ...newPost, working_time: e.target.value })
                       }
@@ -563,6 +613,7 @@ export default function EmployerPost() {
                   <select
                     className="form-select"
                     id="field"
+                    selected={newPost.work_location}
                     onChange={(e) =>
                       setNewPost({ ...newPost, work_location: e.target.value })
                     }
@@ -585,6 +636,7 @@ export default function EmployerPost() {
                       className="form-control"
                       id="postTitle"
                       placeholder="Nhập Địa điểm làm việc"
+                      value={newPost.address}
                       onChange={(e) =>
                         setNewPost({ ...newPost, address: e.target.value })
                       }
@@ -602,6 +654,7 @@ export default function EmployerPost() {
                       className="form-control"
                       id="postTitle"
                       placeholder="Nhập yêu cầu khác"
+                      value={newPost.more_requirement}
                       onChange={(e) =>
                         setNewPost({
                           ...newPost,
@@ -692,6 +745,7 @@ export default function EmployerPost() {
           className="btn btn-success float-end me-3 my-2"
           data-bs-toggle="modal"
           data-bs-target="#addPostModal"
+          onClick={() => setIsAddPost(true)}
         >
           + Đăng tin tuyển dụng
         </button>
@@ -720,7 +774,31 @@ export default function EmployerPost() {
                   <td>{post.working_type}</td>
                   <td>{post.quantity}</td>
                   <td>{new Date(post.date_post).toLocaleDateString()}</td>
-                  <td>
+                  <td
+                    data-bs-toggle="modal"
+                    data-bs-target="#addPostModal"
+                    onClick={() => {
+                      setNewPost({
+                        ...newPost,
+                        job_id: post.job_id,
+                        title: post.title,
+                        industry: post.industry,
+                        job_function: post.job_function,
+                        quantity: post.quantity,
+                        salary_min: post.salary_min,
+                        salary_max: post.salary_max,
+                        describle: post.describle,
+                        require_experience: post.require_experience,
+                        // require_skill: post.require_skill,
+                        // require_language: post.require_language,
+                        require_age_min: post.require_age_min,
+                        require_age_max: post.require_age_max,
+                        address: post.address,
+                        work_location: post.work_location,
+                      });
+                      setIsAddPost(false);
+                    }}
+                  >
                     <p className="text-primary">Sửa</p>
                   </td>
                   <td>
@@ -731,7 +809,9 @@ export default function EmployerPost() {
                       className="text-danger"
                       data-bs-toggle="modal"
                       data-bs-target="#confirmDeletePostModal"
-                      onClick={() => setPostID(post.job_id)}
+                      onClick={() => {
+                        setPostID(post.job_id);
+                      }}
                     >
                       Xóa
                     </p>

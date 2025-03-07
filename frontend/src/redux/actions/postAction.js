@@ -10,6 +10,7 @@ import {
   GET_POSTS_SEARCH,
   DELETE_POST_BY_USER,
   POST_NEW_WORK,
+  EDIT_POST_BY_USER,
 } from "../contants/postContants.js";
 import domain from "../../config/domain";
 import { toast } from "react-toastify";
@@ -154,15 +155,43 @@ export const postNewWork = (data1) => async (dispatch) => {
   // console.log("data", data);
   try {
     const response = await axios.post(`${domain}/company/post-job`, data);
+
     if (response.status === 200) {
       dispatch({
         type: POST_NEW_WORK,
         payload: response.data.work,
       });
       toast.success("Đăng bài thành công!");
+    } else {
+      toast.error("Đăng bài thất bại!");
     }
   } catch (error) {
-    console.error("Error posting new work:", error);
+    console.error("Đăng bài thất bại: ", error);
     toast.error("Đăng bài thất bại!");
+  }
+};
+
+export const editPostByUser = (data1) => async (dispatch) => {
+  let data = {
+    ...data1,
+    require_skill: data1.require_skill.map((skill) => skill.content),
+    require_language: data1.require_language.map((lang) => lang.language_id),
+  };
+  // console.log("data", data);
+  try {
+    const response = await axios.put(`${domain}/work/edit-job`, data);
+
+    if (response.status === 200) {
+      dispatch({
+        type: EDIT_POST_BY_USER,
+        payload: response.data.work,
+      });
+      toast.success("Sửa bài thành công!");
+    } else {
+      toast.error("Sửa bài thất bại!");
+    }
+  } catch (error) {
+    console.error("Sửa bài thất bại: ", error);
+    toast.error("Sửa bài thất bại!");
   }
 };
