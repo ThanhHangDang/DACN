@@ -34,7 +34,7 @@ const {
   getNotificationByID,
 } = require("../controllers/userControllers.js");
 
-const upload = require("../middleware/imageUpload.js");
+const { upload } = require("../middleware/imageUpload.js");
 
 const userRoutes = express.Router();
 

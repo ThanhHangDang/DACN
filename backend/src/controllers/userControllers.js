@@ -1,3 +1,4 @@
+const { uploadToS3 } = require("../middleware/imageUpload.js");
 const {
   queryGetListEmployee,
   queryGetEmployeeDetail,
@@ -13,6 +14,7 @@ const {
   queryGetJobSavedByID,
   queryGetFollowedCompanyByID,
   queryGetCompanyInformation,
+  queryUpdateJobseekerProfileImage,
   queryUpdateJobseekerProfile,
   queryUpdateExpectedJob,
   queryUpdateCareerTarget,
@@ -236,26 +238,24 @@ const getCompanyInformation = async (req, res) => {
 
 const updateJobseekerProfileImage = async (req, res) => {
   try {
+    const { id } = req.body;
     if (!req.file) {
       return res.status(400).json({ message: "Không có file ảnh." });
     }
 
-    const { id } = req.body;
-    const image = `uploads/${req.file.path}`;
-
-    console.log("image", image);
-
-    // return res.status(200).json({
-    //   message: "Cập nhật ảnh thành công",
-    //   userInfor: {
-    //     id: userId,
-    //     profileImage: imageUrl,
-    //   },
-    // });
+    const imageUrl = await uploadToS3(req.file);
+    const affectedRows = await queryUpdateJobseekerProfileImage(id, imageUrl);
+    if (affectedRows !== 0) {
+      const userInfor = await queryGetUserInformation(id);
+      return res.status(200).json({
+        userInfor,
+        message: "Cập nhật ảnh đại diện thành công.",
+      });
+    }
   } catch (err) {
     return res
       .status(500)
-      .json({ message: "Lỗi server khi cập nhật ảnh.", error });
+      .json({ message: "Lỗi server khi cập nhật ảnh.", err });
   }
 };
 

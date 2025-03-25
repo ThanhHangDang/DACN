@@ -190,19 +190,17 @@ export const getFollowEmployer = (id) => async (dispatch) => {
 };
 
 export const updateProfileImage = (id, image) => async (dispatch) => {
-  console.log("chayy");
   try {
     const formData = new FormData();
-    // formData.append("id", id); // Thêm ID vào FormData
+    formData.append("id", id); // Thêm ID vào FormData
     formData.append("image", image); // Thêm hình ảnh vào FormData
-    console.log("formData", formData);
+
     const response = await axios.post(
       `${domain}/user/update-jobseeker-profile-image`,
       formData,
+      id,
       {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { "Content-Type": "multipart/form-data" },
       }
     );
 
@@ -213,7 +211,7 @@ export const updateProfileImage = (id, image) => async (dispatch) => {
       });
       toast.success("Cập nhật ảnh đại diện thành công.");
     } else {
-      toast.error("Có lỗi khi cập nhật ảnh đại diện.");
+      toast.error("Cập nhật ảnh đại diện thất bại.");
     }
   } catch (error) {
     console.log("Có lỗi khi cập nhật ảnh đại diện: ", error);

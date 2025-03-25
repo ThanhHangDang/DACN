@@ -43,16 +43,11 @@ export default function JobSeekerProfile() {
   };
 
   const handleUpdateProfile = () => {
-    console.log(updateProfileData);
     dispatch(updateProfile(user?.user.id, updateProfileData));
   };
 
   const handleUpdateImage = () => {
-    console.log(image);
-    console.log("Tên tệp:", image.name);
-    console.log("Kích thước tệp:", image.size);
-    console.log("Loại tệp:", image.type);
-    dispatch(updateProfileImage(image));
+    dispatch(updateProfileImage(user?.user.id, image));
   };
 
   useEffect(() => {
@@ -102,6 +97,7 @@ export default function JobSeekerProfile() {
                       Chọn ảnh từ máy tính của bạn
                     </label>
                     <input
+                      accept="image/jpeg, image/png, image/gif" // Chỉ cho phép chọn ảnh
                       id="fileInput"
                       type="file"
                       onChange={(e) => {

@@ -322,6 +322,19 @@ const queryGetCompanyInformation = async (id) => {
   return finalResult;
 };
 
+const queryUpdateJobseekerProfileImage = async (id, url) => {
+  const [affectedRows] = await db.query(
+    `
+    UPDATE jobseeker
+      SET avatar = ?
+    WHERE jobseeker_id = ?;
+
+    `,
+    [url, id]
+  );
+  return affectedRows;
+};
+
 const queryUpdateJobseekerProfile = async (id, profile) => {
   const [affectedRows] = await db.query(
     `
@@ -529,6 +542,7 @@ module.exports = {
   queryGetJobSavedByID,
   queryGetJobAppliedByID,
   queryGetCompanyInformation,
+  queryUpdateJobseekerProfileImage,
   queryUpdateJobseekerProfile,
   queryUpdateExpectedJob,
   queryUpdateCareerTarget,
