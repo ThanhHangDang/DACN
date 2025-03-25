@@ -219,14 +219,6 @@ export default function WorkMangePage() {
               </div>
             </div>
 
-            {/* Trạng thái */}
-            {/* <div className="col-md-3">
-              <label className="form-label">Trạng thái</label>
-              <select className="form-select">
-                <option value="">Bất kỳ</option>
-              </select>
-            </div> */}
-
             {/* Ngày đăng */}
             <div className="col-md-3">
               <label className="form-label">Ngày đăng</label>

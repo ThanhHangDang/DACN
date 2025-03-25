@@ -9,6 +9,8 @@ import {
   GET_JOB_APPLY,
   GET_JOB_SAVE,
   GET_FOLLOW_EMPLOYER,
+  UPDATE_PROFILE_IMAGE,
+  UPDATE_PROFILE,
   UPDATE_EXPECTED_JOB,
   UPDATE_CAREER_TARGET,
   ADD_EDUCATION,
@@ -57,6 +59,10 @@ const jobseekerReducer = (state = initialState, action) => {
       return { ...state, listJobSave: action.payload };
     case GET_FOLLOW_EMPLOYER:
       return { ...state, listFollowEmployer: action.payload };
+    case UPDATE_PROFILE_IMAGE:
+      return { ...state, userInformation: action.payload };
+    case UPDATE_PROFILE:
+      return { ...state, userInformation: action.payload };
     case UPDATE_EXPECTED_JOB:
       return { ...state, userInformation: action.payload };
     case UPDATE_CAREER_TARGET:

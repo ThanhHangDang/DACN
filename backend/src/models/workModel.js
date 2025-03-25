@@ -89,7 +89,6 @@ LIMIT 1;
     `,
     [workId]
   );
-  console.log(work);
   return work;
 };
 
@@ -228,7 +227,6 @@ const queryGetWorkBySearch = async (filter) => {
   }
   query +=
     ") as table1 JOIN company on table1.employer_id = company.company_id) as table2 join catalog_city on table2.work_location = catalog_city.city_id;";
-  console.log(query);
   const [result] = await db.query(query, values);
 
   return result;

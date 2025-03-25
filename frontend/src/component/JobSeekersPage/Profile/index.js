@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   getUserInformationByID,
   updateExpectedJob,
+  updateProfile,
+  updateProfileImage,
 } from "../../../redux/actions/jobseekerAction.js";
 import { getCategoryCity } from "../../../redux/actions/categoryAction.js";
 
@@ -22,10 +24,35 @@ export default function JobSeekerProfile() {
     salary: "",
   });
 
+  const [updateProfileData, setUpdateProfileData] = useState({
+    full_name: userInformation?.full_name || "",
+    title: userInformation?.title || "",
+    year_exp: userInformation?.year_exp || "",
+    situations: userInformation?.situations || "",
+    email: userInformation?.email || "",
+    phone_number: userInformation?.phone_number || "",
+    address: userInformation?.address || "",
+  });
+
+  const [image, setImage] = useState(null);
+
   const navigate = useNavigate();
 
   const handleUpdateExpectedJob = () => {
     dispatch(updateExpectedJob(user?.user.id, expectedJob));
+  };
+
+  const handleUpdateProfile = () => {
+    console.log(updateProfileData);
+    dispatch(updateProfile(user?.user.id, updateProfileData));
+  };
+
+  const handleUpdateImage = () => {
+    console.log(image);
+    console.log("Tên tệp:", image.name);
+    console.log("Kích thước tệp:", image.size);
+    console.log("Loại tệp:", image.type);
+    dispatch(updateProfileImage(image));
   };
 
   useEffect(() => {
@@ -47,6 +74,243 @@ export default function JobSeekerProfile() {
 
   return (
     <div>
+      {/* Modal cập nhật ảnh đại diện */}
+      <div
+        className="modal fade"
+        id="updateImage"
+        tabIndex={-1}
+        aria-labelledby="modalTitle"
+      >
+        <div className="modal-dialog modal-lg">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="modalTitle">
+                Cập nhật ảnh đại diện
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              />
+            </div>
+            <div className="modal-body">
+              <form>
+                <div className="mb-3 d-flex justify-content-center">
+                  <div className="col-md-6">
+                    <label htmlFor="fileInput" className="form-label">
+                      Chọn ảnh từ máy tính của bạn
+                    </label>
+                    <input
+                      id="fileInput"
+                      type="file"
+                      onChange={(e) => {
+                        setImage(e.target.files[0]);
+                      }}
+                    />
+                    {/* <i class="bi bi-upload"></i> */}
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Hủy
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleUpdateImage}
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              >
+                Cập nhật
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* End modal cập nhật ảnh đại diện */}
+
+      {/* Modal cập nhật thông tin cơ bản */}
+      <div
+        className="modal fade"
+        id="updateProfile"
+        tabIndex={-1}
+        aria-labelledby="modalTitle"
+      >
+        <div className="modal-dialog modal-lg">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="modalTitle">
+                Cập nhật thông tin
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              />
+            </div>
+            <div className="modal-body">
+              <form>
+                <div className="row mb-3">
+                  <div className="col-md-6">
+                    <label htmlFor="fullname" className="form-label">
+                      Họ và tên
+                    </label>
+                    <input
+                      type="text"
+                      id="fullname"
+                      placeholder="Họ và tên"
+                      className="form-control"
+                      value={updateProfileData.full_name}
+                      onChange={(e) => {
+                        setUpdateProfileData({
+                          ...updateProfileData,
+                          full_name: e.target.value,
+                        });
+                      }}
+                    />
+                  </div>
+
+                  <div className="col-md-6">
+                    <label htmlFor="title" className="form-label">
+                      Chức vụ
+                    </label>
+                    <input
+                      type="text"
+                      id="title"
+                      placeholder="Chức vụ"
+                      className="form-control"
+                      value={updateProfileData.title}
+                      onChange={(e) => {
+                        setUpdateProfileData({
+                          ...updateProfileData,
+                          title: e.target.value,
+                        });
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className="row mb-3">
+                  <div className="col-md-6">
+                    <label htmlFor="expr" className="form-label">
+                      Kinh nghiệm
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      className="form-control"
+                      id="expr"
+                      placeholder="Nhập mức lương mong muốn"
+                      value={updateProfileData.year_exp}
+                      onChange={(e) =>
+                        setUpdateProfileData({
+                          ...updateProfileData,
+                          year_exp: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+
+                  <div className="col-md-6">
+                    <label htmlFor="study" className="form-label">
+                      Học vấn
+                    </label>
+                    <select id="study" className="form-select"></select>
+                  </div>
+                </div>
+
+                <div className="row mb-3">
+                  <div className="col-md-6">
+                    <label htmlFor="email" className="form-label">
+                      Email
+                    </label>
+                    <input
+                      type="text"
+                      id="email"
+                      placeholder="Email"
+                      className="form-control"
+                      value={updateProfileData.email}
+                      onChange={(e) => {
+                        setUpdateProfileData({
+                          ...updateProfileData,
+                          email: e.target.value,
+                        });
+                      }}
+                    />
+                  </div>
+
+                  <div className="col-md-6">
+                    <label htmlFor="phoneNumber" className="form-label">
+                      Số điện thoại
+                    </label>
+                    <input
+                      type="text"
+                      id="phoneNumber"
+                      placeholder="Số điện thoại"
+                      className="form-control"
+                      value={updateProfileData.phone_number}
+                      onChange={(e) => {
+                        setUpdateProfileData({
+                          ...updateProfileData,
+                          phone_number: e.target.value,
+                        });
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div className="">
+                  <label htmlFor="address" className="form-label">
+                    Địa chỉ liên lạc
+                  </label>
+                  <input
+                    type="text"
+                    id="address"
+                    placeholder="Địa chỉ liên lạc"
+                    className="form-control"
+                    value={updateProfileData.address}
+                    onChange={(e) => {
+                      setUpdateProfileData({
+                        ...updateProfileData,
+                        address: e.target.value,
+                      });
+                    }}
+                  />
+                </div>
+              </form>
+            </div>
+
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Hủy
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleUpdateProfile}
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              >
+                Cập nhật
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* End cập nhật hồ sơ */}
+
       {/* Modal công việc mong muốn */}
       <div
         className="modal fade"
@@ -162,7 +426,11 @@ export default function JobSeekerProfile() {
         <div className="row d-flex ">
           <div className="d-flex justify-content-between">
             <h3>Thông tin cơ bản</h3>
-            <i class="bi bi-pencil-square text-primary custom-hover"></i>
+            <i
+              class="bi bi-pencil-square text-primary custom-hover"
+              data-bs-toggle="modal"
+              data-bs-target="#updateProfile"
+            ></i>
           </div>
 
           <div className="col-md-2 col-sm-0 text-center d-flex justify-content-center">
@@ -172,7 +440,11 @@ export default function JobSeekerProfile() {
               style={{ height: 120, width: 120 }}
               className="rounded-2 img-fluid"
             />
-            <i class="bi bi-pencil-square text-primary custom-hover"></i>
+            <i
+              class="bi bi-pencil-square text-primary custom-hover"
+              data-bs-toggle="modal"
+              data-bs-target="#updateImage"
+            ></i>
           </div>
           <div className="col-8">
             <h3>{userInformation.full_name}</h3>

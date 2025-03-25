@@ -13,6 +13,7 @@ const {
   queryGetJobSavedByID,
   queryGetFollowedCompanyByID,
   queryGetCompanyInformation,
+  queryUpdateJobseekerProfile,
   queryUpdateExpectedJob,
   queryUpdateCareerTarget,
   queryAddExperience,
@@ -40,7 +41,7 @@ const getListEmployee = async (req, res) => {
       return res.status(200).json({ listEmployee: [] });
     }
   } catch (err) {
-    console.error("Có lỗi khi lấy danh sách nhân viên:", err);
+    console.log("Có lỗi khi lấy danh sách nhân viên:", err);
     res.status(500).json({ message: "Có lỗi khi lấy danh sách nhân viên." });
   }
 };
@@ -53,7 +54,7 @@ const getEmployeeDetail = async (req, res) => {
       return res.status(200).json({ employeeDetail });
     }
   } catch (err) {
-    console.error("Có lỗi khi lấy thông tin nhân viên:", err);
+    console.log("Có lỗi khi lấy thông tin nhân viên:", err);
     res.status(500).json({ message: "Có lỗi khi lấy thông tin nhân viên." });
   }
 };
@@ -66,107 +67,94 @@ const getUserInformation = async (req, res) => {
       return res.status(200).json({ userInfor });
     }
   } catch (err) {
-    console.error("Có lỗi khi lấy thông tin user:", err);
+    console.log("Có lỗi khi lấy thông tin user:", err);
     res.status(500).json({ message: "Có lỗi khi lấy thông tin user." });
   }
 };
 
 const getExperienceByID = async (req, res) => {
   const id = req.query.id;
-  console.log(id);
   try {
     const experience = await queryGetExperienceByID(id);
     if (experience) {
-      console.log(experience);
       return res.status(200).json({ experience });
     }
   } catch (err) {
-    console.error("Có lỗi khi lấy thông tin kinh nghiệm:", err);
+    console.log("Có lỗi khi lấy thông tin kinh nghiệm:", err);
     res.status(500).json({ message: "Có lỗi khi lấy thông tin kinh nghiệm." });
   }
 };
 
 const getEducationByID = async (req, res) => {
   const id = req.query.id;
-  console.log(id);
   try {
     const education = await queryGetEducationByID(id);
     if (education) {
-      console.log(education);
       return res.status(200).json({ education });
     }
   } catch (err) {
-    console.error("Có lỗi khi lấy thông tin học vấn:", err);
+    console.log("Có lỗi khi lấy thông tin học vấn:", err);
     res.status(500).json({ message: "Có lỗi khi lấy thông tin học vấn." });
   }
 };
 
 const getProjectByID = async (req, res) => {
   const id = req.query.id;
-  console.log(id);
   try {
     const project = await queryGetProjectByID(id);
     if (project) {
-      console.log(project);
       return res.status(200).json({ project });
     }
   } catch (err) {
-    console.error("Có lỗi khi lấy thông tin dự án:", err);
+    console.log("Có lỗi khi lấy thông tin dự án:", err);
     res.status(500).json({ message: "Có lỗi khi lấy thông tin dự án." });
   }
 };
 
 const getSkillByID = async (req, res) => {
   const id = req.query.id;
-  console.log(id);
   try {
     const skill = await queryGetSkillByID(id);
     if (skill) {
-      console.log(skill);
       return res.status(200).json({ skill });
     }
   } catch (err) {
-    console.error("Có lỗi khi lấy thông tin kỹ năng:", err);
+    console.log("Có lỗi khi lấy thông tin kỹ năng:", err);
     res.status(500).json({ message: "Có lỗi khi lấy thông tin kỹ năng." });
   }
 };
 
 const getLanguageByID = async (req, res) => {
   const id = req.query.id;
-  console.log(id);
   try {
     const language = await queryGetLanguageByID(id);
     if (language) {
-      console.log(language);
       return res.status(200).json({ language });
     }
   } catch (err) {
-    console.error("Có lỗi khi lấy thông tin ngôn ngữ:", err);
+    console.log("Có lỗi khi lấy thông tin ngôn ngữ:", err);
     res.status(500).json({ message: "Có lỗi khi lấy thông tin ngôn ngữ." });
   }
 };
 
 const getCertificateByID = async (req, res) => {
   const id = req.query.id;
-  console.log(id);
   try {
     const certificate = await queryGetCertificateByID(id);
     if (certificate) {
-      console.log(certificate);
       return res.status(200).json({ certificate });
     }
   } catch (err) {
-    console.error("Có lỗi khi lấy thông tin chứng chỉ:", err);
+    console.log("Có lỗi khi lấy thông tin chứng chỉ:", err);
     res.status(500).json({ message: "Có lỗi khi lấy thông tin chứng chỉ." });
   }
 };
 
 const getJobAppliedByID = async (req, res) => {
   const id = req.query.id;
-  console.log(id);
+
   try {
     const jobApplied = await queryGetJobAppliedByID(id);
-    console.log(jobApplied);
     if (jobApplied) {
       const jobPromises = jobApplied.map(async (element) => {
         return await queryGetWorkDetail(element.job_id);
@@ -177,7 +165,7 @@ const getJobAppliedByID = async (req, res) => {
       return res.status(200).json({ jobApplied: [] });
     }
   } catch (err) {
-    console.error("Có lỗi khi lấy thông tin công việc đã ứng tuyển:", err);
+    console.log("Có lỗi khi lấy thông tin công việc đã ứng tuyển:", err);
     res
       .status(500)
       .json({ message: "Có lỗi khi lấy thông tin công việc đã ứng tuyển." });
@@ -198,7 +186,7 @@ const getJobSavedByID = async (req, res) => {
       return res.status(200).json({ jobSaved: [] });
     }
   } catch (err) {
-    console.error("Có lỗi khi lấy thông tin công việc đã lưu:", err);
+    console.log("Có lỗi khi lấy thông tin công việc đã lưu:", err);
     res
       .status(500)
       .json({ message: "Có lỗi khi lấy thông tin công việc đã lưu." });
@@ -218,14 +206,13 @@ const getFollowedCompanyByID = async (req, res) => {
 
       // Wait for all promises to resolve
       const array_company = await Promise.all(companyPromises);
-      console.log(array_company); // This will now log the populated array
       return res.status(200).json({ companySaved: array_company });
     } else {
       // Handle case where there are no saved companies
       return res.status(200).json({ companySaved: [] });
     }
   } catch (err) {
-    console.error("Có lỗi khi lấy thông tin công ty đã theo dõi:", err);
+    console.log("Có lỗi khi lấy thông tin công ty đã theo dõi:", err);
     res
       .status(500)
       .json({ message: "Có lỗi khi lấy thông tin công ty đã theo dõi." });
@@ -237,21 +224,44 @@ const getCompanyInformation = async (req, res) => {
     const id = req.query.id;
     const companyInfor = await queryGetCompanyInformation(id);
     if (companyInfor) {
-      console.log(companyInfor);
       return res.status(200).json({ companyInfor });
     } else {
       return res.status(200).json({ companyInfor: {} });
     }
   } catch (err) {
-    console.error("Có lỗi khi lấy thông tin công ty:", err);
+    console.log("Có lỗi khi lấy thông tin công ty:", err);
     res.status(500).json({ message: "Có lỗi khi lấy thông tin công ty." });
+  }
+};
+
+const updateJobseekerProfileImage = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "Không có file ảnh." });
+    }
+
+    const { id } = req.body;
+    const image = `uploads/${req.file.path}`;
+
+    console.log("image", image);
+
+    // return res.status(200).json({
+    //   message: "Cập nhật ảnh thành công",
+    //   userInfor: {
+    //     id: userId,
+    //     profileImage: imageUrl,
+    //   },
+    // });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Lỗi server khi cập nhật ảnh.", error });
   }
 };
 
 const updateExpectedJob = async (req, res) => {
   try {
     const { id, expectedJob } = req.body;
-    console.log(id, expectedJob);
     const affectedRows = await queryUpdateExpectedJob(id, expectedJob);
     if (affectedRows) {
       const userInfor = await queryGetUserInformation(id);
@@ -263,6 +273,23 @@ const updateExpectedJob = async (req, res) => {
   } catch (err) {
     console.error("Có lỗi khi thêm công việc mong muốn:", err);
     res.status(500).json({ message: "Có lỗi khi thêm công việc mong muốn." });
+  }
+};
+
+const updateJobseekerProfile = async (req, res) => {
+  try {
+    const { id, profile } = req.body;
+    const affectedRows = await queryUpdateJobseekerProfile(id, profile);
+    if (affectedRows) {
+      const userInfor = await queryGetUserInformation(id);
+      return res.status(200).json({
+        userInfor,
+        message: "Cập nhật hồ sơ thành công.",
+      });
+    }
+  } catch (err) {
+    console.error("Có lỗi khi cập nhật hồ sơ:", err);
+    res.status(500).json({ message: "Có lỗi khi khi cập nhật hồ sơ." });
   }
 };
 
@@ -288,7 +315,6 @@ const updateCareerTarget = async (req, res) => {
 const addExperience = async (req, res) => {
   try {
     const { id, experience } = req.body;
-    console.log(req.body);
     const affectedRows = await queryAddExperience(id, experience);
     if (affectedRows) {
       const experience = await queryGetExperienceByID(id);
@@ -337,7 +363,6 @@ const addProject = async (req, res) => {
 const deleteExperience = async (req, res) => {
   try {
     const { id, id_delete } = req.query;
-    console.log("dasdasdsadasdsadsad", req.query);
     const affectedRows = await queryDeleteExperience(id, id_delete);
     if (affectedRows) {
       const experience = await queryGetExperienceByID(id);
@@ -436,7 +461,6 @@ const getNotificationByID = async (req, res) => {
   try {
     const notification = await queryGetNotificationByID(id);
     if (notification) {
-      console.log(notification);
       return res.status(200).json({ notification });
     }
   } catch (err) {
@@ -461,6 +485,8 @@ module.exports = {
   getFollowedCompanyByID,
   getCompanyInformation,
 
+  updateJobseekerProfileImage,
+  updateJobseekerProfile,
   updateExpectedJob,
   updateCareerTarget,
   addExperience,

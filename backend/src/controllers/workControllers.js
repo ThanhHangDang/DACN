@@ -64,12 +64,10 @@ const getWorkByUser = async (req, res) => {
 
 const getWorkBySearch = async (req, res) => {
   const data = req.query;
-  console.log("data", data);
   try {
     const work = await queryGetWorkBySearch(data);
 
     if (work) {
-      console.log("work", work);
       return res.status(200).json({ work });
     }
   } catch (error) {
@@ -80,8 +78,6 @@ const getWorkBySearch = async (req, res) => {
 
 const deleteWorkByUser = async (req, res) => {
   const { postID, id } = req.query;
-  console.log("postId", postID);
-  console.log("id", id);
   try {
     const work = await queryDeleteWorkByUser(id, postID);
     if (work) {

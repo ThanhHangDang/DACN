@@ -84,39 +84,39 @@ const queryGetUserInformation = async (id) => {
   const [userInfor] = await db.query(
     `
     SELECT 
-    js.*,
-    u.username,
-    u.email,
-    u.phone_number,
-    u.create_date,
-    r.role_name,
-    p.full_name,
-    p.title,
-    p.career_target,
-    p.salary_expect,
-    p.year_exp,
-    p.gender,
-    p.birthday,
-    p.marital_status,
-    p.address,
-    p.district_id,
-    p.nationality,
-    p.percent_complete,
-    p.last_modify_date,
-    c.city_name,
-    c.city_id
-FROM 
-    jobseeker js
-JOIN 
-    user_ u ON js.jobseeker_id = u.user_id
-JOIN 
-    catalog_role r ON u.role_id = r.role_id
-JOIN 
-    profile_jobseeker p ON js.jobseeker_id = p.profile_id
-LEFT JOIN 
-    catalog_city c ON p.work_place = c.city_id
-WHERE 
-    u.user_id = ?;
+      js.*,
+      u.username,
+      u.email,
+      u.phone_number,
+      u.create_date,
+      r.role_name,
+      p.full_name,
+      p.title,
+      p.career_target,
+      p.salary_expect,
+      p.year_exp,
+      p.gender,
+      p.birthday,
+      p.marital_status,
+      p.address,
+      p.district_id,
+      p.nationality,
+      p.percent_complete,
+      p.last_modify_date,
+      c.city_name,
+      c.city_id
+    FROM 
+      jobseeker js
+    JOIN 
+      user_ u ON js.jobseeker_id = u.user_id
+    JOIN 
+      catalog_role r ON u.role_id = r.role_id
+    JOIN 
+      profile_jobseeker p ON js.jobseeker_id = p.profile_id
+    LEFT JOIN 
+      catalog_city c ON p.work_place = c.city_id
+    WHERE 
+      u.user_id = ?;
     `,
     [id]
   );
@@ -127,17 +127,17 @@ const queryGetExperienceByID = async (id) => {
   const [experience] = await db.query(
     `
     SELECT 
-    exp.*
-FROM 
-    jobseeker js
-JOIN 
-    user_ u ON js.jobseeker_id = u.user_id
-JOIN 
-    profile_jobseeker p ON js.jobseeker_id = p.profile_id
-LEFT JOIN 
-    profile_experience exp ON p.profile_id = exp.profile_id
-WHERE 
-    u.user_id = ?;
+      exp.*
+    FROM 
+      jobseeker js
+    JOIN 
+      user_ u ON js.jobseeker_id = u.user_id
+    JOIN 
+      profile_jobseeker p ON js.jobseeker_id = p.profile_id
+    LEFT JOIN 
+      profile_experience exp ON p.profile_id = exp.profile_id
+    WHERE 
+      u.user_id = ?;
     `,
     [id]
   );
@@ -148,20 +148,20 @@ const queryGetEducationByID = async (id) => {
   const [education] = await db.query(
     `
     SELECT 
-    edu.*,
-    c.education_title
-FROM
-    jobseeker js
-JOIN
-    user_ u ON js.jobseeker_id = u.user_id
-JOIN
-    profile_jobseeker p ON js.jobseeker_id = p.profile_id
-LEFT JOIN
-    profile_education edu ON p.profile_id = edu.profile_id
-JOIN 
-    catalog_education c ON c.education_id = edu.education_id
-WHERE
-    u.user_id = ?;
+      edu.*,
+      c.education_title
+    FROM
+      jobseeker js
+    JOIN
+      user_ u ON js.jobseeker_id = u.user_id
+    JOIN
+      profile_jobseeker p ON js.jobseeker_id = p.profile_id
+    LEFT JOIN
+      profile_education edu ON p.profile_id = edu.profile_id
+    JOIN 
+      catalog_education c ON c.education_id = edu.education_id
+    WHERE
+      u.user_id = ?;
     `,
     [id]
   );
@@ -172,17 +172,17 @@ const queryGetProjectByID = async (id) => {
   const [project] = await db.query(
     `
     SELECT 
-    pro.*
-FROM
-    jobseeker js
-JOIN
-    user_ u ON js.jobseeker_id = u.user_id
-JOIN
-    profile_jobseeker p ON js.jobseeker_id = p.profile_id
-LEFT JOIN
-    profile_project pro ON p.profile_id = pro.profile_id
-WHERE
-    u.user_id = ?;
+      pro.*
+    FROM
+      jobseeker js
+    JOIN
+      user_ u ON js.jobseeker_id = u.user_id
+    JOIN
+      profile_jobseeker p ON js.jobseeker_id = p.profile_id
+    LEFT JOIN
+      profile_project pro ON p.profile_id = pro.profile_id
+    WHERE
+      u.user_id = ?;
     `,
     [id]
   );
@@ -193,17 +193,17 @@ const queryGetSkillByID = async (id) => {
   const [skill] = await db.query(
     `
     SELECT 
-    sk.* 
-FROM
-    jobseeker js
-JOIN
-    user_ u ON js.jobseeker_id = u.user_id
-JOIN
-    profile_jobseeker p ON js.jobseeker_id = p.profile_id
-LEFT JOIN
-    profile_skill sk ON p.profile_id = sk.profile_id
-WHERE
-    u.user_id = ?;
+      sk.* 
+    FROM
+      jobseeker js
+    JOIN
+      user_ u ON js.jobseeker_id = u.user_id
+    JOIN
+      profile_jobseeker p ON js.jobseeker_id = p.profile_id
+    LEFT JOIN
+      profile_skill sk ON p.profile_id = sk.profile_id
+    WHERE
+      u.user_id = ?;
     `,
     [id]
   );
@@ -235,17 +235,17 @@ const queryGetCertificateByID = async (id) => {
   const [certificate] = await db.query(
     `
     SELECT 
-    cer.*
-FROM
-    jobseeker js
-JOIN
-    user_ u ON js.jobseeker_id = u.user_id
-JOIN
-    profile_jobseeker p ON js.jobseeker_id = p.profile_id
-LEFT JOIN
-    profile_certification cer ON p.profile_id = cer.profile_id
-WHERE
-    u.user_id = ?;
+      cer.*
+    FROM
+      jobseeker js
+    JOIN
+      user_ u ON js.jobseeker_id = u.user_id
+    JOIN
+      profile_jobseeker p ON js.jobseeker_id = p.profile_id
+    LEFT JOIN
+      profile_certification cer ON p.profile_id = cer.profile_id
+    WHERE
+      u.user_id = ?;
     `,
     [id]
   );
@@ -256,15 +256,15 @@ const queryGetJobAppliedByID = async (id) => {
   const [jobApplied] = await db.query(
     `
     SELECT 
-    ja.*
-FROM
-    jobseeker js
-JOIN
-    user_ u ON js.jobseeker_id = u.user_id
-JOIN
-    jobseeker_apply_job ja ON u.user_id = ja.jobseeker_id
-WHERE
-    u.user_id = ?;
+      ja.*
+    FROM
+      jobseeker js
+    JOIN
+      user_ u ON js.jobseeker_id = u.user_id
+    JOIN
+      jobseeker_apply_job ja ON u.user_id = ja.jobseeker_id
+    WHERE
+      u.user_id = ?;
     `,
     [id]
   );
@@ -275,15 +275,15 @@ const queryGetJobSavedByID = async (id) => {
   const [jobSaved] = await db.query(
     `
     SELECT 
-    jsj.*
-FROM
-    jobseeker js
-JOIN
-    user_ u ON js.jobseeker_id = u.user_id
-JOIN
-    jobseeker_save_job jsj ON u.user_id = jsj.jobseeker_id
-WHERE
-    u.user_id = ?;
+      jsj.*
+    FROM
+      jobseeker js
+    JOIN
+      user_ u ON js.jobseeker_id = u.user_id
+    JOIN
+      jobseeker_save_job jsj ON u.user_id = jsj.jobseeker_id
+    WHERE
+      u.user_id = ?;
     `,
     [id]
   );
@@ -291,18 +291,16 @@ WHERE
 };
 
 const queryGetFollowedCompanyByID = async (id) => {
-  console.log(id);
   const [followedCompany] = await db.query(
     `
     SELECT employer_id 
-FROM
-    jobseeker_follow_employer 
-WHERE
-    jobseeker_id = ?;
+    FROM
+      jobseeker_follow_employer 
+    WHERE
+      jobseeker_id = ?;
     `,
     [id]
   );
-  console.log(followedCompany);
   return followedCompany;
 };
 
@@ -313,15 +311,45 @@ const queryGetCompanyInformation = async (id) => {
   );
   const [result2] = await db.query(
     `
-                    SELECT DISTINCT catalog_benefit.benefit_name
-                    FROM company_benifit 
-                    JOIN catalog_benefit ON catalog_benefit.benefit_id = company_benifit.benefit_id
-                    WHERE company_benifit.company_id = ?
-                `,
+      SELECT DISTINCT catalog_benefit.benefit_name
+      FROM company_benifit 
+      JOIN catalog_benefit ON catalog_benefit.benefit_id = company_benifit.benefit_id
+      WHERE company_benifit.company_id = ?
+    `,
     [id]
   );
   const finalResult = { ...result[0], company_benefits: result2 };
   return finalResult;
+};
+
+const queryUpdateJobseekerProfile = async (id, profile) => {
+  const [affectedRows] = await db.query(
+    `
+    UPDATE 
+      user_ u
+    JOIN 
+      profile_jobseeker p ON u.user_id = p.profile_id
+    SET 
+      p.full_name = ?,
+      u.email = ?,
+      u.phone_number = ?,
+      p.title = ?,
+      p.address = ?,
+      p.year_exp = ?
+    WHERE 
+      u.user_id = ?;  -- Replace with the actual user ID
+    `,
+    [
+      profile.full_name,
+      profile.email,
+      profile.phone_number,
+      profile.title,
+      profile.address,
+      profile.year_exp,
+      id,
+    ]
+  );
+  return affectedRows;
 };
 
 const queryUpdateExpectedJob = async (id, job) => {
@@ -368,7 +396,6 @@ const queryAddExperience = async (id, experience) => {
       experience.description,
     ]
   );
-  console.log(affectedRows);
   return affectedRows;
 };
 
@@ -387,7 +414,6 @@ const queryAddEducation = async (id, education) => {
       education.endYear,
     ]
   );
-  console.log(affectedRows);
   return affectedRows;
 };
 
@@ -503,6 +529,7 @@ module.exports = {
   queryGetJobSavedByID,
   queryGetJobAppliedByID,
   queryGetCompanyInformation,
+  queryUpdateJobseekerProfile,
   queryUpdateExpectedJob,
   queryUpdateCareerTarget,
   queryAddExperience,

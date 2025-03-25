@@ -15,6 +15,9 @@ const {
   getJobSavedByID,
   getFollowedCompanyByID,
   getCompanyInformation,
+
+  updateJobseekerProfileImage,
+  updateJobseekerProfile,
   updateExpectedJob,
   updateCareerTarget,
   addExperience,
@@ -30,6 +33,8 @@ const {
 
   getNotificationByID,
 } = require("../controllers/userControllers.js");
+
+const upload = require("../middleware/imageUpload.js");
 
 const userRoutes = express.Router();
 
@@ -49,6 +54,12 @@ userRoutes.get("/get-followed-company", getFollowedCompanyByID);
 
 userRoutes.get("/get-employer-information", getCompanyInformation);
 
+userRoutes.post(
+  "/update-jobseeker-profile-image",
+  upload.single("image"),
+  updateJobseekerProfileImage
+);
+userRoutes.post("/update-jobseeker-profile", updateJobseekerProfile);
 userRoutes.post("/update-expected-job", updateExpectedJob);
 userRoutes.post("/update-career-target", updateCareerTarget);
 userRoutes.post("/add-experience", addExperience);

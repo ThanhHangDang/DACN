@@ -13,6 +13,8 @@ import {
   GET_JOB_APPLY,
   GET_JOB_SAVE,
   GET_FOLLOW_EMPLOYER,
+  UPDATE_PROFILE_IMAGE,
+  UPDATE_PROFILE,
   UPDATE_EXPECTED_JOB,
   UPDATE_CAREER_TARGET,
   ADD_EDUCATION,
@@ -49,7 +51,6 @@ export const getListExp = (id) => async (dispatch) => {
       params: { id: id },
     });
     if (response.status === 200) {
-      // console.log("List experience:", response.data);
       dispatch({
         type: GET_LIST_EXP,
         payload: response.data.experience,
@@ -66,7 +67,6 @@ export const getListEducation = (id) => async (dispatch) => {
       params: { id: id },
     });
     if (response.status === 200) {
-      // console.log("List education:", response.data);
       dispatch({
         type: GET_LIST_EDUCATION,
         payload: response.data.education,
@@ -83,7 +83,6 @@ export const getListProject = (id) => async (dispatch) => {
       params: { id: id },
     });
     if (response.status === 200) {
-      // console.log("List project:", response.data);
       dispatch({
         type: GET_LIST_PROJECT,
         payload: response.data.project,
@@ -100,7 +99,6 @@ export const getListSkill = (id) => async (dispatch) => {
       params: { id: id },
     });
     if (response.status === 200) {
-      // console.log("List skill:", response.data);
       dispatch({
         type: GET_LIST_SKILL,
         payload: response.data.skill,
@@ -117,7 +115,6 @@ export const getListLanguage = (id) => async (dispatch) => {
       params: { id: id },
     });
     if (response.status === 200) {
-      // console.log("List language:", response.data);
       dispatch({
         type: GET_LIST_LANGUAGE,
         payload: response.data.language,
@@ -134,7 +131,6 @@ export const getListCertification = (id) => async (dispatch) => {
       params: { id: id },
     });
     if (response.status === 200) {
-      // console.log("List certification:", response.data);
       dispatch({
         type: GET_LIST_CERTIFICATION,
         payload: response.data.certificate,
@@ -151,7 +147,6 @@ export const getJobApply = (id) => async (dispatch) => {
       params: { id: id },
     });
     if (response.status === 200) {
-      console.log("List job apply:", response.data);
       dispatch({
         type: GET_JOB_APPLY,
         payload: response.data.jobApplied,
@@ -168,7 +163,6 @@ export const getJobSave = (id) => async (dispatch) => {
       params: { id: id },
     });
     if (response.status === 200) {
-      // console.log("List job save:", response.data);
       dispatch({
         type: GET_JOB_SAVE,
         payload: response.data.jobSaved,
@@ -195,6 +189,62 @@ export const getFollowEmployer = (id) => async (dispatch) => {
   }
 };
 
+export const updateProfileImage = (id, image) => async (dispatch) => {
+  console.log("chayy");
+  try {
+    const formData = new FormData();
+    // formData.append("id", id); // Thêm ID vào FormData
+    formData.append("image", image); // Thêm hình ảnh vào FormData
+    console.log("formData", formData);
+    const response = await axios.post(
+      `${domain}/user/update-jobseeker-profile-image`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      dispatch({
+        type: UPDATE_PROFILE_IMAGE,
+        payload: response.data.userInfor,
+      });
+      toast.success("Cập nhật ảnh đại diện thành công.");
+    } else {
+      toast.error("Có lỗi khi cập nhật ảnh đại diện.");
+    }
+  } catch (error) {
+    console.log("Có lỗi khi cập nhật ảnh đại diện: ", error);
+    toast.error("Có lỗi khi cập nhật ảnh đại diện.");
+  }
+};
+
+export const updateProfile = (id, profile) => async (dispatch) => {
+  try {
+    const response = await axios.post(
+      `${domain}/user/update-jobseeker-profile`,
+      {
+        id: id,
+        profile: profile,
+      }
+    );
+    if (response.status === 200) {
+      dispatch({
+        type: UPDATE_PROFILE,
+        payload: response.data.userInfor,
+      });
+      toast.success("Cập nhật hồ sơ thành công.");
+    } else {
+      toast.error("Có lỗi khi cập nhật hồ sơ.");
+    }
+  } catch (error) {
+    console.log("Có lỗi khi cập nhật hồ sơ: ", error);
+    toast.error("Có lỗi khi cập nhật hồ sơ.");
+  }
+};
+
 export const updateExpectedJob = (id, expectedJob) => async (dispatch) => {
   try {
     const response = await axios.post(`${domain}/user/update-expected-job`, {
@@ -206,8 +256,9 @@ export const updateExpectedJob = (id, expectedJob) => async (dispatch) => {
         type: UPDATE_EXPECTED_JOB,
         payload: response.data.userInfor,
       });
-      console.log("Add expected job successfully");
       toast.success("Cập nhật công việc mong muốn thành công.");
+    } else {
+      toast.error("Cập nhật công việc mong muốn thất bại.");
     }
   } catch (error) {
     console.error("Error adding expected job:", error);
@@ -226,8 +277,9 @@ export const updateCareerTarget = (id, careerTarget) => async (dispatch) => {
         type: UPDATE_CAREER_TARGET,
         payload: response.data.userInfor,
       });
-      console.log("Add career target successfully");
       toast.success("Cập nhật mục tiêu nghề nghiệp thành công.");
+    } else {
+      toast.error("Cập nhật mục tiêu nghề nghiệp thất bại.");
     }
   } catch (error) {
     console.error("Error adding career target:", error);
@@ -247,6 +299,8 @@ export const addExperience = (id, experience) => async (dispatch) => {
         payload: response.data.experience,
       });
       toast.success(response.message || "Thêm kinh nghiệm thành công.");
+    } else {
+      toast.error("Thêm kinh nghiệm thất bại.");
     }
   } catch (error) {
     console.log(error);
@@ -265,6 +319,8 @@ export const addEducation = (id, education) => async (dispatch) => {
         payload: response.data.education,
       });
       toast.success(response.message || "Thêm học vấn thành công.");
+    } else {
+      toast.error("Thêm học vấn thất bại.");
     }
   } catch (error) {
     console.log(error);
@@ -284,6 +340,8 @@ export const addProject = (id, project) => async (dispatch) => {
         payload: response.data.project,
       });
       toast.success(response.message || "Thêm dự án thành công.");
+    } else {
+      toast.error("Thêm dự án thất bại.");
     }
   } catch (error) {
     console.log(error);
@@ -401,6 +459,8 @@ export const deleteProfileItemChild =
           payload: payload,
         });
         toast.success(messageSuccess);
+      } else {
+        toast.error(messageFail);
       }
     } catch (error) {
       console.error(error);

@@ -23,7 +23,6 @@ const postJob = async (req, res) => {
   try {
     const data = req.body;
     const job_id = await queryPostJob(data);
-    console.log("job_id adsasdsadasdadsad: ", job_id);
     if (job_id) {
       const work = await queryGetWorkByUser(data.employer_id);
       return res.status(200).json({ work });
