@@ -3,16 +3,10 @@ import React, { useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getJobApply } from "../../../redux/actions/jobseekerAction.js";
+import formatDateToDDMMYYYY from "../../../utils/formatDate.js";
 
 export default function YourApply() {
   const formatNumberToTr = (number) => `${(number / 1e6).toFixed(0)}tr`;
-  const formatDateToDDMMYYYY = (isoDateString) => {
-    const date = new Date(isoDateString); // Tạo đối tượng Date từ chuỗi ISO
-    const day = String(date.getDate()).padStart(2, "0"); // Lấy ngày và thêm số 0 nếu cần
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Lấy tháng (tháng bắt đầu từ 0)
-    const year = date.getFullYear(); // Lấy năm
-    return `${day}/${month}/${year}`; // Trả về định dạng DD/MM/YYYY
-  };
   const dispatch = useDispatch();
   const { userInformation, listJobApply } = useSelector(
     (state) => state.jobseeker

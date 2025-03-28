@@ -16,6 +16,7 @@ import {
   deleteProfileItem,
 } from "../../../redux/actions/jobseekerAction.js";
 import { getCategoryEdu } from "../../../redux/actions/categoryAction.js";
+import formatDateToDDMMYYYY from "../../../utils/formatDate.js";
 
 export default function YourCVwithUs() {
   const dispatch = useDispatch();
@@ -30,14 +31,6 @@ export default function YourCVwithUs() {
   } = useSelector((state) => state.jobseeker);
   const { user } = useSelector((state) => state.auth);
   const { edu } = useSelector((state) => state.category);
-
-  const formatDateToDDMMYYYY = (isoDateString) => {
-    const date = new Date(isoDateString); // Tạo đối tượng Date từ chuỗi ISO
-    const day = String(date.getDate()).padStart(2, "0"); // Lấy ngày và thêm số 0 nếu cần
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Lấy tháng (tháng bắt đầu từ 0)
-    const year = date.getFullYear(); // Lấy năm
-    return `${day}/${month}/${year}`; // Trả về định dạng DD/MM/YYYY
-  };
 
   const [experience, setExperience] = useState({
     job: "",
@@ -70,23 +63,56 @@ export default function YourCVwithUs() {
     project_description: "",
   });
 
+  const [isAdd, setIsAdd] = useState(true);
+
   const handleUpdateCarreerTarget = () => {
     // console.log("Update career target: ", careerTarget);
     dispatch(updateCareerTarget(userInformation?.jobseeker_id, careerTarget));
   };
 
   const handleAddExperience = () => {
-    dispatch(addExperience(userInformation?.jobseeker_id, experience));
+    if (isAdd) {
+      dispatch(addExperience(userInformation?.jobseeker_id, experience));
+    } else {
+      console.log("Update experience: ", experience);
+    }
+
+    setExperience({
+      job: "",
+      company: "",
+      startYear: "",
+      endYear: "",
+      description: "",
+    });
   };
 
   const handleAddEducation = () => {
-    // console.log("Add education: ", education);
-    dispatch(addEducation(userInformation?.jobseeker_id, education));
+    if (isAdd) {
+      dispatch(addEducation(userInformation?.jobseeker_id, education));
+    } else {
+      console.log("Update education: ", education);
+    }
+    setEducation({
+      major: "",
+      school: "",
+      startYear: "",
+      endYear: "",
+      education_id: "1",
+    });
   };
 
   const handleAddProject = () => {
-    // console.log(project);
-    dispatch(addProject(userInformation?.jobseeker_id, project));
+    if (isAdd) {
+      dispatch(addProject(userInformation?.jobseeker_id, project));
+    } else {
+      console.log("Update project: ", project);
+    }
+    setProject({
+      project_name: "",
+      project_from: "",
+      project_to: "",
+      project_description: "",
+    });
   };
 
   const handleDeleteProfileItem = () => {
@@ -212,6 +238,7 @@ export default function YourCVwithUs() {
                       Công việc
                     </label>
                     <input
+                      value={experience.job}
                       type="text"
                       className="form-control"
                       id="postTitle"
@@ -226,6 +253,7 @@ export default function YourCVwithUs() {
                       Công ty
                     </label>
                     <input
+                      value={experience.company}
                       type="text"
                       className="form-control"
                       id="postTitle"
@@ -245,6 +273,7 @@ export default function YourCVwithUs() {
                       Từ
                     </label>
                     <input
+                      value={experience.startYear}
                       type="date"
                       min="1960"
                       className="form-control"
@@ -263,6 +292,7 @@ export default function YourCVwithUs() {
                       Đến
                     </label>
                     <input
+                      value={experience.endYear}
                       type="date"
                       min="1960"
                       className="form-control"
@@ -283,11 +313,11 @@ export default function YourCVwithUs() {
                     Mô tả
                   </label>
                   <textarea
+                    value={experience.description}
                     className="form-control"
                     id="benefits"
                     rows={4}
                     placeholder="Nhập mô tả công việc"
-                    // defaultValue={""}
                     onChange={(e) => {
                       setExperience({
                         ...experience,
@@ -351,6 +381,7 @@ export default function YourCVwithUs() {
                       Chuyên ngành
                     </label>
                     <input
+                      value={education.major}
                       type="text"
                       className="form-control"
                       id="postTitle"
@@ -365,6 +396,7 @@ export default function YourCVwithUs() {
                       Trường
                     </label>
                     <input
+                      value={education.school}
                       type="text"
                       className="form-control"
                       id="postTitle"
@@ -381,6 +413,7 @@ export default function YourCVwithUs() {
                       Cấp bậc
                     </label>
                     <select
+                      value={education.education_id}
                       className="form-select"
                       id="field"
                       onChange={(e) => {
@@ -405,6 +438,7 @@ export default function YourCVwithUs() {
                       Từ
                     </label>
                     <input
+                      value={education.startYear}
                       type="date"
                       className="form-control"
                       id="startYear"
@@ -423,6 +457,7 @@ export default function YourCVwithUs() {
                       Đến
                     </label>
                     <input
+                      value={education.endYear}
                       type="date"
                       className="form-control"
                       id="endYear"
@@ -489,6 +524,7 @@ export default function YourCVwithUs() {
                       Dự án
                     </label>
                     <input
+                      value={project.project_name}
                       type="text"
                       className="form-control"
                       id="postTitle"
@@ -508,6 +544,7 @@ export default function YourCVwithUs() {
                       Từ
                     </label>
                     <input
+                      value={project.project_from}
                       type="date"
                       className="form-control"
                       id="startYear"
@@ -525,6 +562,7 @@ export default function YourCVwithUs() {
                       Đến
                     </label>
                     <input
+                      value={project.project_to}
                       type="date"
                       className="form-control"
                       id="endYear"
@@ -544,6 +582,7 @@ export default function YourCVwithUs() {
                     Mô tả
                   </label>
                   <textarea
+                    value={project.project_description}
                     className="form-control"
                     id="benefits"
                     rows={4}
@@ -572,6 +611,8 @@ export default function YourCVwithUs() {
                 type="button"
                 className="btn btn-primary"
                 onClick={handleAddProject}
+                data-bs-dismiss="modal"
+                aria-label="Close"
               >
                 Cập nhật
               </button>
@@ -926,21 +967,42 @@ export default function YourCVwithUs() {
                     {formatDateToDDMMYYYY(exp.exp_from)} đến{" "}
                     {formatDateToDDMMYYYY(exp.exp_to)}
                   </span>
-                  <div
-                    className="text-primary text-decoration-none"
-                    data-bs-toggle="modal"
-                    data-bs-target="#confirmDeleteModal"
-                    onClick={() => {
-                      setDataDeleteModal({
-                        ...dataDeleteModal,
-                        modalID: 1,
-                        id: userInformation?.jobseeker_id,
-                        id_delete: exp.profile_experience_id,
-                      });
-                    }}
-                  >
-                    <i class="bi bi-trash"></i>
-                  </div>
+
+                  <span className="text-primary text-decoration-none">
+                    <i
+                      class="bi bi-pencil-square me-2"
+                      data-bs-toggle="modal"
+                      data-bs-target="#addExperience"
+                      onClick={() => {
+                        setIsAdd(false);
+                        setExperience({
+                          ...experience,
+                          job: exp.exp_title,
+                          company: exp.exp_company,
+                          startYear: new Date(exp.exp_from)
+                            .toISOString()
+                            .split("T")[0],
+                          endYear: new Date(exp.exp_to)
+                            .toISOString()
+                            .split("T")[0],
+                          description: exp.exp_description,
+                        });
+                      }}
+                    ></i>
+                    <i
+                      class="bi bi-trash text-danger"
+                      data-bs-toggle="modal"
+                      data-bs-target="#confirmDeleteModal"
+                      onClick={() => {
+                        setDataDeleteModal({
+                          ...dataDeleteModal,
+                          modalID: 1,
+                          id: userInformation?.jobseeker_id,
+                          id_delete: exp.profile_experience_id,
+                        });
+                      }}
+                    ></i>
+                  </span>
                 </div>
                 <p>{exp.exp_description}</p>
               </div>
@@ -951,6 +1013,16 @@ export default function YourCVwithUs() {
           className="d-flex justify-content-start text-primary lh-lg fs-5 ms-5 custom-hover-2"
           data-bs-toggle="modal"
           data-bs-target="#addExperience"
+          onClick={() => {
+            setIsAdd(true);
+            setExperience({
+              job: "",
+              company: "",
+              startYear: "",
+              endYear: "",
+              description: "",
+            });
+          }}
         >
           <i class="bi bi-plus-circle me-2"></i>
           <p>Thêm kinh nghiệm làm việc</p>
@@ -971,21 +1043,41 @@ export default function YourCVwithUs() {
                     {formatDateToDDMMYYYY(edu.from_)} đến{" "}
                     {formatDateToDDMMYYYY(edu.to_)}
                   </span>
-                  <div
-                    className="text-primary text-decoration-none"
-                    data-bs-toggle="modal"
-                    data-bs-target="#confirmDeleteModal"
-                    onClick={() => {
-                      setDataDeleteModal({
-                        ...dataDeleteModal,
-                        modalID: 2,
-                        id: userInformation?.jobseeker_id,
-                        id_delete: edu.profile_education_id,
-                      });
-                    }}
-                  >
-                    <i class="bi bi-trash"></i>
-                  </div>
+                  <span className="text-primary text-decoration-none">
+                    <i
+                      class="bi bi-pencil-square me-2"
+                      data-bs-toggle="modal"
+                      data-bs-target="#addEducation"
+                      onClick={() => {
+                        setIsAdd(false);
+                        setEducation({
+                          ...education,
+                          major: edu.major,
+                          education_id: edu.education_id,
+                          school: edu.school,
+                          startYear: new Date(edu.from_)
+                            .toISOString()
+                            .split("T")[0],
+                          endYear: new Date(edu.to_)
+                            .toISOString()
+                            .split("T")[0],
+                        });
+                      }}
+                    ></i>
+                    <i
+                      class="bi bi-trash text-danger"
+                      data-bs-toggle="modal"
+                      data-bs-target="#confirmDeleteModal"
+                      onClick={() => {
+                        setDataDeleteModal({
+                          ...dataDeleteModal,
+                          modalID: 2,
+                          id: userInformation?.jobseeker_id,
+                          id_delete: edu.profile_education_id,
+                        });
+                      }}
+                    ></i>
+                  </span>
                 </div>
               </div>
             ))}
@@ -995,6 +1087,16 @@ export default function YourCVwithUs() {
           className="d-flex justify-content-start text-primary lh-lg fs-5 ms-5 custom-hover-2"
           data-bs-toggle="modal"
           data-bs-target="#addEducation"
+          onClick={() => {
+            setIsAdd(true);
+            setEducation({
+              major: "",
+              education_id: "",
+              school: "",
+              startYear: "",
+              endYear: "",
+            });
+          }}
         >
           <i class="bi bi-plus-circle me-2"></i>
           <p>Thêm học vấn</p>
@@ -1015,21 +1117,40 @@ export default function YourCVwithUs() {
                     {formatDateToDDMMYYYY(pro.project_from)} đến{" "}
                     {formatDateToDDMMYYYY(pro.project_to)}
                   </span>
-                  <div
-                    className="text-primary text-decoration-none"
-                    data-bs-toggle="modal"
-                    data-bs-target="#confirmDeleteModal"
-                    onClick={() => {
-                      setDataDeleteModal({
-                        ...dataDeleteModal,
-                        modalID: 3,
-                        id: userInformation?.jobseeker_id,
-                        id_delete: pro.profile_project_id,
-                      });
-                    }}
-                  >
-                    <i class="bi bi-trash"></i>
-                  </div>
+                  <span className="text-primary text-decoration-none">
+                    <i
+                      class="bi bi-pencil-square me-2"
+                      data-bs-toggle="modal"
+                      data-bs-target="#addProject"
+                      onClick={() => {
+                        setIsAdd(false);
+                        setProject({
+                          ...project,
+                          project_name: pro.project_name,
+                          project_from: new Date(pro.project_from)
+                            .toISOString()
+                            .split("T")[0],
+                          project_to: new Date(pro.project_to)
+                            .toISOString()
+                            .split("T")[0],
+                          project_description: pro.project_description,
+                        });
+                      }}
+                    ></i>
+                    <i
+                      class="bi bi-trash text-danger"
+                      data-bs-toggle="modal"
+                      data-bs-target="#confirmDeleteModal"
+                      onClick={() => {
+                        setDataDeleteModal({
+                          ...dataDeleteModal,
+                          modalID: 3,
+                          id: userInformation?.jobseeker_id,
+                          id_delete: pro.profile_project_id,
+                        });
+                      }}
+                    ></i>
+                  </span>
                 </div>
                 <p>{pro.project_description}</p>
               </div>
@@ -1040,6 +1161,15 @@ export default function YourCVwithUs() {
           className="d-flex justify-content-start text-primary lh-lg fs-5 ms-5 custom-hover-2"
           data-bs-toggle="modal"
           data-bs-target="#addProject"
+          onClick={() => {
+            setIsAdd(true);
+            setProject({
+              project_name: "",
+              project_from: "",
+              project_to: "",
+              project_description: "",
+            });
+          }}
         >
           <i class="bi bi-plus-circle me-2"></i>
           <p>Thêm dự án</p>
@@ -1060,21 +1190,22 @@ export default function YourCVwithUs() {
               >
                 <div className="d-flex justify-content-between align-items-center rounded-2">
                   <span className="col-md-3">{skl.skill}</span>
-                  <div
-                    className="text-primary text-decoration-none"
-                    data-bs-toggle="modal"
-                    data-bs-target="#confirmDeleteModal"
-                    onClick={() => {
-                      setDataDeleteModal({
-                        ...dataDeleteModal,
-                        modalID: 4,
-                        id: userInformation?.jobseeker_id,
-                        id_delete: skl.profile_skill_id,
-                      });
-                    }}
-                  >
-                    <i class="bi bi-trash"></i>
-                  </div>
+                  <span className="text-primary text-decoration-none">
+                    <i class="bi bi-pencil-square me-2"></i>
+                    <i
+                      class="bi bi-trash text-danger"
+                      data-bs-toggle="modal"
+                      data-bs-target="#confirmDeleteModal"
+                      onClick={() => {
+                        setDataDeleteModal({
+                          ...dataDeleteModal,
+                          modalID: 4,
+                          id: userInformation?.jobseeker_id,
+                          id_delete: skl.profile_skill_id,
+                        });
+                      }}
+                    ></i>
+                  </span>
                 </div>
               </div>
             ))}
@@ -1117,21 +1248,22 @@ export default function YourCVwithUs() {
                   <span className="col-md-3">
                     {formatDateToDDMMYYYY(cer.month_)}
                   </span>
-                  <div
-                    className="text-primary text-decoration-none"
-                    data-bs-toggle="modal"
-                    data-bs-target="#confirmDeleteModal"
-                    onClick={() => {
-                      setDataDeleteModal({
-                        ...dataDeleteModal,
-                        modalID: 6,
-                        id: userInformation?.jobseeker_id,
-                        id_delete: cer.profile_certifications_id,
-                      });
-                    }}
-                  >
-                    <i class="bi bi-trash"></i>
-                  </div>
+                  <span className="text-primary text-decoration-none">
+                    <i class="bi bi-pencil-square me-2"></i>
+                    <i
+                      class="bi bi-trash text-danger"
+                      data-bs-toggle="modal"
+                      data-bs-target="#confirmDeleteModal"
+                      onClick={() => {
+                        setDataDeleteModal({
+                          ...dataDeleteModal,
+                          modalID: 6,
+                          id: userInformation?.jobseeker_id,
+                          id_delete: cer.profile_certifications_id,
+                        });
+                      }}
+                    ></i>
+                  </span>
                 </div>
               </div>
             ))}
