@@ -2,23 +2,34 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { getCompanyInformation } from "../../../redux/actions/companyAction";
+import { getCategoryIndustry } from "../../../redux/actions/categoryAction";
 
 export default function CompanyProfile() {
   const dispatch = useDispatch();
   const { isLogin, user } = useSelector((state) => state.auth);
+  const { industry } = useSelector((state) => state.category);
   const navigate = useNavigate();
   const { companyInformation } = useSelector((state) => state.company);
 
   const [updateCompany, setUpdateCompany] = useState({
-    company_name: "",
-    phone_number: "",
-    address: "",
-    scale_min: "",
-    scale_max: "",
-    industry_name: "",
-    describle: "",
-    logo: "",
+    company_name: companyInformation.company_name || "",
+    phone_number: companyInformation.phone_number || "",
+    address: companyInformation.address || "",
+    scale_min: companyInformation.scale_min || "",
+    scale_max: companyInformation.scale_max || "",
+    industry_id: companyInformation.industry_id || "",
+    describle: companyInformation.describle || "",
   });
+
+  const [logo, setLogo] = useState("");
+
+  const handleUpdateCompanyProfile = () => {
+    console.log(updateCompany);
+  };
+
+  const handleUpdateCompanyLogo = () => {
+    console.log(logo);
+  };
 
   useEffect(() => {
     if (!isLogin && !(user?.user.role === 2)) {
@@ -30,6 +41,53 @@ export default function CompanyProfile() {
   return (
     <div>
       <div className="bg-light rounded-2 me-2 my-2 p-2">
+        {/* Logo công ty */}
+        <div className="mb-4">
+          <label className="form-label fw-bold">Logo công ty</label>
+          <div className="d-flex align-items-center justify-content-center mb-1">
+            <img
+              src={companyInformation.logo}
+              alt=""
+              style={{ height: 80 }}
+              className=""
+            />
+          </div>
+          <div
+            className="border rounded d-flex align-items-center justify-content-center"
+            style={{ height: "100px", borderColor: "#ccc" }}
+          >
+            <div className="text-center">
+              {/* <i
+                className="bi bi-image"
+                style={{ fontSize: "2rem", color: "#888" }}
+              ></i> */}
+              <input
+                type="file"
+                className="form-control-file"
+                accept="image/jpeg, image/png, image/gif" // Chỉ cho phép chọn ảnh
+                id="fileInput"
+                onChange={(e) => {
+                  setLogo(e.target.files[0]);
+                }}
+              />
+              {/* <p className="mt-2 text-muted">
+                Upload ảnh ở đây{" "}
+                
+              </p> */}
+            </div>
+          </div>
+        </div>
+        <div className="mb-3">
+          <button
+            className="btn btn-primary text-end"
+            onClick={handleUpdateCompanyLogo}
+          >
+            Cập nhật
+          </button>
+        </div>
+      </div>
+
+      <div className="bg-light rounded-2 me-2 my-2 p-2">
         <div className="row mb-3">
           {/* Tên công ty */}
           <div className="col-md-6">
@@ -40,7 +98,17 @@ export default function CompanyProfile() {
               type="text"
               className="form-control"
               placeholder="Ví dụ: Công ty TNHH HDN Teams"
-              value={companyInformation.company_name}
+              value={
+                updateCompany.company_name
+                  ? updateCompany.company_name
+                  : companyInformation.company_name
+              }
+              onChange={(e) =>
+                setUpdateCompany({
+                  ...updateCompany,
+                  company_name: e.target.value,
+                })
+              }
             />
           </div>
 
@@ -53,7 +121,17 @@ export default function CompanyProfile() {
               type="text"
               className="form-control"
               placeholder="Ví dụ: 0981868099"
-              value={companyInformation.phone_number}
+              value={
+                updateCompany.phone_number
+                  ? updateCompany.phone_number
+                  : companyInformation.phone_number
+              }
+              onChange={(e) =>
+                setUpdateCompany({
+                  ...updateCompany,
+                  phone_number: e.target.value,
+                })
+              }
             />
           </div>
         </div>
@@ -69,22 +147,94 @@ export default function CompanyProfile() {
               type="text"
               className="form-control"
               placeholder="Ví dụ: 130 Sương Nguyệt Ánh, Phường Bến Thành, Quận 1"
-              value={companyInformation.address}
+              value={
+                updateCompany.address
+                  ? updateCompany.address
+                  : companyInformation.address
+              }
+              onChange={(e) =>
+                setUpdateCompany({
+                  ...updateCompany,
+                  address: e.target.value,
+                })
+              }
             />
           </div>
 
           {/* Quy mô công ty */}
-          <div className="col-md-6">
+          {/* <div className="col-md-6">
             <label className="form-label">
               Quy mô công ty{" "}
               <span className="text-muted">(Không bắt buộc)</span>
             </label>
+
             <input
               type="text"
               className="form-control"
               placeholder="Ví dụ: 130 Sương Nguyệt Ánh, Phường Bến Thành, Quận 1"
               value={`từ ${companyInformation.scale_min} đến ${companyInformation.scale_max}`}
+              onChange={(e) =>
+                setUpdateCompany({
+                  ...updateCompany,
+                  scale: e.target.value,
+                })
+              }
             />
+          </div> */}
+
+          <div className="row col-md-6">
+            <label className="form-label">
+              Quy mô công ty{" "}
+              <span className="text-muted">(Không bắt buộc)</span>
+            </label>
+            <div className="col-md-4 mb-3">
+              {/* <label htmlFor="startYear" className="form-label">
+                Từ
+              </label> */}
+              <input
+                type="number"
+                min="1"
+                step="1000"
+                className="form-control"
+                id="startYear"
+                placeholder="Quy mô tối thiểu"
+                value={
+                  updateCompany.scale_min
+                    ? updateCompany.scale_min
+                    : companyInformation.scale_min
+                }
+                onChange={(e) =>
+                  setUpdateCompany({
+                    ...updateCompany,
+                    scale_min: e.target.value,
+                  })
+                }
+              />
+            </div>
+            <div className="col-md-4 mb-3">
+              {/* <label htmlFor="endYear" className="form-label">
+                Đến
+              </label> */}
+              <input
+                type="number"
+                min="1"
+                step="1000"
+                className="form-control"
+                id="endYear"
+                placeholder="Quy mô tối đa"
+                value={
+                  updateCompany.scale_max
+                    ? updateCompany.scale_max
+                    : companyInformation.scale_max
+                }
+                onChange={(e) =>
+                  setUpdateCompany({
+                    ...updateCompany,
+                    scale_max: e.target.value,
+                  })
+                }
+              />
+            </div>
           </div>
         </div>
 
@@ -106,10 +256,25 @@ export default function CompanyProfile() {
           <label className="form-label fw-bold">
             Lĩnh vực công ty <span className="text-danger">*</span>
           </label>
-          <select className="form-select">
-            <option seleced>{companyInformation.industry_name}</option>
-            <option>Dịch vụ tài chính</option>
-            <option>Sản xuất</option>
+          <select
+            className="form-select"
+            value={
+              updateCompany.industry_id
+                ? updateCompany.industry_id
+                : companyInformation.industry_id
+            }
+            onChange={(e) => {
+              setUpdateCompany({
+                ...updateCompany,
+                industry_id: e.target.value,
+              });
+            }}
+          >
+            {industry?.map((option) => (
+              <option value={option.industry_id} key={option.industry_id}>
+                {option.industry_name}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -120,37 +285,25 @@ export default function CompanyProfile() {
             className="form-control"
             rows="5"
             placeholder="Sơ lược về công ty của bạn..."
-            value={companyInformation.describle}
+            value={
+              updateCompany.describle
+                ? updateCompany.describle
+                : companyInformation.describle
+            }
+            onChange={(e) => {
+              setUpdateCompany({ ...updateCompany, describle: e.target.value });
+            }}
           ></textarea>
         </div>
 
-        {/* Logo công ty */}
-        <div className="mb-4">
-          <label className="form-label fw-bold">Logo công ty</label>
-          <div className="d-flex align-items-center justify-content-center mb-1">
-            <img
-              src={companyInformation.logo}
-              alt=""
-              style={{ height: 80 }}
-              className=""
-            />
-          </div>
-          <div
-            className="border rounded d-flex align-items-center justify-content-center"
-            style={{ height: "100px", borderColor: "#ccc" }}
+        <div className="mb-3">
+          <button
+            className="btn btn-primary text-end"
+            onClick={handleUpdateCompanyProfile}
           >
-            <div className="text-center">
-              <i
-                className="bi bi-image"
-                style={{ fontSize: "2rem", color: "#888" }}
-              ></i>
-              <p className="mt-2 text-muted">Upload ảnh ở đây</p>
-            </div>
-          </div>
+            Cập nhật
+          </button>
         </div>
-      </div>
-      <div className="mb-3">
-        <button className="btn btn-primary text-end">Cập nhật</button>
       </div>
     </div>
   );

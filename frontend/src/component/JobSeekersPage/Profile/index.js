@@ -9,11 +9,15 @@ import {
   updateProfile,
   updateProfileImage,
 } from "../../../redux/actions/jobseekerAction.js";
-import { getCategoryCity } from "../../../redux/actions/categoryAction.js";
+import {
+  getCategoryCity,
+  getCategoryLevel,
+} from "../../../redux/actions/categoryAction.js";
 
 export default function JobSeekerProfile() {
   const dispatch = useDispatch();
   const { userInformation } = useSelector((state) => state.jobseeker);
+  const { level } = useSelector((state) => state.category);
   const { hideStatus, setHideStatus } = useState(false);
 
   const { isLogin, user } = useSelector((state) => state.auth);
@@ -28,7 +32,7 @@ export default function JobSeekerProfile() {
     full_name: userInformation?.full_name || "",
     title: userInformation?.title || "",
     year_exp: userInformation?.year_exp || "",
-    situations: userInformation?.situations || "",
+    level_id: userInformation?.level_id || "1",
     email: userInformation?.email || "",
     phone_number: userInformation?.phone_number || "",
     address: userInformation?.address || "",
@@ -56,6 +60,7 @@ export default function JobSeekerProfile() {
     }
     dispatch(getUserInformationByID(user?.user.id));
     dispatch(getCategoryCity(84));
+    dispatch(getCategoryLevel());
   }, [isLogin, navigate, user, dispatch]);
 
   useEffect(() => {
@@ -216,10 +221,30 @@ export default function JobSeekerProfile() {
                   </div>
 
                   <div className="col-md-6">
-                    <label htmlFor="study" className="form-label">
-                      Học vấn
+                    <label htmlFor="field" className="form-label">
+                      Trình độ
                     </label>
-                    <select id="study" className="form-select"></select>
+                    <select
+                      className="form-select"
+                      id="field"
+                      value={
+                        updateProfileData.level_id
+                          ? updateProfileData.level_id
+                          : userInformation?.level_id
+                      }
+                      onChange={(e) =>
+                        setUpdateProfileData({
+                          ...updateProfileData,
+                          level_id: e.target.value,
+                        })
+                      }
+                    >
+                      {level?.map((option) => (
+                        <option value={option.level_id} key={option.level_id}>
+                          {option.level_name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
 

@@ -20,12 +20,20 @@ import {
   ADD_EDUCATION,
   ADD_EXPERIENCE,
   ADD_PROJECT,
+  ADD_SKILL,
+  ADD_CERTIFICATION,
   DELETE_EXPERIENCE,
   DELETE_EDUCATION,
   DELETE_CERTIFICATION,
   DELETE_LANGUAGE,
   DELETE_SKILL,
   DELETE_PROJECT,
+  UPDATE_EXPERIENCE,
+  UPDATE_EDUCATION,
+  UPDATE_PROJECT,
+  UPDATE_SKILL,
+  UPDATE_LANGUAGE,
+  UPDATE_CERTIFICATION,
 } from "../contants/jobseekerContants.js";
 
 // Action creator
@@ -347,6 +355,48 @@ export const addProject = (id, project) => async (dispatch) => {
   }
 };
 
+export const addSkill = (id, skill) => async (dispatch) => {
+  try {
+    const response = await axios.post(`${domain}/user/add-skill`, {
+      id: id,
+      skill: skill,
+    });
+    if (response.status === 200) {
+      dispatch({
+        type: ADD_SKILL,
+        payload: response.data.skill,
+      });
+      toast.success(response.message || "Thêm kỹ năng thành công.");
+    } else {
+      toast.error("Thêm kỹ năng thất bại.");
+    }
+  } catch (error) {
+    console.log(error);
+    toast.error("Thêm kỹ năng thất bại.");
+  }
+};
+
+export const addCertification = (id, certification) => async (dispatch) => {
+  try {
+    const response = await axios.post(`${domain}/user/add-certification`, {
+      id: id,
+      certification: certification,
+    });
+    if (response.status === 200) {
+      dispatch({
+        type: ADD_CERTIFICATION,
+        payload: response.data.certificate,
+      });
+      toast.success(response.message || "Thêm chứng chỉ thành công.");
+    } else {
+      toast.error("Thêm chứng chỉ thất bại.");
+    }
+  } catch (error) {
+    console.log(error);
+    toast.error("Thêm chứng chỉ thất bại.");
+  }
+};
+
 export const deleteProfileItem =
   (modalID, id, id_delete) => async (dispatch) => {
     switch (modalID) {
@@ -427,6 +477,125 @@ export const deleteProfileItemChild =
     try {
       const response = await axios.delete(`${domain}/user/${host}`, {
         params: { id: id, id_delete: id_delete }, // Correctly pass data object for DELETE
+      });
+      if (response.status === 200) {
+        let payload = ""; // Use let to allow reassignment
+        switch (modalID) {
+          case 1: // Xóa experience
+            payload = response.data.experience;
+            break;
+          case 2: // Xóa education
+            payload = response.data.education;
+            break;
+          case 3: // Xóa project
+            payload = response.data.project;
+            break;
+          case 4: // Xóa skill
+            payload = response.data.skill;
+            break;
+          case 5: // Xóa language
+            payload = response.data.language; // Assuming you want to handle this case
+            break;
+          case 6: // Xóa certification
+            payload = response.data.certificate;
+            break;
+          default:
+            break;
+        }
+        dispatch({
+          type: type,
+          payload: payload,
+        });
+        toast.success(messageSuccess);
+      } else {
+        toast.error(messageFail);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(messageFail);
+    }
+  };
+
+export const updateProfileItem = (modalID, id, data) => async (dispatch) => {
+  switch (modalID) {
+    case 1:
+      updateProfileItemChild(
+        id,
+        data,
+        "update-experience",
+        UPDATE_EXPERIENCE,
+        modalID,
+        "Cập nhật kinh nghiệm thành công.",
+        "Cập nhật kinh nghiệm thất bại"
+      )(dispatch);
+      break;
+    case 2:
+      updateProfileItemChild(
+        id,
+        data,
+        "update-education",
+        UPDATE_EDUCATION, // Define this constant appropriately
+        modalID,
+        "Cập nhật giáo dục thành công.",
+        "Cập nhật giáo dục thất bại"
+      )(dispatch);
+      break;
+    case 3:
+      updateProfileItemChild(
+        id,
+        data,
+        "update-project",
+        UPDATE_PROJECT, // Define this constant appropriately
+        modalID,
+        "Cập nhật dự án thành công.",
+        "Cập nhật dự án thất bại"
+      )(dispatch);
+      break;
+    case 4:
+      updateProfileItemChild(
+        id,
+        data,
+        "update-skill",
+        UPDATE_SKILL, // Define this constant appropriately
+        modalID,
+        "Cập nhật kỹ năng thành công.",
+        "Cập nhật kỹ năng thất bại"
+      )(dispatch);
+      break;
+    case 5:
+      updateProfileItemChild(
+        id,
+        data,
+        "update-language",
+        UPDATE_LANGUAGE, // Define this constant appropriately
+        modalID,
+        "Cập nhật ngôn ngữ thành công.",
+        "Cập nhật ngôn ngữ thất bại"
+      )(dispatch);
+      break;
+    case 6:
+      updateProfileItemChild(
+        id,
+        data,
+        "update-certification",
+        UPDATE_CERTIFICATION, // Define this constant appropriately
+        modalID,
+        "Cập nhật chứng chỉ thành công.",
+        "Cập nhật chứng chỉ thất bại"
+      )(dispatch);
+      break;
+    default:
+      return; // Exit if modalID is not recognized
+  }
+};
+export const updateProfileItemChild =
+  (id, data, host, type, modalID, messageSuccess, messageFail) =>
+  async (dispatch) => {
+    try {
+      console.log("modalID:", modalID);
+      const response = await axios.post(`${domain}/user/${host}`, {
+        id: id,
+        data: data,
       });
       if (response.status === 200) {
         let payload = ""; // Use let to allow reassignment

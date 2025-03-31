@@ -13,7 +13,10 @@ import {
   addExperience,
   addEducation,
   addProject,
+  addSkill,
+  addCertification,
   deleteProfileItem,
+  updateProfileItem,
 } from "../../../redux/actions/jobseekerAction.js";
 import { getCategoryEdu } from "../../../redux/actions/categoryAction.js";
 import formatDateToDDMMYYYY from "../../../utils/formatDate.js";
@@ -63,6 +66,17 @@ export default function YourCVwithUs() {
     project_description: "",
   });
 
+  const [skill, setSkill] = useState({
+    skill_name: "",
+  });
+
+  const [certification, setCertification] = useState({
+    certificate_name: "",
+    date: "",
+  });
+
+  const [modalUpdateID, setModalUpdateID] = useState("");
+
   const [isAdd, setIsAdd] = useState(true);
 
   const handleUpdateCarreerTarget = () => {
@@ -74,7 +88,13 @@ export default function YourCVwithUs() {
     if (isAdd) {
       dispatch(addExperience(userInformation?.jobseeker_id, experience));
     } else {
-      console.log("Update experience: ", experience);
+      dispatch(
+        updateProfileItem(
+          modalUpdateID,
+          userInformation?.jobseeker_id,
+          experience
+        )
+      );
     }
 
     setExperience({
@@ -90,7 +110,14 @@ export default function YourCVwithUs() {
     if (isAdd) {
       dispatch(addEducation(userInformation?.jobseeker_id, education));
     } else {
-      console.log("Update education: ", education);
+      console.log("Update education chạy: ", education);
+      dispatch(
+        updateProfileItem(
+          modalUpdateID,
+          userInformation?.jobseeker_id,
+          education
+        )
+      );
     }
     setEducation({
       major: "",
@@ -105,13 +132,49 @@ export default function YourCVwithUs() {
     if (isAdd) {
       dispatch(addProject(userInformation?.jobseeker_id, project));
     } else {
-      console.log("Update project: ", project);
+      console.log("Update project chạy: ", project);
+      dispatch(
+        updateProfileItem(modalUpdateID, userInformation?.jobseeker_id, project)
+      );
     }
     setProject({
       project_name: "",
       project_from: "",
       project_to: "",
       project_description: "",
+    });
+  };
+
+  const handleAddSkill = () => {
+    if (isAdd) {
+      dispatch(addSkill(userInformation?.jobseeker_id, skill));
+    } else {
+      console.log("Update skill chạy: ", skill);
+      dispatch(
+        updateProfileItem(modalUpdateID, userInformation?.jobseeker_id, skill)
+      );
+    }
+    setSkill({
+      skill_name: "",
+    });
+  };
+
+  const handleAddCertification = () => {
+    if (isAdd) {
+      dispatch(addCertification(userInformation?.jobseeker_id, certification));
+    } else {
+      dispatch(
+        updateProfileItem(
+          modalUpdateID,
+          userInformation?.jobseeker_id,
+          certification
+        )
+      );
+    }
+
+    setCertification({
+      certificate_name: "",
+      date: "",
     });
   };
 
@@ -238,6 +301,7 @@ export default function YourCVwithUs() {
                       Công việc
                     </label>
                     <input
+                      required
                       value={experience.job}
                       type="text"
                       className="form-control"
@@ -650,14 +714,23 @@ export default function YourCVwithUs() {
                     <label htmlFor="field" className="form-label">
                       Kỹ năng
                     </label>
-                    <select className="form-select" id="field">
+                    {/* <select className="form-select" id="field">
                       <option selected>Chọn kỹ năng</option>
                       <option>Công nghệ thông tin</option>
                       <option>Marketing</option>
                       <option>Tài chính</option>
-                    </select>
+                    </select> */}
+                    <input
+                      value={skill.skill_name}
+                      type="text"
+                      className="form-control"
+                      placeholder="Nhập kỹ năng"
+                      onChange={(e) => {
+                        setSkill({ ...skill, skill_name: e.target.value });
+                      }}
+                    />
                   </div>
-                  <div className="col-md-6">
+                  {/* <div className="col-md-6">
                     <label htmlFor="field" className="form-label">
                       Mức độ thành thạo
                     </label>
@@ -667,7 +740,7 @@ export default function YourCVwithUs() {
                       <option>Marketing</option>
                       <option>Tài chính</option>
                     </select>
-                  </div>
+                  </div> */}
                 </div>
               </form>
             </div>
@@ -680,7 +753,13 @@ export default function YourCVwithUs() {
               >
                 Hủy
               </button>
-              <button type="button" className="btn btn-primary">
+              <button
+                type="button"
+                className="btn btn-primary"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                onClick={handleAddSkill}
+              >
                 Cập nhật
               </button>
             </div>
@@ -796,10 +875,17 @@ export default function YourCVwithUs() {
                     Chứng chỉ
                   </label>
                   <input
+                    value={certification?.certificate_name || ""}
                     type="text"
                     className="form-control"
                     id="jobTitle"
                     placeholder="Nhập chứng chỉ"
+                    onChange={(e) => {
+                      setCertification({
+                        ...certification,
+                        certificate_name: e.target.value,
+                      });
+                    }}
                   />
                 </div>
 
@@ -808,10 +894,17 @@ export default function YourCVwithUs() {
                     Ngày cấp
                   </label>
                   <input
+                    value={certification.date}
                     type="date"
                     className="form-control"
                     id="jobTitle"
                     placeholder="Nhập chứng chỉ"
+                    onChange={(e) => {
+                      setCertification({
+                        ...certification,
+                        date: e.target.value,
+                      });
+                    }}
                   />
                 </div>
               </form>
@@ -825,8 +918,14 @@ export default function YourCVwithUs() {
               >
                 Hủy
               </button>
-              <button type="button" className="btn btn-primary">
-                Thêm
+              <button
+                type="button"
+                className="btn btn-primary"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                onClick={handleAddCertification}
+              >
+                Cập nhật
               </button>
             </div>
           </div>
@@ -927,7 +1026,6 @@ export default function YourCVwithUs() {
             className="progress-bar"
             role="progressbar"
             style={{ width: `${userInformation.percent_complete}%` }}
-            // aria-valuenow={userInformation?.percent_complete}
             aria-valuemin={0}
             aria-valuemax={100}
           >
@@ -987,6 +1085,7 @@ export default function YourCVwithUs() {
                             .split("T")[0],
                           description: exp.exp_description,
                         });
+                        setModalUpdateID(1);
                       }}
                     ></i>
                     <i
@@ -1022,6 +1121,7 @@ export default function YourCVwithUs() {
               endYear: "",
               description: "",
             });
+            setModalUpdateID("");
           }}
         >
           <i class="bi bi-plus-circle me-2"></i>
@@ -1062,6 +1162,7 @@ export default function YourCVwithUs() {
                             .toISOString()
                             .split("T")[0],
                         });
+                        setModalUpdateID(2);
                       }}
                     ></i>
                     <i
@@ -1096,6 +1197,7 @@ export default function YourCVwithUs() {
               startYear: "",
               endYear: "",
             });
+            setModalUpdateID("");
           }}
         >
           <i class="bi bi-plus-circle me-2"></i>
@@ -1135,6 +1237,7 @@ export default function YourCVwithUs() {
                             .split("T")[0],
                           project_description: pro.project_description,
                         });
+                        setModalUpdateID(3);
                       }}
                     ></i>
                     <i
@@ -1169,6 +1272,7 @@ export default function YourCVwithUs() {
               project_to: "",
               project_description: "",
             });
+            setModalUpdateID("");
           }}
         >
           <i class="bi bi-plus-circle me-2"></i>
@@ -1243,13 +1347,28 @@ export default function YourCVwithUs() {
             listCertification?.map((cer, index) => (
               <div className="bg-white rounded-2 me-2 my-2 p-2" key={index}>
                 <div className="d-flex justify-content-between align-items-center rounded-2">
-                  <span className="col-md-3">{cer.certifications}</span>
+                  <span className="col-md-3">{cer.certifications || ""}</span>
                   <span className="col-md-3"></span>
                   <span className="col-md-3">
                     {formatDateToDDMMYYYY(cer.month_)}
                   </span>
                   <span className="text-primary text-decoration-none">
-                    <i class="bi bi-pencil-square me-2"></i>
+                    <i
+                      class="bi bi-pencil-square me-2"
+                      data-bs-toggle="modal"
+                      data-bs-target="#addCer"
+                      onClick={() => {
+                        setIsAdd(false);
+                        setCertification({
+                          ...certification,
+                          certificate_name: cer.certifications,
+                          date: new Date(cer.month_)
+                            .toISOString()
+                            .split("T")[0],
+                        });
+                        setModalUpdateID(6);
+                      }}
+                    ></i>
                     <i
                       class="bi bi-trash text-danger"
                       data-bs-toggle="modal"
@@ -1273,6 +1392,13 @@ export default function YourCVwithUs() {
           className="d-flex justify-content-start text-primary lh-lg fs-5 ms-5 custom-hover-2"
           data-bs-toggle="modal"
           data-bs-target="#addCer"
+          onClick={() => {
+            setCertification({
+              certificate_name: "",
+              date: "",
+            });
+            setModalUpdateID("");
+          }}
         >
           <i class="bi bi-plus-circle me-2"></i>
           <p>Thêm chứng chỉ</p>

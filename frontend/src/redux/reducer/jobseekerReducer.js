@@ -16,12 +16,20 @@ import {
   ADD_EDUCATION,
   ADD_EXPERIENCE,
   ADD_PROJECT,
+  ADD_SKILL,
+  ADD_CERTIFICATION,
   DELETE_EXPERIENCE,
   DELETE_EDUCATION,
   DELETE_PROJECT,
   DELETE_SKILL,
   DELETE_LANGUAGE,
   DELETE_CERTIFICATION,
+  UPDATE_EXPERIENCE,
+  UPDATE_EDUCATION,
+  UPDATE_PROJECT,
+  UPDATE_SKILL,
+  UPDATE_LANGUAGE,
+  UPDATE_CERTIFICATION,
 } from "../contants/jobseekerContants.js";
 
 const initialState = {
@@ -73,6 +81,10 @@ const jobseekerReducer = (state = initialState, action) => {
       return { ...state, listEducation: action.payload };
     case ADD_PROJECT:
       return { ...state, listProject: action.payload };
+    case ADD_SKILL:
+      return { ...state, listSkill: action.payload };
+    case ADD_CERTIFICATION:
+      return { ...state, listCertification: action.payload };
     case DELETE_EXPERIENCE:
       return { ...state, listExp: action.payload };
     case DELETE_EDUCATION:
@@ -84,6 +96,18 @@ const jobseekerReducer = (state = initialState, action) => {
     case DELETE_LANGUAGE:
       return { ...state, listLanguage: action.payload };
     case DELETE_CERTIFICATION:
+      return { ...state, listCertification: action.payload };
+    case UPDATE_EXPERIENCE:
+      return { ...state, listExp: action.payload };
+    case UPDATE_EDUCATION:
+      return { ...state, listEducation: action.payload };
+    case UPDATE_PROJECT:
+      return { ...state, listProject: action.payload };
+    case UPDATE_SKILL:
+      return { ...state, listSkill: action.payload };
+    case UPDATE_LANGUAGE:
+      return { ...state, listLanguage: action.payload };
+    case UPDATE_CERTIFICATION:
       return { ...state, listCertification: action.payload };
     default:
       return state;

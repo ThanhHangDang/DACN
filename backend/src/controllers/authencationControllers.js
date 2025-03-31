@@ -38,7 +38,7 @@ const login = async (req, res) => {
       create_date: userLogin.create_date,
     };
 
-    res
+    return res
       .status(200)
       .json({ message: "Đăng nhập thành công.", user: req.session.userLogin });
   } catch (error) {

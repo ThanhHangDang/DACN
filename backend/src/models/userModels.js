@@ -103,8 +103,10 @@ const queryGetUserInformation = async (id) => {
       p.nationality,
       p.percent_complete,
       p.last_modify_date,
+      p.level_id,
       c.city_name,
-      c.city_id
+      c.city_id,
+      l.level_name as situations
     FROM 
       jobseeker js
     JOIN 
@@ -115,6 +117,8 @@ const queryGetUserInformation = async (id) => {
       profile_jobseeker p ON js.jobseeker_id = p.profile_id
     LEFT JOIN 
       catalog_city c ON p.work_place = c.city_id
+    JOIN
+      catalog_level l ON p.level_id = l.level_id
     WHERE 
       u.user_id = ?;
     `,
@@ -348,7 +352,8 @@ const queryUpdateJobseekerProfile = async (id, profile) => {
       u.phone_number = ?,
       p.title = ?,
       p.address = ?,
-      p.year_exp = ?
+      p.year_exp = ?,
+      p.level_id = ?
     WHERE 
       u.user_id = ?;  -- Replace with the actual user ID
     `,
@@ -359,6 +364,7 @@ const queryUpdateJobseekerProfile = async (id, profile) => {
       profile.title,
       profile.address,
       profile.year_exp,
+      profile.level_id,
       id,
     ]
   );
@@ -447,6 +453,28 @@ const queryAddProject = async (id, project) => {
   return affectedRows;
 };
 
+const queryAddSkill = async (id, skill) => {
+  const [affectedRows] = await db.query(
+    `
+    insert into profile_skill(profile_id, skill)
+    values(?, ?)
+    `,
+    [id, skill.skill_name]
+  );
+  return affectedRows;
+};
+
+const queryAddCertification = async (id, certification) => {
+  const [affectedRows] = await db.query(
+    `
+    insert into profile_certification(profile_id, certifications, month_)
+    values(?, ?, ?)
+    `,
+    [id, certification.certificate_name, certification.date]
+  );
+  return affectedRows;
+};
+
 const queryDeleteExperience = async (id, id_delete) => {
   const [affectedRows] = await db.query(
     `
@@ -506,7 +534,7 @@ const queryDeleteCertification = async (id, id_delete) => {
   const [affectedRows] = await db.query(
     `
     DELETE FROM profile_certification
-    WHERE profile_id = ? AND profile_certification_id = ?;
+    WHERE profile_id = ? AND profile_certifications_id = ?;
     `,
     [id, id_delete]
   );
@@ -549,6 +577,8 @@ module.exports = {
   queryAddExperience,
   queryAddEducation,
   queryAddProject,
+  queryAddSkill,
+  queryAddCertification,
 
   queryDeleteExperience,
   queryDeleteEducation,

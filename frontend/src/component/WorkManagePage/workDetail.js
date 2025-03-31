@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { getPostDetails } from "../../redux/actions/postAction.js";
+import formatDateToDDMMYYYY from "../../utils/formatDate.js";
 
 export default function WorkDetail() {
   const dispatch = useDispatch();
@@ -15,13 +16,6 @@ export default function WorkDetail() {
     const currentDate = new Date();
     const timeDifference = targetDate - currentDate;
     return Math.ceil(timeDifference / (1000 * 60 * 60 * 24)); // Trả về số ngày còn lại
-  };
-  const formatDateToDDMMYYYY = (isoDateString) => {
-    const date = new Date(isoDateString); // Tạo đối tượng Date từ chuỗi ISO
-    const day = String(date.getDate()).padStart(2, "0"); // Lấy ngày và thêm số 0 nếu cần
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Lấy tháng (tháng bắt đầu từ 0)
-    const year = date.getFullYear(); // Lấy năm
-    return `${day}/${month}/${year}`; // Trả về định dạng DD/MM/YYYY
   };
 
   const postDetail = useSelector((state) => state.post.postDetail);

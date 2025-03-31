@@ -21,6 +21,8 @@ const {
   queryAddExperience,
   queryAddEducation,
   queryAddProject,
+  queryAddSkill,
+  queryAddCertification,
 
   queryDeleteExperience,
   queryDeleteEducation,
@@ -360,6 +362,38 @@ const addProject = async (req, res) => {
   }
 };
 
+const addSkill = async (req, res) => {
+  try {
+    const { id, skill } = req.body;
+    const affectedRows = await queryAddSkill(id, skill);
+    if (affectedRows) {
+      const skill = await queryGetSkillByID(id);
+      return res
+        .status(200)
+        .json({ skill, message: "Thêm kỹ năng thành công." });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Thêm kỹ năng thất bại." });
+  }
+};
+
+const addCertification = async (req, res) => {
+  try {
+    const { id, certification } = req.body;
+    const affectedRows = await queryAddCertification(id, certification);
+    if (affectedRows) {
+      const certificate = await queryGetCertificateByID(id);
+      return res
+        .status(200)
+        .json({ certificate, message: "Thêm chứng chỉ thành công." });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Thêm chứng chỉ thất bại." });
+  }
+};
+
 const deleteExperience = async (req, res) => {
   try {
     const { id, id_delete } = req.query;
@@ -492,6 +526,8 @@ module.exports = {
   addExperience,
   addEducation,
   addProject,
+  addSkill,
+  addCertification,
 
   deleteExperience,
   deleteEducation,
