@@ -9,11 +9,12 @@ import {
   getListLanguage,
   getListCertification,
   updateCareerTarget,
-  getUserInformationByID,
+  // getUserInformationByID,
   addExperience,
   addEducation,
   addProject,
   addSkill,
+  addLanguage,
   addCertification,
   deleteProfileItem,
   updateProfileItem,
@@ -21,6 +22,7 @@ import {
 import {
   getCategoryEdu,
   getCategoryTags,
+  getCategoryLanguage,
 } from "../../../redux/actions/categoryAction.js";
 import formatDateToDDMMYYYY from "../../../utils/formatDate.js";
 
@@ -32,12 +34,12 @@ export default function YourCVwithUs() {
     listEducation,
     listProject,
     listSkill,
-    // listLanguage,
+    listLanguage,
     listCertification,
   } = useSelector((state) => state.jobseeker);
-  const { user } = useSelector((state) => state.auth);
-  const { edu, tags } = useSelector((state) => state.category);
-
+  // const { user } = useSelector((state) => state.auth);
+  const { edu, tags, lang } = useSelector((state) => state.category);
+  console.log("listLanguage: ", listLanguage);
   const [experience, setExperience] = useState({
     job: "",
     company: "",
@@ -71,6 +73,9 @@ export default function YourCVwithUs() {
 
   const [skillInput, setSkillInput] = useState("");
   const [skillAdd, setSkillAdd] = useState([]);
+
+  const [languageInput, setLanguageInput] = useState("");
+  const [languageAdd, setLanguageAdd] = useState([]);
 
   const [certification, setCertification] = useState({
     certificate_name: "",
@@ -144,6 +149,10 @@ export default function YourCVwithUs() {
     });
   };
 
+  const handleRemoveSkill = (skill) => {
+    setSkillAdd((prev) => prev.filter((item) => item !== skill));
+  };
+
   const handleAddSkillOptions = (skill) => {
     if (!skillAdd.includes(skill)) {
       setSkillAdd([...skillAdd, skill]);
@@ -152,11 +161,27 @@ export default function YourCVwithUs() {
   };
 
   const handleAddSkill = () => {
-    console.log("skillAdd: ", skillAdd);
-
     dispatch(addSkill(userInformation?.jobseeker_id, skillAdd));
-
     setSkillAdd([]);
+    setSkillInput("");
+  };
+
+  const handleRemoveLanguage = (language) => {
+    setLanguageAdd((prev) => prev.filter((item) => item !== language));
+  };
+
+  const handleAddLanguageOptions = (language) => {
+    if (!languageAdd.includes(language)) {
+      setLanguageAdd([...languageAdd, language]);
+    }
+    setLanguageInput("");
+  };
+
+  const handleAddLanguage = () => {
+    console.log("languageAdd: ", languageAdd);
+    dispatch(addLanguage(userInformation?.jobseeker_id, languageAdd));
+    setLanguageAdd([]);
+    setLanguageInput("");
   };
 
   const handleAddCertification = () => {
@@ -198,6 +223,7 @@ export default function YourCVwithUs() {
     dispatch(getListCertification(userInformation?.jobseeker_id));
     dispatch(getCategoryEdu());
     dispatch(getCategoryTags());
+    dispatch(getCategoryLanguage());
   }, [dispatch, userInformation]);
 
   useEffect(() => {
@@ -712,7 +738,7 @@ export default function YourCVwithUs() {
             <div className="modal-body">
               <form>
                 <div className="row mb-3">
-                  <div className="col-md-6">
+                  <div className="col">
                     <label htmlFor="field" className="form-label">
                       Kỹ năng
                     </label>
@@ -758,7 +784,7 @@ export default function YourCVwithUs() {
                           key={skill.tag_id}
                           className="badge bg-primary me-2"
                           style={{ cursor: "pointer" }}
-                          onClick={() => {}}
+                          onClick={() => handleRemoveSkill(skill)}
                         >
                           {skill.tags_content}{" "}
                           <span className="ms-1">&times;</span>
@@ -825,31 +851,50 @@ export default function YourCVwithUs() {
                     className="form-control"
                     id="jobTitle"
                     placeholder="Nhập ngoại ngữ"
+                    value={languageInput}
+                    onChange={(e) => setLanguageInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && languageInput.trim() !== "") {
+                        e.preventDefault();
+                        handleAddLanguageOptions(languageInput);
+                      }
+                    }}
                   />
-                </div>
-
-                <div className="row mb-3">
-                  <div className="col-md-6">
-                    <label htmlFor="field" className="form-label">
-                      Chứng chỉ
-                    </label>
-                    <select className="form-select" id="field">
-                      <option selected>Chọn kỹ năng</option>
-                      <option>Công nghệ thông tin</option>
-                      <option>Marketing</option>
-                      <option>Tài chính</option>
-                    </select>
-                  </div>
-                  <div className="col-md-6">
-                    <label htmlFor="field" className="form-label">
-                      Năng lực
-                    </label>
-                    <select className="form-select" id="field">
-                      <option selected>Chọn mức độ thành thạo</option>
-                      <option>Công nghệ thông tin</option>
-                      <option>Marketing</option>
-                      <option>Tài chính</option>
-                    </select>
+                  <ul className="list-group">
+                    {lang
+                      ?.filter((language) =>
+                        language.metric_display
+                          .toLowerCase()
+                          .includes(languageInput.toLowerCase())
+                      )
+                      .map((language) => (
+                        <>
+                          {languageInput !== "" && (
+                            <li
+                              key={language.language_id}
+                              className="list-group-item list-group-item-action ms-2 mr-2"
+                              onClick={() => handleAddLanguageOptions(language)}
+                            >
+                              {language.metric_display}
+                            </li>
+                          )}
+                        </>
+                      ))}
+                  </ul>
+                  <div className="mt-2">
+                    {languageAdd?.map((language) => (
+                      <span
+                        key={language.language_id}
+                        className="badge bg-primary me-2"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                          handleRemoveLanguage(language);
+                        }}
+                      >
+                        {language.metric_display}{" "}
+                        <span className="ms-1">&times;</span>
+                      </span>
+                    ))}
                   </div>
                 </div>
               </form>
@@ -863,7 +908,13 @@ export default function YourCVwithUs() {
               >
                 Hủy
               </button>
-              <button type="button" className="btn btn-primary">
+              <button
+                type="button"
+                className="btn btn-primary"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                onClick={handleAddLanguage}
+              >
                 Cập nhật
               </button>
             </div>
@@ -1308,9 +1359,6 @@ export default function YourCVwithUs() {
       <div className="bg-light rounded-2 me-2 my-2 p-2">
         <span className="">
           <h3>Kỹ năng</h3>
-          {/* <p className="fst-italic">
-            Mô tả kỹ năng làm việc của bạn càng chi tiết càng tốt
-          </p> */}
           {listSkill &&
             listSkill?.map((skl, index) => (
               <div key={index}>
@@ -1348,6 +1396,28 @@ export default function YourCVwithUs() {
       <div className="bg-light rounded-2 me-2 my-2 p-2">
         <span className="">
           <h3>Ngoại ngữ</h3>
+          {listLanguage &&
+            listLanguage?.map((lang, index) => (
+              <div key={index}>
+                <span
+                  key={lang.language_id}
+                  className="badge bg-primary me-2 p-2 m-1"
+                  style={{ cursor: "pointer" }}
+                  data-bs-toggle="modal"
+                  data-bs-target="#confirmDeleteModal"
+                  onClick={() => {
+                    setDataDeleteModal({
+                      ...dataDeleteModal,
+                      modalID: 5,
+                      id: userInformation?.jobseeker_id,
+                      id_delete: lang.language_id,
+                    });
+                  }}
+                >
+                  {lang.metric_display} <span className="ms-1">&times;</span>
+                </span>
+              </div>
+            ))}
         </span>
 
         <span

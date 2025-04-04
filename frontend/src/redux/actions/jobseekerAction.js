@@ -22,6 +22,7 @@ import {
   ADD_PROJECT,
   ADD_SKILL,
   ADD_CERTIFICATION,
+  ADD_LANGUAGE,
   DELETE_EXPERIENCE,
   DELETE_EDUCATION,
   DELETE_CERTIFICATION,
@@ -373,6 +374,27 @@ export const addSkill = (id, skill) => async (dispatch) => {
   } catch (error) {
     console.log(error);
     toast.error("Thêm kỹ năng thất bại.");
+  }
+};
+
+export const addLanguage = (id, language) => async (dispatch) => {
+  try {
+    const response = await axios.post(`${domain}/user/add-language`, {
+      id: id,
+      language: language,
+    });
+    if (response.status === 200) {
+      dispatch({
+        type: ADD_LANGUAGE,
+        payload: response.data.language,
+      });
+      toast.success(response.message || "Thêm ngoại ngữ thành công.");
+    } else {
+      toast.error("Thêm ngoại ngữ thất bại.");
+    }
+  } catch (error) {
+    console.log(error);
+    toast.error("Thêm ngoại ngữ thất bại.");
   }
 };
 

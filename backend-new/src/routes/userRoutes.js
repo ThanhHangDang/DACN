@@ -25,6 +25,7 @@ const {
   addEducation,
   addProject,
   addSkill,
+  addLanguage,
   addCertification,
 
   deleteExperience,
@@ -69,6 +70,7 @@ userRoutes.post("/add-experience", addExperience);
 userRoutes.post("/add-education", addEducation);
 userRoutes.post("/add-project", addProject);
 userRoutes.post("/add-skill", addSkill);
+userRoutes.post("/add-language", addLanguage);
 userRoutes.post("/add-certification", addCertification);
 
 userRoutes.delete("/delete-experience", deleteExperience);

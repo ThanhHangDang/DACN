@@ -213,24 +213,21 @@ const queryGetSkillByID = async (id) => {
 };
 
 const queryGetLanguageByID = async (id) => {
-  //   const [language] = await db.query(
-  //     `
-  //     SELECT
-  //     lang.*
-  // FROM
-  //     jobseeker js
-  // JOIN
-  //     user_ u ON js.jobseeker_id = u.user_id
-  // JOIN
-  //     profile_jobseeker p ON js.jobseeker_id = p.profile_id
-  // LEFT JOIN
-  //     profile_language lang ON p.profile_id = lang.profile_id
-  // WHERE
-  //     u.user_id = ?;
-  //     `,
-  //     [id]
-  //   );
-  //   return language;
+  const [language] = await db.query(
+    `
+    SELECT
+      lang.profile_id,
+      cl.*
+    FROM
+      profile_language lang
+    JOIN
+      catalog_language cl ON lang.language_id = cl.language_id    
+    WHERE
+      lang.profile_id = ?;
+    `,
+    [id]
+  );
+  return language;
 };
 
 const queryGetCertificateByID = async (id) => {
@@ -456,6 +453,21 @@ const queryAddSkill = async (id, skill) => {
   return totalInserted;
 };
 
+const queryAddLanguage = async (id, language) => {
+  let totalInserted = 0;
+  for (const i of language) {
+    const [result] = await db.query(
+      `
+    insert into profile_language(profile_id, language_id)
+    values(?, ?)
+    `,
+      [id, i.language_id]
+    );
+    totalInserted += result.affectedRows;
+  }
+  return totalInserted;
+};
+
 const queryAddCertification = async (id, certification) => {
   const [affectedRows] = await db.query(
     `
@@ -515,7 +527,7 @@ const queryDeleteLanguage = async (id, id_delete) => {
   const [affectedRows] = await db.query(
     `
     DELETE FROM profile_language
-    WHERE profile_id = ? AND profile_language_id = ?;
+    WHERE profile_id = ? AND language_id = ?;
     `,
     [id, id_delete]
   );
@@ -571,6 +583,7 @@ module.exports = {
   queryAddEducation,
   queryAddProject,
   queryAddSkill,
+  queryAddLanguage,
   queryAddCertification,
 
   queryDeleteExperience,

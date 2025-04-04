@@ -22,6 +22,7 @@ const {
   queryAddEducation,
   queryAddProject,
   queryAddSkill,
+  queryAddLanguage,
   queryAddCertification,
 
   queryDeleteExperience,
@@ -378,6 +379,22 @@ const addSkill = async (req, res) => {
   }
 };
 
+const addLanguage = async (req, res) => {
+  try {
+    const { id, language } = req.body;
+    const affectedRows = await queryAddLanguage(id, language);
+    if (affectedRows > 0) {
+      const language = await queryGetLanguageByID(id);
+      return res
+        .status(200)
+        .json({ language, message: "Thêm ngôn ngữ thành công." });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Thêm ngôn ngữ thất bại." });
+  }
+};
+
 const addCertification = async (req, res) => {
   try {
     const { id, certification } = req.body;
@@ -523,10 +540,12 @@ module.exports = {
   updateJobseekerProfile,
   updateExpectedJob,
   updateCareerTarget,
+
   addExperience,
   addEducation,
   addProject,
   addSkill,
+  addLanguage,
   addCertification,
 
   deleteExperience,

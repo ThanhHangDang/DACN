@@ -18,6 +18,7 @@ import {
   ADD_PROJECT,
   ADD_SKILL,
   ADD_CERTIFICATION,
+  ADD_LANGUAGE,
   DELETE_EXPERIENCE,
   DELETE_EDUCATION,
   DELETE_PROJECT,
@@ -83,6 +84,8 @@ const jobseekerReducer = (state = initialState, action) => {
       return { ...state, listProject: action.payload };
     case ADD_SKILL:
       return { ...state, listSkill: action.payload };
+    case ADD_LANGUAGE:
+      return { ...state, listLanguage: action.payload };
     case ADD_CERTIFICATION:
       return { ...state, listCertification: action.payload };
     case DELETE_EXPERIENCE:

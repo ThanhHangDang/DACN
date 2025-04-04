@@ -28,7 +28,7 @@ export const loginFailure = (error) => ({
 
 export const loginUser = (username, password) => {
   return async (dispatch) => {
-    dispatch(loginRequest());
+    // dispatch(loginRequest());
     try {
       const response = await axios.post(
         `${domain}/auth/login`,
@@ -37,8 +37,13 @@ export const loginUser = (username, password) => {
         },
         { withCredentials: true }
       );
-      dispatch(loginSuccess(response.data));
-      toast.success(response.data.message || "Đăng nhập thành công!");
+      if (response.status === 200) {
+        dispatch(loginSuccess(response.data));
+        toast.success(response.data.message || "Đăng nhập thành công!");
+      } else {
+        dispatch(loginFailure(response.data.message || "Đăng nhập thất bại!"));
+        toast.error(response.data.message || "Đăng nhập thất bại!");
+      }
     } catch (err) {
       dispatch(
         loginFailure(err.response?.data?.message || "Đăng nhập thất bại!")
