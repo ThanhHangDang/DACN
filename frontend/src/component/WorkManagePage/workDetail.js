@@ -19,7 +19,7 @@ export default function WorkDetail() {
   };
 
   const postDetail = useSelector((state) => state.post.postDetail);
-  console.log(id);
+  console.log(postDetail);
   useEffect(() => {
     dispatch(getPostDetails(id));
   }, [id]);
@@ -67,9 +67,6 @@ export default function WorkDetail() {
                 <section className="mb-4">
                   <h5>Mô tả công việc</h5>
                   <ul>
-                    {/* {postDetail.describle?.map((description, index) => (
-                      <li key={index}>{description}</li>
-                    ))} */}
                     <li>{postDetail?.describle}</li>
                   </ul>
                 </section>
@@ -111,7 +108,7 @@ export default function WorkDetail() {
               <div className="d-flex">
                 <div className="col-md-6">
                   <h6 className="fw-bold text-secondary">Ngành nghề</h6>
-                  <p>Software Engineer</p>
+                  <p>{postDetail?.job_function_name}</p>
                 </div>
                 <div>
                   <h6 className="fw-bold text-secondary">Kỹ năng</h6>
@@ -126,7 +123,7 @@ export default function WorkDetail() {
               <div className="d-flex">
                 <div className="col-md-6">
                   <h6 className="fw-bold text-secondary">Lĩnh vực</h6>
-                  <p>Công nghệ thông tin</p>
+                  <p>{postDetail?.industry_name}</p>
                 </div>
                 <div>
                   <h6 className="fw-bold text-secondary">Ngôn ngữ</h6>

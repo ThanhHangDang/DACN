@@ -149,7 +149,7 @@ export const deletePostByUser = (id, postID) => {
 export const postNewWork = (data1) => async (dispatch) => {
   let data = {
     ...data1,
-    require_skill: data1.require_skill.map((skill) => skill.content),
+    require_skill: data1.require_skill.map((skill) => skill.tag_id),
     require_language: data1.require_language.map((lang) => lang.language_id),
   };
   // console.log("data", data);

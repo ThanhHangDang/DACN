@@ -25,7 +25,6 @@ export default function EmployerPost() {
     (state) => state.category
   );
   const { postsByUser } = useSelector((state) => state.post);
-
   const [isAddPost, setIsAddPost] = useState(true);
 
   const [newPost, setNewPost] = useState({
@@ -33,8 +32,8 @@ export default function EmployerPost() {
     employer_id: user?.user?.id,
     title: "",
     date_post: new Date().toISOString(),
-    industry: 20,
-    job_function: 1,
+    industry_id: 20,
+    job_function_id: 1,
     quantity: 1,
     salary_min: 500000,
     salary_max: 1000000,
@@ -46,9 +45,9 @@ export default function EmployerPost() {
     require_age_max: 18,
     address: "",
     work_location: 1,
-    require_gender: "không yêu cầu",
-    require_martial_status: "không yêu cầu",
-    education_at_least: 1,
+    require_gender: "Không yêu cầu",
+    require_martial_status: "Không yêu cầu",
+    require_education: 1,
     level_id: 1,
     working_type: "full-time",
     working_time: "",
@@ -67,7 +66,7 @@ export default function EmployerPost() {
     "Tiếng Trung",
   ];
 
-  const martialStatusOptions = ["không yêu cầu", "đã kết hôn", "độc thân"];
+  const martialStatusOptions = ["Không yêu cầu", "Đã kết hôn", "Độc thân"];
   const workingTypeOptions = ["full-time", "part-time", "flexible"];
 
   const navigate = useNavigate();
@@ -115,6 +114,7 @@ export default function EmployerPost() {
   };
 
   const handleAddPost = () => {
+    console.log("newPost: ", newPost);
     if (isAddPost) {
       dispatch(postNewWork(newPost));
     } else {
@@ -126,8 +126,8 @@ export default function EmployerPost() {
       employer_id: user?.user?.id,
       title: "",
       date_post: new Date().toISOString(),
-      industry: 20,
-      job_function: 1,
+      industry_id: 20,
+      job_function_id: 1,
       quantity: 1,
       salary_min: 500000,
       salary_max: 1000000,
@@ -139,9 +139,9 @@ export default function EmployerPost() {
       require_age_max: 18,
       address: "",
       work_location: 1,
-      require_gender: "không yêu cầu",
-      require_martial_status: "không yêu cầu",
-      education_at_least: 1,
+      require_gender: "Không yêu cầu",
+      require_martial_status: "Không yêu cầu",
+      require_education: 1,
       level_id: 1,
       working_type: "full-time",
       working_time: "",
@@ -219,9 +219,9 @@ export default function EmployerPost() {
                     <select
                       className="form-select"
                       id="field"
-                      value={newPost.industry}
+                      value={newPost.industry_id}
                       onChange={(e) =>
-                        setNewPost({ ...newPost, industry: e.target.value })
+                        setNewPost({ ...newPost, industry_id: e.target.value })
                       }
                     >
                       {industry?.map((option) => (
@@ -241,9 +241,12 @@ export default function EmployerPost() {
                     <select
                       className="form-select"
                       id="field"
-                      value={newPost.job_function}
+                      value={newPost.job_function_id}
                       onChange={(e) =>
-                        setNewPost({ ...newPost, job_function: e.target.value })
+                        setNewPost({
+                          ...newPost,
+                          job_function_id: e.target.value,
+                        })
                       }
                     >
                       {jobFunction?.map((option) => (
@@ -349,11 +352,11 @@ export default function EmployerPost() {
                     <select
                       className="form-select"
                       id="field"
-                      value={newPost.education_at_least}
+                      value={newPost.require_education}
                       onChange={(e) =>
                         setNewPost({
                           ...newPost,
-                          education_at_least: e.target.value,
+                          require_education: e.target.value,
                         })
                       }
                     >
@@ -395,7 +398,7 @@ export default function EmployerPost() {
                   <ul className="list-group">
                     {tags
                       ?.filter((skill) =>
-                        skill.content
+                        skill.tags_content
                           .toLowerCase()
                           .includes(skillInput.toLowerCase())
                       )
@@ -407,7 +410,7 @@ export default function EmployerPost() {
                               className="list-group-item list-group-item-action ms-2 mr-2"
                               onClick={() => handleAddSkill(skill)}
                             >
-                              {skill.content}
+                              {skill.tags_content}
                             </li>
                           )}
                         </>
@@ -421,7 +424,8 @@ export default function EmployerPost() {
                         style={{ cursor: "pointer" }}
                         onClick={() => handleRemoveSkill(skill)}
                       >
-                        {skill.content} <span className="ms-1">&times;</span>
+                        {skill.tags_content}{" "}
+                        <span className="ms-1">&times;</span>
                       </span>
                     ))}
                   </div>
@@ -535,7 +539,7 @@ export default function EmployerPost() {
                         })
                       }
                     >
-                      <option value="không yêu cầu" selected>
+                      <option value="Không yêu cầu" selected>
                         Không yêu cầu
                       </option>
                       <option value="nam">Nam</option>
@@ -782,8 +786,8 @@ export default function EmployerPost() {
                         ...newPost,
                         job_id: post.job_id,
                         title: post.title,
-                        industry: post.industry,
-                        job_function: post.job_function,
+                        industry_id: post.industry_id,
+                        job_function_id: post.job_function_id,
                         quantity: post.quantity,
                         salary_min: post.salary_min,
                         salary_max: post.salary_max,

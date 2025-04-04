@@ -18,7 +18,10 @@ import {
   deleteProfileItem,
   updateProfileItem,
 } from "../../../redux/actions/jobseekerAction.js";
-import { getCategoryEdu } from "../../../redux/actions/categoryAction.js";
+import {
+  getCategoryEdu,
+  getCategoryTags,
+} from "../../../redux/actions/categoryAction.js";
 import formatDateToDDMMYYYY from "../../../utils/formatDate.js";
 
 export default function YourCVwithUs() {
@@ -33,8 +36,8 @@ export default function YourCVwithUs() {
     listCertification,
   } = useSelector((state) => state.jobseeker);
   const { user } = useSelector((state) => state.auth);
-  const { edu } = useSelector((state) => state.category);
-
+  const { edu, tags } = useSelector((state) => state.category);
+  console.log("liskisll", tags);
   const [experience, setExperience] = useState({
     job: "",
     company: "",
@@ -66,9 +69,7 @@ export default function YourCVwithUs() {
     project_description: "",
   });
 
-  const [skill, setSkill] = useState({
-    skill_name: "",
-  });
+  const [skillInput, setSkillInput] = useState("");
 
   const [certification, setCertification] = useState({
     certificate_name: "",
@@ -146,17 +147,17 @@ export default function YourCVwithUs() {
   };
 
   const handleAddSkill = () => {
-    if (isAdd) {
-      dispatch(addSkill(userInformation?.jobseeker_id, skill));
-    } else {
-      console.log("Update skill chạy: ", skill);
-      dispatch(
-        updateProfileItem(modalUpdateID, userInformation?.jobseeker_id, skill)
-      );
-    }
-    setSkill({
-      skill_name: "",
-    });
+    // if (isAdd) {
+    //   dispatch(addSkill(userInformation?.jobseeker_id, skill));
+    // } else {
+    //   console.log("Update skill chạy: ", skill);
+    //   dispatch(
+    //     updateProfileItem(modalUpdateID, userInformation?.jobseeker_id, skill)
+    //   );
+    // }
+    // setSkill({
+    //   skill_name: "",
+    // });
   };
 
   const handleAddCertification = () => {
@@ -196,6 +197,7 @@ export default function YourCVwithUs() {
     dispatch(getListLanguage(userInformation?.jobseeker_id));
     dispatch(getListCertification(userInformation?.jobseeker_id));
     dispatch(getCategoryEdu());
+    dispatch(getCategoryTags());
   }, [dispatch, userInformation]);
 
   useEffect(() => {
@@ -714,33 +716,39 @@ export default function YourCVwithUs() {
                     <label htmlFor="field" className="form-label">
                       Kỹ năng
                     </label>
-                    {/* <select className="form-select" id="field">
-                      <option selected>Chọn kỹ năng</option>
-                      <option>Công nghệ thông tin</option>
-                      <option>Marketing</option>
-                      <option>Tài chính</option>
-                    </select> */}
                     <input
-                      value={skill.skill_name}
+                      value={skillInput}
                       type="text"
                       className="form-control"
                       placeholder="Nhập kỹ năng"
                       onChange={(e) => {
-                        setSkill({ ...skill, skill_name: e.target.value });
+                        setSkillInput(e.target.value);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleAddSkill();
+                        }
                       }}
                     />
+                    <ul className="list-group">
+                      {tags
+                        ?.filter((tag) =>
+                          tag.content
+                            .toLowerCase()
+                            .includes(skillInput.toLowerCase())
+                        )
+                        .map((skill) => (
+                          <li
+                            key={skill.skill_id}
+                            className="list-group-item list-group-item-action ms-2 mr-2"
+                            onClick={() => handleAddSkill(skill)}
+                          >
+                            {skill.content}
+                          </li>
+                        ))}
+                    </ul>
                   </div>
-                  {/* <div className="col-md-6">
-                    <label htmlFor="field" className="form-label">
-                      Mức độ thành thạo
-                    </label>
-                    <select className="form-select" id="field">
-                      <option selected>Chọn mức độ thành thạo</option>
-                      <option>Công nghệ thông tin</option>
-                      <option>Marketing</option>
-                      <option>Tài chính</option>
-                    </select>
-                  </div> */}
                 </div>
               </form>
             </div>
@@ -1293,7 +1301,7 @@ export default function YourCVwithUs() {
                 key={index}
               >
                 <div className="d-flex justify-content-between align-items-center rounded-2">
-                  <span className="col-md-3">{skl.skill}</span>
+                  <span className="col-md-3">{skl.tags_content}</span>
                   <span className="text-primary text-decoration-none">
                     <i class="bi bi-pencil-square me-2"></i>
                     <i

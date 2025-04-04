@@ -18,6 +18,8 @@ export default function WorkMangePage() {
     (state) => state.category
   );
 
+  console.log("city", city);
+
   const [filter, setFilter] = useState({
     title: "",
     industry: "",
