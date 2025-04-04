@@ -574,6 +574,7 @@ export const updateProfileItem = (modalID, id, data) => async (dispatch) => {
       )(dispatch);
       break;
     case 6:
+      console.log("data", data);
       updateProfileItemChild(
         id,
         data,
@@ -592,7 +593,6 @@ export const updateProfileItemChild =
   (id, data, host, type, modalID, messageSuccess, messageFail) =>
   async (dispatch) => {
     try {
-      console.log("modalID:", modalID);
       const response = await axios.post(`${domain}/user/${host}`, {
         id: id,
         data: data,

@@ -441,6 +441,32 @@ const queryAddProject = async (id, project) => {
   return affectedRows;
 };
 
+const queryAddSkill = async (id, skill) => {
+  let totalInserted = 0;
+  for (const i of skill) {
+    const [result] = await db.query(
+      `
+    insert into profile_skill(profile_id, skill_id)
+    values(?, ?)
+    `,
+      [id, i.tag_id]
+    );
+    totalInserted += result.affectedRows;
+  }
+  return totalInserted;
+};
+
+const queryAddCertification = async (id, certification) => {
+  const [affectedRows] = await db.query(
+    `
+    insert into profile_certification(profile_id, certifications, month_)
+    values(?, ?, ?)
+    `,
+    [id, certification.certificate_name, certification.date]
+  );
+  return affectedRows;
+};
+
 const queryDeleteExperience = async (id, id_delete) => {
   const [affectedRows] = await db.query(
     `
@@ -478,7 +504,7 @@ const queryDeleteSkill = async (id, id_delete) => {
   const [affectedRows] = await db.query(
     `
     DELETE FROM profile_skill
-    WHERE profile_id = ? AND profile_skill_id = ?;
+    WHERE profile_id = ? AND skill_id = ?;
     `,
     [id, id_delete]
   );
@@ -500,7 +526,7 @@ const queryDeleteCertification = async (id, id_delete) => {
   const [affectedRows] = await db.query(
     `
     DELETE FROM profile_certification
-    WHERE profile_id = ? AND profile_certification_id = ?;
+    WHERE profile_id = ? AND profile_certifications_id = ?;
     `,
     [id, id_delete]
   );
@@ -544,6 +570,8 @@ module.exports = {
   queryAddExperience,
   queryAddEducation,
   queryAddProject,
+  queryAddSkill,
+  queryAddCertification,
 
   queryDeleteExperience,
   queryDeleteEducation,

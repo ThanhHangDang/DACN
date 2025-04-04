@@ -37,7 +37,7 @@ export default function YourCVwithUs() {
   } = useSelector((state) => state.jobseeker);
   const { user } = useSelector((state) => state.auth);
   const { edu, tags } = useSelector((state) => state.category);
-  console.log("liskisll", tags);
+
   const [experience, setExperience] = useState({
     job: "",
     company: "",
@@ -70,6 +70,7 @@ export default function YourCVwithUs() {
   });
 
   const [skillInput, setSkillInput] = useState("");
+  const [skillAdd, setSkillAdd] = useState([]);
 
   const [certification, setCertification] = useState({
     certificate_name: "",
@@ -81,7 +82,6 @@ export default function YourCVwithUs() {
   const [isAdd, setIsAdd] = useState(true);
 
   const handleUpdateCarreerTarget = () => {
-    // console.log("Update career target: ", careerTarget);
     dispatch(updateCareerTarget(userInformation?.jobseeker_id, careerTarget));
   };
 
@@ -111,7 +111,6 @@ export default function YourCVwithUs() {
     if (isAdd) {
       dispatch(addEducation(userInformation?.jobseeker_id, education));
     } else {
-      console.log("Update education chạy: ", education);
       dispatch(
         updateProfileItem(
           modalUpdateID,
@@ -133,7 +132,6 @@ export default function YourCVwithUs() {
     if (isAdd) {
       dispatch(addProject(userInformation?.jobseeker_id, project));
     } else {
-      console.log("Update project chạy: ", project);
       dispatch(
         updateProfileItem(modalUpdateID, userInformation?.jobseeker_id, project)
       );
@@ -146,18 +144,19 @@ export default function YourCVwithUs() {
     });
   };
 
+  const handleAddSkillOptions = (skill) => {
+    if (!skillAdd.includes(skill)) {
+      setSkillAdd([...skillAdd, skill]);
+    }
+    setSkillInput("");
+  };
+
   const handleAddSkill = () => {
-    // if (isAdd) {
-    //   dispatch(addSkill(userInformation?.jobseeker_id, skill));
-    // } else {
-    //   console.log("Update skill chạy: ", skill);
-    //   dispatch(
-    //     updateProfileItem(modalUpdateID, userInformation?.jobseeker_id, skill)
-    //   );
-    // }
-    // setSkill({
-    //   skill_name: "",
-    // });
+    console.log("skillAdd: ", skillAdd);
+
+    dispatch(addSkill(userInformation?.jobseeker_id, skillAdd));
+
+    setSkillAdd([]);
   };
 
   const handleAddCertification = () => {
@@ -180,6 +179,7 @@ export default function YourCVwithUs() {
   };
 
   const handleDeleteProfileItem = () => {
+    console.log("dataDeleteModal: ", dataDeleteModal);
     dispatch(
       deleteProfileItem(
         dataDeleteModal.modalID,
@@ -725,29 +725,46 @@ export default function YourCVwithUs() {
                         setSkillInput(e.target.value);
                       }}
                       onKeyDown={(e) => {
-                        if (e.key === "Enter") {
+                        if (e.key === "Enter" && skillInput.trim() !== "") {
                           e.preventDefault();
-                          handleAddSkill();
+                          handleAddSkillOptions(skillInput);
                         }
                       }}
                     />
                     <ul className="list-group">
                       {tags
                         ?.filter((tag) =>
-                          tag.content
+                          tag.tags_content
                             .toLowerCase()
                             .includes(skillInput.toLowerCase())
                         )
                         .map((skill) => (
-                          <li
-                            key={skill.skill_id}
-                            className="list-group-item list-group-item-action ms-2 mr-2"
-                            onClick={() => handleAddSkill(skill)}
-                          >
-                            {skill.content}
-                          </li>
+                          <>
+                            {skillInput !== "" && (
+                              <li
+                                key={skill.tag_id}
+                                className="list-group-item list-group-item-action ms-2 mr-2"
+                                onClick={() => handleAddSkillOptions(skill)}
+                              >
+                                {skill.tags_content}
+                              </li>
+                            )}
+                          </>
                         ))}
                     </ul>
+                    <div className="mt-2">
+                      {skillAdd?.map((skill) => (
+                        <span
+                          key={skill.tag_id}
+                          className="badge bg-primary me-2"
+                          style={{ cursor: "pointer" }}
+                          onClick={() => {}}
+                        >
+                          {skill.tags_content}{" "}
+                          <span className="ms-1">&times;</span>
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </form>
@@ -1291,34 +1308,29 @@ export default function YourCVwithUs() {
       <div className="bg-light rounded-2 me-2 my-2 p-2">
         <span className="">
           <h3>Kỹ năng</h3>
-          <p className="fst-italic">
+          {/* <p className="fst-italic">
             Mô tả kỹ năng làm việc của bạn càng chi tiết càng tốt
-          </p>
+          </p> */}
           {listSkill &&
             listSkill?.map((skl, index) => (
-              <div
-                className="bg-white rounded-2 me-2 my-2 p-2 col-4"
-                key={index}
-              >
-                <div className="d-flex justify-content-between align-items-center rounded-2">
-                  <span className="col-md-3">{skl.tags_content}</span>
-                  <span className="text-primary text-decoration-none">
-                    <i class="bi bi-pencil-square me-2"></i>
-                    <i
-                      class="bi bi-trash text-danger"
-                      data-bs-toggle="modal"
-                      data-bs-target="#confirmDeleteModal"
-                      onClick={() => {
-                        setDataDeleteModal({
-                          ...dataDeleteModal,
-                          modalID: 4,
-                          id: userInformation?.jobseeker_id,
-                          id_delete: skl.profile_skill_id,
-                        });
-                      }}
-                    ></i>
-                  </span>
-                </div>
+              <div key={index}>
+                <span
+                  key={skl.tag_id}
+                  className="badge bg-primary me-2 p-2 m-1"
+                  style={{ cursor: "pointer" }}
+                  data-bs-toggle="modal"
+                  data-bs-target="#confirmDeleteModal"
+                  onClick={() => {
+                    setDataDeleteModal({
+                      ...dataDeleteModal,
+                      modalID: 4,
+                      id: userInformation?.jobseeker_id,
+                      id_delete: skl.skill_id,
+                    });
+                  }}
+                >
+                  {skl.tags_content} <span className="ms-1">&times;</span>
+                </span>
               </div>
             ))}
         </span>

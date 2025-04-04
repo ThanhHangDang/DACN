@@ -20,9 +20,12 @@ const {
   updateJobseekerProfile,
   updateExpectedJob,
   updateCareerTarget,
+
   addExperience,
   addEducation,
   addProject,
+  addSkill,
+  addCertification,
 
   deleteExperience,
   deleteEducation,
@@ -65,6 +68,8 @@ userRoutes.post("/update-career-target", updateCareerTarget);
 userRoutes.post("/add-experience", addExperience);
 userRoutes.post("/add-education", addEducation);
 userRoutes.post("/add-project", addProject);
+userRoutes.post("/add-skill", addSkill);
+userRoutes.post("/add-certification", addCertification);
 
 userRoutes.delete("/delete-experience", deleteExperience);
 userRoutes.delete("/delete-education", deleteEducation);

@@ -147,8 +147,14 @@ export default function WorkDetail() {
                 <div>
                   <h6 className="fw-bold text-secondary">Độ tuổi</h6>
                   <p>
-                    {postDetail?.require_age_min} -{" "}
-                    {postDetail?.require_age_max}
+                    {postDetail?.require_age_min > 0 &&
+                    postDetail?.require_age_max > 0
+                      ? postDetail?.require_age_min +
+                        " - " +
+                        postDetail?.require_age_max
+                      : "Không yêu cầu"}
+                    {/* {postDetail?.require_age_min} -{" "}
+                    {postDetail?.require_age_max} */}
                   </p>
                 </div>
               </div>
