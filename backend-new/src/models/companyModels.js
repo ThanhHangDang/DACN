@@ -1,39 +1,112 @@
 const db = require("../config/databaseConfig.js");
 
 const queryGetLeadingCompany = async () => {
-  const [company] = await db.query(`
+  const [company] = await db.query(
+    `
     SELECT 
-    c.company_id,
-    c.company_name,
-    c.logo,
-    c.scale_id,
-    c.industry_id,
-    c.phone_number,
-    c.describle,
-    e.status_ AS employer_status,
-    s.scale_min,
-    s.scale_max,
-    i.industry_name,
-    ct.city_name,
-    n.nation_name
-FROM 
-    company AS c
-JOIN 
-    user_employer AS e ON c.company_id = e.employer_id
-LEFT JOIN 
-    catalog_scale AS s ON c.scale_id = s.scale_id
-LEFT JOIN 
-    catalog_industry AS i ON c.industry_id = i.industry_id
-LEFT JOIN 
-    company_location AS cl ON c.company_id = cl.company_id
-LEFT JOIN 
-    catalog_city AS ct ON cl.city_id = ct.city_id
-LEFT JOIN 
-    catalog_nation AS n ON ct.nation_id = n.nation_id
-LIMIT 5;
-    `);
+      c.company_id,
+      c.company_name,
+      c.logo,
+      c.scale_id,
+      c.industry_id,
+      c.phone_number,
+      c.describle,
+      e.status_ AS employer_status,
+      s.scale_min,
+      s.scale_max,
+      i.industry_name,
+      ct.city_name,
+      n.nation_name
+    FROM 
+      company AS c
+    JOIN 
+      user_employer AS e ON c.company_id = e.employer_id
+    LEFT JOIN 
+      catalog_scale AS s ON c.scale_id = s.scale_id
+    LEFT JOIN 
+      catalog_industry AS i ON c.industry_id = i.industry_id
+    LEFT JOIN 
+      company_location AS cl ON c.company_id = cl.company_id
+    LEFT JOIN 
+      catalog_city AS ct ON cl.city_id = ct.city_id
+    LEFT JOIN 
+      catalog_nation AS n ON ct.nation_id = n.nation_id
+    LIMIT 5;
+    `
+  );
 
   return company;
+};
+
+const queryGetAllCompany = async (limit, offset) => {
+  const [company] = await db.query(
+    `
+    SELECT 
+      c.company_id,
+      c.company_name,
+      c.logo,
+      c.scale_id,
+      c.industry_id,
+      c.phone_number,
+      c.describle,
+      c.count_follower,
+      e.status_ AS employer_status,
+      s.scale_min,
+      s.scale_max,
+      i.industry_name,
+      ct.city_name,
+      n.nation_name,
+      COUNT(j.job_id) AS total_jobs
+    FROM
+      company AS c
+    JOIN
+      user_employer AS e ON c.company_id = e.employer_id
+    LEFT JOIN
+      catalog_scale AS s ON c.scale_id = s.scale_id
+    LEFT JOIN
+      catalog_industry AS i ON c.industry_id = i.industry_id
+    LEFT JOIN
+      company_location AS cl ON c.company_id = cl.company_id
+    LEFT JOIN
+      catalog_city AS ct ON cl.city_id = ct.city_id
+    LEFT JOIN
+      catalog_nation AS n ON ct.nation_id = n.nation_id
+    LEFT JOIN
+      job AS j ON c.company_id = j.employer_id
+    WHERE
+      e.status_ = 1
+    GROUP BY
+      c.company_id,
+      c.company_name,
+      c.logo,
+      c.scale_id,
+      c.industry_id,
+      c.phone_number,
+      c.describle,
+      c.count_follower,
+      e.status_,
+      s.scale_min,
+      s.scale_max,
+      i.industry_name,
+      ct.city_name,
+      n.nation_name
+    ORDER BY
+      c.company_id DESC
+    LIMIT ? OFFSET ?;
+  `,
+    [limit, offset]
+  );
+
+  return company;
+};
+
+const queryGetCountTotalCompany = async () => {
+  const [total] = await db.query(
+    `
+    SELECT COUNT(*) AS total FROM company;
+  `
+  );
+  return total;
 };
 
 const queryPostJob = async (data) => {
@@ -156,6 +229,9 @@ const queryGetCompanySaveJobseeker = async (id) => {
 };
 
 module.exports = {
+  queryGetAllCompany,
+  queryGetCountTotalCompany,
+
   queryGetLeadingCompany,
   queryPostJob,
   queryGetCompanySaveJobseeker,

@@ -2,9 +2,30 @@ const {
   queryGetLeadingCompany,
   queryPostJob,
   queryEditJob,
+  queryGetAllCompany,
+  queryGetCountTotalCompany,
 } = require("../models/companyModels.js");
 
 const { queryGetWorkByUser } = require("../models/workModel.js");
+
+const getAllCompany = async (req, res) => {
+  const page = parseInt(req.query.page);
+  const limit = 9;
+  const offset = (page - 1) * limit;
+
+  try {
+    const company = await queryGetAllCompany(limit, offset);
+    const total = await queryGetCountTotalCompany();
+    const totalPages = Math.ceil(total[0].total / limit);
+    if (company) {
+      return res.status(200).json({ company, totalPages });
+    }
+    return res.status(404).json({ message: "No companies found" });
+  } catch (error) {
+    console.log("Get All Company error:", error);
+    return res.status(500);
+  }
+};
 
 const getLeadingCompany = async (req, res) => {
   try {
@@ -13,6 +34,7 @@ const getLeadingCompany = async (req, res) => {
     if (company) {
       return res.status(200).json({ company });
     }
+    return res.status(404).json({ message: "No leading company found" });
   } catch (error) {
     console.log("Get Leading Company error:", error);
     return res.status(500);
@@ -61,6 +83,8 @@ const editJob = async (req, res) => {
 const getCompanySaveJobseeker = async (req, res) => {};
 
 module.exports = {
+  getAllCompany,
+
   getLeadingCompany,
   getCompanySaveJobseeker,
   postJob,
