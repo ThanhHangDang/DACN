@@ -23,14 +23,17 @@ function CompanyCard({ company }) {
           style={{ height: "180px", objectFit: "cover" }}
         />
         <div className="card-body">
-          <div className="d-flex align-items-center mb-2">
+          <NavLink
+            to={`/company-detail/${company?.company_id}`}
+            className="d-flex align-items-center mb-2"
+          >
             <img
               src={company.logo}
               alt="logo"
               style={{ width: 40, height: 40, marginRight: 10 }}
             />
             <h6 className="mb-0">{company?.company_name}</h6>
-          </div>
+          </NavLink>
           <p className="mb-1 text-muted">
             {company?.count_follower ? company.count_follower : "0"} lượt theo
             dõi • {company?.total_jobs ? company.total_jobs : "0"} tin tuyển
@@ -61,8 +64,6 @@ export default function CompanyCulture() {
     (state) => state.company
   );
   const { industry, city } = useSelector((state) => state.category);
-
-  console.log("listCompany", city);
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -104,6 +105,17 @@ export default function CompanyCulture() {
 
   return (
     <div className="container py-4">
+      <nav aria-label="breadcrumb">
+        <ol className="breadcrumb">
+          <li className="breadcrumb-item">
+            <NavLink to="/">Trang chủ</NavLink>
+          </li>
+          <li className="breadcrumb-item active" aria-current="page">
+            Danh sách công ty
+          </li>
+        </ol>
+      </nav>
+
       <h2 className="fw-bold mb-3">Khám Phá Văn Hoá Công Ty</h2>
       <div className="input-group mb-4">
         <input

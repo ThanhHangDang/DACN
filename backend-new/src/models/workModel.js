@@ -133,7 +133,12 @@ const queryGetAllWorks = async () => {
 const queryGetWorkByUser = async (userId) => {
   const [work] = await db.query(
     `
-      SELECT * FROM job WHERE employer_id = ?;
+      SELECT 
+        j.* ,
+        c.city_name
+      FROM job j
+      JOIN catalog_city c ON j.work_location = c.city_id
+      WHERE employer_id = ?;
     `,
     [userId]
   );

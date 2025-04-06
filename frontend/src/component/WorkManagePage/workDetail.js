@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { getPostDetails } from "../../redux/actions/postAction.js";
 import formatDateToDDMMYYYY from "../../utils/formatDate.js";
+import calculateDaysRemaining from "../../utils/calculateDaysRemaining.js";
 
 export default function WorkDetail() {
   const dispatch = useDispatch();
@@ -11,15 +12,9 @@ export default function WorkDetail() {
   const { id } = useParams();
 
   const formatNumberToTr = (number) => `${(number / 1e6).toFixed(0)}tr`;
-  const calculateDaysRemaining = (targetDateString) => {
-    const targetDate = new Date(targetDateString);
-    const currentDate = new Date();
-    const timeDifference = targetDate - currentDate;
-    return Math.ceil(timeDifference / (1000 * 60 * 60 * 24)); // Trả về số ngày còn lại
-  };
 
   const postDetail = useSelector((state) => state.post.postDetail);
-  console.log(postDetail);
+
   useEffect(() => {
     dispatch(getPostDetails(id));
   }, [id]);
@@ -39,13 +34,22 @@ export default function WorkDetail() {
             </div>
             <div className="d-flex justify-content-start">
               <p className="me-4 text-color">
-                {formatNumberToTr(postDetail?.salary_min)}-
-                {formatNumberToTr(postDetail?.salary_max)} đ/tháng
+                {postDetail?.salary_min === 0 && postDetail?.salary_max === 0
+                  ? "Thỏa thuận"
+                  : `${formatNumberToTr(
+                      postDetail?.salary_min
+                    )} - ${formatNumberToTr(postDetail?.salary_max)} đ/tháng`}
               </p>
+
               <p className="me-4">
-                <i class="bi bi-stopwatch-fill me-2"></i>Hết hạn trong{" "}
-                {calculateDaysRemaining(postDetail?.date_expi)} ngày
+                <i className="bi bi-stopwatch-fill me-2"></i>
+                {calculateDaysRemaining(postDetail?.date_expi) > 0
+                  ? `Hết hạn trong ${calculateDaysRemaining(
+                      postDetail?.date_expi
+                    )} ngày`
+                  : "Hết hạn"}
               </p>
+
               <p>
                 <i class="bi bi-people-fill me-2"></i>
                 {postDetail?.views} Lượt xem

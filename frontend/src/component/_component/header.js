@@ -111,7 +111,7 @@ export default function Header() {
         <div className="container-fluid">
           <NavLink className="navbar-brand ms-lg-4" to="/">
             <img
-              src="./img/logo/logo.jpg"
+              src="/img/logo/logo.jpg"
               alt="logo"
               style={{ height: 40, width: 40 }}
             />

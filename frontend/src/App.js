@@ -122,7 +122,7 @@ function App() {
 
           {/* Anh Đạt làm 2 cái này */}
           <Route path="/list-company" Component={ListCompany} />
-          <Route path="/company-detail" Component={CompanyDetail} />
+          <Route path="/company-detail/:companyId" Component={CompanyDetail} />
 
           <Route path="*" Component={PageNotFound} />
         </Routes>

@@ -1,14 +1,58 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { NavLink } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { getCompanyInformation } from "../../redux/actions/companyAction.js";
+import { getCategoryCity } from "../../redux/actions/categoryAction.js";
+import { getPostsByUser } from "../../redux/actions/postAction.js";
+import calculateDaysRemaining from "../../utils/calculateDaysRemaining.js";
 
 export default function CompanyDetail() {
+  const dispatch = useDispatch();
+  const { companyId } = useParams();
+  const { companyInformation } = useSelector((state) => state.company);
+  const { city } = useSelector((state) => state.category);
+  const { postsByUser } = useSelector((state) => state.post);
+
+  const formatNumberToTr = (number) => `${(number / 1e3).toFixed(0)}tr`;
+
+  console.log(companyId);
+
+  useEffect(() => {
+    dispatch(getCompanyInformation(companyId));
+    dispatch(getPostsByUser(companyId));
+  }, [companyId]);
+
+  useEffect(() => {
+    dispatch(getCategoryCity(84));
+  }, []);
+
   return (
     <div className="container my-4">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <NavLink to="/">Home</NavLink>
+          </li>
+          <li class="breadcrumb-item">
+            <NavLink to="/list-company">Danh sách công ty</NavLink>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">
+            Thông tin công ty
+          </li>
+        </ol>
+      </nav>
       {/* Header */}
       <div className="card">
         <div className="card-header p-0">
           <div className="position-relative">
             <img
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSP0JRIJbRlJrEhNZlPR-xHkBddR5jA0BXtXA&s"
+              src={
+                companyInformation?.background
+                  ? companyInformation.background
+                  : "/img/default-background/defaultBg.jpg"
+              }
+              // src="/img/default-background/defaultBg.jpg"
               alt="Company Banner"
               className="w-100"
               style={{ height: "250px", objectFit: "cover" }}
@@ -16,15 +60,33 @@ export default function CompanyDetail() {
             <div className="position-absolute bottom-0 start-0 p-3">
               <div className="d-flex align-items-center">
                 <img
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSP0JRIJbRlJrEhNZlPR-xHkBddR5jA0BXtXA&s"
+                  src={companyInformation?.logo}
                   alt="Company Logo"
                   className="rounded-circle border border-white"
                   style={{ width: "80px", height: "80px", objectFit: "cover" }}
                 />
                 <div className="ms-3">
-                  <h5 className="text-white fw-bold">HAPAS VIỆT NAM</h5>
-                  <p className="text-white mb-0">
+                  <h5 className="text-white fw-bold">
+                    {companyInformation?.company_name}
+                  </h5>
+                  {/* <p className="text-white mb-0">
                     https://hapas.vn | 25-99 nhân viên | 87 người theo dõi
+                  </p> */}
+                  <p className="text-white mb-0">
+                    {companyInformation?.scale_min
+                      ? companyInformation.scale_min
+                      : "0"}{" "}
+                    -{" "}
+                    {companyInformation?.scale_max
+                      ? companyInformation.scale_max
+                      : companyInformation?.scale_min
+                      ? companyInformation.scale_min
+                      : "0"}{" "}
+                    nhân viên |{" "}
+                    {companyInformation?.count_follower
+                      ? companyInformation.count_follower
+                      : "0"}{" "}
+                    người theo dõi
                   </p>
                 </div>
               </div>
@@ -41,19 +103,7 @@ export default function CompanyDetail() {
           <div className="card mb-4">
             <div className="card-body">
               <h6 className="fw-bold">Giới thiệu công ty</h6>
-              <p>
-                HAPAS chào bạn! <br />
-                HAPAS với sứ mệnh đem lại hạnh phúc và tiện ích cho mọi người,
-                chúng tôi tạo cơ hội để sáng tạo, nuôi dưỡng tiềm năng con người
-                và mang lại những giá trị tốt đẹp cho thị trường số 1 tại Việt
-                Nam vào năm 2028, cam kết mang đến trải nghiệm khách hàng vượt
-                trội và những sản phẩm tinh tế.
-              </p>
-              <p>
-                Hãy gia nhập đội ngũ trẻ trung, năng động của HAPAS để cùng mang
-                lại những điều bình thường tươi đẹp cho mọi người, cho mỗi ngày,
-                bớt mệt nhọc!
-              </p>
+              <p>{companyInformation?.describle}</p>
             </div>
           </div>
 
@@ -69,29 +119,54 @@ export default function CompanyDetail() {
                 />
                 <select className="form-select">
                   <option selected>Tất cả tỉnh/thành phố</option>
-                  <option>Hà Nội</option>
-                  <option>TP. Hồ Chí Minh</option>
+                  {city?.map((option) => (
+                    <option value={option.city_id} key={option.city_id}>
+                      {option.city_name}
+                    </option>
+                  ))}
                 </select>
                 <button className="btn btn-success">Tìm kiếm</button>
               </div>
               <div className="list-group">
-                <div className="list-group-item d-flex justify-content-between align-items-center">
-                  <div>
-                    <h6 className="mb-0">
-                      Quản Lý Cửa Hàng Thời Trang Tại Quận 9
-                    </h6>
-                    <p className="text-muted mb-0">
-                      HAPAS VIỆT NAM | Hồ Chí Minh | Còn 25 ngày để ứng tuyển
-                    </p>
-                  </div>
-                  <div className="text-end">
-                    <span className="badge bg-success">15 - 25 triệu</span>
-                    <button className="btn btn-outline-success btn-sm ms-3">
-                      Ứng tuyển
-                    </button>
-                  </div>
-                </div>
-                <div className="list-group-item d-flex justify-content-between align-items-center">
+                {postsByUser.length > 0 ? (
+                  postsByUser.map((option) => (
+                    <div
+                      className="list-group-item d-flex justify-content-between align-items-center"
+                      key={option.job_id}
+                    >
+                      <div>
+                        <h6 className="mb-0">{option.title}</h6>
+                        <p className="text-muted mb-0">
+                          {/* {option.company_name} |  */}
+                          {option.city_name} |{" "}
+                          {calculateDaysRemaining(option.date_expi) > 0
+                            ? `Còn ${calculateDaysRemaining(
+                                option.date_expi
+                              )} ngày để ứng tuyển`
+                            : "Hết hạn"}
+                        </p>
+                      </div>
+                      <div className="text-end">
+                        <span className="badge bg-success">
+                          {option.salary_min === 0 && option.salary_max === 0
+                            ? "Thỏa thuận"
+                            : `${formatNumberToTr(
+                                option.salary_min
+                              )} - ${formatNumberToTr(
+                                option.salary_max
+                              )} đ/tháng`}
+                        </span>
+                        <button className="btn btn-outline-success btn-sm ms-3">
+                          Ứng tuyển
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p>Chưa có bài đăng nào</p>
+                )}
+
+                {/* <div className="list-group-item d-flex justify-content-between align-items-center">
                   <div>
                     <h6 className="mb-0">
                       Chuyên Viên Vận Hành Sàn Thương Mại Điện Tử
@@ -106,7 +181,7 @@ export default function CompanyDetail() {
                       Ứng tuyển
                     </button>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
@@ -121,13 +196,11 @@ export default function CompanyDetail() {
               <p className="mb-1">
                 <strong>Địa chỉ công ty:</strong>
               </p>
-              <p className="mb-1">
-                Tầng 3, Tòa Riverside Garden 349 Vũ Tông Phan, Thanh Xuân, Hà
-                Nội
-              </p>
+
               <p>
-                Tầng 17 Sailing Tower, 51A Pasteur, Phường Bến Nghé, Quận 1, TP
-                Hồ Chí Minh
+                {companyInformation?.address
+                  ? companyInformation.address
+                  : "Chưa có thông tin"}
               </p>
               <h6 className="fw-bold">Chia sẻ công ty tới bạn bè</h6>
               <div className="d-flex gap-2">
@@ -149,19 +222,19 @@ export default function CompanyDetail() {
       {/* Footer Section */}
       <div className="card mt-4">
         <div className="card-body text-center">
-          <div className="row">
-            <div className="col-md-4">
+          <div className="row list-group list-group-horizontal">
+            <div className="col-md-4 list-group-item">
               <h6 className="fw-bold">Lương, Thưởng Và Chế Độ Phúc Lợi</h6>
               <p>Chính sách lương thưởng hấp dẫn, nhiều phúc lợi đặc biệt.</p>
             </div>
-            <div className="col-md-4">
+            <div className="col-md-4 list-group-item">
               <h6 className="fw-bold">Thời Gian Làm Việc Và Nghỉ Ngơi</h6>
               <p>
                 Môi trường làm việc năng động, giờ làm việc linh hoạt, nghỉ phép
                 đầy đủ.
               </p>
             </div>
-            <div className="col-md-4">
+            <div className="col-md-4 list-group-item">
               <h6 className="fw-bold">Đào Tạo Và Phát Triển</h6>
               <p>
                 Chương trình đào tạo chuyên môn, phát triển kỹ năng cá nhân.
