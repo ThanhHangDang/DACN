@@ -23,9 +23,13 @@ export default function EmployeeProfileManage() {
         <table class="table table-hover text-center">
           <thead>
             <tr>
+              <th scope="col">Avatar</th>
               <th scope="col">Ứng viên</th>
               <th scope="col">Công việc</th>
-              <th scope="col">Hồ sơ</th>
+              <th scope="col">Tuổi</th>
+              <th scope="col">Địa chỉ</th>
+              <th scope="col">Email</th>
+              <th scope="col">Ngày ứng tuyển</th>
               <th scope="col"></th>
             </tr>
           </thead>

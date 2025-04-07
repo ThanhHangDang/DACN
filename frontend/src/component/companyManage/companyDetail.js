@@ -14,9 +14,7 @@ export default function CompanyDetail() {
   const { city } = useSelector((state) => state.category);
   const { postsByUser } = useSelector((state) => state.post);
 
-  const formatNumberToTr = (number) => `${(number / 1e3).toFixed(0)}tr`;
-
-  console.log(companyId);
+  const formatNumberToTr = (number) => `${(number / 1e6).toFixed(0)}tr`;
 
   useEffect(() => {
     dispatch(getCompanyInformation(companyId));

@@ -1,7 +1,8 @@
 const db = require("../config/databaseConfig.js");
 
 const queryGetLatestWork = async () => {
-  const [work] = await db.query(`
+  const [work] = await db.query(
+    `
     SELECT 
     j.*,
     u.username AS employer_name,
@@ -33,7 +34,8 @@ LEFT JOIN
 ORDER BY 
     j.date_post DESC
 LIMIT 30;
-    `);
+    `
+  );
   return work;
 };
 

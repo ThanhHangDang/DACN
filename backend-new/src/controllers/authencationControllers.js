@@ -35,7 +35,7 @@ const login = async (req, res) => {
       id: userLogin.user_id,
       username: userLogin.username,
       role: userLogin.role_id,
-      create_date: userLogin.create_date,
+      create_date: userLogin.create_at,
     };
 
     res

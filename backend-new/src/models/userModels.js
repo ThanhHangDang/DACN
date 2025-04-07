@@ -89,7 +89,7 @@ const queryGetUserInformation = async (id) => {
       u.username,
       u.email,
       u.phone_number,
-      u.create_date,
+      u.create_at,
       r.role_name,
       p.full_name,
       p.title,
@@ -104,7 +104,7 @@ const queryGetUserInformation = async (id) => {
       p.nationality_id,
       cna.nation_name,
       p.percent_complete,
-      p.last_modify_date,
+      p.create_at as last_modify_date,
       c.city_name,
       c.city_id
     FROM 
