@@ -68,22 +68,21 @@ export const getAllPostsFailure = (error) => ({
   payload: error,
 });
 
-export const getAllPosts = () => {
+export const getAllPosts = (page) => {
   return async (dispatch) => {
     dispatch(getAllPostsRequest());
     try {
       const response = await axios.get(`${domain}/work/get-all-works`, {
         withCredentials: true,
+        params: { page },
       });
-      dispatch(getAllPostsSuccess(response.data.work));
+      console.log(response.data);
+      dispatch(getAllPostsSuccess(response.data));
     } catch (err) {
       dispatch(
         getAllPostsFailure(
           err.response?.data?.message || "Lấy danh sách bài viết thất bại!"
         )
-      );
-      toast.error(
-        err.response?.data?.message || "Lấy danh sách bài viết thất bại!"
       );
     }
   };

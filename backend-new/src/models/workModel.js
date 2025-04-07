@@ -95,8 +95,9 @@ LIMIT 1;
   return work;
 };
 
-const queryGetAllWorks = async () => {
-  const [work] = await db.query(`
+const queryGetAllWorks = async (limit, offset) => {
+  const [work] = await db.query(
+    `
       SELECT 
       j.*,
       u.username AS employer_name,
@@ -127,9 +128,20 @@ const queryGetAllWorks = async () => {
       catalog_education edu ON j.require_education = edu.education_id
   ORDER BY 
       j.date_post DESC
-  LIMIT 200;
-      `);
+  LIMIT ? OFFSET ?;;
+      `,
+    [limit, offset]
+  );
   return work;
+};
+
+const queryGetCountTotalWorks = async () => {
+  const [total] = await db.query(
+    `
+      SELECT COUNT(*) as total FROM job;
+    `
+  );
+  return total;
 };
 
 const queryGetWorkByUser = async (userId) => {
@@ -255,6 +267,7 @@ module.exports = {
   queryGetLatestWork,
   queryGetWorkDetail,
   queryGetAllWorks,
+  queryGetCountTotalWorks,
   queryGetWorkByUser,
   queryGetWorkBySearch,
 

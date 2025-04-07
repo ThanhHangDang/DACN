@@ -19,6 +19,7 @@ const initialState = {
   allPosts: null,
   postsByUser: null,
   suitablePosts: null,
+  totalWorksPages: 1,
 };
 
 const postReducer = (state = initialState, action) => {
@@ -32,7 +33,13 @@ const postReducer = (state = initialState, action) => {
     case GET_ALL_POSTS_REQUEST:
       return { ...state, loading: true, error: null };
     case GET_ALL_POSTS_SUCCESS:
-      return { ...state, loading: false, allPosts: action.payload };
+      console.log("dsdsda", action.payload.work);
+      return {
+        ...state,
+        loading: false,
+        allPosts: action.payload.work,
+        totalWorksPages: action.payload.totalPages,
+      };
     case GET_ALL_POSTS_FAILURE:
       return { ...state, loading: false, error: action.payload };
     case GET_POSTS_BY_USER:

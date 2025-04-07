@@ -12,7 +12,7 @@ import {
 
 export default function WorkMangePage() {
   const dispatch = useDispatch();
-  const allPosts = useSelector((state) => state.post.allPosts);
+  const { allPosts, totalWorksPages } = useSelector((state) => state.post);
 
   const { industry, jobFunction, city } = useSelector(
     (state) => state.category
@@ -45,12 +45,41 @@ export default function WorkMangePage() {
     dispatch(getPostsSearch(filter));
   };
 
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const getVisiblePages = (page, totalPages) => {
+    let start = Math.max(1, page - 2);
+    let end = Math.min(totalPages, page + 2);
+
+    if (end - start < 4) {
+      if (start === 1) {
+        end = Math.min(totalPages, start + 4);
+      } else if (end === totalPages) {
+        start = Math.max(1, end - 4);
+      }
+    }
+
+    const pages = [];
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    return pages;
+  };
+
+  const changePage = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
+
   useEffect(() => {
-    dispatch(getAllPosts());
+    dispatch(getAllPosts(page));
     dispatch(getCategoryIndustry());
     dispatch(getCategoryJobFunction());
     dispatch(getCategoryCity(84));
-  }, [dispatch]);
+    setTotalPages(totalWorksPages);
+  }, [page, dispatch]);
 
   const renderJob = () => {
     return allPosts?.map((job, index) => {
@@ -69,7 +98,6 @@ export default function WorkMangePage() {
               style={{ maxHeight: 100, maxWidth: 100 }}
             />
           </div>
-
           {/* Job Details */}
           <div className="flex-grow-1 col-md-6">
             <NavLink
@@ -78,7 +106,6 @@ export default function WorkMangePage() {
             >
               <h5 className="text-primary text-decoration-none">{job.title}</h5>
             </NavLink>
-
             <p className="mb-1 fw-bold">{job.company_name}</p>
             <p className="mb-1 text-danger">
               {formatNumberToTr(job?.salary_min)}-
@@ -86,7 +113,6 @@ export default function WorkMangePage() {
             </p>
             <p className="mb-0 text-muted">{job.work_location_name}</p>
           </div>
-
           {/* Favorite Icon */}
           <div className="col-md-2 d-flex justify-content-end">
             <button className="btn btn-outline-secondary">
@@ -100,6 +126,19 @@ export default function WorkMangePage() {
 
   return (
     <div>
+      <div className="container mt-4">
+        <nav aria-label="breadcrumb">
+          <ol className="breadcrumb">
+            <li className="breadcrumb-item">
+              <NavLink to="/">Trang chủ</NavLink>
+            </li>
+            <li className="breadcrumb-item active" aria-current="page">
+              Danh sách việc làm
+            </li>
+          </ol>
+        </nav>
+      </div>
+
       <div className="container bg-light p-4 rounded-3 shadow-sm mt-4 sticky">
         <form>
           <div className="row g-3">
@@ -241,6 +280,69 @@ export default function WorkMangePage() {
       </div>
 
       <div className="container mt-4">{renderJob()}</div>
+
+      <nav
+        className="d-flex justify-content-center mt-4"
+        aria-label="Page navigation example"
+      >
+        <ul className="pagination">
+          <li className="page-item">
+            <a
+              className="page-link"
+              href="#aaa"
+              aria-label="Previous"
+              onClick={() => changePage(page - 1)}
+            >
+              <span aria-hidden="true">«</span>
+            </a>
+          </li>
+
+          <li className="page-item">
+            <a
+              className="page-link"
+              href="#aaa"
+              aria-label="Previous"
+              onClick={() => changePage(1)}
+            >
+              <span aria-hidden="true">Đầu</span>
+            </a>
+          </li>
+
+          {getVisiblePages(page, totalPages).map((p) => (
+            <li key={p} className={`page-item ${p === page ? "active" : ""}`}>
+              <a
+                className="page-link"
+                href="#aaa"
+                onClick={() => changePage(p)}
+              >
+                {p}
+              </a>
+            </li>
+          ))}
+
+          <li className="page-item">
+            <a
+              className="page-link"
+              href="#aaa"
+              aria-label="Previous"
+              onClick={() => changePage(totalPages)}
+            >
+              <span aria-hidden="true">Cuối</span>
+            </a>
+          </li>
+
+          <li className="page-item">
+            <a
+              className="page-link"
+              href="#aaa"
+              aria-label="Next"
+              onClick={() => changePage(page + 1)}
+            >
+              <span aria-hidden="true">»</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
     </div>
   );
 }

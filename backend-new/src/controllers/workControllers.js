@@ -2,6 +2,7 @@ const {
   queryGetLatestWork,
   queryGetWorkDetail,
   queryGetAllWorks,
+  queryGetCountTotalWorks,
   queryGetWorkByUser,
   queryGetWorkBySearch,
 
@@ -36,12 +37,19 @@ const getWorkDetail = async (req, res) => {
 };
 
 const getAllWorks = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const offset = (page - 1) * limit;
+
   try {
-    const work = await queryGetAllWorks();
+    const work = await queryGetAllWorks(limit, offset);
+    const total = await queryGetCountTotalWorks();
+    const totalPages = Math.ceil(total[0].total / limit);
 
     if (work) {
-      return res.status(200).json({ work });
+      return res.status(200).json({ work, totalPages });
     }
+    return res.status(404).json({ message: "No works found" });
   } catch (error) {
     console.log("Get All Works error:", error);
     res.status(500);

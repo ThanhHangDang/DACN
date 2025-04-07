@@ -67,7 +67,7 @@ const queryGetEmployeeDetail = async (id) => {
     join profile_jobseeker pjs on js.jobseeker_id = pjs.profile_id
     join user_ u on js.jobseeker_id = u.user_id
     join catalog_level cl on pjs.level_id = cl.level_id
-    join catalog_city cc on pjs.work_place = cc.city_id
+    join catalog_city cc on pjs.city_id = cc.city_id
     left join profile_education pe on js.jobseeker_id = pe.profile_id
     left join profile_certification pcer on js.jobseeker_id = pcer.profile_id
     left join profile_experience pexp on js.jobseeker_id = pexp.profile_id

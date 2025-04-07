@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { getCompanyInformation } from "../../../redux/actions/companyAction";
 import { getCategoryIndustry } from "../../../redux/actions/categoryAction";
+import CompanyHeader from "../../../component/_component/ui/CompanyHeader.js";
 
 export default function CompanyProfile() {
   const dispatch = useDispatch();
@@ -10,6 +11,8 @@ export default function CompanyProfile() {
   const { industry } = useSelector((state) => state.category);
   const navigate = useNavigate();
   const { companyInformation } = useSelector((state) => state.company);
+
+  console.log("company information ", companyInformation);
 
   const [updateCompany, setUpdateCompany] = useState({
     company_name: companyInformation.company_name || "",
@@ -86,6 +89,8 @@ export default function CompanyProfile() {
           </button>
         </div>
       </div>
+
+      {/* <CompanyHeader companyInformation={companyInformation} /> */}
 
       <div className="bg-light rounded-2 me-2 my-2 p-2">
         <div className="row mb-3">
