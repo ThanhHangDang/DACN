@@ -30,17 +30,18 @@ const login = async (req, res) => {
         .status(401)
         .json({ message: "Tài khoản hoặc mật khẩu không đúng." });
     }
-
+    console.log("dang chay login");
+    const token = "token";
     req.session.userLogin = {
       id: userLogin.user_id,
       username: userLogin.username,
       role: userLogin.role_id,
       create_date: userLogin.create_at,
     };
-
-    res
+     // Tạo token ở đây nếu cần thiết
+    return res
       .status(200)
-      .json({ message: "Đăng nhập thành công.", user: req.session.userLogin });
+      .json({ message: "Đăng nhập thành công.", user: req.session.userLogin, token:token });
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ message: "Có lỗi khi đăng nhập." });
@@ -48,6 +49,7 @@ const login = async (req, res) => {
 };
 
 const isLogin = (req, res) => {
+  console.log("isLogin", req.session.userLogin);
   if (req.session.userLogin) {
     return res
       .status(200)
