@@ -362,7 +362,7 @@ const queryUpdateExpectedJob = async (id, job) => {
     UPDATE 
     profile_jobseeker
     SET 
-      work_place = ?,
+      city_id = ?,
       salary_expect = ?
     WHERE profile_id = ?;
     `,
