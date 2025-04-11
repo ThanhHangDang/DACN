@@ -1,77 +1,221 @@
 import React, { useEffect, useState } from "react";
-
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useGetCitiesQuery, useGetLevelsQuery,useGetJobFunctionQuery,useGetNationsQuery,useGetEducationQuery } from "../../../redux_toolkit/CategoryApi.js";
+import formatDate from "../../../utils/formatDate.js";
+import { 
+  useGetItemProfileQuery,
+  // useUpdateProfileMutation,
+  useUpdateProfileImageMutation,
+  // useUpdateExpectedJobMutation,
+  useUpdateItemProfileMutation
+} from "../../../redux_toolkit/JobseekerApi.js";
+import { toast } from "react-toastify";
 
-import { useDispatch, useSelector } from "react-redux";
-import {
-  getUserInformationByID,
-  updateExpectedJob,
-  updateProfile,
-  updateProfileImage,
-} from "../../../redux/actions/jobseekerAction.js";
-import {
-  getCategoryCity,
-  getCategoryLevel,
-} from "../../../redux/actions/categoryAction.js";
+// Hàm chuyển đổi định dạng ngày tháng cho input date
+const formatDateForInput = (dateString) => {
+  if (!dateString) return "";
+  
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return ""; // Invalid date
+    
+    // Format as YYYY-MM-DD
+    return date.toISOString().split('T')[0];
+  } catch (error) {
+    console.error("Error formatting date:", error);
+    return "";
+  }
+};
 
 export default function JobSeekerProfile() {
-  const dispatch = useDispatch();
-  const { userInformation } = useSelector((state) => state.jobseeker);
-  const { level } = useSelector((state) => state.category);
-  const { hideStatus, setHideStatus } = useState(false);
+  const navigate = useNavigate();
 
+  const mary_dict = [{key:1,name:"Độc thân"},{key:2,name:"Đã kết hôn"}];
+  const gender_dict = [{key:1,name:"Nam"},{key:2,name:"Nữ"}];
   const { isLogin, user } = useSelector((state) => state.auth);
-  const { city } = useSelector((state) => state.category);
+  const {data: edu } = useGetItemProfileQuery({type:"education",profile_id:user?.user?.id}); 
+  const highestEducation = edu?.reduce((highest, current) => {
+    return (current.education_id > highest.education_id) ? current : highest;
+  }, edu[0]);
+  
+  // Sử dụng
+  console.log(`Level cao nhất: ${highestEducation?.education_title}`);
+  
+  // Debug
+  console.log("User ID:", user?.user?.id);
+  const { data: level } = useGetLevelsQuery();
+  const { data: city } = useGetCitiesQuery(84);
+
+  const { data: job_function } = useGetJobFunctionQuery();
+  const { data: nation } = useGetNationsQuery();
+  console.log("job_function:", job_function);
+  // Sử dụng refetchOnMountOrArgChange để đảm bảo dữ liệu luôn được refresh
+  const { 
+    data: userInformation, 
+    isLoading, 
+    error, 
+    refetch 
+  } = useGetItemProfileQuery({type:"Basic",profile_id:user?.user?.id}, { 
+    skip: !user?.user?.id,
+    refetchOnMountOrArgChange: true
+  });
+  
+  // Debug API response
+  console.log("UserInformation response:", userInformation);
+  console.log("Error:", error);
+  
+
+  
+  // const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation();
+  const [updateProfileImage, { isLoading: isUpdatingImage }] = useUpdateProfileImageMutation();
+  // const [updateExpectedJobData, { isLoading: isUpdatingJob }] = useUpdateExpectedJobMutation();
+  const [updateItemProfile, { isLoading: isUpdatingJob }] = useUpdateItemProfileMutation();
+  
+  const [hideStatus, setHideStatus] = useState(false);
 
   const [expectedJob, setExpectedJob] = useState({
-    workCityPlace: "",
-    salary: "",
+    city_id: "",
+    salary_expect: "",
   });
 
   const [updateProfileData, setUpdateProfileData] = useState({
-    full_name: userInformation?.full_name || "",
-    title: userInformation?.title || "",
-    year_exp: userInformation?.year_exp || "",
-    level_id: userInformation?.level_id || "1",
-    email: userInformation?.email || "",
-    phone_number: userInformation?.phone_number || "",
-    address: userInformation?.address || "",
+    full_name: "",
+    title: "",
+    year_exp: "",
+    level_id: "1",
+    phone_number: "",
+    address: "",
+    birthday: "",
+    marital_status: "",
+    nationality_id: "",
+    job_function_id: "",
+    gender: "",
   });
 
   const [image, setImage] = useState(null);
 
-  const navigate = useNavigate();
-
-  const handleUpdateExpectedJob = () => {
-    dispatch(updateExpectedJob(user?.user.id, expectedJob));
-  };
-
-  const handleUpdateProfile = () => {
-    dispatch(updateProfile(user?.user.id, updateProfileData));
-  };
-
-  const handleUpdateImage = () => {
-    dispatch(updateProfileImage(user?.user.id, image));
-  };
-
+  // Kiểm tra đăng nhập
   useEffect(() => {
     if (!isLogin || user?.user?.role !== 3) {
       navigate("/login");
     }
-    dispatch(getUserInformationByID(user?.user.id));
-    dispatch(getCategoryCity(84));
-    dispatch(getCategoryLevel());
-  }, [isLogin, navigate, user, dispatch]);
+  }, [isLogin, navigate, user]);
 
+  // Cập nhật form data khi có thông tin user - đảm bảo đưa cả birthday vào
   useEffect(() => {
     if (userInformation) {
+      console.log("Setting form data from user information:", userInformation);
+      
+      setUpdateProfileData({
+        full_name: userInformation.full_name || "",
+        title: userInformation.title || "",
+        year_exp: userInformation.year_exp || "",
+        level_id: userInformation.level_id || "1",
+        // phone_number: userInformation.phone_number || "",
+        address: userInformation.address || "",
+        birthday: formatDateForInput(userInformation.birthday) || "",
+        gender: userInformation.gender || "",
+        marital_status: userInformation.marital_status || "",
+        nationality_id: userInformation.nationality_id || "",
+        job_function_id: userInformation.job_function_id || ""
+      });
+      
       setExpectedJob({
-        workCityPlace: userInformation?.city_id,
-        salary: userInformation?.salary_expect,
+        city_id: userInformation.city_id || "",
+        salary_expect: userInformation.salary_expect || ""
       });
     }
   }, [userInformation]);
 
+  // Khi cập nhật thành công, refetch data để hiển thị dữ liệu mới nhất
+  const handleUpdateProfileSuccess = () => {
+    refetch();
+  };
+
+  const handleUpdateExpectedJob = async () => {
+    try {
+      await updateItemProfile({type:"Basic",data:{
+        profile_id: user?.user?.id,
+        ...expectedJob
+      }}).unwrap();
+      toast.success("Cập nhật công việc mong muốn thành công!");
+      handleUpdateProfileSuccess();
+    } catch (error) {
+      console.error("Update expected job error:", error);
+      toast.error("Cập nhật công việc mong muốn thất bại!");
+    }
+  };
+
+  const handleUpdateProfile = async () => {
+    try {
+      await updateItemProfile({type:"Basic",data:{
+        profile_id: user?.user?.id,
+        ...updateProfileData
+      }}).unwrap();
+      toast.success("Cập nhật thông tin thành công!");
+      handleUpdateProfileSuccess();
+    } catch (error) {
+      console.error("Update profile error:", error);
+      toast.error("Cập nhật thông tin thất bại!");
+    }
+  };
+
+  const handleUpdateImage = async () => {
+    if (!image) {
+      toast.error("Vui lòng chọn ảnh!");
+      return;
+    }
+    
+    try {
+      await updateProfileImage({
+        id: user?.user?.id,
+        image: image
+      }).unwrap();
+      toast.success("Cập nhật ảnh đại diện thành công!");
+      handleUpdateProfileSuccess();
+    } catch (error) {
+      console.error("Update image error:", error);
+      toast.error("Cập nhật ảnh đại diện thất bại!");
+    }
+  };
+
+  // Hiển thị loading state
+  if (isLoading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{ height: "300px" }}>
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Hiển thị error state
+  if (error) {
+    return (
+      <div className="alert alert-danger">
+        Lỗi khi tải dữ liệu: {error.status} {error.data?.message || 'Unknown error'}
+        <button className="btn btn-sm btn-outline-danger ms-2" onClick={refetch}>
+          Thử lại
+        </button>
+      </div>
+    );
+  }
+
+  // Hiển thị khi không có dữ liệu
+  if (!userInformation) {
+    return (
+      <div className="alert alert-warning">
+        Không tìm thấy thông tin người dùng!
+        <button className="btn btn-sm btn-outline-warning ms-2" onClick={refetch}>
+          Tải lại
+        </button>
+      </div>
+    );
+  }
+
+  // Main render với dữ liệu đã có
   return (
     <div>
       {/* Modal cập nhật ảnh đại diện */}
@@ -109,7 +253,6 @@ export default function JobSeekerProfile() {
                         setImage(e.target.files[0]);
                       }}
                     />
-                    {/* <i class="bi bi-upload"></i> */}
                   </div>
                 </div>
               </form>
@@ -127,18 +270,17 @@ export default function JobSeekerProfile() {
                 type="button"
                 className="btn btn-primary"
                 onClick={handleUpdateImage}
+                disabled={isUpdatingImage} // bo sung the de khong bi click nhieu lan
                 data-bs-dismiss="modal"
                 aria-label="Close"
               >
-                Cập nhật
+                {isUpdatingImage ? 'Đang cập nhật...' : 'Cập nhật'}
               </button>
             </div>
           </div>
         </div>
       </div>
-      {/* End modal cập nhật ảnh đại diện */}
 
-      {/* Modal cập nhật thông tin cơ bản */}
       <div
         className="modal fade"
         id="updateProfile"
@@ -182,7 +324,7 @@ export default function JobSeekerProfile() {
 
                   <div className="col-md-6">
                     <label htmlFor="title" className="form-label">
-                      Chức vụ
+                      Chức danh hiện tại
                     </label>
                     <input
                       type="text"
@@ -202,7 +344,7 @@ export default function JobSeekerProfile() {
                 <div className="row mb-3">
                   <div className="col-md-6">
                     <label htmlFor="expr" className="form-label">
-                      Kinh nghiệm
+                      Số năm kinh nghiệm
                     </label>
                     <input
                       type="number"
@@ -222,7 +364,7 @@ export default function JobSeekerProfile() {
 
                   <div className="col-md-6">
                     <label htmlFor="field" className="form-label">
-                      Trình độ
+                      Cấp bậc hiện tại
                     </label>
                     <select
                       className="form-select"
@@ -231,7 +373,7 @@ export default function JobSeekerProfile() {
                         updateProfileData.level_id
                           ? updateProfileData.level_id
                           : userInformation?.level_id
-                      }
+                          }
                       onChange={(e) =>
                         setUpdateProfileData({
                           ...updateProfileData,
@@ -258,13 +400,15 @@ export default function JobSeekerProfile() {
                       id="email"
                       placeholder="Email"
                       className="form-control"
-                      value={updateProfileData.email}
-                      onChange={(e) => {
-                        setUpdateProfileData({
-                          ...updateProfileData,
-                          email: e.target.value,
-                        });
-                      }}
+                      value={userInformation.email}
+                      disabled
+                      //// khong cho phep cap nhat email tai day
+                      // onChange={(e) => {
+                      //   setUpdateProfileData({
+                      //     ...updateProfileData,
+                      //     email: e.target.value,
+                      //   });
+                      // }}
                     />
                   </div>
 
@@ -277,18 +421,129 @@ export default function JobSeekerProfile() {
                       id="phoneNumber"
                       placeholder="Số điện thoại"
                       className="form-control"
-                      value={updateProfileData.phone_number}
+                      value={
+                          updateProfileData.phone_number ?
+                          updateProfileData.phone_number  : userInformation?.phone_number
+                          }
+                          disabled
+                          // khong cho phep cap nhat phone_number tai day
+                      // onChange={(e) => {
+                      //   setUpdateProfileData({
+                      //     ...updateProfileData,
+                      //     phone_number: e.target.value,
+                      //   });
+                      // }}
+                    />
+                  </div>
+                </div>
+{/* bo sung them */}
+                <div className="row mb-3">
+                  <div className="col-md-6">
+                    <label htmlFor="birthday" className="form-label">
+                      Ngày sinh
+                    </label>
+                    <input
+                      value={updateProfileData.birthday || ""}
+                      type="date"
+                      className="form-control"
+                      id="birthday"
+                      placeholder="Nhập ngày tháng năm sinh"
+                      min="1960-01-01"
                       onChange={(e) => {
+                        console.log("Selected birthday:", e.target.value);
                         setUpdateProfileData({
                           ...updateProfileData,
-                          phone_number: e.target.value,
+                          birthday: e.target.value,
                         });
                       }}
                     />
                   </div>
-                </div>
 
-                <div className="">
+                  <div className="col-md-6">
+                    <label htmlFor="field" className="form-label">
+                      Giới tính
+                    </label>
+                    <select
+                      className="form-select"
+                      id="field"
+                      value={
+                        updateProfileData.gender
+                          ? updateProfileData.gender
+                          : userInformation?.gender
+                      }
+                      onChange={(e) =>
+                        setUpdateProfileData({
+                          ...updateProfileData,
+                          gender: e.target.value,
+                        })
+                      }
+                    >
+                      {gender_dict?.map((option) => (
+                        <option value={option.key} key={option.key}>
+                          {option.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="row mb-3">
+                <div className="col-md-6">
+                    <label htmlFor="field" className="form-label">
+                      Ngành nghề hiện tại
+                    </label>
+                    <select
+                      className="form-select"
+                      id="field_job_function"
+                      value={
+                        updateProfileData.job_function_id
+                          ? updateProfileData.job_function_id
+                          : userInformation?.job_function_id
+                      }
+                      onChange={(e) =>
+                        setUpdateProfileData({
+                          ...updateProfileData,
+                          job_function_id: e.target.value,
+                        })
+                      }
+                    >
+                      {job_function?.map((option) => (
+                        <option value={option.job_function_id} key={option.job_function_id}>
+                          {option.job_function_name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="col-md-6">
+                    <label htmlFor="field" className="form-label">
+                      Quốc tịch
+                    </label>
+                    <select
+                      className="form-select"
+                      id="field_nation"
+                      value={
+                        updateProfileData.nationality_id
+                          ? updateProfileData.nationality_id
+                          : userInformation?.nationality_id
+                      }
+                      onChange={(e) =>
+                        setUpdateProfileData({
+                          ...updateProfileData,
+                          nationality_id: e.target.value,
+                        })
+                      }
+                    >
+                      {nation?.map((option) => (
+                        <option value={option.nation_id} key={option.nation_id}>
+                          {option.nation_name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+{/* ket thuc bo sung */}
+                <div className="row mb-3">
+                  <div className="col-md-8">
                   <label htmlFor="address" className="form-label">
                     Địa chỉ liên lạc
                   </label>
@@ -306,6 +561,33 @@ export default function JobSeekerProfile() {
                     }}
                   />
                 </div>
+                <div className="col-md-4">
+                    <label htmlFor="field" className="form-label">
+                      Tình trạng hôn nhân
+                    </label>
+                    <select
+                      className="form-select"
+                      id="field_nation"
+                      value={
+                        updateProfileData.marital_status
+                          ? updateProfileData.marital_status
+                          : userInformation?.marital_status
+                      }
+                      onChange={(e) =>
+                        setUpdateProfileData({
+                          ...updateProfileData,
+                          marital_status: e.target.value,
+                        })
+                      }
+                    >
+                      {mary_dict?.map((option) => (
+                        <option value={option.key} key={option.key}>
+                          {option.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+             </div>
               </form>
             </div>
 
@@ -321,24 +603,22 @@ export default function JobSeekerProfile() {
                 type="button"
                 className="btn btn-primary"
                 onClick={handleUpdateProfile}
+                disabled={isUpdatingJob}
                 data-bs-dismiss="modal"
                 aria-label="Close"
               >
-                Cập nhật
+                {isUpdatingJob ? 'Đang cập nhật...' : 'Cập nhật'}
               </button>
             </div>
           </div>
         </div>
       </div>
-      {/* End cập nhật hồ sơ */}
 
-      {/* Modal công việc mong muốn */}
       <div
         className="modal fade"
         id="expectedJob"
         tabIndex={-1}
         aria-labelledby="modalTitle"
-        // aria-hidden="true"
       >
         <div className="modal-dialog modal-lg">
           <div className="modal-content">
@@ -364,14 +644,14 @@ export default function JobSeekerProfile() {
                       className="form-select"
                       id="field"
                       value={
-                        expectedJob.workCityPlace
-                          ? expectedJob.workCityPlace
+                        expectedJob.city_id
+                          ? expectedJob.city_id
                           : userInformation?.city_id
-                      }
+}
                       onChange={(e) =>
                         setExpectedJob({
                           ...expectedJob,
-                          workCityPlace: e.target.value,
+                          city_id: e.target.value,
                         })
                       }
                     >
@@ -395,12 +675,12 @@ export default function JobSeekerProfile() {
                     id="postTitle"
                     placeholder="Nhập mức lương mong muốn"
                     value={
-                      expectedJob.salary
-                        ? expectedJob.salary
+                      expectedJob.salary_expect
+                        ? expectedJob.salary_expect
                         : userInformation?.salary_expect
-                    }
+}
                     onChange={(e) =>
-                      setExpectedJob({ ...expectedJob, salary: e.target.value })
+                      setExpectedJob({ ...expectedJob, salary_expect: e.target.value })
                     }
                   />
                 </div>
@@ -419,25 +699,25 @@ export default function JobSeekerProfile() {
                 type="button"
                 className="btn btn-primary"
                 onClick={handleUpdateExpectedJob}
+                disabled={isUpdatingJob}
                 data-bs-dismiss="modal"
                 aria-label="Close"
               >
-                Cập nhật
+                {isUpdatingJob ? 'Đang cập nhật...' : 'Cập nhật'}
               </button>
             </div>
           </div>
         </div>
       </div>
-      {/* End modal công việc mong muốn */}
 
       <div className="bg-light rounded-2 me-2 my-2 p-2">
         <div className="d-flex justify-content-start align-items-center mb-2">
           <h3 className="me-2">Hồ sơ của bạn</h3>
           <NavLink to="/post" className="text-primary">
             {hideStatus ? (
-              <i class="bi bi-eye"></i>
+              <i className="bi bi-eye"></i>
             ) : (
-              <i class="bi bi-eye-slash"></i>
+              <i className="bi bi-eye-slash"></i>
             )}
           </NavLink>
         </div>
@@ -448,7 +728,7 @@ export default function JobSeekerProfile() {
           <div className="d-flex justify-content-between">
             <h3>Thông tin cơ bản</h3>
             <i
-              class="bi bi-pencil-square text-primary custom-hover"
+              className="bi bi-pencil-square text-primary custom-hover"
               data-bs-toggle="modal"
               data-bs-target="#updateProfile"
             ></i>
@@ -456,53 +736,79 @@ export default function JobSeekerProfile() {
 
           <div className="col-md-2 col-sm-0 text-center d-flex justify-content-center">
             <img
-              src={userInformation.avatar}
-              alt="logo"
+              src={userInformation?.avatar || "/default-avatar.png"}
+              alt="profile"
               style={{ height: 120, width: 120 }}
               className="rounded-2 img-fluid"
             />
             <i
-              class="bi bi-pencil-square text-primary custom-hover"
+              className="bi bi-pencil-square text-primary custom-hover"
               data-bs-toggle="modal"
               data-bs-target="#updateImage"
             ></i>
           </div>
           <div className="col-8">
-            <h3>{userInformation.full_name}</h3>
-            <p className="lh-1">{userInformation.title}</p>
+            <h3>{userInformation?.full_name}</h3>
+            <div>
+            <p className="lh-1 d-inline me-5"> <strong>Chức danh: </strong>{userInformation?.title}</p>
+            <p className="lh-1 d-inline"> <strong>Lĩnh vực: </strong>{userInformation?.job_function_name}</p>
+            </div>
             <div className="row">
               <span className="col-md-6 col-sm-0">
                 <i className="bi bi-briefcase-fill me-2"></i>
-                {userInformation.year_exp
+                {userInformation?.year_exp
                   ? `${userInformation.year_exp} năm kinh nghiệm`
                   : "Chưa có kinh nghiệm"}
               </span>
 
               <span className="col-md-5 col-sm-0">
-                <i class="bi bi-mortarboard-fill me-2"></i>
-                {userInformation.situations
-                  ? userInformation.situations
+                <i className="bi bi-mortarboard-fill me-2"></i>
+                {
+                highestEducation?.education_title
+                  ? highestEducation.education_title
                   : "Chưa"}
               </span>
             </div>
             <div className="row">
               <span className="col-md-6 col-sm-0">
-                <i class="bi bi-envelope-fill me-2"></i>
-                {userInformation.email}
+                <i className="bi bi-envelope-fill me-2"></i>
+                {userInformation?.email}
               </span>
               <span className="col-md-5 col-sm-0">
-                <i class="bi bi-telephone-fill me-2"></i>
+                <i className="bi bi-telephone-fill me-2"></i>
                 {userInformation?.phone_number
                   ? userInformation.phone_number
                   : "Chưa có số điện thoại liên lạc"}
               </span>
             </div>
-            <span>
-              <i class="bi bi-house-door-fill me-2"></i>
+            <div className="row">
+            <span className="col-md-6 col-sm-0">
+              <i className="bi bi-house-door-fill me-2"></i>
               {userInformation?.address
                 ? userInformation.address
                 : "Chưa có thông tin địa chỉ"}
             </span>
+            <span className="col-md-5 col-sm-0">
+              <i className="bi bi-heart-fill me-2"></i>
+              {userInformation?.marital_status
+                ? "Đã kết hôn"
+                : "Chưa kết hôn"}
+            </span>
+            </div>
+            <div className="row">
+            <span className="col-md-6 col-sm-0">
+            <i className="bi bi-calendar2-date me-2"></i>
+              {userInformation?.birthday
+                ? formatDate(userInformation.birthday)
+                : "Chưa cập nhật"}
+            </span>
+            <span className="col-md-5 col-sm-0">
+              <i className="bi bi-globe me-2"></i>
+              {userInformation?.nation_name
+                ? userInformation?.nation_name
+                : "Chưa cập nhật"}
+            </span>
+            </div>
           </div>
         </div>
       </div>
@@ -511,7 +817,7 @@ export default function JobSeekerProfile() {
         <div className="d-flex justify-content-between">
           <h3>Công việc mong muốn</h3>
           <i
-            class="bi bi-pencil-square text-primary custom-hover"
+            className="bi bi-pencil-square text-primary custom-hover"
             data-bs-toggle="modal"
             data-bs-target="#expectedJob"
           ></i>
@@ -520,7 +826,7 @@ export default function JobSeekerProfile() {
         <div className="row">
           <span className="col-md-3 col-sm-0">Nơi làm việc</span>
           <span className="col-md-5 col-sm-0 fw-bold">
-            {userInformation?.city_name}
+            {userInformation?.city_name || "Chưa xác định"}
           </span>
         </div>
         <div className="row">
@@ -528,7 +834,7 @@ export default function JobSeekerProfile() {
             Mức lương mong muốn (VNĐ/tháng)
           </span>
           <span className="col-md-5 col-sm-0 fw-bold">
-            {userInformation.salary_expect} (VNĐ/tháng)
+            {userInformation.salary_expect || 0} (VNĐ/tháng)
           </span>
         </div>
       </div>

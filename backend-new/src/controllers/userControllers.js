@@ -517,12 +517,14 @@ const updateJobseekerProfileImage = async (req, res) => {
 // type: experience, education, project, skill, language, certification, basic, cv
 const getItemProfile = async (req, res) => {
   // type: basic, experience, education, project, skill, language, certification, cv: xem cu the file table_for_jobseeker
-  const { type, profiel_id } = req.query;
+  const { type, profile_id } = req.query;
   try {
-    if (!type || !profiel_id) {
+    // console.log(req);
+    console.log("dang lay info cua jobseeker bang new query", type, profile_id);
+    if (!type || !profile_id) {
       return res.status(400).json({ message: "Thiếu thông tin." });
     }
-    const userInfor = await queryItemProfile(type, profiel_id);
+    const userInfor = await queryItemProfile(type, profile_id);
     if (userInfor) {
       return res.status(200).json({data: userInfor });
     } else {
@@ -566,6 +568,7 @@ const deleteItemProfile = async (req, res, next) => {
     if (!type || !data) {
       return res.status(400).json({ message: "Thiếu thông tin." });
     }
+        // console.log("queryDeleteItemProfile", type, data);
     const affectedRows = await queryDeleteItemProfile(type, data);
     if (affectedRows === 0) {
       return res.status(500).json({ message: "Xóa không thành công", err });

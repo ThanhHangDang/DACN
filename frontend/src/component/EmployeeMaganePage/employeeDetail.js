@@ -23,27 +23,27 @@ export default function EmployeeDetail() {
             <p className="me-5">{jobseekerDetail?.title}</p>
             <div className="d-flex justify-content-start">
               <p className="me-5 col-4">
-                <i class="bi bi-briefcase-fill me-2"></i>
+                <i className="bi bi-briefcase-fill me-2"></i>
                 {jobseekerDetail?.level_name}
               </p>
               <p className="me-4">
-                <i class="bi bi-mortarboard-fill me-2"></i>
+                <i className="bi bi-mortarboard-fill me-2"></i>
                 {jobseekerDetail?.education_title}
               </p>
             </div>
             <div className="d-flex justify-content-start">
               <p className="me-5 col-4">
-                <i class="bi bi-envelope-fill me-2"></i>
+                <i className="bi bi-envelope-fill me-2"></i>
                 {jobseekerDetail?.email}
               </p>
               <p className="me-4">
-                <i class="bi bi-telephone-fill me-2"></i>
+                <i className="bi bi-telephone-fill me-2"></i>
                 {jobseekerDetail?.phone_number}
               </p>
             </div>
             <div className="d-flex justify-content-start">
               <p className="me-5 col-4">
-                <i class="bi bi-envelope-fill me-2"></i>
+                <i className="bi bi-envelope-fill me-2"></i>
                 {jobseekerDetail?.address}
               </p>
             </div>

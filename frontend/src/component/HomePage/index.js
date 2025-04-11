@@ -4,18 +4,23 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getCurrentDate,
-  getLeadingCompany,
-  getLatestWork,
+  // getLeadingCompany,
+  // getLatestWork,
   setCurrentPage,
 } from "../../redux/actions/homePageAction.js";
+import { useGetLeadingCompaniesQuery,useGetLatestWorkQuery } from "../../redux_toolkit/guestApi.js";
 
 export default function HomePage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { currentDate, leadingCompany, latestWork, currentPage } = useSelector(
+  const { currentDate, 
+    // leadingCompany, latestWork, 
+    currentPage } = useSelector(
     (state) => state.homePage
   );
+  const { data: leadingCompany } = useGetLeadingCompaniesQuery();
+  const { data: latestWork } = useGetLatestWorkQuery();
 
   const { isLogin, user } = useSelector((state) => state.auth);
 
@@ -30,8 +35,8 @@ export default function HomePage() {
     }
 
     dispatch(getCurrentDate());
-    dispatch(getLatestWork());
-    dispatch(getLeadingCompany());
+    // dispatch(getLatestWork());
+    // dispatch(getLeadingCompany());
   }, [dispatch]);
 
   // Pagination
@@ -172,7 +177,7 @@ export default function HomePage() {
             />
 
             <div className="d-flex align-items-center col-2 me-2 border-end">
-              <i class="bi bi-geo-alt-fill me-2"></i>
+              <i className="bi bi-geo-alt-fill me-2"></i>
               <span className="md-display-none">Tất cả địa điểm</span>
             </div>
 
@@ -180,7 +185,7 @@ export default function HomePage() {
               className="btn btn-outline-info rounded-5 d-flex align-items-center col-1"
               type="submit"
             >
-              <i class="bi bi-search me-2"></i>
+              <i className="bi bi-search me-2"></i>
               <span className="md-display-none">Search</span>
             </button>
           </form>
@@ -220,7 +225,7 @@ export default function HomePage() {
                   className="d-block w-100"
                   alt="..."
                 />
-                <div class="carousel-caption d-none d-md-block">
+                <div className="carousel-caption d-none d-md-block">
                   <h5>First slide label</h5>
                   <p>
                     Some representative placeholder content for the first slide.
@@ -233,7 +238,7 @@ export default function HomePage() {
                   className="d-block w-100"
                   alt="..."
                 />
-                <div class="carousel-caption d-none d-md-block">
+                <div className="carousel-caption d-none d-md-block">
                   <h5>Second slide label</h5>
                   <p>
                     Some representative placeholder content for the second
@@ -247,7 +252,7 @@ export default function HomePage() {
                   className="d-block w-100"
                   alt="..."
                 />
-                <div class="carousel-caption d-none d-md-block">
+                <div className="carousel-caption d-none d-md-block">
                   <h5>Third slide label</h5>
                   <p>
                     Some representative placeholder content for the third slide.
@@ -349,7 +354,7 @@ export default function HomePage() {
                 kèm học vấn, kinh nghiệm, dự án, kỹ năng,... của mình
               </p>
               <button className="btn btn-primary text-white float-end">
-                Tạo profile<i class="bi bi-arrow-right fs-10 ms-2"></i>
+                Tạo profile<i className="bi bi-arrow-right fs-10 ms-2"></i>
               </button>
             </div>
             <div className="col-md-5 col-sm-10 backgound-item-info text-white rounded-2 m-4 p-4">
@@ -360,7 +365,7 @@ export default function HomePage() {
                 kèm học vấn, kinh nghiệm, dự án, kỹ năng,... của mìnhn
               </p>
               <button className="btn btn-primary text-white float-end">
-                Xây dựng<i class="bi bi-arrow-right fs-10 ms-2"></i>
+                Xây dựng<i className="bi bi-arrow-right fs-10 ms-2"></i>
               </button>
             </div>
           </div>

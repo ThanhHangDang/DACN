@@ -20,7 +20,7 @@ export default function EmployeeProfileManage() {
       </div>
 
       <div className="bg-light rounded-2 me-2 my-2 p-2">
-        <table class="table table-hover text-center">
+        <table className="table table-hover text-center">
           <thead>
             <tr>
               <th scope="col">Avatar</th>

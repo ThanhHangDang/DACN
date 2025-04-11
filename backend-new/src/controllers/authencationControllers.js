@@ -30,7 +30,7 @@ const login = async (req, res) => {
         .status(401)
         .json({ message: "Tài khoản hoặc mật khẩu không đúng." });
     }
-    console.log("dang chay login");
+    // console.log("dang chay login");
     const token = "token";
     req.session.userLogin = {
       id: userLogin.user_id,
@@ -49,7 +49,7 @@ const login = async (req, res) => {
 };
 
 const isLogin = (req, res) => {
-  console.log("isLogin", req.session.userLogin);
+  // console.log("isLogin", req.session.userLogin);
   if (req.session.userLogin) {
     return res
       .status(200)

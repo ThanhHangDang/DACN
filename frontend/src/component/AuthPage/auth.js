@@ -132,7 +132,7 @@ export default function Auth() {
         <form method="post">
           <p>Bạn là:*</p>
           <select
-            class="form-select mb-3"
+            className="form-select mb-3"
             aria-label="Default select example"
             value={dataRegister.role}
             onChange={(e) => {

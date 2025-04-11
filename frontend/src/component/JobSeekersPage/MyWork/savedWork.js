@@ -1,20 +1,19 @@
-import React, { useEffect } from "react";
+import React  from "react"; //{ useEffect }
 
 import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getJobSave } from "../../../redux/actions/jobseekerAction.js";
+import { useGetItemProfileQuery } from "../../../redux_toolkit/JobseekerApi.js";
 import formatDateToDDMMYYYY from "../../../utils/formatDate.js";
+// import { type } from "@testing-library/user-event/dist/type/index.js";
 
 export default function SavedWork() {
   const formatNumberToTr = (number) => `${(number / 1e6).toFixed(0)}tr`;
-  const dispatch = useDispatch();
-  const { userInformation, listJobSave } = useSelector(
-    (state) => state.jobseeker
-  );
+  // const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+    const {data:userInformation} = useGetItemProfileQuery({type: "Basic",profile_id: user?.user?.id});
+  const { data: listJobSave } = useGetItemProfileQuery({type: "save_job",profile_id: user?.user?.id});
+
   console.log("List job save:", listJobSave);
-  useEffect(() => {
-    dispatch(getJobSave(userInformation?.jobseeker_id));
-  }, []);
 
   return (
     <>
@@ -25,64 +24,64 @@ export default function SavedWork() {
               <div className="accordion-item">
                 <h2
                   className="accordion-header"
-                  id={`flush-headingOne${job[0].job_id}`}
+                  id={`flush-headingOne${job.job_id}`}
                 >
                   <button
                     className="accordion-button collapsed"
                     type="button"
                     data-bs-toggle="collapse"
-                    data-bs-target={`#flush-collapseOne${job[0].job_id}`}
+                    data-bs-target={`#flush-collapseOne${job.job_id}`}
                     aria-expanded="false"
-                    aria-controls={`flush-collapseOne${job[0].job_id}`}
+                    aria-controls={`flush-collapseOne${job.job_id}`}
                   >
                     <span>
                       <img
-                        src={job[0].company_logo}
+                        src={job.company_logo}
                         alt="logo"
                         style={{ height: 50, width: 50 }}
                         className="rounded-circle me-5"
                       />
                     </span>
-                    <span className="fw-bold">{job[0].title}</span>
+                    <span className="fw-bold">{job.title}</span>
                   </button>
                 </h2>
                 <div
-                  id={`flush-collapseOne${job[0].job_id}`}
+                  id={`flush-collapseOne${job.job_id}`}
                   className="accordion-collapse collapse"
-                  aria-labelledby={`flush-headingOne${job[0].job_id}`}
+                  aria-labelledby={`flush-headingOne${job.job_id}`}
                   data-bs-parent="#accordionFlushExample"
                 >
                   <div className="accordion-body text-start d-flex justify-content-between">
                     <div className="d-flex flex-column">
                       <span>
                         Mức lương:{" "}
-                        {job[0].salary_min || job[0].salary_max
+                        {job.salary_min || job.salary_max
                           ? `${formatNumberToTr(
-                              job[0].salary_min
-                            )} - ${formatNumberToTr(job[0].salary_max)} đ/tháng`
+                              job.salary_min
+                            )} - ${formatNumberToTr(job.salary_max)} đ/tháng`
                           : "Chưa có thông tin"}{" "}
                       </span>
                       <span>
                         Công ty:{" "}
-                        {job[0].company_name || "Chưa có thông tin công ty"}
+                        {job.company_name || "Chưa có thông tin công ty"}
                       </span>
                       <span>
-                        Địa chỉ: {job[0].address || "Chưa có thông tin địa chỉ"}
+                        Địa chỉ: {job.address || "Chưa có thông tin địa chỉ"}
                       </span>
                       <span>
                         Ngày đăng:{" "}
-                        {formatDateToDDMMYYYY(job[0].date_post) ||
+                        {formatDateToDDMMYYYY(job.date_post) ||
                           "Chưa có thông tin ngày đăng"}
                       </span>
                       <span>
                         Mô tả:{" "}
-                        {job[0].describle ||
+                        {job.describle ||
                           "Chưa có thông tin mô tả công việc"}
                       </span>
                     </div>
                     <div className="d-flex align-items-center justify-content-end">
                       <NavLink
-                        to={`/post-detail/${job[0].job_id}`}
+                        to={`/post-detail/${job.job_id}`}
                         className="text-primary text-decoration-none flex-end"
                       >
                         Xem thêm

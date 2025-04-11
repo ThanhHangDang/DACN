@@ -2,42 +2,45 @@ import React, { useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { getCompanyInformation } from "../../redux/actions/companyAction.js";
-import { getCategoryCity } from "../../redux/actions/categoryAction.js";
+// import { getCompanyInformation } from "../../redux/actions/companyAction.js";
+// import { getCategoryCity } from "../../redux_toolkit/categorySlice.js";
 import { getPostsByUser } from "../../redux/actions/postAction.js";
 import calculateDaysRemaining from "../../utils/calculateDaysRemaining.js";
-
+import { useGetCompanyInformationQuery } from "../../redux_toolkit/guestApi.js";
+import { useGetCitiesQuery } from "../../redux_toolkit/CategoryApi.js";
 import CompanyHeader from "../../component/_component/ui/CompanyHeader.js";
 
 export default function CompanyDetail() {
   const dispatch = useDispatch();
   const { companyId } = useParams();
-  const { companyInformation } = useSelector((state) => state.company);
-  const { city } = useSelector((state) => state.category);
+  // const { companyInformation } = useSelector((state) => state.company);
+  // const { city } = useSelector((state) => state.category);
+  const { data: city } = useGetCitiesQuery(84); // 84 là mã quốc gia Việt Nam
+  const { data: companyInformation } = useGetCompanyInformationQuery(companyId);
   const { postsByUser } = useSelector((state) => state.post);
 
   const formatNumberToTr = (number) => `${(number / 1e6).toFixed(0)}tr`;
 
   useEffect(() => {
-    dispatch(getCompanyInformation(companyId));
+    // dispatch(getCompanyInformation(companyId));
     dispatch(getPostsByUser(companyId));
   }, [companyId]);
 
-  useEffect(() => {
-    dispatch(getCategoryCity(84));
-  }, []);
+  // useEffect(() => {
+  //   dispatch(getCategoryCity(84));
+  // }, []);
 
   return (
     <div className="container my-4">
       <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item">
+        <ol className="breadcrumb">
+          <li className="breadcrumb-item">
             <NavLink to="/">Home</NavLink>
           </li>
-          <li class="breadcrumb-item">
+          <li className="breadcrumb-item">
             <NavLink to="/list-company">Danh sách công ty</NavLink>
           </li>
-          <li class="breadcrumb-item active" aria-current="page">
+          <li className="breadcrumb-item active" aria-current="page">
             Thông tin công ty
           </li>
         </ol>

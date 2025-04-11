@@ -1,19 +1,18 @@
-import React, { useEffect } from "react";
-
+import React from "react";
 import { NavLink } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { getFollowEmployer } from "../../../redux/actions/jobseekerAction.js";
+import { useSelector } from "react-redux";
+import { useGetItemProfileQuery } from "../../../redux_toolkit/JobseekerApi";
 
 export default function CompanyYouFollow() {
-  const dispatch = useDispatch();
-  const { userInformation, listFollowEmployer } = useSelector(
-    (state) => state.jobseeker
-  );
+  const { user } = useSelector((state) => state.auth);
+  const jobseekerId = user?.user?.id;
+  
+  // Using RTK Query hook instead of dispatch + useEffect
+  const { data: listFollowEmployer, isLoading } = useGetItemProfileQuery({type:"follow_employer",profile_id:jobseekerId});
 
-  useEffect(() => {
-    console.log("Uaaaaa");
-    dispatch(getFollowEmployer(userInformation?.jobseeker_id));
-  }, []);
+  if (isLoading) {
+    return <div className="text-center">Loading...</div>;
+  }
 
   return (
     <>
@@ -34,14 +33,14 @@ export default function CompanyYouFollow() {
               </span>
               <span>{company.company_name}</span>
 
-              <NavLink to="" className="text-primary text-decoration-none">
+              <NavLink to={`/company-detail/${company.company_id}`} className="text-primary text-decoration-none">
                 Xem
               </NavLink>
             </div>
           ))}
         </>
       ) : (
-        "Bạn chưa theo dỏi công ty nào"
+        "Bạn chưa theo dõi công ty nào"
       )}
     </>
   );

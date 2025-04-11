@@ -1,14 +1,20 @@
 import React, { useEffect } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserInformationByID } from "../../../redux/actions/jobseekerAction.js";
+import { useGetItemProfileQuery } from "../../../redux_toolkit/JobseekerApi.js";
 
 export default function JobSeekerOverview() {
   const dispatch = useDispatch();
-  const { userInformation } = useSelector((state) => state.jobseeker);
+  const { isLogin, user } = useSelector((state) => state.auth);
+  const { data: userInformation, isLoading, error } = useGetItemProfileQuery({type:"Basic",profile_id: user?.user?.id},     
+    { 
+      skip: !user?.user?.id 
+    }
+  );
+
   const { suitablePosts } = useSelector((state) => state.post);
 
-  const { isLogin, user } = useSelector((state) => state.auth);
+
 
   const navigate = useNavigate();
 
@@ -65,7 +71,6 @@ export default function JobSeekerOverview() {
       console.log("check: co chay", user?.user.role);
       navigate("/login");
     }
-    dispatch(getUserInformationByID(user?.user.id));
   }, [dispatch, isLogin, navigate, user]);
 
   return (

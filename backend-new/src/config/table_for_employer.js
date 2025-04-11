@@ -1,6 +1,6 @@
 module.exports = {
-  // Employer basic information
-  basic: {
+  // Employer Basic information
+  Basic: {
     tableName: 'user_employer',
     key: ['employer_id'],
     fields: ['employer_id', 'status_'],

@@ -1,12 +1,9 @@
 import React, { useEffect } from "react";
-
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-
 import { useSelector } from "react-redux";
 
 export default function JobSeekerCompany() {
   const { isLogin, user } = useSelector((state) => state.auth);
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -14,6 +11,7 @@ export default function JobSeekerCompany() {
       navigate("/login");
     }
   }, [isLogin, navigate, user]);
+
   return (
     <div>
       <div className="bg-light rounded-2 me-2 my-2 p-2">
@@ -22,9 +20,6 @@ export default function JobSeekerCompany() {
 
       <div className="bg-light rounded-2 me-2 my-2 p-2">
         <div className="">
-          {/* <NavLink to="/jobseeker-mycompany" className="text-decoration-none">
-            <span className="me-3">Nhà tuyển dụng đã xem hồ sơ của bạn</span>
-          </NavLink> */}
           <NavLink
             to="/jobseeker-company-follow"
             className="text-decoration-none"

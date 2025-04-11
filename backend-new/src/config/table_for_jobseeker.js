@@ -1,9 +1,16 @@
 module.exports = {
-    basic: {
+    user:{
+        tableName: 'user_',
+        key: ['user_id'],
+        field: ['user_id','email','phone_number','password'],
+        updateItem: ['email','phone_number','password'],
+        addItem: [],
+    },
+    Basic: {
       tableName: 'profile_jobseeker',
       key: ['profile_id'],
-      fields: ['profile_id', 'title','job_function_id','career_target','city_id','salary_expect','year_exp','gender','marital_status','birthday','address','district_id','nationality_id'],
-      updateItem:  [],
+      fields: ['profile_id','full_name', 'title','job_function_id','career_target','city_id','salary_expect','year_exp','gender','marital_status','birthday','address','district_id','nationality_id'],
+      updateItem:  ['title','full_name','job_function_id','career_target','city_id','salary_expect','year_exp','gender','marital_status','birthday','address','district_id','nationality_id'],
       addItem:[]
     },
     skill: {

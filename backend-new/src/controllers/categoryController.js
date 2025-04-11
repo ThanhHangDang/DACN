@@ -51,9 +51,9 @@ const getCategory_Nation = async (req, res) => {
 
 const getCategory_City = async (req, res) => {
   try {
-    const nation = req.query.nation;
+    // const nation = req.query.nation;
     // console.log("nation", req.query);
-
+    const nation = 84;
     const data = await queryCategory_City(nation);
     if (data) {
       return res.status(200).json(data);

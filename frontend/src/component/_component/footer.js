@@ -64,10 +64,10 @@ export default function Footer() {
                 {/* Links */}
                 <h6 className="text-uppercase fw-bold mb-4">Cộng đồng</h6>
                 <div className="mt-2 d-flex justify-content-between col-4 ">
-                  <i class="bi bi-facebook"></i>
-                  <i class="bi bi-youtube"></i>
-                  <i class="bi bi-instagram"></i>
-                  <i class="bi bi-tiktok"></i>
+                  <i className="bi bi-facebook"></i>
+                  <i className="bi bi-youtube"></i>
+                  <i className="bi bi-instagram"></i>
+                  <i className="bi bi-tiktok"></i>
                 </div>
                 <h6 className="text-uppercase fw-bold mb-4 mt-4">
                   Ứng dụng di động

@@ -2,7 +2,8 @@ import React, { useEffect } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../../../redux/actions/authAction.js";
+// import { logout } from "../../../redux/actions/authAction.js";
+import { logout } from "../../../redux_toolkit/AuthSlice.js";
 
 export default function JobSeekerAccountSetting() {
   const dispatch = useDispatch();
@@ -135,7 +136,7 @@ export default function JobSeekerAccountSetting() {
 
       <div className="d-flex justify-content-start me-2 my-2 p-2">
         <p className="text-danger text-decoration-none d-block mt-2 ms-3">
-          <i class="bi bi-dash-circle-fill me-2"></i>Xóa tài khoản
+          <i className="bi bi-dash-circle-fill me-2"></i>Xóa tài khoản
         </p>
       </div>
     </div>
