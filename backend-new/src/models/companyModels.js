@@ -152,9 +152,15 @@ const queryPostJob = async (data) => {
                 (employer_id, title, date_post, date_expi, status_, 
                 industry_id, job_function_id, work_location, address, working_type, working_time, quantity, 
                 describle, views, salary_max, salary_min, level_id, require_marital_status, require_gender, 
+<<<<<<< HEAD
                 require_age_min, require_age_max, require_education, require_experience, more_requirement) 
             VALUES
                             (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?,  ?, ?, ?, ?,?) `,
+=======
+                require_age_min, require_age_max, require_education, require_experience, more_requirements) 
+            VALUES
+                            (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?) `,
+>>>>>>> origin/main
       [
         employer_id,
         title,
@@ -179,7 +185,11 @@ const queryPostJob = async (data) => {
         require_age_max,
         require_education,
         require_experience,
+<<<<<<< HEAD
         more_requirement ,
+=======
+        more_requirement,
+>>>>>>> origin/main
       ]
     );
     const job_id = result.insertId;

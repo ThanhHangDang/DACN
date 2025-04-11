@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { useGetItemProfileQuery } from "../../redux_toolkit/JobseekerApi.js";
-import Sidebar from "../../component/_component/sidebar.js";
+import { useDispatch, useSelector } from "react-redux";
+import { getUserInformationByID } from "../../redux/actions/jobseekerAction.js";
+
 export default function JobSeekerPage() {
   // Lấy thông tin user từ Redux store
   const { isLogin, user } = useSelector((state) => state.auth);
