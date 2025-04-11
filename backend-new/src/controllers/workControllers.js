@@ -57,6 +57,7 @@ const getAllWorks = async (req, res) => {
 };
 
 const getWorkByUser = async (req, res) => {
+  console.log("Get Work By User:", req.query);
   const userId = req.query.userId;
   try {
     const work = await queryGetWorkByUser(userId);

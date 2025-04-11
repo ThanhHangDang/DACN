@@ -13,23 +13,17 @@ import CompanyHeader from "../../component/_component/ui/CompanyHeader.js";
 export default function CompanyDetail() {
   const dispatch = useDispatch();
   const { companyId } = useParams();
-  // const { companyInformation } = useSelector((state) => state.company);
-  // const { city } = useSelector((state) => state.category);
   const { data: city } = useGetCitiesQuery(84); // 84 là mã quốc gia Việt Nam
   const { data: companyInformation } = useGetCompanyInformationQuery(companyId);
-  const { postsByUser } = useSelector((state) => state.post);
+  
+  
 
   const formatNumberToTr = (number) => `${(number / 1e6).toFixed(0)}tr`;
 
   useEffect(() => {
-    // dispatch(getCompanyInformation(companyId));
     dispatch(getPostsByUser(companyId));
   }, [companyId]);
-
-  // useEffect(() => {
-  //   dispatch(getCategoryCity(84));
-  // }, []);
-
+  const { postsByUser } = useSelector((state) => state.post);
   return (
     <div className="container my-4">
       <nav aria-label="breadcrumb">
@@ -118,23 +112,6 @@ export default function CompanyDetail() {
                 ) : (
                   <p>Chưa có bài đăng nào</p>
                 )}
-
-                {/* <div className="list-group-item d-flex justify-content-between align-items-center">
-                  <div>
-                    <h6 className="mb-0">
-                      Chuyên Viên Vận Hành Sàn Thương Mại Điện Tử
-                    </h6>
-                    <p className="text-muted mb-0">
-                      HAPAS VIỆT NAM | Hà Nội | Còn 25 ngày để ứng tuyển
-                    </p>
-                  </div>
-                  <div className="text-end">
-                    <span className="badge bg-success">12 - 20 triệu</span>
-                    <button className="btn btn-outline-success btn-sm ms-3">
-                      Ứng tuyển
-                    </button>
-                  </div>
-                </div> */}
               </div>
             </div>
           </div>
@@ -171,8 +148,6 @@ export default function CompanyDetail() {
           </div>
         </div>
       </div>
-
-      {/* Footer Section */}
       <div className="card mt-4">
         <div className="card-body text-center">
           <div className="row list-group list-group-horizontal">

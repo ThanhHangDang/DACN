@@ -6,19 +6,23 @@ import { NavLink,
 } from "react-router-dom";
 
 import { getPostsSearch } from "../../redux/actions/postAction";
-import {
-  getCategoryIndustry,
-  getCategoryJobFunction,
-  getCategoryCity,
-} from "../../redux/actions/categoryAction";
+// import {
+//   getCategoryIndustry,
+//   getCategoryJobFunction,
+//   getCategoryCity,
+// } from "../../redux/actions/categoryAction";
+import { useGetCitiesQuery, useGetIndustriesQuery,useGetJobFunctionQuery } from "../../redux_toolkit/CategoryApi";
 
 export default function WorkMangePage() {
   const dispatch = useDispatch();
   const { allPosts, totalWorksPages } = useSelector((state) => state.post);
+const {data: city} = useGetCitiesQuery(84); // 84 là mã quốc gia Việt Nam
+const {data: industry} = useGetIndustriesQuery();
+const {data: jobFunction} = useGetJobFunctionQuery();
 
-  const { industry, jobFunction, city } = useSelector(
-    (state) => state.category
-  );
+  // const { industry, jobFunction, city } = useSelector(
+  //   (state) => state.category
+  // );
 
   console.log("city", city);
 
@@ -77,9 +81,9 @@ export default function WorkMangePage() {
 
   useEffect(() => {
     dispatch(getAllPosts(page));
-    dispatch(getCategoryIndustry());
-    dispatch(getCategoryJobFunction());
-    dispatch(getCategoryCity(84));
+    // dispatch(getCategoryIndustry());
+    // dispatch(getCategoryJobFunction());
+    // dispatch(getCategoryCity(84));
     setTotalPages(totalWorksPages);
   }, [page, dispatch]);
 

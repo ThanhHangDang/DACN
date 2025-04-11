@@ -232,6 +232,7 @@ const getEmployeeDetail = async (req, res) => {
 const getCompanyInformation = async (req, res) => {
   try {
     const id = req.query.id;
+    console.log("id", id);
     const companyInfor = await queryGetCompanyInformation(id);
     if (companyInfor) {
       return res.status(200).json({ companyInfor });

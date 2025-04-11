@@ -91,6 +91,7 @@ export const getAllPosts = (page) => {
 export const getPostsByUser = (userId) => {
   return async (dispatch) => {
     try {
+      console.log("userId tại action", userId);
       const response = await axios.get(
         `${domain}/work/get-works-by-user`,
         {
