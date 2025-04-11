@@ -179,11 +179,7 @@ const queryPostJob = async (data) => {
         require_age_max,
         require_education,
         require_experience,
-<<<<<<< HEAD
         more_requirement ,
-=======
-        more_requirement,
->>>>>>> origin/main
       ]
     );
     const job_id = result.insertId;
