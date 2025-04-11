@@ -315,10 +315,22 @@ export default function EmployerPost() {
                     id="benefits"
                     rows={3}
                     placeholder="Nhập mô tả công việc"
-                    value={newPost.describle}
+                    value={newPost.describle.replace(/00pizon00/g, "\n")}
                     onChange={(e) =>
-                      setNewPost({ ...newPost, describle: e.target.value })
+                      setNewPost({
+                        ...newPost,
+                        describle: e.target.value.replace(/\n/g, "00pizon00"),
+                      })
                     }
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault(); // Ngăn không cho xuống dòng (đối với textarea) hoặc submit form
+                        setNewPost((prev) => ({
+                          ...prev,
+                          describle: prev.describle + "00pizon00",
+                        }));
+                      }
+                    }}
                   />
                 </div>
 
@@ -653,18 +665,35 @@ export default function EmployerPost() {
                     <label htmlFor="postTitle" className="form-label">
                       Yêu cầu khác
                     </label>
-                    <input
+                    <textarea
+                      rows={3}
                       type="text"
                       className="form-control"
                       id="postTitle"
                       placeholder="Nhập yêu cầu khác"
-                      value={newPost.more_requirement}
+                      value={newPost.more_requirement.replace(
+                        /00pizon00/g,
+                        "\n"
+                      )}
                       onChange={(e) =>
                         setNewPost({
                           ...newPost,
-                          more_requirement: e.target.value,
+                          more_requirement: e.target.value.replace(
+                            /\n/g,
+                            "00pizon00"
+                          ),
                         })
                       }
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault(); // Ngăn không cho xuống dòng (đối với textarea) hoặc submit form
+                          setNewPost((prev) => ({
+                            ...prev,
+                            more_requirement:
+                              prev.more_requirement + "00pizon00",
+                          }));
+                        }
+                      }}
                     />
                   </div>
                 </div>

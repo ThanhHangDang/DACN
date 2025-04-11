@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserInformationByID } from "../../redux/actions/jobseekerAction.js";
-
+import Sidebar from "../../component/_component/sidebar.js";
 export default function JobSeekerPage() {
   const dispatch = useDispatch();
   const { userInformation } = useSelector((state) => state.jobseeker);

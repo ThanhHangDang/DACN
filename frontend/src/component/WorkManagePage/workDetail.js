@@ -21,221 +21,6 @@ export default function WorkDetail() {
     dispatch(getPostDetails(id));
   }, [id]);
 
-  // return (
-  //   <div>
-  //     <div className="container mt-4 mb-4">
-  //       <div className="card">
-  //         <div className="card-header post-detail-bg">
-  //           <h3>{postDetail?.title}</h3>
-  //           <div className="d-flex justify-content-start">
-  //             <p className="me-5">{postDetail?.company_name}</p>
-  //             <p className="me-4">
-  //               <i class="bi bi-geo-alt-fill me-2"></i>
-  //               {postDetail?.work_location_name}
-  //             </p>
-  //           </div>
-  //           <div className="d-flex justify-content-start">
-  //             <p className="me-4 text-color">
-  //               {postDetail?.salary_min === 0 && postDetail?.salary_max === 0
-  //                 ? "Thỏa thuận"
-  //                 : `${formatNumberToTr(
-  //                     postDetail?.salary_min
-  //                   )} - ${formatNumberToTr(postDetail?.salary_max)} đ/tháng`}
-  //             </p>
-
-  //             <p className="me-4">
-  //               <i className="bi bi-stopwatch-fill me-2"></i>
-  //               {calculateDaysRemaining(postDetail?.date_expi) > 0
-  //                 ? `Hết hạn trong ${calculateDaysRemaining(
-  //                     postDetail?.date_expi
-  //                   )} ngày`
-  //                 : "Hết hạn"}
-  //             </p>
-
-  //             <p>
-  //               <i class="bi bi-people-fill me-2"></i>
-  //               {postDetail?.views} Lượt xem
-  //             </p>
-  //           </div>
-
-  //           {user?.user.role !== 2 && (
-  //             <>
-  //               <button className="btn btn-primary mb-3 mt-2">Ứng tuyển</button>
-  //               <button className="btn btn-secondary mb-3 mt-2 ms-2">
-  //                 Lưu
-  //               </button>
-  //             </>
-  //           )}
-  //         </div>
-  //         <div className="card-body">
-  //           <section className="mb-4 border border-primany rounded-3 p-2">
-  //             {postDetail?.describle && postDetail.describle.length > 0 && (
-  //               <section className="mb-4">
-  //                 <h5>Mô tả công việc</h5>
-  //                 <ul>
-  //                   <li>{postDetail?.describle}</li>
-  //                 </ul>
-  //               </section>
-  //             )}
-
-  //             {postDetail?.more_requirement &&
-  //               postDetail.more_requirement.length > 0 && (
-  //                 <section className="mb-4">
-  //                   <h5>Yêu cầu công việc</h5>
-  //                   <ul>
-  //                     {postDetail?.more_requirement.map(
-  //                       (requirement, index) => (
-  //                         <li key={index}>{requirement}</li>
-  //                       )
-  //                     )}
-  //                   </ul>
-  //                 </section>
-  //               )}
-  //           </section>
-
-  //           <section className="mb-4 border border-primany rounded-3 p-2">
-  //             <h5>Quyền lợi</h5>
-  //             <p>{postDetail?.catalog_benefit}</p>
-  //           </section>
-
-  //           <section className="mb-4 border border-primany rounded-3 p-2">
-  //             <h5>Thông tin việc làm</h5>
-  //             <div className="d-flex ">
-  //               <div className="col-md-6">
-  //                 <h6 className="fw-bold text-secondary">Ngày Đăng</h6>
-  //                 <p>{formatDateToDDMMYYYY(postDetail?.date_post)}</p>
-  //               </div>
-  //               <div>
-  //                 <h6 className="fw-bold text-secondary">Cấp bậc</h6>
-  //                 <p>{postDetail?.job_level_name}</p>
-  //               </div>
-  //             </div>
-
-  //             <div className="d-flex">
-  //               <div className="col-md-6">
-  //                 <h6 className="fw-bold text-secondary">Ngành nghề</h6>
-  //                 <p>{postDetail?.job_function_name}</p>
-  //               </div>
-  //               <div>
-  //                 <h6 className="fw-bold text-secondary">Kỹ năng</h6>
-  //                 <p>
-  //                   {postDetail?.job_skills
-  //                     ? postDetail.job_skills
-  //                     : "Không yêu cầu"}
-  //                 </p>
-  //               </div>
-  //             </div>
-
-  //             <div className="d-flex">
-  //               <div className="col-md-6">
-  //                 <h6 className="fw-bold text-secondary">Lĩnh vực</h6>
-  //                 <p>{postDetail?.industry_name}</p>
-  //               </div>
-  //               <div>
-  //                 <h6 className="fw-bold text-secondary">Ngôn ngữ</h6>
-  //                 <p>
-  //                   {postDetail?.languages
-  //                     ? postDetail.languages
-  //                     : "Không yêu cầu"}
-  //                 </p>
-  //               </div>
-  //             </div>
-
-  //             <div className="d-flex">
-  //               <div className="col-md-6">
-  //                 <h6 className="fw-bold text-secondary">Kinh nghiệm</h6>
-  //                 <p>
-  //                   {postDetail?.require_experience
-  //                     ? `${postDetail.require_experience} năm`
-  //                     : "Không yêu cầu"}
-  //                 </p>{" "}
-  //               </div>
-  //               <div>
-  //                 <h6 className="fw-bold text-secondary">Độ tuổi</h6>
-  //                 <p>
-  //                   {postDetail?.require_age_min > 0 &&
-  //                   postDetail?.require_age_max > 0
-  //                     ? postDetail?.require_age_min +
-  //                       " - " +
-  //                       postDetail?.require_age_max
-  //                     : "Không yêu cầu"}
-  //                   {/* {postDetail?.require_age_min} -{" "}
-  //                   {postDetail?.require_age_max} */}
-  //                 </p>
-  //               </div>
-  //             </div>
-
-  //             <div className="d-flex">
-  //               <div className="col-md-6">
-  //                 <h6 className="fw-bold text-secondary">Trình độ học vấn</h6>
-  //                 <p>
-  //                   {postDetail?.education_requirement
-  //                     ? postDetail.education_requirement
-  //                     : "Không yêu cầu"}
-  //                 </p>
-  //               </div>
-  //               <div>
-  //                 <h6 className="fw-bold text-secondary">Giới tính</h6>
-  //                 <p>
-  //                   {postDetail?.require_gender
-  //                     ? postDetail.require_gender
-  //                     : "Không yêu cầu"}
-  //                 </p>
-  //               </div>
-  //             </div>
-
-  //             <div className="d-flex">
-  //               <div className="col-md-6">
-  //                 <h6 className="fw-bold text-secondary">
-  //                   Số lượng tuyển dụng
-  //                 </h6>
-  //                 <p>{postDetail?.quantity}</p>
-  //               </div>
-  //               <div>
-  //                 <h6 className="fw-bold text-secondary">
-  //                   Tình trạng hôn nhân
-  //                 </h6>
-  //                 <p>
-  //                   {postDetail?.require_marital_status
-  //                     ? postDetail.require_marital_status
-  //                     : "Không yêu cầu"}
-  //                 </p>
-  //               </div>
-  //             </div>
-
-  //             <div className="d-flex">
-  //               <div className="col-md-6">
-  //                 <h6 className="fw-bold text-secondary">Loại hình làm việc</h6>
-  //                 <p>
-  //                   {postDetail?.working_type
-  //                     ? postDetail.working_type
-  //                     : "Không yêu cầu"}
-  //                 </p>
-  //               </div>
-  //               <div>
-  //                 <h6 className="fw-bold text-secondary">Thời gian làm việc</h6>
-  //                 <p>
-  //                   {postDetail?.working_time
-  //                     ? postDetail.working_time
-  //                     : "Không yêu cầu"}
-  //                 </p>
-  //               </div>
-  //             </div>
-  //           </section>
-
-  //           <section className="mb-4 border border-primany rounded-3 p-2">
-  //             <h5>Địa điểm làm việc</h5>
-  //             <span>
-  //               <i class="bi bi-geo-alt-fill me-2"></i>
-  //               {postDetail?.address}
-  //             </span>
-  //           </section>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   </div>
-  // );
-
   return (
     <div className="container my-5">
       <nav aria-label="breadcrumb">
@@ -283,21 +68,11 @@ export default function WorkDetail() {
 
               <h5 className="mt-3">Mô tả công việc</h5>
               <ul>
-                {/* <li>
-                  Nghiên cứu và thử nghiệm các công nghệ AI nhằm giải quyết và
-                  tối ưu các bài toán cốt lõi.
-                </li>
-                <li>
-                  Xây dựng, triển khai các hệ thống AI nhằm tích hợp công nghệ
-                  vào sản phẩm và quy trình.
-                </li>
-                <li>
-                  Phối hợp chặt chẽ với Data Engineer và Data Analyst để đảm bảo
-                  hệ thống được tích hợp một cách hoàn chỉnh và tối ưu.
-                </li> */}
-                {postDetail?.describle?.split("u003c").map((item, index) => (
-                  <li key={index}>{item}</li>
-                ))}
+                {postDetail?.describle
+                  ?.split("00pizon00")
+                  .map((item, index) => (
+                    <li key={index}>{item}</li>
+                  ))}
               </ul>
 
               <h5 className="mt-3">Yêu cầu ứng viên</h5>
@@ -315,8 +90,8 @@ export default function WorkDetail() {
                   Scikit-learn, PyTorch, Pandas/Polars, SQL,...
                 </li> */}
                 {postDetail?.more_requirements
-                  ?.split("u003c")
-                  .map((item, index) => (
+                  ?.split("00pizon00")
+                  ?.map((item, index) => (
                     <li key={index}>{item}</li>
                   ))}
               </ul>
