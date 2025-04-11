@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserInformationByID } from "../../redux/actions/jobseekerAction.js";
+import { useGetItemProfileQuery } from "../../redux_toolkit/JobseekerApi";
 
 export default function JobSeekerPage() {
   // Lấy thông tin user từ Redux store

@@ -96,6 +96,7 @@ const queryGetUserInformation = async (id) => {
       p.title,
       p.job_function_id,
       j.job_function_name,
+      cle.level_name,
       p.career_target,
       p.salary_expect,
       p.year_exp,
@@ -120,14 +121,18 @@ const queryGetUserInformation = async (id) => {
       profile_jobseeker p ON js.jobseeker_id = p.profile_id
     JOIN 
       catalog_job_function j ON j.job_function_id = p.job_function_id
-    LEFT JOIN 
+    JOIN 
       catalog_city c ON p.city_id = c.city_id
-	left join catalog_nation cna ON cna.nation_id = p.nationality_id
+    JOIN 
+      catalog_level cle ON p.level_id= cle.level_id
+	  join 
+    catalog_nation cna ON cna.nation_id = p.nationality_id
     WHERE 
       u.user_id = ?;
     `,
     [id]
   );
+  console.log(userInfor);
   return userInfor[0];
 };
 
@@ -341,224 +346,6 @@ const queryUpdateJobseekerProfileImage = async (id, url) => {
   return affectedRows;
 };
 
-const queryUpdateJobseekerProfile = async (id, profile) => {
-  const [affectedRows] = await db.query(
-    `
-    UPDATE 
-      user_ u
-    JOIN 
-      profile_jobseeker p ON u.user_id = p.profile_id
-    SET 
-      p.full_name = ?,
-      u.email = ?,
-      u.phone_number = ?,
-      p.title = ?,
-      p.address = ?,
-      p.year_exp = ?
-    WHERE 
-      u.user_id = ?;  -- Replace with the actual user ID
-    `,
-    [
-      profile.full_name,
-      profile.email,
-      profile.phone_number,
-      profile.title,
-      profile.address,
-      profile.year_exp,
-      id,
-    ]
-  );
-  return affectedRows;
-};
-
-const queryUpdateExpectedJob = async (id, job) => {
-  const [affectedRows] = await db.query(
-    `
-    UPDATE 
-    profile_jobseeker
-    SET 
-      city_id = ?,
-      salary_expect = ?
-    WHERE profile_id = ?;
-    `,
-    [job.workCityPlace, job.salary, id]
-  );
-  return affectedRows;
-};
-
-const queryUpdateCareerTarget = async (id, career_target) => {
-  const [affectedRows] = await db.query(
-    `
-    Update
-    profile_jobseeker
-    set
-      career_target = ?
-    where profile_id = ?
-    `,
-    [career_target, id]
-  );
-  return affectedRows;
-};
-
-const queryAddExperience = async (id, experience) => {
-  const [affectedRows] = await db.query(
-    `
-    insert into profile_experience(profile_id, exp_title, exp_from, exp_to, exp_company, exp_description)
-    values(?, ?, ?, ?, ?, ?)
-    `,
-    [
-      id,
-      experience.job,
-      experience.startYear,
-      experience.endYear,
-      experience.company,
-      experience.description,
-    ]
-  );
-  return affectedRows;
-};
-
-const queryAddEducation = async (id, education) => {
-  const [affectedRows] = await db.query(
-    `
-    insert into profile_education(profile_id, education_id, major, school, from_, to_)
-    values(?, ?, ?, ?, ?, ?)
-    `,
-    [
-      id,
-      education.education_id,
-      education.major,
-      education.school,
-      education.startYear,
-      education.endYear,
-    ]
-  );
-  return affectedRows;
-};
-
-const queryAddProject = async (id, project) => {
-  const [affectedRows] = await db.query(
-    `
-    insert into profile_project(profile_id, project_name, project_from, project_to, project_description)
-    values(?, ?, ?, ?, ?)
-    `,
-    [
-      id,
-      project.project_name,
-      project.project_from,
-      project.project_to,
-      project.project_description,
-    ]
-  );
-  return affectedRows;
-};
-
-const queryAddSkill = async (id, skill) => {
-  let totalInserted = 0;
-  for (const i of skill) {
-    const [result] = await db.query(
-      `
-    insert into profile_skill(profile_id, skill_id)
-    values(?, ?)
-    `,
-      [id, i.tag_id]
-    );
-    totalInserted += result.affectedRows;
-  }
-  return totalInserted;
-};
-
-const queryAddLanguage = async (id, language) => {
-  let totalInserted = 0;
-  for (const i of language) {
-    const [result] = await db.query(
-      `
-    insert into profile_language(profile_id, language_id)
-    values(?, ?)
-    `,
-      [id, i.language_id]
-    );
-    totalInserted += result.affectedRows;
-  }
-  return totalInserted;
-};
-
-const queryAddCertification = async (id, certification) => {
-  const [affectedRows] = await db.query(
-    `
-    insert into profile_certification(profile_id, certifications, month_)
-    values(?, ?, ?)
-    `,
-    [id, certification.certificate_name, certification.date]
-  );
-  return affectedRows;
-};
-
-const queryDeleteExperience = async (id, id_delete) => {
-  const [affectedRows] = await db.query(
-    `
-    DELETE FROM profile_experience
-    WHERE profile_id = ? AND profile_experience_id = ?;
-    `,
-    [id, id_delete]
-  );
-  return affectedRows;
-};
-
-const queryDeleteEducation = async (id, id_delete) => {
-  const [affectedRows] = await db.query(
-    `
-    DELETE FROM profile_education
-    WHERE profile_id = ? AND profile_education_id = ?;
-    `,
-    [id, id_delete]
-  );
-  return affectedRows;
-};
-
-const queryDeleteProject = async (id, id_delete) => {
-  const [affectedRows] = await db.query(
-    `
-    DELETE FROM profile_project
-    WHERE profile_id = ? AND profile_project_id = ?;
-    `,
-    [id, id_delete]
-  );
-  return affectedRows;
-};
-
-const queryDeleteSkill = async (id, id_delete) => {
-  const [affectedRows] = await db.query(
-    `
-    DELETE FROM profile_skill
-    WHERE profile_id = ? AND skill_id = ?;
-    `,
-    [id, id_delete]
-  );
-  return affectedRows;
-};
-
-const queryDeleteLanguage = async (id, id_delete) => {
-  const [affectedRows] = await db.query(
-    `
-    DELETE FROM profile_language
-    WHERE profile_id = ? AND language_id = ?;
-    `,
-    [id, id_delete]
-  );
-  return affectedRows;
-};
-
-const queryDeleteCertification = async (id, id_delete) => {
-  const [affectedRows] = await db.query(
-    `
-    DELETE FROM profile_certification
-    WHERE profile_id = ? AND profile_certifications_id = ?;
-    `,
-    [id, id_delete]
-  );
-  return affectedRows;
-};
 
 const queryGetNotificationByID = async (id) => {
   const [notification] = await db.query(
@@ -640,7 +427,7 @@ const queryUpdateItemProfile = async (type, data) => {
     if (type === "Basic") {
       // Special case for Basic profile fields
       const key = profileTables[type]["key"][0]; // bang nay chi co 1 key
-      // console.log("data Update Basic ",data);
+      console.log("data Update Basic ",data);
       const fieldsToUpdate_arr = [];
       const values = [];
       Object.keys(data).forEach((item) => {
@@ -781,39 +568,11 @@ const queryItemProfile = async (type, profile_id) => {
 module.exports = {
   queryGetListEmployee,
   queryGetEmployeeDetail,
-
-  // queryGetUserInformation,
-  // queryGetExperienceByID,
-  // queryGetEducationByID,
-  // queryGetSkillByID,
-  // queryGetLanguageByID,
-  // queryGetProjectByID,
-  // queryGetCertificateByID,
-  // queryGetFollowedCompanyByID,
-  // queryGetJobSavedByID,
-  // queryGetJobAppliedByID,
   queryGetCompanyInformation,
   queryUpdateJobseekerProfileImage,
-  // queryUpdateJobseekerProfile,
-  // queryUpdateExpectedJob,
-  // queryUpdateCareerTarget,
-  // queryAddExperience,
-  // queryAddEducation,
-  // queryAddProject,
-  // queryAddSkill,
-  // queryAddLanguage,
-  // queryAddCertification,
-
-  // queryDeleteExperience,
-  // queryDeleteEducation,
-  // queryDeleteProject,
-  // queryDeleteSkill,
-  // queryDeleteLanguage,
-  // queryDeleteCertification,
   queryItemProfile,
   queryAddItemProfile,  
   queryDeleteItemProfile,
   queryUpdateItemProfile,
-
   queryGetNotificationByID,
 };

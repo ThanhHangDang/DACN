@@ -31,8 +31,8 @@ const formatDateForInput = (dateString) => {
 export default function JobSeekerProfile() {
   const navigate = useNavigate();
 
-  const mary_dict = [{key:1,name:"Độc thân"},{key:2,name:"Đã kết hôn"}];
-  const gender_dict = [{key:1,name:"Nam"},{key:2,name:"Nữ"}];
+  const mary_dict = ['Độc thân', 'Đã kết hôn'];
+  const gender_dict = ["male","female"];
   const { isLogin, user } = useSelector((state) => state.auth);
   const {data: edu } = useGetItemProfileQuery({type:"education",profile_id:user?.user?.id}); 
   const highestEducation = edu?.reduce((highest, current) => {
@@ -479,8 +479,8 @@ export default function JobSeekerProfile() {
                       }
                     >
                       {gender_dict?.map((option) => (
-                        <option value={option.key} key={option.key}>
-                          {option.name}
+                        <option value={option} key={option}>
+                          {option}
                         </option>
                       ))}
                     </select>
@@ -569,8 +569,8 @@ export default function JobSeekerProfile() {
                       className="form-select"
                       id="field_nation"
                       value={
-                        updateProfileData.marital_status
-                          ? updateProfileData.marital_status
+                        updateProfileData?.marital_status
+                          ? updateProfileData?.marital_status
                           : userInformation?.marital_status
                       }
                       onChange={(e) =>
@@ -581,8 +581,8 @@ export default function JobSeekerProfile() {
                       }
                     >
                       {mary_dict?.map((option) => (
-                        <option value={option.key} key={option.key}>
-                          {option.name}
+                        <option value={option} key={option}>
+                          {option}
                         </option>
                       ))}
                     </select>
@@ -751,7 +751,8 @@ export default function JobSeekerProfile() {
             <h3>{userInformation?.full_name}</h3>
             <div>
             <p className="lh-1 d-inline me-5"> <strong>Chức danh: </strong>{userInformation?.title}</p>
-            <p className="lh-1 d-inline"> <strong>Lĩnh vực: </strong>{userInformation?.job_function_name}</p>
+            <p className="lh-1 d-inline me-5"> <strong>Lĩnh vực: </strong>{userInformation?.job_function_name}</p>
+            <p className="lh-1 d-inline"> <strong>Cấp bậc hiện tại: </strong>{userInformation?.level_name}</p>
             </div>
             <div className="row">
               <span className="col-md-6 col-sm-0">
@@ -791,8 +792,8 @@ export default function JobSeekerProfile() {
             <span className="col-md-5 col-sm-0">
               <i className="bi bi-heart-fill me-2"></i>
               {userInformation?.marital_status
-                ? "Đã kết hôn"
-                : "Chưa kết hôn"}
+                ? userInformation?.marital_status
+                : "Chưa cập nhật"}
             </span>
             </div>
             <div className="row">

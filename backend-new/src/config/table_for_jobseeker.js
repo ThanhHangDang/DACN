@@ -9,8 +9,8 @@ module.exports = {
     Basic: {
       tableName: 'profile_jobseeker',
       key: ['profile_id'],
-      fields: ['profile_id','full_name', 'title','job_function_id','career_target','city_id','salary_expect','year_exp','gender','marital_status','birthday','address','district_id','nationality_id'],
-      updateItem:  ['title','full_name','job_function_id','career_target','city_id','salary_expect','year_exp','gender','marital_status','birthday','address','district_id','nationality_id'],
+      fields: ['profile_id','full_name', 'title','job_function_id','career_target','city_id','salary_expect','year_exp','gender','marital_status','birthday','address','district_id','nationality_id','level_id'],
+      updateItem:  ['title','full_name','job_function_id','career_target','city_id','salary_expect','year_exp','gender','marital_status','birthday','address','district_id','nationality_id','level_id'],
       addItem:[]
     },
     skill: {
