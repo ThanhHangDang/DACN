@@ -1,5 +1,6 @@
 const db = require("../config/databaseConfig.js");
-
+const profileTables = require("../config/table_for_jobseeker.js");
+const { queryGetWorkDetail } = require("./workModel");
 const queryGetListEmployee = async () => {
   const [listEmployee] = await db.query(
     `
@@ -93,6 +94,8 @@ const queryGetUserInformation = async (id) => {
       r.role_name,
       p.full_name,
       p.title,
+      p.job_function_id,
+      j.job_function_name,
       p.career_target,
       p.salary_expect,
       p.year_exp,
@@ -115,6 +118,8 @@ const queryGetUserInformation = async (id) => {
       catalog_role r ON u.role_id = r.role_id
     JOIN 
       profile_jobseeker p ON js.jobseeker_id = p.profile_id
+    JOIN 
+      catalog_job_function j ON j.job_function_id = p.job_function_id
     LEFT JOIN 
       catalog_city c ON p.city_id = c.city_id
 	left join catalog_nation cna ON cna.nation_id = p.nationality_id
@@ -290,7 +295,17 @@ const queryGetFollowedCompanyByID = async (id) => {
     `,
     [id]
   );
+  // console.log(followedCompany);
   return followedCompany;
+};
+const queryGetBasicCompany = async (id) => {
+  const [result] = await db.query(
+    `SELECT * FROM (Select * FROM company where company_id = ?) as t1
+    JOIN catalog_scale cs on cs.scale_id= t1.scale_id  JOIN company_location cl ON cl.company_id = t1.company_id 
+    JOIN catalog_industry ci where ci.industry_id=t1.industry_id`,
+    [id]
+  );
+  return result;
 };
 
 const queryGetCompanyInformation = async (id) => {
@@ -560,38 +575,245 @@ const queryGetNotificationByID = async (id) => {
   return notification;
 };
 
+
+const queryAddItemProfile = async (type, data) => {
+  if (!profileTables[type] || profileTables[type].tableName === undefined || profileTables[type].key === "Basic") {
+    throw new Error(`Invalid profile type: ${type}`);
+  }
+try {
+  if (type==="language" || type==="skill") { // array of objects
+    const profile_id = data.profile_id;
+    const arr = data.values;    
+    const fieldsArray = profileTables[type]["addItem"];    
+    const values = [];
+    const placeholder_arr=[];
+    arr.forEach(item => { 
+      values.push(profile_id, item);
+      placeholder_arr.push(`(${fieldsArray.map(() => "?").join(", ")})`);
+    }
+    );
+    const fields = fieldsArray.join(", ");
+    const placeholders = placeholder_arr.join(", ");
+    const [result] = await db.query(
+      `
+      INSERT INTO ${profileTables[type].tableName} (${fields})
+      VALUES ${placeholders};`,
+      values
+    );
+    return  result.affectedRows;}
+  else {
+    const fieldsArray = profileTables[type]["addItem"];    
+    const values = [];
+    fieldsArray.forEach(field => {
+      if (data[field] !== undefined) {
+        values.push(data[field]);
+      } else {
+        throw new Error(`Required field '${field}' is missing in the data for ${type}`)
+      }
+    });
+    const fields = fieldsArray.join(", ");
+    const placeholders = values.map(() => "?").join(", ");
+
+
+    // console.log(      `
+    //   INSERT INTO ${profileTables[type].tableName} (${fields})
+    //   VALUES (${placeholders});`,
+    //   values)
+    const [result] = await db.query(
+      `
+      INSERT INTO ${profileTables[type].tableName} (${fields})
+      VALUES (${placeholders});`,
+      values
+    );
+    return  result.affectedRows;
+  }
+}
+catch (error) {
+    console.error("Error in queryAddItemProfile:", error);
+    throw error;
+  }
+};
+
+const queryUpdateItemProfile = async (type, data) => {
+  // data là dạng object như {title: "abc", profile_id: 1}
+  try {
+    if (type === "Basic") {
+      // Special case for Basic profile fields
+      const key = profileTables[type]["key"][0]; // bang nay chi co 1 key
+      // console.log("data Update Basic ",data);
+      const fieldsToUpdate_arr = [];
+      const values = [];
+      Object.keys(data).forEach((item) => {
+        if (profileTables[type]["updateItem"].includes(item)) {
+          fieldsToUpdate_arr.push(`${item}=?`);
+          values.push(data[item]);
+        }});        
+        const fieldsToUpdate = fieldsToUpdate_arr.join(", ");
+        // console.log("fieldsToUpdate_arr", fieldsToUpdate);
+        values.push(data[key]);
+        const [result] = await db.query(        `
+        UPDATE profile_jobseeker
+        SET ${fieldsToUpdate}
+        WHERE ${key} = ?;`,
+        values
+      );
+      return result.affectedRows;
+    } else {
+      // console.log("data Update other ",data);
+      if (!profileTables[type]) {
+        throw new Error(`Invalid profile type: ${type}`);
+      }
+      const values = [];
+      const fieldsToUpdate = profileTables[type]["updateItem"];   
+      const fields = fieldsToUpdate.map((item) => `${item} = ?`).join(", ");
+      const fieldKey = profileTables[type]["key"];
+      const whereClause = fieldKey.map((item) => `${item} = ?`).join(" AND ");
+      fieldsToUpdate.map((item) => values.push(data[item]));
+      fieldKey.map((item) => values.push(data[item]));
+      const [result] = await db.query(
+        `
+        UPDATE ${profileTables[type].tableName}
+        SET ${fields}
+        WHERE ${whereClause};`,
+        values
+      );
+      return result.affectedRows;;
+    }
+  } catch (error) {
+    console.error("Error in queryUpdateItemProfile:", error);
+    throw error;
+  }
+};
+const queryDeleteItemProfile = async (type, data) => {
+  try {
+
+    if (!profileTables[type]) {
+      throw new Error(`Invalid profile type: ${type}`);
+    }
+    const values = [];
+    const fieldsToDelete = profileTables[type]["key"]; 
+    const whereClause = fieldsToDelete.map((item) => `${item} = ?`).join(" AND ");
+    fieldsToDelete.map((item) => values.push(data[item]));
+    const [result] = await db.query(
+      `
+    DELETE FROM ${profileTables[type].tableName}
+    WHERE ${whereClause};`,
+      values
+    );
+    // console.log(result);
+    // console.log(result.affectedRows);
+    return result.affectedRows;;
+  } catch (error) {
+    console.error(`Error in queryDeleteItemProfile:`, error);
+    throw error;
+  }
+};
+
+const queryItemProfile = async (type, profile_id) => {
+  try {
+    if (type === "Basic") {
+      // Special case for Basic profile fields
+      const  result = queryGetUserInformation(profile_id);
+      return result;
+    } else {
+      if (!profileTables[type]) {
+        throw new Error(`Invalid profile type: ${type}`);
+      }
+     switch (type) {
+        case "experience":
+          const exp = await queryGetExperienceByID(profile_id);
+          return exp;
+        case "education":
+          const edu = await queryGetEducationByID(profile_id);
+          return edu;
+        case "project":
+          const project = await queryGetProjectByID(profile_id);
+          return project;
+        case "skill":
+          const skill = await queryGetSkillByID(profile_id);
+          return skill;
+        case "language":
+          const lang = await queryGetLanguageByID(profile_id);
+          return lang;
+        case "certification":
+          const cert = await queryGetCertificateByID(profile_id);
+          return cert;
+        case "cv":
+          const cv = await queryGetCertificateByID(profile_id);
+          return cv;
+        case "apply_job":
+          const jobApplied_basic = await queryGetJobAppliedByID(profile_id);
+          const jobApplied = [];
+          for (const item of jobApplied_basic) {
+            const [job] = await queryGetWorkDetail(item.job_id);
+            jobApplied.push(job);
+          }
+          return jobApplied;
+        case "save_job":
+          const jobSaved_basic = await queryGetJobSavedByID(profile_id);
+          const jobSaved = [];
+          for (const item of jobSaved_basic) {
+            const [job] = await queryGetWorkDetail(item.job_id);
+            jobSaved.push(job);
+          }
+          // console.log(jobSaved);
+          return jobSaved;
+        case "follow_employer":
+          const followedCompany_basic = await queryGetFollowedCompanyByID(profile_id);
+          const followedCompany = [];
+          // if (!followedCompany_basic) return followedCompany;
+          for (const item of followedCompany_basic) {
+            // console.log(item);
+            const [company] = await queryGetBasicCompany(item.employer_id);
+            followedCompany.push(company);
+          }
+          return followedCompany;
+        default:
+          throw new Error(`Invalid profile type: ${type}`);
+      }
+      // return result.affectedRows;;
+    }
+  } catch (error) {
+    console.error("Error in queryUpdateItemProfile:", error);
+    throw error;
+  }
+};
 module.exports = {
   queryGetListEmployee,
   queryGetEmployeeDetail,
 
-  queryGetUserInformation,
-  queryGetExperienceByID,
-  queryGetEducationByID,
-  queryGetSkillByID,
-  queryGetLanguageByID,
-  queryGetProjectByID,
-  queryGetCertificateByID,
-  queryGetFollowedCompanyByID,
-  queryGetJobSavedByID,
-  queryGetJobAppliedByID,
+  // queryGetUserInformation,
+  // queryGetExperienceByID,
+  // queryGetEducationByID,
+  // queryGetSkillByID,
+  // queryGetLanguageByID,
+  // queryGetProjectByID,
+  // queryGetCertificateByID,
+  // queryGetFollowedCompanyByID,
+  // queryGetJobSavedByID,
+  // queryGetJobAppliedByID,
   queryGetCompanyInformation,
   queryUpdateJobseekerProfileImage,
-  queryUpdateJobseekerProfile,
-  queryUpdateExpectedJob,
-  queryUpdateCareerTarget,
-  queryAddExperience,
-  queryAddEducation,
-  queryAddProject,
-  queryAddSkill,
-  queryAddLanguage,
-  queryAddCertification,
+  // queryUpdateJobseekerProfile,
+  // queryUpdateExpectedJob,
+  // queryUpdateCareerTarget,
+  // queryAddExperience,
+  // queryAddEducation,
+  // queryAddProject,
+  // queryAddSkill,
+  // queryAddLanguage,
+  // queryAddCertification,
 
-  queryDeleteExperience,
-  queryDeleteEducation,
-  queryDeleteProject,
-  queryDeleteSkill,
-  queryDeleteLanguage,
-  queryDeleteCertification,
+  // queryDeleteExperience,
+  // queryDeleteEducation,
+  // queryDeleteProject,
+  // queryDeleteSkill,
+  // queryDeleteLanguage,
+  // queryDeleteCertification,
+  queryItemProfile,
+  queryAddItemProfile,  
+  queryDeleteItemProfile,
+  queryUpdateItemProfile,
 
   queryGetNotificationByID,
 };

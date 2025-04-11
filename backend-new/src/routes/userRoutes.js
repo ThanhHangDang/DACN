@@ -4,36 +4,40 @@ const {
   getListEmployee,
   getEmployeeDetail,
 
-  getUserInformation,
-  getExperienceByID,
-  getEducationByID,
-  getSkillByID,
-  getLanguageByID,
-  getCertificateByID,
-  getProjectByID,
-  getJobAppliedByID,
-  getJobSavedByID,
-  getFollowedCompanyByID,
+  // getUserInformation,
+  // getExperienceByID,
+  // getEducationByID,
+  // getSkillByID,
+  // getLanguageByID,
+  // getCertificateByID,
+  // getProjectByID,
+  // getJobAppliedByID,
+  // getJobSavedByID,
+  // getFollowedCompanyByID,
   getCompanyInformation,
 
   updateJobseekerProfileImage,
-  updateJobseekerProfile,
-  updateExpectedJob,
-  updateCareerTarget,
+  // updateJobseekerProfile,
+  // updateExpectedJob,
+  // updateCareerTarget,
 
-  addExperience,
-  addEducation,
-  addProject,
-  addSkill,
-  addLanguage,
-  addCertification,
+  // addExperience,
+  // addEducation,
+  // addProject,
+  // addSkill,
+  // addLanguage,
+  // addCertification,
 
-  deleteExperience,
-  deleteEducation,
-  deleteProject,
-  deleteSkill,
-  deleteLanguage,
-  deleteCertification,
+  // deleteExperience,
+  // deleteEducation,
+  // deleteProject,
+  // deleteSkill,
+  // deleteLanguage,
+  // deleteCertification,
+  getItemProfile,
+  deleteItemProfile,
+  addItemProfile,
+  updateItemProfile,
 
   getNotificationByID,
 } = require("../controllers/userControllers.js");
@@ -45,40 +49,41 @@ const userRoutes = express.Router();
 userRoutes.get("/get-list-employee", getListEmployee);
 userRoutes.get("/get-employee-detail", getEmployeeDetail);
 
-userRoutes.get("/user-information", getUserInformation);
-userRoutes.get("/get-experience", getExperienceByID);
-userRoutes.get("/get-education", getEducationByID);
-userRoutes.get("/get-skill", getSkillByID);
-userRoutes.get("/get-language", getLanguageByID);
-userRoutes.get("/get-certification", getCertificateByID);
-userRoutes.get("/get-project", getProjectByID);
-userRoutes.get("/get-job-applied", getJobAppliedByID);
-userRoutes.get("/get-job-saved", getJobSavedByID);
-userRoutes.get("/get-followed-company", getFollowedCompanyByID);
+// userRoutes.get("/user-information", getUserInformation);
+// userRoutes.get("/get-experience", getExperienceByID);
+// userRoutes.get("/get-education", getEducationByID);
+// userRoutes.get("/get-skill", getSkillByID);
+// userRoutes.get("/get-language", getLanguageByID);
+// userRoutes.get("/get-certification", getCertificateByID);
+// userRoutes.get("/get-project", getProjectByID);
+// userRoutes.get("/get-job-applied", getJobAppliedByID);
+// userRoutes.get("/get-job-saved", getJobSavedByID);
+// userRoutes.get("/get-followed-company", getFollowedCompanyByID);
 
 userRoutes.get("/get-employer-information", getCompanyInformation);
 
-userRoutes.post(
-  "/update-jobseeker-profile-image",
-  upload.single("image"),
-  updateJobseekerProfileImage
-);
-userRoutes.post("/update-jobseeker-profile", updateJobseekerProfile);
-userRoutes.post("/update-expected-job", updateExpectedJob);
-userRoutes.post("/update-career-target", updateCareerTarget);
-userRoutes.post("/add-experience", addExperience);
-userRoutes.post("/add-education", addEducation);
-userRoutes.post("/add-project", addProject);
-userRoutes.post("/add-skill", addSkill);
-userRoutes.post("/add-language", addLanguage);
-userRoutes.post("/add-certification", addCertification);
+userRoutes.post("/update-jobseeker-profile-image", upload.single("image"), updateJobseekerProfileImage);
 
-userRoutes.delete("/delete-experience", deleteExperience);
-userRoutes.delete("/delete-education", deleteEducation);
-userRoutes.delete("/delete-project", deleteProject);
-userRoutes.delete("/delete-skill", deleteSkill);
-userRoutes.delete("/delete-language", deleteLanguage);
-userRoutes.delete("/delete-certification", deleteCertification);
+// userRoutes.post("/update-jobseeker-profile", updateJobseekerProfile);
+// userRoutes.post("/update-expected-job", updateExpectedJob);
+// userRoutes.post("/update-career-target", updateCareerTarget);
+// userRoutes.post("/add-experience", addExperience);
+// userRoutes.post("/add-education", addEducation);
+// userRoutes.post("/add-project", addProject);
+// userRoutes.post("/add-skill", addSkill);
+// userRoutes.post("/add-language", addLanguage);
+// userRoutes.post("/add-certification", addCertification);
+
+// userRoutes.delete("/delete-experience", deleteExperience);
+// userRoutes.delete("/delete-education", deleteEducation);
+// userRoutes.delete("/delete-project", deleteProject);
+// userRoutes.delete("/delete-skill", deleteSkill);
+// userRoutes.delete("/delete-language", deleteLanguage);
+// userRoutes.delete("/delete-certification", deleteCertification);
+userRoutes.get("/profile", getItemProfile);
+userRoutes.post("/profile", addItemProfile);
+userRoutes.put("/profile", updateItemProfile);
+userRoutes.delete("/profile", deleteItemProfile);
 
 userRoutes.get("/get-notification-by-user-id", getNotificationByID);
 

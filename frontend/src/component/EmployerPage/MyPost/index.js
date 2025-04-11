@@ -1,17 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import React, { useState } from "react"; //useEffect
+import { NavLink, useNavigate } from "react-router-dom"; //Outlet
 import { useSelector, useDispatch } from "react-redux";
-import {
-  getCategoryTags,
-  getCategoryJobFunction,
-  getCategoryIndustry,
-  getCategoryCity,
-  getCategoryEdu,
-  getCategoryLanguage,
-} from "../../../redux/actions/categoryAction";
+import {useGetIndustriesQuery,useGetJobFunctionQuery, useGetCitiesQuery,
+        useGetLanguagesQuery, useGetTagsQuery, useGetEducationQuery} from "../../../redux_toolkit/CategoryApi.js"; //useGetBenefitsQuery, useGetNationsQuery,useGetLevelsQuery,  useGetScalesQuery,useGetDistrictsQuery,
+
 
 import {
-  getPostsByUser,
+  // getPostsByUser,
   deletePostByUser,
   postNewWork,
   editPostByUser,
@@ -21,9 +16,14 @@ export default function EmployerPost() {
   const dispatch = useDispatch();
 
   const { isLogin, user } = useSelector((state) => state.auth);
-  const { tags, jobFunction, industry, city, edu, lang } = useSelector(
-    (state) => state.category
-  );
+
+  const { data: tags } = useGetTagsQuery();
+  const { data: jobFunction } = useGetJobFunctionQuery();
+  const { data: industry } = useGetIndustriesQuery();
+  const { data: city } = useGetCitiesQuery(84);
+  const { data: edu } = useGetEducationQuery();
+  const { data: lang } = useGetLanguagesQuery();
+  
   const { postsByUser } = useSelector((state) => state.post);
   const [isAddPost, setIsAddPost] = useState(true);
 
@@ -156,18 +156,19 @@ export default function EmployerPost() {
     dispatch(deletePostByUser(user?.user?.id, postID));
   };
 
-  useEffect(() => {
-    if (!isLogin || user?.user?.role !== 2) {
-      navigate("/login");
-    }
-    dispatch(getCategoryTags());
-    dispatch(getCategoryJobFunction());
-    dispatch(getCategoryIndustry());
-    dispatch(getCategoryCity(84));
-    dispatch(getCategoryEdu());
-    dispatch(getCategoryLanguage());
-    dispatch(getPostsByUser(user?.user?.id));
-  }, []);
+  // useEffect(() => {
+  //   if (!isLogin || user?.user?.role !== 2) {
+  //     navigate("/login");
+  //   }
+  //   console.log("chay hang loat category: ");
+  //   dispatch(getCategoryTags());
+  //   dispatch(getCategoryJobFunction());
+  //   dispatch(getCategoryIndustry());
+  //   dispatch(getCategoryCity(84));
+  //   dispatch(getCategoryEdu());
+  //   dispatch(getCategoryLanguage());
+  //   dispatch(getPostsByUser(user?.user?.id));
+  // }, [dispatch]);
 
   return (
     <>
@@ -305,7 +306,6 @@ export default function EmployerPost() {
                     </div>
                   </div>
                 </div>
-
                 <div className="mb-3">
                   <label htmlFor="benefits" className="form-label">
                     Mô tả công việc
@@ -784,7 +784,7 @@ export default function EmployerPost() {
         </button>
 
         <div className="bg-light rounded-2 me-2 my-2 p-2">
-          <table class="table table-hover text-center">
+          <table className="table table-hover text-center">
             <thead>
               <tr>
                 <th scope="col">Bài đăng</th>

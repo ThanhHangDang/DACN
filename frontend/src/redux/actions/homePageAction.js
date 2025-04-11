@@ -1,12 +1,10 @@
 import {
   SET_CURRENT_DATE,
-  SET_LEADING_COMPANY,
-  SET_LATEST_WORK,
   SET_CURRENT_PAGE,
 } from "../contants/homePageContants.js";
 
-import axios from "axios";
-import domain from "../../config/domain.js";
+// import axios from "axios";
+// import domain from "../../config/domain.js";
 
 // Action creators
 export const setCurrentDate = (date) => ({
@@ -14,15 +12,15 @@ export const setCurrentDate = (date) => ({
   payload: date,
 });
 
-export const setLeadingCompany = (company) => ({
-  type: SET_LEADING_COMPANY,
-  payload: company,
-});
+// export const setLeadingCompany = (company) => ({
+//   type: SET_LEADING_COMPANY,
+//   payload: company,
+// });
 
-export const setLatestWork = (work) => ({
-  type: SET_LATEST_WORK,
-  payload: work,
-});
+// export const setLatestWork = (work) => ({
+//   type: SET_LATEST_WORK,
+//   payload: work,
+// });
 
 // Thunks (asynchronous actions)
 export const getCurrentDate = () => (dispatch) => {
@@ -33,23 +31,23 @@ export const getCurrentDate = () => (dispatch) => {
   dispatch(setCurrentDate(`${day}/${month}/${year}`));
 };
 
-export const getLeadingCompany = () => (dispatch) => {
-  axios
-    .get(`${domain}/company/get-leading-company`)
-    .then((res) => {
-      dispatch(setLeadingCompany(res.data.company));
-    })
-    .catch((err) => console.error(err));
-};
+// export const getLeadingCompany = () => (dispatch) => {
+//   axios
+//     .get(`${domain}/company/get-leading-company`)
+//     .then((res) => {
+//       dispatch(setLeadingCompany(res.data.company));
+//     })
+//     .catch((err) => console.error(err));
+// };
 
-export const getLatestWork = () => (dispatch) => {
-  axios
-    .get(`${domain}/work/get-latest-work`)
-    .then((res) => {
-      dispatch(setLatestWork(res.data.work));
-    })
-    .catch((err) => console.error(err));
-};
+// export const getLatestWork = () => (dispatch) => {
+//   axios
+//     .get(`${domain}/work/get-latest-work`)
+//     .then((res) => {
+//       dispatch(setLatestWork(res.data.work));
+//     })
+//     .catch((err) => console.error(err));
+// };
 
 export const setCurrentPage = (page) => {
   return {

@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 
 import { useSelector, useDispatch } from "react-redux";
-import { logout, checkLoginStatus } from "../../redux/actions/authAction.js";
+import { logout, checkLoginStatus } from "../../redux_toolkit/AuthSlice.js";
 
 export default function Header() {
   const dispatch = useDispatch();
@@ -11,7 +11,7 @@ export default function Header() {
   // Lấy state từ Redux
   const { isLogin, user } = useSelector((state) => state.auth);
 
-  console.log(user?.user);
+  console.log("header check ",user?.user);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -40,7 +40,7 @@ export default function Header() {
   //         data-bs-toggle="dropdown"
   //         aria-expanded="false"
   //       >
-  //         <i class="bi bi-bell-fill ms-2 me-2"></i>
+  //         <i className="bi bi-bell-fill ms-2 me-2"></i>
   //       </a>
   //       <ul
   //         className="dropdown-menu dropdown-menu-end me-1"
@@ -142,7 +142,7 @@ export default function Header() {
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                <i class="bi bi-list me-2 ms-2"></i>
+                <i className="bi bi-list me-2 ms-2"></i>
                 Tất cả danh mục
               </a>
               <ul
@@ -175,7 +175,7 @@ export default function Header() {
               </ul>
             </div>
 
-            <p class="navbar-nav vertical-line me-3 bg-secondary"></p>
+            <p className="navbar-nav vertical-line me-3 bg-secondary"></p>
             {/* {renderNotification()} */}
             <div className="navbar-nav mb-2 mb-lg-0">
               <a
@@ -186,8 +186,8 @@ export default function Header() {
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                <i class="bi bi-person-circle ms-2 me-2"></i>
-                <i class="bi bi-chevron-down"></i>
+                <i className="bi bi-person-circle ms-2 me-2"></i>
+                <i className="bi bi-chevron-down"></i>
               </a>
               <ul
                 className="dropdown-menu dropdown-menu-end me-1"

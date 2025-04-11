@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser, checkLoginStatus } from "../../redux/actions/authAction.js";
+import { loginUser, checkLoginStatus } from "../../redux_toolkit/AuthSlice.js";
 
 export default function Login() {
   const [username, setUsername] = useState(null);
@@ -16,7 +16,7 @@ export default function Login() {
 
   const submitLogin = (e) => {
     e.preventDefault();
-    dispatch(loginUser(username, password));
+    dispatch(loginUser({username, password}));
   };
 
   useEffect(() => {

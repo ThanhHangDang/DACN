@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { getCompanyInformation } from "../../../redux/actions/companyAction";
-import { getCategoryIndustry } from "../../../redux/actions/categoryAction";
+// import { getCompanyInformation } from "../../../redux/actions/companyAction";
+// import { getCategoryIndustry } from "../../../redux_toolkit/categorySlice.js";
+import { useGetIndustriesQuery } from "../../../redux_toolkit/CategoryApi.js";
+import { useGetCompanyInformationQuery } from "../../../redux_toolkit/guestApi.js";
 import CompanyHeader from "../../../component/_component/ui/CompanyHeader.js";
 
 export default function CompanyProfile() {
   const dispatch = useDispatch();
   const { isLogin, user } = useSelector((state) => state.auth);
-  const { industry } = useSelector((state) => state.category);
+  const {data: industry } =useGetIndustriesQuery();
   const navigate = useNavigate();
-  const { companyInformation } = useSelector((state) => state.company);
+  // const { companyInformation } = useSelector((state) => state.company);
+  const { data: companyInformation } = useGetCompanyInformationQuery(user?.user.id);
 
   console.log("company information ", companyInformation);
 
@@ -34,12 +37,12 @@ export default function CompanyProfile() {
     console.log(logo);
   };
 
-  useEffect(() => {
-    if (!isLogin && !(user?.user.role === 2)) {
-      navigate("/login");
-    }
-    dispatch(getCompanyInformation(user?.user.id));
-  }, [isLogin, user]);
+  // useEffect(() => {
+  //   if (!isLogin && !(user?.user.role === 2)) {
+  //     navigate("/login");
+  //   }
+  //   dispatch(getCompanyInformation(user?.user.id));
+  // }, [isLogin, user]);
 
   return (
     <div>

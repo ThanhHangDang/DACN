@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllPosts } from "../../redux/actions/postAction";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, 
+  // useNavigate 
+} from "react-router-dom";
 
 import { getPostsSearch } from "../../redux/actions/postAction";
 import {

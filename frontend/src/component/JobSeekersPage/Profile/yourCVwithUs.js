@@ -1,65 +1,47 @@
 import React, { useState, useEffect } from "react";
-
+import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getListExp,
-  getListEducation,
-  getListProject,
-  getListSkill,
-  getListLanguage,
-  getListCertification,
-  updateCareerTarget,
-  // getUserInformationByID,
-  addExperience,
-  addEducation,
-  addProject,
-  addSkill,
-  addLanguage,
-  addCertification,
-  deleteProfileItem,
-  updateProfileItem,
-} from "../../../redux/actions/jobseekerAction.js";
-import {
-  getCategoryEdu,
-  getCategoryTags,
-  getCategoryLanguage,
-} from "../../../redux/actions/categoryAction.js";
+import { useAddItemProfileMutation,useDeleteItemProfileMutation,useUpdateItemProfileMutation,useGetItemProfileQuery } from "../../../redux_toolkit/JobseekerApi.js";
+import { useGetLanguagesQuery,useGetEducationQuery,useGetTagsQuery } from "../../../redux_toolkit/CategoryApi.js";
 import formatDateToDDMMYYYY from "../../../utils/formatDate.js";
 
 export default function YourCVwithUs() {
   const dispatch = useDispatch();
-  const {
-    userInformation,
-    listExp,
-    listEducation,
-    listProject,
-    listSkill,
-    listLanguage,
-    listCertification,
-  } = useSelector((state) => state.jobseeker);
-  // const { user } = useSelector((state) => state.auth);
-  const { edu, tags, lang } = useSelector((state) => state.category);
+  const { user } = useSelector((state) => state.auth);
+  const {data:userInformation} = useGetItemProfileQuery({type: "Basic",profile_id: user?.user?.id});
+  const {data:listExp} = useGetItemProfileQuery({type: "experience",profile_id: user?.user?.id});
+  const {data:listEducation} = useGetItemProfileQuery({type: "education",profile_id: user?.user?.id});
+  const {data:listProject} = useGetItemProfileQuery({type: "project",profile_id: user?.user?.id});
+  const {data:listSkill} = useGetItemProfileQuery({type: "skill",profile_id: user?.user?.id});
+  const {data:listLanguage} = useGetItemProfileQuery({type: "language",profile_id: user?.user?.id});
+  const {data:listCertification} = useGetItemProfileQuery({type: "certification",profile_id: user?.user?.id});
+  const [addItemProfile] = useAddItemProfileMutation();
+  const [deleteItemProfile] = useDeleteItemProfileMutation();
+  const [updateProfileItem] = useUpdateItemProfileMutation();
+
+  const {data: edu} = useGetEducationQuery();
+  const {data: tags} = useGetTagsQuery();
+  const {data: lang} = useGetLanguagesQuery();
   console.log("listLanguage: ", listLanguage);
   const [experience, setExperience] = useState({
-    job: "",
-    company: "",
-    startYear: "",
-    endYear: "",
-    description: "",
+    exp_title: "",
+    exp_company: "",
+    exp_from: "",
+    exp_to: "",
+    exp_description: "",
   });
 
   const [education, setEducation] = useState({
     major: "",
     school: "",
-    startYear: "",
-    endYear: "",
+    from_: "",
+    to_: "",
     education_id: "1",
   });
 
   const [dataDeleteModal, setDataDeleteModal] = useState({
-    modalID: "",
-    id: "",
-    id_delete: "",
+    type: "",
+    data:{}
   });
 
   const [careerTarget, setCareerTarget] = useState("");
@@ -74,72 +56,79 @@ export default function YourCVwithUs() {
   const [skillInput, setSkillInput] = useState("");
   const [skillAdd, setSkillAdd] = useState([]);
 
-  const [languageInput, setLanguageInput] = useState("");
+  const [languageInput, setLanguageInput] = useState("");    const skillAdd_ID = [];
+  skillAdd.forEach((item) => {skillAdd_ID.push(item.tag_id)});
   const [languageAdd, setLanguageAdd] = useState([]);
 
   const [certification, setCertification] = useState({
-    certificate_name: "",
-    date: "",
+    profile_certifications_id: "",
+    certifications: "",
+    month_: "",
   });
 
   const [modalUpdateID, setModalUpdateID] = useState("");
 
   const [isAdd, setIsAdd] = useState(true);
 
-  const handleUpdateCarreerTarget = () => {
-    dispatch(updateCareerTarget(userInformation?.jobseeker_id, careerTarget));
+  const handleUpdateCarreerTarget = async () => {
+    try{
+      await updateProfileItem({type:"Basic",data:{profile_id:userInformation?.jobseeker_id,career_target:careerTarget}}).unwrap();
+    }
+    catch (error) {
+      console.error("Error adding Carreer Target:", error);
+      toast.error("Update Carreer Target thất bại!");
+    }
   };
 
-  const handleAddExperience = () => {
+  const handleAddExperience = async () => {
+    try {
     if (isAdd) {
-      dispatch(addExperience(userInformation?.jobseeker_id, experience));
+      await addItemProfile({type:"experience",data:{profile_id:userInformation?.jobseeker_id,...experience}}).unwrap();
     } else {
-      dispatch(
-        updateProfileItem(
-          modalUpdateID,
-          userInformation?.jobseeker_id,
-          experience
-        )
-      );
+      await updateProfileItem({type:"experience",data:{profile_id:userInformation?.jobseeker_id,...experience}}).unwrap();
     }
 
     setExperience({
-      job: "",
-      company: "",
-      startYear: "",
-      endYear: "",
-      description: "",
+      exp_title: "",
+      exp_company: "",
+      exp_from: "",
+      exp_to: "",
+      exp_description: "",
     });
+  }
+  catch (error) {
+      console.error("Error adding experience:", error);
+      toast.error("Thêm kinh nghiệm thất bại!");
+    }
   };
 
-  const handleAddEducation = () => {
+  const handleAddEducation = async () => {
+    try {
     if (isAdd) {
-      dispatch(addEducation(userInformation?.jobseeker_id, education));
+     await addItemProfile({type:"education",data:{profile_id:userInformation?.jobseeker_id,...education}}).unwrap();
     } else {
-      dispatch(
-        updateProfileItem(
-          modalUpdateID,
-          userInformation?.jobseeker_id,
-          education
-        )
-      );
+    await  updateProfileItem({type:"education",data:{profile_id:userInformation?.jobseeker_id,...education}}).unwrap();
     }
     setEducation({
       major: "",
       school: "",
-      startYear: "",
+      from_: "",
       endYear: "",
-      education_id: "1",
+      to_: "1",
     });
+  }
+  catch (error) {
+      console.error("Error adding education:", error);
+      toast.error("Thêm học vấn thất bại!");
+    }
   };
 
-  const handleAddProject = () => {
+  const handleAddProject = async () => {
+    try {
     if (isAdd) {
-      dispatch(addProject(userInformation?.jobseeker_id, project));
-    } else {
-      dispatch(
-        updateProfileItem(modalUpdateID, userInformation?.jobseeker_id, project)
-      );
+      await addItemProfile({type:"project",data:{profile_id:userInformation?.jobseeker_id,...project}}).unwrap();
+    } else { 
+      await  updateProfileItem({type:"project",data:{profile_id:userInformation?.jobseeker_id,...project}}).unwrap();
     }
     setProject({
       project_name: "",
@@ -147,6 +136,11 @@ export default function YourCVwithUs() {
       project_to: "",
       project_description: "",
     });
+  }
+  catch (error) {
+      console.error("Error adding project:", error);
+      toast.error("Thêm project thất bại!");
+    }
   };
 
   const handleRemoveSkill = (skill) => {
@@ -160,10 +154,18 @@ export default function YourCVwithUs() {
     setSkillInput("");
   };
 
-  const handleAddSkill = () => {
-    dispatch(addSkill(userInformation?.jobseeker_id, skillAdd));
+  const handleAddSkill = async () => {
+    try {
+    const skillAdd_ID = [];
+    skillAdd.forEach((item) => {skillAdd_ID.push(item.tag_id)});
+    await addItemProfile({type:"skill",data:{profile_id:userInformation?.jobseeker_id,values:skillAdd_ID}}).unwrap();
     setSkillAdd([]);
     setSkillInput("");
+    }
+    catch (error) {
+      console.error("Error adding skill:", error);
+      toast.error("Thêm skillthất bại!");
+    }
   };
 
   const handleRemoveLanguage = (language) => {
@@ -177,60 +179,52 @@ export default function YourCVwithUs() {
     setLanguageInput("");
   };
 
-  const handleAddLanguage = () => {
-    console.log("languageAdd: ", languageAdd);
-    dispatch(addLanguage(userInformation?.jobseeker_id, languageAdd));
+  const handleAddLanguage = async () => {
+    try {
+    const languageID = [];
+    languageAdd.forEach((item) => {languageID.push(item.language_id)});
+    await addItemProfile({type:"language",data:{profile_id:userInformation?.jobseeker_id,values:languageID}}).unwrap();
     setLanguageAdd([]);
     setLanguageInput("");
+    }
+    catch (error) {
+      console.error("Error adding Language:", error);
+      toast.error("Thêm ngoại ngữ thất bại!");
+    }
   };
 
-  const handleAddCertification = () => {
+  const handleAddCertification = async () => {
+    try {
     if (isAdd) {
-      dispatch(addCertification(userInformation?.jobseeker_id, certification));
+      await addItemProfile({type:"certification",data:{profile_id:userInformation?.jobseeker_id,...certification}}).unwrap();
     } else {
-      dispatch(
-        updateProfileItem(
-          modalUpdateID,
-          userInformation?.jobseeker_id,
-          certification
-        )
-      );
+
+    await  updateProfileItem({type:"certification",data:{profile_id:userInformation?.jobseeker_id,...certification}}).unwrap();
     }
 
     setCertification({
-      certificate_name: "",
-      date: "",
+      profile_certifications_id: "",
+      certifications: "",
+      month_: "",
     });
-  };
-
-  const handleDeleteProfileItem = () => {
-    console.log("dataDeleteModal: ", dataDeleteModal);
-    dispatch(
-      deleteProfileItem(
-        dataDeleteModal.modalID,
-        dataDeleteModal.id,
-        dataDeleteModal.id_delete
-      )
-    );
-  };
-
-  useEffect(() => {
-    dispatch(getListExp(userInformation?.jobseeker_id));
-    dispatch(getListEducation(userInformation?.jobseeker_id));
-    dispatch(getListProject(userInformation?.jobseeker_id));
-    dispatch(getListSkill(userInformation?.jobseeker_id));
-    dispatch(getListLanguage(userInformation?.jobseeker_id));
-    dispatch(getListCertification(userInformation?.jobseeker_id));
-    dispatch(getCategoryEdu());
-    dispatch(getCategoryTags());
-    dispatch(getCategoryLanguage());
-  }, [dispatch, userInformation]);
-
-  useEffect(() => {
-    if (userInformation && userInformation.career_target) {
-      setCareerTarget(userInformation.career_target);
+  }
+  catch (error) {
+      console.error("Error adding Certification :", error);
+      toast.error("Thêm chứng chỉ thất bại!");
     }
-  }, [userInformation]);
+  };
+
+  const handleDeleteProfileItem = async () => {
+    try {
+    console.log("dataDeleteModal: ", dataDeleteModal);
+   await deleteItemProfile(dataDeleteModal).unwrap();
+    }
+    catch (error) {
+      console.error("Error Delete:", error);
+      toast.error("Xóa thất bại!");
+    }
+  };
+
 
   return (
     <div>
@@ -336,7 +330,7 @@ export default function YourCVwithUs() {
                       id="postTitle"
                       placeholder="Nhập công việc"
                       onChange={(e) => {
-                        setExperience({ ...experience, job: e.target.value });
+                        setExperience({ ...experience, exp_title: e.target.value });
                       }}
                     />
                   </div>
@@ -353,7 +347,7 @@ export default function YourCVwithUs() {
                       onChange={(e) => {
                         setExperience({
                           ...experience,
-                          company: e.target.value,
+                          exp_company: e.target.value,
                         });
                       }}
                     />
@@ -374,7 +368,7 @@ export default function YourCVwithUs() {
                       onChange={(e) => {
                         setExperience({
                           ...experience,
-                          startYear: e.target.value,
+                          exp_from: e.target.value,
                         });
                       }}
                     />
@@ -393,7 +387,7 @@ export default function YourCVwithUs() {
                       onChange={(e) => {
                         setExperience({
                           ...experience,
-                          endYear: e.target.value,
+                          exp_to: e.target.value,
                         });
                       }}
                     />
@@ -413,7 +407,7 @@ export default function YourCVwithUs() {
                     onChange={(e) => {
                       setExperience({
                         ...experience,
-                        description: e.target.value,
+                        exp_description: e.target.value,
                       });
                     }}
                   />
@@ -539,7 +533,7 @@ export default function YourCVwithUs() {
                       onChange={(e) => {
                         setEducation({
                           ...education,
-                          startYear: e.target.value,
+                          from_: e.target.value,
                         });
                       }}
                     />
@@ -556,7 +550,7 @@ export default function YourCVwithUs() {
                       placeholder="Nhập năm kết thúc"
                       min="1960"
                       onChange={(e) => {
-                        setEducation({ ...education, endYear: e.target.value });
+                        setEducation({ ...education, to_: e.target.value });
                       }}
                     />
                   </div>
@@ -758,24 +752,20 @@ export default function YourCVwithUs() {
                       }}
                     />
                     <ul className="list-group">
-                      {tags
+                      {skillInput !== "" && tags
                         ?.filter((tag) =>
                           tag.tags_content
                             .toLowerCase()
                             .includes(skillInput.toLowerCase())
                         )
                         .map((skill) => (
-                          <>
-                            {skillInput !== "" && (
-                              <li
-                                key={skill.tag_id}
-                                className="list-group-item list-group-item-action ms-2 mr-2"
-                                onClick={() => handleAddSkillOptions(skill)}
-                              >
-                                {skill.tags_content}
-                              </li>
-                            )}
-                          </>
+                          <li
+                            key={skill.tag_id}
+                            className="list-group-item list-group-item-action ms-2 mr-2"
+                            onClick={() => handleAddSkillOptions(skill)}
+                          >
+                            {skill.tags_content}
+                          </li>
                         ))}
                     </ul>
                     <div className="mt-2">
@@ -951,7 +941,7 @@ export default function YourCVwithUs() {
                     Chứng chỉ
                   </label>
                   <input
-                    value={certification?.certificate_name || ""}
+                    value={certification?.certifications || ""}
                     type="text"
                     className="form-control"
                     id="jobTitle"
@@ -959,7 +949,7 @@ export default function YourCVwithUs() {
                     onChange={(e) => {
                       setCertification({
                         ...certification,
-                        certificate_name: e.target.value,
+                        certifications: e.target.value,
                       });
                     }}
                   />
@@ -970,7 +960,7 @@ export default function YourCVwithUs() {
                     Ngày cấp
                   </label>
                   <input
-                    value={certification.date}
+                    value={certification.month_}
                     type="date"
                     className="form-control"
                     id="jobTitle"
@@ -978,7 +968,7 @@ export default function YourCVwithUs() {
                     onChange={(e) => {
                       setCertification({
                         ...certification,
-                        date: e.target.value,
+                        month_: e.target.value,
                       });
                     }}
                   />
@@ -1114,7 +1104,7 @@ export default function YourCVwithUs() {
         <span className="d-flex justify-content-between">
           <h3>Mục tiêu nghề nghiệp</h3>
           <i
-            class="bi bi-pencil-square text-primary custom-hover"
+            className="bi bi-pencil-square text-primary custom-hover"
             data-bs-toggle="modal"
             data-bs-target="#careerTarget"
           ></i>
@@ -1144,7 +1134,7 @@ export default function YourCVwithUs() {
 
                   <span className="text-primary text-decoration-none">
                     <i
-                      class="bi bi-pencil-square me-2"
+                      className="bi bi-pencil-square me-2"
                       data-bs-toggle="modal"
                       data-bs-target="#addExperience"
                       onClick={() => {
@@ -1165,15 +1155,16 @@ export default function YourCVwithUs() {
                       }}
                     ></i>
                     <i
-                      class="bi bi-trash text-danger"
+                      className="bi bi-trash text-danger"
                       data-bs-toggle="modal"
                       data-bs-target="#confirmDeleteModal"
                       onClick={() => {
                         setDataDeleteModal({
                           ...dataDeleteModal,
-                          modalID: 1,
-                          id: userInformation?.jobseeker_id,
-                          id_delete: exp.profile_experience_id,
+                          type: "experience",
+                          data: {
+                            profile_id: userInformation?.jobseeker_id,
+                            profile_experience_id: exp.profile_experience_id,}   
                         });
                       }}
                     ></i>
@@ -1191,16 +1182,16 @@ export default function YourCVwithUs() {
           onClick={() => {
             setIsAdd(true);
             setExperience({
-              job: "",
-              company: "",
-              startYear: "",
-              endYear: "",
-              description: "",
+              exp_title: "",
+              exp_company: "",
+              exp_from: "",
+              exp_to: "",
+              exp_description: "",
             });
             setModalUpdateID("");
           }}
         >
-          <i class="bi bi-plus-circle me-2"></i>
+          <i className="bi bi-plus-circle me-2"></i>
           <p>Thêm kinh nghiệm làm việc</p>
         </span>
       </div>
@@ -1221,7 +1212,7 @@ export default function YourCVwithUs() {
                   </span>
                   <span className="text-primary text-decoration-none">
                     <i
-                      class="bi bi-pencil-square me-2"
+                      className="bi bi-pencil-square me-2"
                       data-bs-toggle="modal"
                       data-bs-target="#addEducation"
                       onClick={() => {
@@ -1231,10 +1222,10 @@ export default function YourCVwithUs() {
                           major: edu.major,
                           education_id: edu.education_id,
                           school: edu.school,
-                          startYear: new Date(edu.from_)
+                          from_: new Date(edu.from_)
                             .toISOString()
                             .split("T")[0],
-                          endYear: new Date(edu.to_)
+                            to_: new Date(edu.to_)
                             .toISOString()
                             .split("T")[0],
                         });
@@ -1242,15 +1233,16 @@ export default function YourCVwithUs() {
                       }}
                     ></i>
                     <i
-                      class="bi bi-trash text-danger"
+                      className="bi bi-trash text-danger"
                       data-bs-toggle="modal"
                       data-bs-target="#confirmDeleteModal"
                       onClick={() => {
                         setDataDeleteModal({
                           ...dataDeleteModal,
-                          modalID: 2,
-                          id: userInformation?.jobseeker_id,
-                          id_delete: edu.profile_education_id,
+                          type: "education",
+                          data: {
+                            profile_id: userInformation?.jobseeker_id,
+                            profile_education_id: edu.profile_education_id}   
                         });
                       }}
                     ></i>
@@ -1270,13 +1262,13 @@ export default function YourCVwithUs() {
               major: "",
               education_id: "",
               school: "",
-              startYear: "",
-              endYear: "",
+              from_: "",
+              to_: "",
             });
             setModalUpdateID("");
           }}
         >
-          <i class="bi bi-plus-circle me-2"></i>
+          <i className="bi bi-plus-circle me-2"></i>
           <p>Thêm học vấn</p>
         </span>
       </div>
@@ -1297,7 +1289,7 @@ export default function YourCVwithUs() {
                   </span>
                   <span className="text-primary text-decoration-none">
                     <i
-                      class="bi bi-pencil-square me-2"
+                      className="bi bi-pencil-square me-2"
                       data-bs-toggle="modal"
                       data-bs-target="#addProject"
                       onClick={() => {
@@ -1317,15 +1309,16 @@ export default function YourCVwithUs() {
                       }}
                     ></i>
                     <i
-                      class="bi bi-trash text-danger"
+                      className="bi bi-trash text-danger"
                       data-bs-toggle="modal"
                       data-bs-target="#confirmDeleteModal"
                       onClick={() => {
                         setDataDeleteModal({
                           ...dataDeleteModal,
-                          modalID: 3,
-                          id: userInformation?.jobseeker_id,
-                          id_delete: pro.profile_project_id,
+                          type:"project",
+                          data: {
+                                  profile_id: userInformation?.jobseeker_id,
+                                  profile_project_id: pro.profile_project_id}
                         });
                       }}
                     ></i>
@@ -1351,7 +1344,7 @@ export default function YourCVwithUs() {
             setModalUpdateID("");
           }}
         >
-          <i class="bi bi-plus-circle me-2"></i>
+          <i className="bi bi-plus-circle me-2"></i>
           <p>Thêm dự án</p>
         </span>
       </div>
@@ -1371,9 +1364,11 @@ export default function YourCVwithUs() {
                   onClick={() => {
                     setDataDeleteModal({
                       ...dataDeleteModal,
-                      modalID: 4,
-                      id: userInformation?.jobseeker_id,
-                      id_delete: skl.skill_id,
+                      type: "skill",
+                      data: {
+                              profile_id: userInformation?.jobseeker_id,
+                              skill_id: skl.skill_id
+                            }
                     });
                   }}
                 >
@@ -1388,7 +1383,7 @@ export default function YourCVwithUs() {
           data-bs-toggle="modal"
           data-bs-target="#addSkill"
         >
-          <i class="bi bi-plus-circle me-2"></i>
+          <i className="bi bi-plus-circle me-2"></i>
           <p>Thêm kỹ năng</p>
         </span>
       </div>
@@ -1408,9 +1403,11 @@ export default function YourCVwithUs() {
                   onClick={() => {
                     setDataDeleteModal({
                       ...dataDeleteModal,
-                      modalID: 5,
-                      id: userInformation?.jobseeker_id,
-                      id_delete: lang.language_id,
+                      type: "language",
+                      data: {
+                        profile_id: userInformation?.jobseeker_id,
+                        language_id: lang.language_id,
+                      }
                     });
                   }}
                 >
@@ -1425,7 +1422,7 @@ export default function YourCVwithUs() {
           data-bs-toggle="modal"
           data-bs-target="#addLanguage"
         >
-          <i class="bi bi-plus-circle me-2"></i>
+          <i className="bi bi-plus-circle me-2"></i>
           <p>Thêm ngoại ngữ</p>
         </span>
       </div>
@@ -1444,15 +1441,15 @@ export default function YourCVwithUs() {
                   </span>
                   <span className="text-primary text-decoration-none">
                     <i
-                      class="bi bi-pencil-square me-2"
+                      className="bi bi-pencil-square me-2"
                       data-bs-toggle="modal"
                       data-bs-target="#addCer"
                       onClick={() => {
                         setIsAdd(false);
                         setCertification({
                           ...certification,
-                          certificate_name: cer.certifications,
-                          date: new Date(cer.month_)
+                          certifications: cer.certifications,
+                          month_: new Date(cer.month_)
                             .toISOString()
                             .split("T")[0],
                         });
@@ -1460,15 +1457,18 @@ export default function YourCVwithUs() {
                       }}
                     ></i>
                     <i
-                      class="bi bi-trash text-danger"
+                      className="bi bi-trash text-danger"
                       data-bs-toggle="modal"
                       data-bs-target="#confirmDeleteModal"
                       onClick={() => {
                         setDataDeleteModal({
                           ...dataDeleteModal,
-                          modalID: 6,
-                          id: userInformation?.jobseeker_id,
-                          id_delete: cer.profile_certifications_id,
+                          type: "certification",
+                          data: {
+                            profile_id: userInformation?.jobseeker_id,
+                            profile_certifications_id:
+                              cer.profile_certifications_id,
+                          }
                         });
                       }}
                     ></i>
@@ -1484,13 +1484,13 @@ export default function YourCVwithUs() {
           data-bs-target="#addCer"
           onClick={() => {
             setCertification({
-              certificate_name: "",
-              date: "",
+              certifications: "",
+              month_: "",
             });
             setModalUpdateID("");
           }}
         >
-          <i class="bi bi-plus-circle me-2"></i>
+          <i className="bi bi-plus-circle me-2"></i>
           <p>Thêm chứng chỉ</p>
         </span>
       </div>

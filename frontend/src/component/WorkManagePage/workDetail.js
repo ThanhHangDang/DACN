@@ -57,7 +57,7 @@ export default function WorkDetail() {
                       postDetail?.date_expi
                     )} ngày`
                   : "Hết hạn"}{" "}
-                •<i class="bi bi-people-fill me-1"></i>
+                •<i className="bi bi-people-fill me-1"></i>
                 {postDetail?.views} lượt xem • {postDetail?.work_location_name}
               </p>
 
@@ -68,7 +68,7 @@ export default function WorkDetail() {
 
               <h5 className="mt-3">Mô tả công việc</h5>
               <ul>
-                {postDetail?.describle
+              {postDetail?.describle
                   ?.split("00pizon00")
                   .map((item, index) => (
                     <li key={index}>{item}</li>
@@ -76,20 +76,8 @@ export default function WorkDetail() {
               </ul>
 
               <h5 className="mt-3">Yêu cầu ứng viên</h5>
-              <ul>
-                {/* <li>
-                  Tốt nghiệp Đại học; ưu tiên chuyên ngành CNTT, Khoa học dữ
-                  liệu, Trí tuệ nhân tạo.
-                </li>
-                <li>
-                  Có từ 2 năm kinh nghiệm trở lên ở AI Engineer, Data Scientist
-                  hoặc ML Engineer.
-                </li>
-                <li>
-                  Kinh nghiệm với các công cụ AI và Machine Learning:
-                  Scikit-learn, PyTorch, Pandas/Polars, SQL,...
-                </li> */}
-                {postDetail?.more_requirements
+              <ul>   
+              {postDetail?.more_requirements
                   ?.split("00pizon00")
                   ?.map((item, index) => (
                     <li key={index}>{item}</li>
@@ -98,10 +86,6 @@ export default function WorkDetail() {
 
               <h5 className="mt-3">Các phúc lợi dành cho bạn</h5>
               <ul>
-                {/* <li>Thưởng lương tháng 13 và các khoản thưởng khác.</li>
-                <li>Chăm sóc sức khỏe định kỳ.</li>
-                <li>Đào tạo và phát triển nghề nghiệp.</li>
-                <li>Hoạt động nhóm và các sự kiện thường niên.</li> */}
                 {postDetail?.catalog_benefit?.split(",")?.map((item, index) => (
                   <li key={index}>{item}</li>
                 ))}
@@ -112,12 +96,6 @@ export default function WorkDetail() {
 
               <h5 className="mt-3">Từ khóa:</h5>
               <div>
-                {/* <span className="badge bg-secondary me-2">AI</span>
-                <span className="badge bg-secondary me-2">
-                  Machine Learning
-                </span>
-                <span className="badge bg-secondary me-2">Python</span>
-                <span className="badge bg-secondary">Hồ Chí Minh</span> */}
                 {postDetail?.job_skills?.split(",")?.map((item, index) => (
                   <span key={index} className="badge bg-secondary me-2">
                     {item}

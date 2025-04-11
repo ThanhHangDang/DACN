@@ -1,21 +1,22 @@
 import React, { useEffect } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { getCompanyInformation } from "../../redux/actions/companyAction";
+// import { getCompanyInformation } from "../../redux/actions/companyAction";
+import { useGetCompanyInformationQuery } from "../../redux_toolkit/guestApi";
 
 export default function EmployerPage() {
   const dispatch = useDispatch();
   const { isLogin, user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
-  const { companyInformation } = useSelector((state) => state.company);
+  // const { companyInformation } = useSelector((state) => state.company);
   // console.log(companyInformation);
-
-  useEffect(() => {
-    if (!isLogin && !(user?.user.role === 2)) {
-      navigate("/login");
-    }
-    dispatch(getCompanyInformation(user?.user.id));
-  }, [isLogin, user]);
+const { data: companyInformation } = useGetCompanyInformationQuery(user?.user.id);
+  // useEffect(() => {
+  //   if (!isLogin && !(user?.user.role === 2)) {
+  //     navigate("/login");
+  //   }
+  //   // dispatch(getCompanyInformation(user?.user.id));
+  // }, [isLogin, user]);
 
   return (
     <div className="container-fluid">
@@ -31,7 +32,7 @@ export default function EmployerPage() {
                   className="rounded-circle me-2"
                 />
               ) : (
-                <i class="bi bi-person-circle me-2 text-white fs-2"></i>
+                <i className="bi bi-person-circle me-2 text-white fs-2"></i>
               )}
             </div>
             <div className="col-md-12">
@@ -49,7 +50,7 @@ export default function EmployerPage() {
               to="/employer-overview"
             >
               <span className="ms-3">
-                <i class="bi bi-nut me-2"></i>Tổng quan
+                <i className="bi bi-nut me-2"></i>Tổng quan
               </span>
             </NavLink>
             <NavLink
@@ -57,7 +58,7 @@ export default function EmployerPage() {
               to="/employer-profile"
             >
               <span className="ms-3">
-                <i class="bi bi-person-video3 me-2"></i>Quản lý hồ sơ
+                <i className="bi bi-person-video3 me-2"></i>Quản lý hồ sơ
               </span>
             </NavLink>
             <NavLink
@@ -65,7 +66,7 @@ export default function EmployerPage() {
               to="/employer-post"
             >
               <span className="ms-3">
-                <i class="bi bi-postcard me-2"></i>Quản lý tin tuyển dụng
+                <i className="bi bi-postcard me-2"></i>Quản lý tin tuyển dụng
               </span>
             </NavLink>
             <NavLink
@@ -73,7 +74,7 @@ export default function EmployerPage() {
               to="/employer-notification"
             >
               <span className="ms-3">
-                <i class="bi bi-bell me-2"></i>Thông báo
+                <i className="bi bi-bell me-2"></i>Thông báo
               </span>
             </NavLink>
             <NavLink
@@ -81,7 +82,7 @@ export default function EmployerPage() {
               to="/employer-account"
             >
               <span className="ms-3">
-                <i class="bi bi-person-gear me-2"></i>Quản lý tài khoản
+                <i className="bi bi-person-gear me-2"></i>Quản lý tài khoản
               </span>
             </NavLink>
 
