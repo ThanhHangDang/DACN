@@ -11,8 +11,12 @@ const formatDateForInput = (dateString) => {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return ""; // Invalid date
     
-    // Format as YYYY-MM-DD
-    return date.toISOString().split('T')[0];
+    // Thêm offset múi giờ để đảm bảo ngày được hiển thị đúng
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}`;
   } catch (error) {
     console.error("Error formatting date:", error);
     return "";
@@ -46,6 +50,7 @@ export default function YourCVwithUs() {
   });
 
   const [education, setEducation] = useState({
+    profile_education_id: "",
     major: "",
     school: "",
     from_: "",
@@ -98,8 +103,10 @@ export default function YourCVwithUs() {
     try {
     if (isAdd) {
       await addItemProfile({type:"experience",data:{profile_id:userInformation?.jobseeker_id,...experience}}).unwrap();
+      toast.success("Thêm Experience thành công!");
     } else {
       await updateProfileItem({type:"experience",data:{profile_id:userInformation?.jobseeker_id,...experience}}).unwrap();
+      toast.success("Update Experience thành công!");
     }
 
     setExperience({
@@ -121,15 +128,18 @@ export default function YourCVwithUs() {
     try {
     if (isAdd) {
      await addItemProfile({type:"education",data:{profile_id:userInformation?.jobseeker_id,...education}}).unwrap();
+     toast.success("Thêm Education thành công!");
     } else {
     await  updateProfileItem({type:"education",data:{profile_id:userInformation?.jobseeker_id,...education}}).unwrap();
+    toast.success("Update Education thành công!");
     }
     setEducation({
+      profile_education_id: "",
       major: "",
       school: "",
       from_: "",
       endYear: "",
-      to_: "1",
+      to_: "",
     });
   }
   catch (error) {
@@ -142,10 +152,13 @@ export default function YourCVwithUs() {
     try {
     if (isAdd) {
       await addItemProfile({type:"project",data:{profile_id:userInformation?.jobseeker_id,...project}}).unwrap();
+      toast.success("Thêm Project thành công!");
     } else { 
       await  updateProfileItem({type:"project",data:{profile_id:userInformation?.jobseeker_id,...project}}).unwrap();
+      toast.success("Update Project thành công!");
     }
     setProject({
+      profile_project_id: "",
       project_name: "",
       project_from: "",
       project_to: "",
@@ -176,6 +189,7 @@ export default function YourCVwithUs() {
     await addItemProfile({type:"skill",data:{profile_id:userInformation?.jobseeker_id,values:skillAdd_ID}}).unwrap();
     setSkillAdd([]);
     setSkillInput("");
+    toast.success("Thêm skill thành công!");
     }
     catch (error) {
       console.error("Error adding skill:", error);
@@ -199,6 +213,7 @@ export default function YourCVwithUs() {
     const languageID = [];
     languageAdd.forEach((item) => {languageID.push(item.language_id)});
     await addItemProfile({type:"language",data:{profile_id:userInformation?.jobseeker_id,values:languageID}}).unwrap();
+    toast.success("Thêm Language  thành công!");
     setLanguageAdd([]);
     setLanguageInput("");
     }
@@ -218,6 +233,7 @@ export default function YourCVwithUs() {
             ...certification
           }
         }).unwrap();
+      toast.success("Thêm Certification thành công!");
       } else {
         await updateProfileItem({
           type: "certification",
@@ -227,6 +243,7 @@ export default function YourCVwithUs() {
             // certification đã có profile_certifications_id nhờ bạn đã thêm ở trên
           }
         }).unwrap();
+        toast.success("Cập nhật Certification thành công!");
       }
   
       setCertification({
@@ -245,6 +262,7 @@ export default function YourCVwithUs() {
     try {
     console.log("dataDeleteModal: ", dataDeleteModal);
    await deleteItemProfile(dataDeleteModal).unwrap();
+   toast.success("Xóa thành công!");
     }
     catch (error) {
       console.error("Error Delete:", error);
@@ -550,7 +568,7 @@ export default function YourCVwithUs() {
                       Từ
                     </label>
                     <input
-                      value={education.startYear}
+                      value={education.from_}
                       type="date"
                       className="form-control"
                       id="startYear"
@@ -569,7 +587,7 @@ export default function YourCVwithUs() {
                       Đến
                     </label>
                     <input
-                      value={education.endYear}
+                      value={education.to_}
                       type="date"
                       className="form-control"
                       id="endYear"
@@ -1242,17 +1260,14 @@ export default function YourCVwithUs() {
                         setIsAdd(false);
                         setEducation({
                           ...education,
+                          profile_education_id: edu.profile_education_id,
                           major: edu.major,
                           education_id: edu.education_id,
                           school: edu.school,
-                          from_: new Date(edu.from_)
-                            .toISOString()
-                            .split("T")[0],
-                            to_: new Date(edu.to_)
-                            .toISOString()
-                            .split("T")[0],
+                          from_: formatDateForInput(edu.from_), // Sử dụng formatDateForInput
+                            to_:formatDateForInput(edu.to_), // Sử dụng formatDateForInput
                         });
-                        setModalUpdateID(2);
+                        // setModalUpdateID(2);
                       }}
                     ></i>
                     <i
@@ -1282,6 +1297,7 @@ export default function YourCVwithUs() {
           onClick={() => {
             setIsAdd(true);
             setEducation({
+              profile_education_id: "",
               major: "",
               education_id: "",
               school: "",
@@ -1319,6 +1335,7 @@ export default function YourCVwithUs() {
                         setIsAdd(false);
                         setProject({
                           ...project,
+                          profile_project_id: pro.profile_project_id,
                           project_name: pro.project_name,
                           project_from: new Date(pro.project_from)
                             .toISOString()
@@ -1328,7 +1345,7 @@ export default function YourCVwithUs() {
                             .split("T")[0],
                           project_description: pro.project_description,
                         });
-                        setModalUpdateID(3);
+
                       }}
                     ></i>
                     <i
@@ -1359,6 +1376,7 @@ export default function YourCVwithUs() {
           onClick={() => {
             setIsAdd(true);
             setProject({
+              profile_project_id: "",
               project_name: "",
               project_from: "",
               project_to: "",

@@ -81,9 +81,7 @@ const {data: jobFunction} = useGetJobFunctionQuery();
 
   useEffect(() => {
     dispatch(getAllPosts(page));
-    // dispatch(getCategoryIndustry());
-    // dispatch(getCategoryJobFunction());
-    // dispatch(getCategoryCity(84));
+ 
     setTotalPages(totalWorksPages);
   }, [page, dispatch]);
 
