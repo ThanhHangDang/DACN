@@ -210,21 +210,33 @@ export default function YourCVwithUs() {
 
   const handleAddCertification = async () => {
     try {
-    if (isAdd) {
-      await addItemProfile({type:"certification",data:{profile_id:userInformation?.jobseeker_id,...certification}}).unwrap();
-    } else {
-
-    await  updateProfileItem({type:"certification",data:{profile_id:userInformation?.jobseeker_id,...certification}}).unwrap();
+      if (isAdd) {
+        await addItemProfile({
+          type: "certification",
+          data: {
+            profile_id: userInformation?.jobseeker_id,
+            ...certification
+          }
+        }).unwrap();
+      } else {
+        await updateProfileItem({
+          type: "certification",
+          data: {
+            profile_id: userInformation?.jobseeker_id,
+            ...certification
+            // certification đã có profile_certifications_id nhờ bạn đã thêm ở trên
+          }
+        }).unwrap();
+      }
+  
+      setCertification({
+        profile_certifications_id: "", // Reset ID khi hoàn thành
+        certifications: "",
+        month_: "",
+      });
     }
-
-    setCertification({
-      profile_certifications_id: "",
-      certifications: "",
-      month_: "",
-    });
-  }
-  catch (error) {
-      console.error("Error adding Certification :", error);
+    catch (error) {
+      console.error("Error adding Certification:", error);
       toast.error("Thêm chứng chỉ thất bại!");
     }
   };
@@ -1495,11 +1507,13 @@ export default function YourCVwithUs() {
           data-bs-toggle="modal"
           data-bs-target="#addCer"
           onClick={() => {
+            setIsAdd(true); // Thêm dòng này
             setCertification({
+              profile_certifications_id: "", // Thêm dòng này
               certifications: "",
               month_: "",
             });
-            setModalUpdateID("");
+            // setModalUpdateID(""); // Không cần thiết nếu bạn dùng isAdd
           }}
         >
           <i className="bi bi-plus-circle me-2"></i>
