@@ -1496,10 +1496,11 @@ export default function YourCVwithUs() {
           data-bs-target="#addCer"
           onClick={() => {
             setCertification({
+              profile_certifications_id: "", 
               certifications: "",
               month_: "",
             });
-            setModalUpdateID("");
+            // setModalUpdateID("");
           }}
         >
           <i className="bi bi-plus-circle me-2"></i>
