@@ -4,7 +4,20 @@ import { useDispatch, useSelector } from "react-redux";
 import { useAddItemProfileMutation,useDeleteItemProfileMutation,useUpdateItemProfileMutation,useGetItemProfileQuery } from "../../../redux_toolkit/JobseekerApi.js";
 import { useGetLanguagesQuery,useGetEducationQuery,useGetTagsQuery } from "../../../redux_toolkit/CategoryApi.js";
 import formatDateToDDMMYYYY from "../../../utils/formatDate.js";
-
+const formatDateForInput = (dateString) => {
+  if (!dateString) return "";
+  
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return ""; // Invalid date
+    
+    // Format as YYYY-MM-DD
+    return date.toISOString().split('T')[0];
+  } catch (error) {
+    console.error("Error formatting date:", error);
+    return "";
+  }
+};
 export default function YourCVwithUs() {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
@@ -24,6 +37,7 @@ export default function YourCVwithUs() {
   const {data: lang} = useGetLanguagesQuery();
   console.log("listLanguage: ", listLanguage);
   const [experience, setExperience] = useState({
+    profile_experience_id: "",
     exp_title: "",
     exp_company: "",
     exp_from: "",
@@ -89,6 +103,7 @@ export default function YourCVwithUs() {
     }
 
     setExperience({
+      profile_experience_id: "",
       exp_title: "",
       exp_company: "",
       exp_from: "",
@@ -323,8 +338,7 @@ export default function YourCVwithUs() {
                       Công việc
                     </label>
                     <input
-                      required
-                      value={experience.job}
+                      value={experience.exp_title || ""}  // Thêm || "" để tránh lỗi undefined
                       type="text"
                       className="form-control"
                       id="postTitle"
@@ -339,7 +353,7 @@ export default function YourCVwithUs() {
                       Công ty
                     </label>
                     <input
-                      value={experience.company}
+                      value={experience.exp_company}
                       type="text"
                       className="form-control"
                       id="postTitle"
@@ -359,7 +373,7 @@ export default function YourCVwithUs() {
                       Từ
                     </label>
                     <input
-                      value={experience.startYear}
+                      value={experience.exp_from}
                       type="date"
                       min="1960"
                       className="form-control"
@@ -378,7 +392,7 @@ export default function YourCVwithUs() {
                       Đến
                     </label>
                     <input
-                      value={experience.endYear}
+                      value={experience.exp_to}
                       type="date"
                       min="1960"
                       className="form-control"
@@ -399,7 +413,7 @@ export default function YourCVwithUs() {
                     Mô tả
                   </label>
                   <textarea
-                    value={experience.description}
+                    value={experience.exp_description}
                     className="form-control"
                     id="benefits"
                     rows={4}
@@ -1141,17 +1155,13 @@ export default function YourCVwithUs() {
                         setIsAdd(false);
                         setExperience({
                           ...experience,
-                          job: exp.exp_title,
-                          company: exp.exp_company,
-                          startYear: new Date(exp.exp_from)
-                            .toISOString()
-                            .split("T")[0],
-                          endYear: new Date(exp.exp_to)
-                            .toISOString()
-                            .split("T")[0],
-                          description: exp.exp_description,
+                          profile_experience_id: exp.profile_experience_id,
+                          exp_title: exp.exp_title,
+                          exp_company: exp.exp_company,
+                          exp_from: formatDateForInput(exp.exp_from),  // Sử dụng formatDateForInput
+                          exp_to: formatDateForInput(exp.exp_to),      // Sử dụng formatDateForInput
+                          exp_description: exp.exp_description,
                         });
-                        setModalUpdateID(1);
                       }}
                     ></i>
                     <i
@@ -1182,13 +1192,14 @@ export default function YourCVwithUs() {
           onClick={() => {
             setIsAdd(true);
             setExperience({
+              profile_experience_id: "", 
               exp_title: "",
               exp_company: "",
               exp_from: "",
               exp_to: "",
               exp_description: "",
             });
-            setModalUpdateID("");
+            // setModalUpdateID("");
           }}
         >
           <i className="bi bi-plus-circle me-2"></i>
@@ -1448,6 +1459,7 @@ export default function YourCVwithUs() {
                         setIsAdd(false);
                         setCertification({
                           ...certification,
+                          profile_certifications_id: cer.profile_certifications_id, 
                           certifications: cer.certifications,
                           month_: new Date(cer.month_)
                             .toISOString()
