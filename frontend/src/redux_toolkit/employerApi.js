@@ -11,9 +11,7 @@ export const employerApi = createApi({
           url: "/user/get-employer-information",
           params: { id },
         }),
-        transformResponse: (response) => {
-          console.log("redux receive getCompanyInformation", response);
-          return response.companyInfor},
+        transformResponse: (response) => response,
       }),
       getPostByUser: builder.query({
         query: (userId) => ({

@@ -41,6 +41,7 @@ export default function WorkMangePage() {
     totalWorksPages: 1,
   };
 
+  console.log(allPosts);
   const formatNumberToTr = (number) => `${(number / 1e6).toFixed(0)}tr`;
 
   const handleSearch = (e) => {

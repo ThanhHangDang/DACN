@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useGetItemProfileQuery } from "../../redux_toolkit/JobseekerApi";
+import { useGetItemProfileQuery } from "../../redux_toolkit/jobseekerApi";
 import SidebarLayout from "../../component/_component/sidebar";
 
 export default function JobSeekerPage() {

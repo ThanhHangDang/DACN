@@ -66,9 +66,9 @@ export const guestApi = createApi({
     }),
     // Get post detail by ID
     getPostDetail: builder.query({
-      query: (post_id) => ({
-        url: "/work/get-post-detail",
-        params: { post_id },
+      query: (postId) => ({
+        url: "/work/get-work-detail",
+        params: { postId },
       }),
     }),
     // Get all posts by user ID

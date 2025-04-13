@@ -18,7 +18,7 @@ export default function Footer() {
             </p>
             <ul className="contact-info mb-4">
               <li>
-                <i class="bi bi-geo-alt-fill"></i>
+                <i className="bi bi-geo-alt-fill"></i>
                 <span>
                   123 Business Avenue, Suite 100
                   <br />
@@ -26,11 +26,11 @@ export default function Footer() {
                 </span>
               </li>
               <li>
-                <i class="bi bi-telephone-fill"></i>
+                <i className="bi bi-telephone-fill"></i>
                 <span>+1 (555) 123-4567</span>
               </li>
               <li>
-                <i class="bi bi-envelope-fill"></i>
+                <i className="bi bi-envelope-fill"></i>
                 <span>contact@boost-career.com</span>
               </li>
             </ul>
@@ -92,13 +92,13 @@ export default function Footer() {
                 <i className="bi bi-facebook"></i>
               </a>
               <a href="#aa" className="social-icon">
-                <i class="bi bi-twitter-x"></i>
+                <i className="bi bi-twitter-x"></i>
               </a>
               <a href="#aa" className="social-icon">
                 <i className="bi bi-instagram"></i>
               </a>
               <a href="#aa" className="social-icon">
-                <i class="bi bi-linkedin"></i>
+                <i className="bi bi-linkedin"></i>
               </a>
               <a href="#aa" className="social-icon">
                 <i className="bi bi-youtube"></i>

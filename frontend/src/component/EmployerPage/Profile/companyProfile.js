@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { useGetIndustriesQuery } from "../../../redux_toolkit/CategoryApi.js";
-// tạm thời lấy info từ guest => sẽ chuyển qua port api employer sau
 import { useGetCompanyInforQuery } from "../../../redux_toolkit/employerApi.js";
 import CompanyHeader from "../../../component/_component/ui/CompanyHeader.js";
 
@@ -12,7 +11,9 @@ export default function CompanyProfile() {
   const { data: industry } = useGetIndustriesQuery();
   const navigate = useNavigate();
   const id = user?.user.id;
-  const { data: companyInformation } = useGetCompanyInforQuery(id);
+  console.log("id", id);
+  const { data } = useGetCompanyInforQuery(id);
+  const companyInformation = data|| {};
 
   const [updateCompany, setUpdateCompany] = useState({
     company_name: companyInformation.company_name || "",

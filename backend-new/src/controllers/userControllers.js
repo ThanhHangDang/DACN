@@ -235,7 +235,7 @@ const getCompanyInformation = async (req, res) => {
     console.log("id", id);
     const companyInfor = await queryGetCompanyInformation(id);
     if (companyInfor) {
-      return res.status(200).json({ companyInfor });
+      return res.status(200).json(companyInfor);
     } else {
       return res.status(200).json({ companyInfor: {} });
     }

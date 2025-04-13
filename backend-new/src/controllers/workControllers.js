@@ -24,12 +24,12 @@ const getLatestWork = async (req, res) => {
 
 const getWorkDetail = async (req, res) => {
   console.log("Get Work Detail:", req.query);
-  const postId = req.query.post_id;
+  const postId = req.query.postId;
   try {
     const data = await queryGetWorkDetail(postId);
 
     if (data) {
-      return res.status(200).json({data});
+      return res.status(200).json(data);
     }
   } catch (error) {
     console.log("Get Work Detail error:", error);

@@ -92,7 +92,7 @@ LIMIT 1;
     `,
     [workId]
   );
-  return work;
+  return work[0];
 };
 
 const queryGetAllWorks = async (limit, offset) => {
