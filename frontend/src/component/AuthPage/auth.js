@@ -118,8 +118,8 @@ export default function Auth() {
   ]);
 
   return (
-    <div>
-      <div className="container bg-light mt-5 mb-5 col-10 col-sm-5 rounded-3">
+    <div className=" d-flex align-items-center justify-content-center p-5">
+      {/* <div className="container bg-light mt-5 mb-5 col-10 col-sm-5 rounded-3">
         <div className="row">
           <h2 className="fw-bold text-center mt-2">ĐĂNG KÝ TÀI KHOẢN</h2>
           <p>
@@ -252,6 +252,181 @@ export default function Auth() {
             </div>
           </div>
         </form>
+      </div> */}
+      <div className="card shadow-lg w-100" style={{ maxWidth: 800 }}>
+        <div className="card-body">
+          <div className="text-center">
+            <h1 className="card-title h3">ĐĂNG KÝ TÀI KHOẢN</h1>
+            <p className="card-text text-muted">
+              Nếu bạn có một tài khoản, xin vui lòng bấm nút "Đăng nhập" chuyển
+              qua trang đăng nhập.
+              <br />
+              Những trường có * là bắt buộc
+            </p>
+          </div>
+          <div className="mt-4">
+            <form>
+              <div className="mb-4">
+                <label htmlFor="yourRole" className="form-label text-muted">
+                  Bạn là:*
+                </label>
+                <select
+                  type="text"
+                  className="form-control"
+                  id="yourRole"
+                  placeholder="Tên đăng nhập"
+                  required
+                  value={dataRegister.role}
+                  onChange={(e) => {
+                    setDataRegister({ ...dataRegister, role: e.target.value });
+                  }}
+                >
+                  <option value="3" selected>
+                    Người tìm việc
+                  </option>
+                  <option value="2">Nhà tuyển dụng</option>
+                </select>
+              </div>
+              <div className="mb-4">
+                <label htmlFor="username" className="form-label text-muted">
+                  Tên đăng nhập
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="username"
+                  placeholder="Tên đăng nhập"
+                  required
+                  value={dataRegister.username}
+                  onChange={(e) => {
+                    setDataRegister({
+                      ...dataRegister,
+                      username: e.target.value,
+                    });
+                  }}
+                  onBlur={handleErrors}
+                />
+                {usernameValidMess ? (
+                  <div className="alert alert-danger">{usernameValidMess}</div>
+                ) : (
+                  ""
+                )}
+              </div>
+              <div className="mb-4">
+                <label htmlFor="name" className="form-label text-muted">
+                  {dataRegister.role === "2" ? (
+                    <p>Tên công ty</p>
+                  ) : (
+                    <p>Họ và tên*</p>
+                  )}
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="name"
+                  placeholder="Họ và tên"
+                  required
+                  value={dataRegister.name}
+                  onChange={(e) => {
+                    setDataRegister({ ...dataRegister, name: e.target.value });
+                  }}
+                  onBlur={handleErrors}
+                />
+                {nameValidMess ? (
+                  <div className="alert alert-danger">{nameValidMess}</div>
+                ) : (
+                  ""
+                )}
+              </div>
+              <div className="mb-4">
+                <label htmlFor="phoneNumber" className="form-label text-muted">
+                  Số điện thoại
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="phoneNumber"
+                  placeholder="Số điện thoại"
+                  required
+                  value={dataRegister.phone}
+                  onChange={(e) => {
+                    setDataRegister({ ...dataRegister, phone: e.target.value });
+                  }}
+                  onBlur={handleErrors}
+                />
+                {phoneValidMess ? (
+                  <div className="alert alert-danger">{phoneValidMess}</div>
+                ) : (
+                  ""
+                )}
+              </div>
+              <div className="mb-4">
+                <label htmlFor="email" className="form-label text-muted">
+                  Email
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="email"
+                  placeholder="Email"
+                  value={dataRegister.email}
+                  required
+                  onChange={(e) => {
+                    setDataRegister({ ...dataRegister, email: e.target.value });
+                  }}
+                  onBlur={handleErrors}
+                />
+                {emailValidMess ? (
+                  <div className="alert alert-danger">{emailValidMess}</div>
+                ) : (
+                  ""
+                )}
+              </div>
+              <div className="mb-4">
+                <label htmlFor="password" className="form-label text-muted">
+                  Mật khẩu
+                </label>
+                <input
+                  type="password"
+                  className="form-control"
+                  id="password"
+                  placeholder="Mật khẩu"
+                  required
+                  value={dataRegister.password}
+                  onChange={(e) => {
+                    setDataRegister({
+                      ...dataRegister,
+                      password: e.target.value,
+                    });
+                  }}
+                  onBlur={handleErrors}
+                />
+                {passwordValidMess ? (
+                  <div className="alert alert-danger">{passwordValidMess}</div>
+                ) : (
+                  ""
+                )}
+              </div>
+              <div className="d-grid">
+                <button
+                  type="submit"
+                  className="btn btn-dark btn-lg"
+                  disabled={!formValid}
+                  onClick={handleSubmit}
+                >
+                  Đăng ký
+                </button>
+              </div>
+              <p className="text-center text-muted mt-4">
+                Bạn đã là thành viên của Boost Career?
+                <NavLink to="/login" className="text-decoration-none">
+                  Đăng nhập
+                </NavLink>
+                .
+              </p>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
   );

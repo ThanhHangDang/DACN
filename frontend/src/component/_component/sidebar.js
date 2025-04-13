@@ -1,137 +1,87 @@
-import React, { useState } from "react";
+import React, { useState, useLayoutEffect } from "react";
+import "./SidebarLayout.css"; // tạo file CSS riêng nếu bạn muốn tách style ra
+import { NavLink, Outlet } from "react-router-dom";
 
-function Sidebar() {
-  const [openMenu, setOpenMenu] = useState("");
+const SidebarLayout = ({ data = [] }) => {
+  const [collapsed, setCollapsed] = useState(false);
 
-  const toggleMenu = (menu) => {
-    setOpenMenu(openMenu === menu ? "" : menu);
+  const toggleSidebar = () => {
+    setCollapsed(!collapsed);
   };
 
+  useLayoutEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1150) {
+        setCollapsed(true);
+      } else {
+        setCollapsed(false);
+      }
+    };
+
+    handleResize(); // gọi lần đầu
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
-    <div className="d-flex flex-column vh-100 bg-dark text-light">
-      {/* Sidebar Header */}
-      <div className="d-flex align-items-center p-3 border-bottom border-secondary">
-        <img
-          src="https://via.placeholder.com/40"
-          alt="Logo"
-          className="rounded-circle me-2"
-        />
-        <span className="fw-bold">kaiadmin</span>
-        <button
-          className="btn btn-sm btn-outline-light ms-auto d-md-none"
-          type="button"
-          onClick={() => toggleMenu("sidebar")}
-        >
-          <i className="bi bi-list"></i>
+    <div className="d-flex">
+      <nav
+        className={`sidebar d-flex flex-column flex-shrink-0 position-fixed ${
+          collapsed ? "collapsed" : ""
+        }`}
+      >
+        <button className="toggle-btn" onClick={toggleSidebar}>
+          <i
+            className={`bi ${
+              collapsed ? "bi-chevron-right" : "bi-chevron-left"
+            }`}
+          ></i>
         </button>
-      </div>
 
-      {/* Sidebar Menu */}
-      <div className="flex-grow-1">
-        <ul className="nav flex-column">
-          {/* Dashboard */}
-          <li className="nav-item">
-            <button
-              className="nav-link text-start text-light px-3 py-2 d-flex align-items-center"
-              onClick={() => toggleMenu("dashboard")}
+        <div className="p-4">
+          <h4 className="logo-text fw-bold mb-0">Boost Career</h4>
+          {/* <p className="text-muted small hide-on-collapse">Dashboard</p> */}
+        </div>
+
+        <div className="nav flex-column">
+          {data?.map((item, index) => (
+            <NavLink
+              to={item.path}
+              key={index}
+              className="sidebar-link text-decoration-none p-3"
+              activeClassName="active"
             >
-              <i className="bi bi-house-door me-2"></i>
-              Dashboard
-              <i
-                className={`bi ms-auto ${
-                  openMenu === "dashboard" ? "bi-chevron-up" : "bi-chevron-down"
-                }`}
-              ></i>
-            </button>
-            <div
-              className={`collapse ${openMenu === "dashboard" ? "show" : ""}`}
-            >
-              <ul className="nav flex-column bg-secondary ps-3">
-                <li className="nav-item">
-                  <a href="#" className="nav-link text-light py-1 px-2">
-                    Submenu 1
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <a href="#" className="nav-link text-light py-1 px-2">
-                    Submenu 2
-                  </a>
-                </li>
-              </ul>
+              <i className={`${item.icon} me-3`}>{""}</i>
+              <span className="hide-on-collapse">{item.title}</span>
+            </NavLink>
+          ))}
+        </div>
+
+        {/* <div className="profile-section mt-auto p-4">
+          <div className="d-flex align-items-center">
+            <img
+              src="https://randomuser.me/api/portraits/women/70.jpg"
+              style={{ height: "60px" }}
+              className="rounded-circle"
+              alt="Profile"
+            />
+            <div className="ms-3 profile-info">
+              <h6 className="text-white mb-0">Alex Morgan</h6>
+              <small className="text-muted">Admin</small>
             </div>
-          </li>
+          </div>
+        </div> */}
+      </nav>
 
-          {/* Components */}
-          <li className="nav-item">
-            <button
-              className="nav-link text-start text-light px-3 py-2 d-flex align-items-center"
-              onClick={() => toggleMenu("components")}
-            >
-              <i className="bi bi-stack me-2"></i>
-              Components
-              <i
-                className={`bi ms-auto ${
-                  openMenu === "components"
-                    ? "bi-chevron-up"
-                    : "bi-chevron-down"
-                }`}
-              ></i>
-            </button>
-            <div
-              className={`collapse ${openMenu === "components" ? "show" : ""}`}
-            >
-              <ul className="nav flex-column bg-secondary ps-3">
-                <li className="nav-item">
-                  <a href="#" className="nav-link text-light py-1 px-2">
-                    Base
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <a href="#" className="nav-link text-light py-1 px-2">
-                    Sidebar Layouts
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <a href="#" className="nav-link text-light py-1 px-2">
-                    Forms
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </li>
-
-          {/* Widgets */}
-          <li className="nav-item">
-            <button
-              className="nav-link text-start text-light px-3 py-2 d-flex align-items-center"
-              onClick={() => toggleMenu("widgets")}
-            >
-              <i className="bi bi-display me-2"></i>
-              Widgets
-              <span className="badge bg-success ms-auto">4</span>
-            </button>
-          </li>
-
-          {/* Documentation */}
-          <li className="nav-item">
-            <a
-              href="#"
-              className="nav-link text-light px-3 py-2 d-flex align-items-center"
-            >
-              <i className="bi bi-file-earmark me-2"></i>
-              Documentation
-              <span className="badge bg-primary ms-2">1</span>
-            </a>
-          </li>
-        </ul>
-      </div>
-
-      {/* Footer */}
-      <div className="p-3 border-top border-secondary">
-        <small className="text-secondary">© 2025 kaiadmin</small>
-      </div>
+      <main className="main-content">
+        <Outlet />
+      </main>
     </div>
   );
-}
+};
 
-export default Sidebar;
+export default SidebarLayout;

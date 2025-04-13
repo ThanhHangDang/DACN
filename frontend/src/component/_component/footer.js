@@ -1,107 +1,128 @@
 import React from "react";
+import "./footer.css";
+import { NavLink } from "react-router-dom";
 
 export default function Footer() {
   return (
-    <div>
-      <footer className="text-center text-lg-start bg-body-tertiary text-muted border-top align-items-center">
-        <section>
-          <div className="container text-center text-md-start mt-5">
-            <div className="row mt-3">
-              <div className="col-lg-3 col-xl-3 mx-auto mb-4">
-                {/* Content */}
-                <h6 className="text-uppercase fw-bold mb-4">Về chúng tôi</h6>
-                <div>Giới thiệu</div>
-                <div className="mt-2">Liên hệ</div>
-                <div className="mt-2">Hỏi Đáp</div>
-                <div className="mt-2">Chính sách bảo mật</div>
-                <div className="mt-2">Điều khoản dịch vụ</div>
-                <div className="mt-2">Quy chế hoạt động</div>
+    <footer className="modern-footer pt-5">
+      <div className="container footer-content">
+        <div className="row g-4 mb-5">
+          {/* Company Info */}
+          <div className="col-lg-4 col-md-6">
+            <NavLink to="/" className="footer-logo d-block mb-4">
+              <span className="text-primary">BoostCareer.</span>
+            </NavLink>
+            <p className="text-muted mb-4">
+              "Cùng chúng tôi xây dựng tương lai, nơi mỗi bước đi đều dẫn đến
+              thành công và hạnh phúc!"
+            </p>
+            <ul className="contact-info mb-4">
+              <li>
+                <i class="bi bi-geo-alt-fill"></i>
+                <span>
+                  123 Business Avenue, Suite 100
+                  <br />
+                  New York, NY 10001
+                </span>
+              </li>
+              <li>
+                <i class="bi bi-telephone-fill"></i>
+                <span>+1 (555) 123-4567</span>
+              </li>
+              <li>
+                <i class="bi bi-envelope-fill"></i>
+                <span>contact@boost-career.com</span>
+              </li>
+            </ul>
+          </div>
+          {/* Quick Links */}
+          <div className="col-lg-4 col-md-6">
+            <h3 className="footer-title">Liên kết nhanh</h3>
+            <ul className="quick-links">
+              <li>
+                <a href="#aa">Dịch vụ của chúng tôi</a>
+              </li>
+              <li>
+                <a href="#aaa">Giới thiệu công ty</a>
+              </li>
+              {/* <li>
+                <a href="#aaa">Latest Projects</a>
+              </li> */}
+              <li>
+                <a href="#aaa">Thông tin gần đây</a>
+              </li>
+              <li>
+                <a href="#aaa">Hỗ trợ</a>
+              </li>
+              <li>
+                <a href="#aa">Liên hệ</a>
+              </li>
+              <li>
+                <a href="#aaa">Chính sách bảo mật</a>
+              </li>
+              <li>
+                <a href="#aa">Điều khoản dịch vụ</a>
+              </li>
+            </ul>
+          </div>
+          {/* Newsletter */}
+          <div className="col-lg-4 col-md-12">
+            <h3 className="footer-title">Kết nối với chúng tôi</h3>
+            <p className="text-muted mb-4">
+              Đăng ký nhận bản tin của chúng tôi để cập nhật những tin tức và
+              thông tin mới nhất.
+            </p>
+            <form className="mb-4">
+              <div className="mb-3">
+                <input
+                  type="email"
+                  className="form-control newsletter-input"
+                  placeholder="Địa chỉ email của bạn"
+                />
               </div>
-              <div className="col-lg-3 col-xl-2 mx-auto mb-4">
-                {/* Links */}
-                <h6 className="text-uppercase fw-bold mb-4">Hồ sơ và CV</h6>
-                <div className="mt-2">
-                  <a href="#a" className="text-reset text-decoration-none">
-                    Quản lý CV của bạn
-                  </a>
-                </div>
-                <div className="mt-2">
-                  <a href="#a" className="text-reset text-decoration-none">
-                    HDN Teams Profile
-                  </a>
-                </div>
-                <div className="mt-2">
-                  <a href="#a" className="text-reset text-decoration-none">
-                    Hướng dẫn viết CV
-                  </a>
-                </div>
-                <div className="mt-2">
-                  <a href="#a" className="text-reset text-decoration-none">
-                    Review CV
-                  </a>
-                </div>
-              </div>
-              <div className="col-lg-3 col-xl-2 mx-auto mb-4">
-                {/* Links */}
-                <h6 className="text-uppercase fw-bold mb-4">Sự nghiệp</h6>
-                <div className="mt-2">
-                  <a href="#a" className="text-reset text-decoration-none">
-                    Việc làm tốt nhất
-                  </a>
-                </div>
-                <div className="mt-2">
-                  <a href="#a" className="text-reset text-decoration-none">
-                    Việc làm lương cao
-                  </a>
-                </div>
-                <div className="mt-2">
-                  <a href="#a" className="text-reset text-decoration-none">
-                    Quản lý việc làm
-                  </a>
-                </div>
-              </div>
-              <div className="col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
-                {/* Links */}
-                <h6 className="text-uppercase fw-bold mb-4">Cộng đồng</h6>
-                <div className="mt-2 d-flex justify-content-between col-4 ">
-                  <i className="bi bi-facebook"></i>
-                  <i className="bi bi-youtube"></i>
-                  <i className="bi bi-instagram"></i>
-                  <i className="bi bi-tiktok"></i>
-                </div>
-                <h6 className="text-uppercase fw-bold mb-4 mt-4">
-                  Ứng dụng di động
-                </h6>
-                <div className="row d-flex align-items-between mt-2">
-                  <div className="">
-                    <img
-                      src="./img/appstore/appstore.png"
-                      style={{ height: 40, width: 80 }}
-                      alt=""
-                    />
-                  </div>
-                  <div className="mt-2">
-                    <img
-                      src="./img/appstore/google-play.png"
-                      style={{ height: 40, width: 80 }}
-                      alt=""
-                    />
-                  </div>
-                </div>
-              </div>
+              <button
+                type="submit"
+                className="btn btn-subscribe text-white w-100"
+              >
+                Đăng ký ngay
+              </button>
+            </form>
+            <div className="social-links">
+              <a href="#aa" className="social-icon">
+                <i className="bi bi-facebook"></i>
+              </a>
+              <a href="#aa" className="social-icon">
+                <i class="bi bi-twitter-x"></i>
+              </a>
+              <a href="#aa" className="social-icon">
+                <i className="bi bi-instagram"></i>
+              </a>
+              <a href="#aa" className="social-icon">
+                <i class="bi bi-linkedin"></i>
+              </a>
+              <a href="#aa" className="social-icon">
+                <i className="bi bi-youtube"></i>
+              </a>
             </div>
           </div>
-        </section>
-        <div
-          className="text-center p-4"
-          style={{ backgroundColor: "rgba(0, 0, 0, 0.05)" }}
-        >
-          © 2021 Copyright:
-          <a className="text-reset fw-bold" href="#a">
-            boost-career@support.com
-          </a>
         </div>
-      </footer>
-    </div>
+      </div>
+      {/* Footer Bottom */}
+      <div className="footer-bottom">
+        <div className="container">
+          <div className="row py-4">
+            <div className="col-md-6 text-center text-md-start">
+              <p>© 2025 BoostCareer. All rights reserved.</p>
+            </div>
+            <div className="col-md-6 text-center text-md-end">
+              <p>
+                Made with <i className="fas fa-heart text-danger" /> by{" "}
+                <NavLink to="/">BoostCareer.</NavLink>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
   );
 }
