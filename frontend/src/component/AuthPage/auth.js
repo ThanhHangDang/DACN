@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { registerUser } from "../../redux/actions/authAction";
-
+ import { registerUser } from "../../redux_toolkit/AuthSlice.js";
 export default function Auth() {
   const dispatch = useDispatch();
 

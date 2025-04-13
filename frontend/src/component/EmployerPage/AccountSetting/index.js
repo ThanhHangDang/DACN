@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../../../redux/actions/authAction.js";
+import { logout } from "../../../redux_toolkit/AuthSlice.js";
 
 export default function EmployerAccountSetting() {
   const dispatch = useDispatch();

@@ -190,8 +190,7 @@ const queryGetWorkBySearch = async (searchData) => {
     industry_id = null,
     job_function_id = null,
     work_location = null,
-    salary_max = null,
-    salary_min = null,
+    salary = null,
     level_id = null,
     require_marital_status = null,
     require_gender = null,
@@ -270,13 +269,9 @@ const queryGetWorkBySearch = async (searchData) => {
     conditions.push("j.date_post <= ?");
     values.push(date_to);
   }
-  if (salary_max) {
-    conditions.push("j.salary_max <= ?");
-    values.push(salary_max);
-  }
-  if (salary_min) {
-    conditions.push("j.salary_min >= ?");
-    values.push(salary_min);
+  if (salary) {
+    conditions.push("j.salary_max >= ?");
+    values.push(salary);
   }
   if (level_id) {
     conditions.push("j.level_id = ?");

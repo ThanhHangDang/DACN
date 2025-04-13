@@ -9,7 +9,7 @@ import {jobseekerApi} from './jobseekerApi.js';
 import {employerApi} from './employerApi.js';
 import {notificationApi} from './notificationApi.js';
 import { setupListeners } from '@reduxjs/toolkit/query';
-import homePageReducer from '../redux/reducer/homePageReducer.js';
+
 const persistConfig = {
   key: "root", // Key dùng để lưu vào localStorage
   storage,
@@ -18,8 +18,6 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   auth: authReducer,
-  homePage: homePageReducer,
-
   [categoryApi.reducerPath]: categoryApi.reducer,
   [guestApi.reducerPath]: guestApi.reducer,
   [jobseekerApi.reducerPath]: jobseekerApi.reducer,
