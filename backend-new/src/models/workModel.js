@@ -147,19 +147,44 @@ const queryGetCountTotalWorks = async () => {
 const queryGetWorkByUser = async (userId) => {
   const [work] = await db.query(
     `
-      SELECT 
-        j.* ,
-        c.city_name
-      FROM job j
-      JOIN catalog_city c ON j.work_location = c.city_id
-      WHERE employer_id = ?;
+     SELECT 
+      j.*,
+      u.username AS employer_name,
+      c.company_name,
+      c.logo AS company_logo,
+      ind.industry_name,
+      func.job_function_name,
+      loc.city_name AS work_location_name,
+      lvl.level_name AS job_level_name,
+      edu.education_title AS education_requirement
+  FROM 
+      job j
+  LEFT JOIN 
+      user_employer e ON j.employer_id = e.employer_id
+  LEFT JOIN 
+      user_ u ON e.employer_id = u.user_id
+  LEFT JOIN 
+      company c ON e.employer_id = c.company_id
+  LEFT JOIN 
+      catalog_industry ind ON j.industry_id = ind.industry_id
+  LEFT JOIN 
+      catalog_job_function func ON j.job_function_id = func.job_function_id
+  LEFT JOIN 
+      catalog_city loc ON j.work_location = loc.city_id
+  LEFT JOIN 
+      catalog_level lvl ON j.level_id = lvl.level_id
+  LEFT JOIN 
+      catalog_education edu ON j.require_education = edu.education_id
+  where j.employer_id = ?
+  ORDER BY 
+      j.date_post DESC ; 
     `,
     [userId]
   );
   return work;
 };
 
-const queryGetWorkBySearch = async (filter) => {
+const queryGetWorkBySearch = async (searchData) => {
   const {
     title,
     industry_id = null,
@@ -172,83 +197,124 @@ const queryGetWorkBySearch = async (filter) => {
     require_gender = null,
     require_age_min = null,
     require_age_max = null,
-    require_education = 0,
-    require_experience = 0,
-    is_active = null,
-    date_post = null,
-  } = filter;
-
-  let query =
-    "SELECT title, company_name,logo,job_id,salary_max,salary_min, city_name  FROM (SELECT * FROM ( SELECT job_id,title,employer_id,salary_max,salary_min,work_location FROM job ";
+    require_education = null,
+    require_experience = null,
+    status_ = null, // tam thoi null, sau do sẽ thay đổi thành 1 (do null thì quá ít job đang còn hiệu lực)
+    date_from = null,
+    date_to = null,
+    paging_size=10,
+    page=1,
+  } = searchData;
+   let query =
+    `
+      SELECT 
+      j.*,
+      u.username AS employer_name,
+      c.company_name,
+      c.logo AS company_logo,
+      ind.industry_name,
+      func.job_function_name,
+      loc.city_name AS work_location_name,
+      lvl.level_name AS job_level_name,
+      edu.education_title AS education_requirement,
+      COUNT(*) OVER() AS total_count
+  FROM 
+      job j
+  LEFT JOIN 
+      user_employer e ON j.employer_id = e.employer_id
+  LEFT JOIN 
+      user_ u ON e.employer_id = u.user_id
+  LEFT JOIN 
+      company c ON e.employer_id = c.company_id
+  LEFT JOIN 
+      catalog_industry ind ON j.industry_id = ind.industry_id
+  LEFT JOIN 
+      catalog_job_function func ON j.job_function_id = func.job_function_id
+  LEFT JOIN 
+      catalog_city loc ON j.work_location = loc.city_id
+  LEFT JOIN 
+      catalog_level lvl ON j.level_id = lvl.level_id
+  LEFT JOIN 
+      catalog_education edu ON j.require_education = edu.education_id
+      `;
   const conditions = [];
   const values = [];
-  const title2 = `%${title}%`;
-  conditions.push("title LIKE ?");
-  values.push(title2);
+  if (title) {
+    const title2 = `%${title}%`;
+    conditions.push("j.title LIKE ?");
+    values.push(title2);
+  }
+
   if (industry_id) {
-    conditions.push("industry_id = ?");
+    conditions.push("j.industry_id = ?");
     values.push(industry_id);
   }
   if (job_function_id) {
-    conditions.push("job_function_id = ?");
+    conditions.push("j.job_function_id = ?");
     values.push(job_function_id);
   }
   if (work_location) {
-    conditions.push("work_location = ?");
-    values.push(work_location);
+    conditions.push("j.work_location = ?");
+    values.push(citi_id);
   }
   const currentDate = new Date().toISOString().split("T")[0];
-  if (is_active) {
-    conditions.push("date_expi >= ?");
+  if (status_) {
+    conditions.push("j.date_expi >= ?");
     values.push(currentDate);
   }
-  if (date_post) {
-    conditions.push("date_post = ?");
-    values.push(date_post);
+  if (date_from) {
+    conditions.push("j.date_post >= ?");
+    values.push(date_from);
+  }
+  if (date_to) {
+    conditions.push("j.date_post <= ?");
+    values.push(date_to);
   }
   if (salary_max) {
-    conditions.push("salary_max <= ?");
+    conditions.push("j.salary_max <= ?");
     values.push(salary_max);
   }
   if (salary_min) {
-    conditions.push("salary_min >= ?");
+    conditions.push("j.salary_min >= ?");
     values.push(salary_min);
   }
-  if (require_gender) {
-    conditions.push("require_gender = ?");
-    values.push(require_gender);
-  }
   if (level_id) {
-    conditions.push("level_id = ?");
+    conditions.push("j.level_id = ?");
     values.push(level_id);
   }
-  if (require_marital_status) {
-    conditions.push("require_marital_status = ?");
-    values.push(require_marital_status);
-  }
-  if (require_age_min) {
-    conditions.push("require_age_min >= ?");
-    values.push(require_age_min);
+  if (require_experience) {
+    conditions.push("j.require_experience >= ?");
+    values.push(require_experience);
   }
   if (require_age_max) {
-    conditions.push("require_age_max <= ?");
+    conditions.push("j.require_age_max <= ?");
     values.push(require_age_max);
   }
-  if (require_education) {
-    conditions.push("require_education >= ?");
-    values.push(require_education);
+  if (require_age_min) {
+    conditions.push("j.require_age_min >= ?");
+    values.push(require_age_min);
   }
-  if (require_experience) {
-    conditions.push("industry >= ?");
-    values.push(require_experience);
+  if (require_gender) {
+    conditions.push("j.require_gender = ?");
+    values.push(require_gender);
+  }
+  if (require_marital_status) {
+    conditions.push("j.require_marital_status = ?");
+    values.push(require_marital_status);
+  }
+  if (require_education) {
+    conditions.push("j.require_education >= ?");
+    values.push(require_education);
   }
   if (conditions.length > 0) {
     query += " WHERE " + conditions.join(" AND ");
   }
   query +=
-    ") as table1 JOIN company on table1.employer_id = company.company_id) as table2 join catalog_city on table2.work_location = catalog_city.city_id;";
+   ` ORDER BY j.date_post DESC
+  LIMIT ? OFFSET ?;`;
+  values.push(Number(paging_size));
+  values.push((Number(page)-1)*Number(paging_size));
   const [result] = await db.query(query, values);
-
   return result;
 };
 

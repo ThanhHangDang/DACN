@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 // import { getJobApply } from "../../../redux/actions/jobseekerAction.js";
-import { useAddItemProfileMutation,useDeleteItemProfileMutation,useUpdateItemProfileMutation,useGetItemProfileQuery } from "../../../redux_toolkit/JobseekerApi.js";
+import { useAddItemProfileMutation,useDeleteItemProfileMutation,useUpdateItemProfileMutation,useGetItemProfileQuery } from "../../../redux_toolkit/jobseekerApi.js";
 
 import formatDateToDDMMYYYY from "../../../utils/formatDate.js";
 

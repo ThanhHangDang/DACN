@@ -1,20 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { useGetAllCompaniesQuery } from "../../redux_toolkit/guestApi";
-import { useGetIndustriesQuery, useGetCitiesQuery } from "../../redux_toolkit/CategoryApi";
-import CompanyCard from "../../component/_component/ui/CompanyCard.js";
+import { useGetAllCompaniesQuery } from "../../../redux_toolkit/guestApi.js";
+import { useGetIndustriesQuery, useGetCitiesQuery } from "../../../redux_toolkit/CategoryApi.js";
+import CompanyCard from "../../_component/ui/CompanyCard.js";
 
 export default function ListCompany() {
   const [page, setPage] = useState(1);
-  
-  // Sử dụng RTK Query hooks thay vì dispatch actions
-  const { data: companiesData, isLoading: companiesLoading } = useGetAllCompaniesQuery(page);
+  // Add more detailed query information
+  const { data, isLoading: companiesLoading, isError, error,refetch } = useGetAllCompaniesQuery(page);
   const { data: industries } = useGetIndustriesQuery();
   const { data: cities } = useGetCitiesQuery(84); // 84 là mã quốc gia Việt Nam
   
+  
+  const {company, totalPages} = data || {company:[], totalPages:1};
   // Lấy dữ liệu trực tiếp từ kết quả query
-  const listCompany = companiesData?.companies || [];
-  const totalPages = companiesData?.totalPages || 1;
+  const listCompany = company || [];
 
   const getVisiblePages = (page, totalPages) => {
     let start = Math.max(1, page - 2);
@@ -39,6 +39,7 @@ export default function ListCompany() {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);
     }
+    refetch();
   };
 
   return (

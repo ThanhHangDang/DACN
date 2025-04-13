@@ -2,7 +2,7 @@ import React  from "react"; //{ useEffect }
 
 import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { useGetItemProfileQuery } from "../../../redux_toolkit/JobseekerApi.js";
+import { useGetItemProfileQuery } from "../../../redux_toolkit/jobseekerApi.js";
 import formatDateToDDMMYYYY from "../../../utils/formatDate.js";
 // import { type } from "@testing-library/user-event/dist/type/index.js";
 

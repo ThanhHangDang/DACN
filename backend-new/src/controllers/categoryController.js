@@ -148,6 +148,28 @@ const getCategory_Education = async (req, res) => {
   }
 };
 
+const gettime = (req, res) => {
+  try {
+    // const currentDate = new Date();
+    // const currentTime = currentDate.toLocaleTimeString("en-US", {
+    //   hour: "2-digit",
+    //   minute: "2-digit",
+    //   second: "2-digit",
+    // });
+    const today = new Date();
+    const day = today.getDate().toString().padStart(2, "0");
+    const month = (today.getMonth() + 1).toString().padStart(2, "0");
+    const year = today.getFullYear();
+    // dispatch(setCurrentDate());
+    const currentDate = `${day}/${month}/${year}`
+
+
+    res.status(200).json({ data: currentDate });
+  } catch (err) {
+    console.error("Có lỗi khi lấy thông tin:", err);
+    res.status(500).json({ message: "Có lỗi khi lấy thông tin" });
+  }
+}
 module.exports = {
   getCategory_Industry,
   getCategory_Jobfunction,
@@ -160,4 +182,5 @@ module.exports = {
   getCategory_Scale,
   getCategory_Tags,
   getCategory_Education,
+  gettime
 };

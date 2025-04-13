@@ -9,7 +9,7 @@ import {
   useUpdateProfileImageMutation,
   // useUpdateExpectedJobMutation,
   useUpdateItemProfileMutation
-} from "../../../redux_toolkit/JobseekerApi.js";
+} from "../../../redux_toolkit/jobseekerApi.js";
 import { toast } from "react-toastify";
 
 // Hàm chuyển đổi định dạng ngày tháng cho input date

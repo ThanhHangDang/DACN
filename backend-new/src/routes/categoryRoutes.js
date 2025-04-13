@@ -12,6 +12,7 @@ const {
   getCategory_Scale,
   getCategory_Tags,
   getCategory_Education,
+  gettime,
 } = require("../controllers/categoryController.js");
 
 const categoryRoutes = express.Router();
@@ -27,5 +28,5 @@ categoryRoutes.get("/getCategory_Level", getCategory_Level);
 categoryRoutes.get("/getCategory_Scale", getCategory_Scale);
 categoryRoutes.get("/getCategory_Tags", getCategory_Tags);
 categoryRoutes.get("/getCategory_Education", getCategory_Education);
-
+categoryRoutes.get("/get-time", gettime);
 module.exports = categoryRoutes;

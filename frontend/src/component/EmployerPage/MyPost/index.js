@@ -5,16 +5,21 @@ import {useGetIndustriesQuery,useGetJobFunctionQuery, useGetCitiesQuery,
         useGetLanguagesQuery, useGetTagsQuery, useGetEducationQuery} from "../../../redux_toolkit/CategoryApi.js"; //useGetBenefitsQuery, useGetNationsQuery,useGetLevelsQuery,  useGetScalesQuery,useGetDistrictsQuery,
 
 
-import {
-  // getPostsByUser,
-  deletePostByUser,
-  postNewWork,
-  editPostByUser,
-} from "../../../redux/actions/postAction";
+// import {
+//   // getPostsByUser,
+//   deletePostByUser,
+//   postNewWork,
+//   editPostByUser,
+// } from "../../../redux/actions/postAction";
+ import { useAddPostMutation,useDeletePostMutation,useUpdatePostMutation,useGetCompanyInformationQuery,useGetPostByUserQuery } from "../../../redux_toolkit/employerApi.js";
+
 
 export default function EmployerPost() {
   const dispatch = useDispatch();
 
+  const deletePostByUser = useDeletePostMutation();
+  const postNewWork = useAddPostMutation();
+  const editPostByUser = useUpdatePostMutation();
   const { isLogin, user } = useSelector((state) => state.auth);
 
   const { data: tags } = useGetTagsQuery();
@@ -23,8 +28,9 @@ export default function EmployerPost() {
   const { data: city } = useGetCitiesQuery(84);
   const { data: edu } = useGetEducationQuery();
   const { data: lang } = useGetLanguagesQuery();
-  
-  const { postsByUser } = useSelector((state) => state.post);
+  const userId = user?.user?.id;
+  const {data} = useGetPostByUserQuery(userId);
+  const postsByUser = data?.work || [];
   const [isAddPost, setIsAddPost] = useState(true);
 
   const [newPost, setNewPost] = useState({

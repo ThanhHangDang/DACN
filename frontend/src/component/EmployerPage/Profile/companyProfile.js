@@ -1,21 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-// import { getCompanyInformation } from "../../../redux/actions/companyAction";
-// import { getCategoryIndustry } from "../../../redux_toolkit/categorySlice.js";
 import { useGetIndustriesQuery } from "../../../redux_toolkit/CategoryApi.js";
-import { useGetCompanyInformationQuery } from "../../../redux_toolkit/guestApi.js";
+// tạm thời lấy info từ guest => sẽ chuyển qua port api employer sau
+import { useGetCompanyInforQuery } from "../../../redux_toolkit/employerApi.js";
 import CompanyHeader from "../../../component/_component/ui/CompanyHeader.js";
 
 export default function CompanyProfile() {
   const dispatch = useDispatch();
   const { isLogin, user } = useSelector((state) => state.auth);
-  const {data: industry } =useGetIndustriesQuery();
+  const { data: industry } = useGetIndustriesQuery();
   const navigate = useNavigate();
-  // const { companyInformation } = useSelector((state) => state.company);
-  const { data: companyInformation } = useGetCompanyInformationQuery(user?.user.id);
-
-  console.log("company information ", companyInformation);
+  const id = user?.user.id;
+  const { data: companyInformation } = useGetCompanyInforQuery(id);
 
   const [updateCompany, setUpdateCompany] = useState({
     company_name: companyInformation.company_name || "",
@@ -36,13 +33,6 @@ export default function CompanyProfile() {
   const handleUpdateCompanyLogo = () => {
     console.log(logo);
   };
-
-  // useEffect(() => {
-  //   if (!isLogin && !(user?.user.role === 2)) {
-  //     navigate("/login");
-  //   }
-  //   dispatch(getCompanyInformation(user?.user.id));
-  // }, [isLogin, user]);
 
   return (
     <div>
@@ -92,8 +82,6 @@ export default function CompanyProfile() {
           </button>
         </div>
       </div>
-
-      {/* <CompanyHeader companyInformation={companyInformation} /> */}
 
       <div className="bg-light rounded-2 me-2 my-2 p-2">
         <div className="row mb-3">
@@ -169,27 +157,6 @@ export default function CompanyProfile() {
             />
           </div>
 
-          {/* Quy mô công ty */}
-          {/* <div className="col-md-6">
-            <label className="form-label">
-              Quy mô công ty{" "}
-              <span className="text-muted">(Không bắt buộc)</span>
-            </label>
-
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Ví dụ: 130 Sương Nguyệt Ánh, Phường Bến Thành, Quận 1"
-              value={`từ ${companyInformation.scale_min} đến ${companyInformation.scale_max}`}
-              onChange={(e) =>
-                setUpdateCompany({
-                  ...updateCompany,
-                  scale: e.target.value,
-                })
-              }
-            />
-          </div> */}
-
           <div className="row col-md-6">
             <label className="form-label">
               Quy mô công ty{" "}
@@ -245,21 +212,6 @@ export default function CompanyProfile() {
             </div>
           </div>
         </div>
-
-        {/* Người liên hệ */}
-        {/* <div className="mb-3">
-          <label className="form-label">
-            Người liên hệ <span className="text-muted">(Không bắt buộc)</span>
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Ví dụ: Nguyễn Văn A"
-            value=""
-          />
-        </div> */}
-
-        {/* Lĩnh vực công ty */}
         <div className="mb-3">
           <label className="form-label fw-bold">
             Lĩnh vực công ty <span className="text-danger">*</span>

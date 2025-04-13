@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useGetItemProfileQuery } from "../../../redux_toolkit/JobseekerApi";
+import { useGetItemProfileQuery } from "../../../redux_toolkit/jobseekerApi";
 
 export default function CompanyYouFollow() {
   const { user } = useSelector((state) => state.auth);

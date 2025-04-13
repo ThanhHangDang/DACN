@@ -1,18 +1,12 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import { getJobseekerDetail } from "../../redux/actions/userAction.js";
+import { useGetItemProfileQuery } from "../../../redux_toolkit/jobseekerApi";
 
 export default function EmployeeDetail() {
-  const dispatch = useDispatch();
-  const { jobseekerDetail } = useSelector((state) => state.user);
   const { id } = useParams();
-
+  const { data: jobseekerDetail } = useGetItemProfileQuery({ type: "jobseeker", profile_id: id });
   const formatNumberToTr = (number) => `${(number / 1e6).toFixed(0)}tr`;
-
-  useEffect(() => {
-    dispatch(getJobseekerDetail(id));
-  }, [id]);
 
   return (
     <div>

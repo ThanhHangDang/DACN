@@ -57,9 +57,9 @@ const getListEmployee = async (req, res) => {
 };
 
 const getEmployeeDetail = async (req, res) => {
-  const id = req.query.id;
+  const profile_id = req.query.profile_id;
   try {
-    const employeeDetail = await queryGetEmployeeDetail(id);
+    const employeeDetail = await queryGetEmployeeDetail(profile_id);
     if (employeeDetail) {
       return res.status(200).json({ employeeDetail });
     }

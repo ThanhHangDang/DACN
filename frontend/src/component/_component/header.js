@@ -168,7 +168,9 @@ export default function Header() {
                     </div>
                     <div className="col-lg-3">
                       <h5>Công ty</h5>
-                      <p>Tất cả công ty</p>
+                      <NavLink to="/list-company" className="text-decoration-none">
+                      Tất cả công ty
+                      </NavLink>
                     </div>
                   </div>
                 </li>

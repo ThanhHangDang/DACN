@@ -1,8 +1,8 @@
-import {
-  GET_COMPANY_INFORMATION,
-  GET_ALL_COMPANY,
-  GET_COMPANY_BY_ID,
-} from "../contants/companyContants.js";
+// import {
+//   GET_COMPANY_INFORMATION,
+//   GET_ALL_COMPANY,
+//   GET_COMPANY_BY_ID,
+// } from "../contants/companyContants.js";
 
 // import domain from "../../config/domain";
 // // import { toast } from "react-toastify";

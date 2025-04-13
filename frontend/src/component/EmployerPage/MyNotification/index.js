@@ -1,9 +1,15 @@
 import React, { useEffect } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useGetNotificationByUserIDQuery } from "../../../redux_toolkit/notificationApi";
 
 export default function EmployerNotification() {
   const { isLogin, user } = useSelector((state) => state.auth);
+
+  // *********** lấy sãn notification ở đây, @pizon đưa vào frontend đi em
+  const { data: notification } = useGetNotificationByUserIDQuery(user?.user?.id, {
+    skip: !user?.user?.id, // Skip the query if user ID is not available
+  });
 
   const navigate = useNavigate();
 

@@ -37,14 +37,14 @@ import EmployerPost from "./component/EmployerPage/MyPost/index.js";
 import EmployerNotification from "./component/EmployerPage/MyNotification/index.js";
 import EmployerAccountSetting from "./component/EmployerPage/AccountSetting/index.js";
 
-import WorkMangePage from "./component/WorkManagePage/index.js";
-import WorkDetail from "./component/WorkManagePage/workDetail.js";
+import WorkMangePage from "./component/HomePage/WorkManagePage/index.js";
+import WorkDetail from "./component/HomePage/WorkManagePage/workDetail.js";
 
-import EmployeeMaganePage from "./component/EmployeeMaganePage/index.js";
-import EmployeeDetail from "./component/EmployeeMaganePage/employeeDetail.js";
+import EmployeeMaganePage from "./component/EmployerPage/EmployeeMaganePage/index.js";
+import EmployeeDetail from "./component/EmployerPage/EmployeeMaganePage/employeeDetail.js";
 
-import ListCompany from "./component/companyManage/index.js";
-import CompanyDetail from "./component/companyManage/companyDetail.js";
+import ListCompany from "./component/HomePage/companyManage/index.js";
+import CompanyDetail from "./component/HomePage/companyManage/companyDetail.js";
 
 import PageNotFound from "./component/PageNotFound/index.js";
 

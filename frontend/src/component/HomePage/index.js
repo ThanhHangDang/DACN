@@ -1,42 +1,29 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getCurrentDate,
-  // getLeadingCompany,
-  // getLatestWork,
-  setCurrentPage,
-} from "../../redux/actions/homePageAction.js";
-import { useGetLeadingCompaniesQuery,useGetLatestWorkQuery } from "../../redux_toolkit/guestApi.js";
-
+import { useGetLeadingCompaniesQuery, useGetLatestWorkQuery } from "../../redux_toolkit/guestApi.js";
+import { useGetTimeQuery } from "../../redux_toolkit/CategoryApi.js";
 export default function HomePage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { currentDate, 
-    // leadingCompany, latestWork, 
-    currentPage } = useSelector(
-    (state) => state.homePage
-  );
+  const [currentPage, setCurrentPage] = useState(1);
   const { data: leadingCompany } = useGetLeadingCompaniesQuery();
   const { data: latestWork } = useGetLatestWorkQuery();
+const { currentDate } = useGetTimeQuery();
 
   const { isLogin, user } = useSelector((state) => state.auth);
 
   const formatNumberToTr = (number) => `${(number / 1e6).toFixed(0)}tr`;
 
-  const pageSize = 6;
-  const totalPages = 5;
+  const pageSize = 9;
+  const totalPages = latestWork ? Math.ceil(latestWork.length / pageSize) : 0;
 
   useEffect(() => {
     if (isLogin && user?.user?.role === 2) {
       navigate("/employer-overview");
     }
-
-    dispatch(getCurrentDate());
-    // dispatch(getLatestWork());
-    // dispatch(getLeadingCompany());
   }, [dispatch]);
 
   // Pagination
@@ -46,31 +33,35 @@ export default function HomePage() {
   );
 
   const handlePageChangeFeaturedJobs = (page) => {
-    dispatch(setCurrentPage(page));
+    setCurrentPage(page);
+    window.scrollTo({ top: document.getElementById('latestJobs').offsetTop - 100, behavior: 'smooth' });
     console.log(`Chuyển sang trang ${page}`);
   };
 
-  const PaginationFeaturedJobs = ({
-    totalPages,
-    currentPage,
-    onPageChange,
-  }) => {
+  const PaginationFeaturedJobs = ({ totalPages, currentPage, onPageChange }) => {
+    if (totalPages <= 1) return null;
+    
     const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
     return (
       <nav aria-label="Page navigation">
         <ul className="pagination justify-content-center">
-          {/* Các trang */}
+          {/* Page dots only */}
           {pages.map((page) => (
             <li
               key={page}
-              className={`page-item ${
-                currentPage === page ? "active" : ""
-              } m-1`}
+              className={`page-item ${currentPage === page ? "active" : ""} m-1`}
             >
               <button
                 className="page-link dot"
-                onClick={() => handlePageChangeFeaturedJobs(page)}
+                onClick={() => onPageChange(page)}
                 aria-label={`Page ${page}`}
+                style={{
+                  width: '10px',
+                  height: '10px',
+                  borderRadius: '50%',
+                  padding: 0,
+                  margin: '0 5px'
+                }}
               />
             </li>
           ))}
@@ -78,7 +69,7 @@ export default function HomePage() {
       </nav>
     );
   };
-  console.log("currentWorks", currentWorks);
+
   const renderLatestWork = () => {
     return currentWorks?.map((work, index) => {
       return (
@@ -103,7 +94,6 @@ export default function HomePage() {
                 >
                   <h5 className="card-title text-truncate">{work.title}</h5>
                 </NavLink>
-                {/* <h5 className="card-title text-truncate">{work.title}</h5> */}
                 <div
                   className="card-text"
                   style={{ padding: "0px !important" }}
@@ -125,10 +115,7 @@ export default function HomePage() {
     });
   };
 
-  console.log("leadingCompany", leadingCompany);
-
   const renderLeadingCompany = () => {
-    // Kiểm tra leadingCompany có dữ liệu hay không
     if (!leadingCompany || leadingCompany.length === 0) {
       return <div>Chưa có thông tin công ty</div>;
     }
@@ -137,7 +124,6 @@ export default function HomePage() {
         <div
           key={company.Company_ID}
           className="card col-lg-2 col-md-3 m-md-2 col-sm-10 align-items-center m-sm-4"
-          // style={{ minHeight: "150px" }}
         >
           <img
             src={company.logo}
@@ -173,7 +159,6 @@ export default function HomePage() {
               type="search"
               placeholder="Vị trí tuyển dụng, tên công ty"
               aria-label="Search"
-              // aria-describedby="search-icon"
             />
 
             <div className="d-flex align-items-center col-2 me-2 border-end">
@@ -293,7 +278,7 @@ export default function HomePage() {
       <div className="bg-light pb-4">
         <div className="pt-4"></div>
         {/* Việc làm tốt nhất */}
-        <section className="container border border-primary rounded-3 mt-4">
+        <section id="latestJobs" className="container border border-primary rounded-3 mt-4">
           <div className="d-flex border-bottom border-primary justify-content-between align-items-center mb-2">
             <h3>Việc làm mới nhất</h3>
             <NavLink to="/post" className="text-primary">
@@ -302,15 +287,19 @@ export default function HomePage() {
           </div>
 
           <div className="row d-flex justify-content-center">
-            {renderLatestWork()}
+            {latestWork && latestWork.length > 0 ? renderLatestWork() : (
+              <div className="text-center py-4">
+                <p>Không có việc làm mới</p>
+              </div>
+            )}
           </div>
 
           {/* Thanh pagination */}
-          <div className="container mt-2">
+          <div className="container mt-2 mb-3">
             <PaginationFeaturedJobs
               totalPages={totalPages}
               currentPage={currentPage}
-              handlePageChangeFeaturedJobs={handlePageChangeFeaturedJobs}
+              onPageChange={handlePageChangeFeaturedJobs}
             />
           </div>
         </section>

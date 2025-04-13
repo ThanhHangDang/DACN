@@ -11,10 +11,10 @@ const {
 
 const getLatestWork = async (req, res) => {
   try {
-    const work = await queryGetLatestWork();
+    const data = await queryGetLatestWork();
 
-    if (work) {
-      return res.status(200).json({ work });
+    if (data) {
+      return res.status(200).json({data});
     }
   } catch (error) {
     console.log("Get Latest Work error:", error);
@@ -23,12 +23,13 @@ const getLatestWork = async (req, res) => {
 };
 
 const getWorkDetail = async (req, res) => {
-  const postId = req.query.postId;
+  console.log("Get Work Detail:", req.query);
+  const postId = req.query.post_id;
   try {
-    const work = await queryGetWorkDetail(postId);
+    const data = await queryGetWorkDetail(postId);
 
-    if (work) {
-      return res.status(200).json({ work });
+    if (data) {
+      return res.status(200).json({data});
     }
   } catch (error) {
     console.log("Get Work Detail error:", error);
@@ -44,10 +45,10 @@ const getAllWorks = async (req, res) => {
   try {
     const work = await queryGetAllWorks(limit, offset);
     const total = await queryGetCountTotalWorks();
-    const totalPages = Math.ceil(total[0].total / limit);
+    const totalWorksPages = Math.ceil(total[0].total / limit);
 
     if (work) {
-      return res.status(200).json({ work, totalPages });
+      return res.status(200).json({data:{work, totalWorksPages}});
     }
     return res.status(404).json({ message: "No works found" });
   } catch (error) {
@@ -72,12 +73,17 @@ const getWorkByUser = async (req, res) => {
 };
 
 const getWorkBySearch = async (req, res) => {
-  const data = req.query;
+  const searchData = req.query;
+  const paging_size = Number(searchData?.paging_size)|| 10;
+  // console.log("dang Search Job ", paging);
   try {
-    const work = await queryGetWorkBySearch(data);
-
-    if (work) {
-      return res.status(200).json({ work });
+    const data = await queryGetWorkBySearch(searchData);
+    if (data) {
+      const total_count = data.length > 0 ? data[0].total_count : 0;
+      console.log("total_count ", total_count); 
+      const totalWorksPages = Math.ceil(total_count / paging_size);
+      console.log("totalPages ", totalWorksPages);
+      return res.status(200).json({work:data,totalWorksPages });
     }
   } catch (error) {
     console.log("Get Work By Search error:", error);

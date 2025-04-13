@@ -2,17 +2,22 @@ import React, { useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
-import { getListEmployee } from "../../redux/actions/userAction.js";
+// import { getListEmployee } from "../../../redux/actions/userAction.js";
+import { useGetlistJobseekerQuery } from "../../../redux_toolkit/employerApi";
 
 export default function EmployeeMaganePage() {
   const dispatch = useDispatch();
-  const { listEmployee } = useSelector((state) => state.user);
+  // const { listEmployee } = useSelector((state) => state.user);
+  const { isLogin, user } = useSelector((state) => state.auth);
+  const { data: listEmployee } = useGetlistJobseekerQuery(user?.user?.id, {
+    skip: !user?.user?.id, // Skip the query if user ID is not available
+  });
 
   console.log("asdsdasdad", listEmployee);
 
-  useEffect(() => {
-    dispatch(getListEmployee());
-  }, []);
+  // useEffect(() => {
+  //   dispatch(getListEmployee());
+  // }, []);
 
   const renderEmployee = () => {
     return (

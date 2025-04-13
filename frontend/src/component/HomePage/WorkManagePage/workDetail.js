@@ -1,24 +1,28 @@
 import React, { useEffect } from "react";
 import { useParams, NavLink } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { getPostDetails } from "../../redux/actions/postAction.js";
-import formatDateToDDMMYYYY from "../../utils/formatDate.js";
-import calculateDaysRemaining from "../../utils/calculateDaysRemaining.js";
-import CompanyHeader from "../../component/_component/ui/CompanyHeader.js";
+// import { getPostDetails } from "../../redux/actions/postAction.js";
+import {useGetPostDetailQuery} from "../../../redux_toolkit/guestApi.js"
+import formatDateToDDMMYYYY from "../../../utils/formatDate.js";
+import calculateDaysRemaining from "../../../utils/calculateDaysRemaining.js";
+import CompanyHeader from "../../../component/_component/ui/CompanyHeader.js";
 
 export default function WorkDetail() {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-
   const { id } = useParams();
 
   const formatNumberToTr = (number) => `${(number / 1e6).toFixed(0)}tr`;
 
-  const postDetail = useSelector((state) => state.post.postDetail);
+  // const postDetail = useSelector((state) => state.post.postDetail);
+  const { data: postDetail, isLoading,refetch } = useGetPostDetailQuery(id, {
+    refetchOnMountOrArgChange: true,
+  });
   console.log(postDetail);
 
   useEffect(() => {
-    dispatch(getPostDetails(id));
+    // dispatch(getPostDetails(id));
+    refetch();
   }, [id]);
 
   return (

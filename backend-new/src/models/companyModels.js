@@ -45,6 +45,7 @@ const queryGetAllCompany = async (limit, offset) => {
       c.company_id,
       c.company_name,
       c.logo,
+      c.background,
       c.scale_id,
       c.industry_id,
       c.phone_number,
@@ -96,7 +97,7 @@ const queryGetAllCompany = async (limit, offset) => {
   `,
     [limit, offset]
   );
-
+  console.log("company model done");
   return company;
 };
 

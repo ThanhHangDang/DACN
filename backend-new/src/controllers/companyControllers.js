@@ -9,6 +9,7 @@ const {
 const { queryGetWorkByUser } = require("../models/workModel.js");
 
 const getAllCompany = async (req, res) => {
+  console.log("Get All Company:", req.query);
   const page = parseInt(req.query.page);
   const limit = 9;
   const offset = (page - 1) * limit;
@@ -17,7 +18,9 @@ const getAllCompany = async (req, res) => {
     const company = await queryGetAllCompany(limit, offset);
     const total = await queryGetCountTotalCompany();
     const totalPages = Math.ceil(total[0].total / limit);
+    console.log("total", total[0].total);
     if (company) {
+      console.log("tra ve");
       return res.status(200).json({ company, totalPages });
     }
     return res.status(404).json({ message: "No companies found" });
@@ -29,10 +32,10 @@ const getAllCompany = async (req, res) => {
 
 const getLeadingCompany = async (req, res) => {
   try {
-    const company = await queryGetLeadingCompany();
+    const data = await queryGetLeadingCompany();
 
-    if (company) {
-      return res.status(200).json({ company });
+    if (data) {
+      return res.status(200).json({data});
     }
     return res.status(404).json({ message: "No leading company found" });
   } catch (error) {

@@ -1,22 +1,14 @@
 import React, { useEffect } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-// import { getCompanyInformation } from "../../redux/actions/companyAction";
 import { useGetCompanyInformationQuery } from "../../redux_toolkit/guestApi";
 
 export default function EmployerPage() {
   const dispatch = useDispatch();
   const { isLogin, user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
-  // const { companyInformation } = useSelector((state) => state.company);
-  // console.log(companyInformation);
+
 const { data: companyInformation } = useGetCompanyInformationQuery(user?.user.id);
-  // useEffect(() => {
-  //   if (!isLogin && !(user?.user.role === 2)) {
-  //     navigate("/login");
-  //   }
-  //   // dispatch(getCompanyInformation(user?.user.id));
-  // }, [isLogin, user]);
 
   return (
     <div className="container-fluid">

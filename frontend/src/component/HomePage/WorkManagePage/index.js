@@ -1,35 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllPosts } from "../../redux/actions/postAction";
-import { NavLink, 
-  // useNavigate 
-} from "react-router-dom";
-
-import { getPostsSearch } from "../../redux/actions/postAction";
-// import {
-//   getCategoryIndustry,
-//   getCategoryJobFunction,
-//   getCategoryCity,
-// } from "../../redux/actions/categoryAction";
-import { useGetCitiesQuery, useGetIndustriesQuery,useGetJobFunctionQuery } from "../../redux_toolkit/CategoryApi";
+import { getAllPosts } from "../../../redux/actions/postAction";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useGetPostSearchQuery } from "../../../redux_toolkit/guestApi";
+import {
+  useGetCitiesQuery,
+  useGetIndustriesQuery,
+  useGetJobFunctionQuery,
+} from "../../../redux_toolkit/CategoryApi";
 
 export default function WorkMangePage() {
   const dispatch = useDispatch();
-  const { allPosts, totalWorksPages } = useSelector((state) => state.post);
-const {data: city} = useGetCitiesQuery(84); // 84 là mã quốc gia Việt Nam
-const {data: industry} = useGetIndustriesQuery();
-const {data: jobFunction} = useGetJobFunctionQuery();
-
-  // const { industry, jobFunction, city } = useSelector(
-  //   (state) => state.category
-  // );
-
-  console.log("city", city);
-
   const [filter, setFilter] = useState({
     title: "",
-    industry: "",
-    job_function: "",
+    industry_id: "",
+    job_function_id: "",
     work_location: "",
     salary_max: "",
     salary_min: "",
@@ -42,17 +27,52 @@ const {data: jobFunction} = useGetJobFunctionQuery();
     require_experience: 0,
     is_active: 1,
     date_post: "",
+    active_page: 1, // Thêm active_page vào filter
+    paging_size: 10, // Thêm kích thước trang
   });
+  const { data: city } = useGetCitiesQuery(84); // 84 là mã quốc gia Việt Nam
+  const { data: industry } = useGetIndustriesQuery();
+  const { data: jobFunction } = useGetJobFunctionQuery();
+  const [active_page, setActive_Page] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const { data, isLoading, error, refetch } = useGetPostSearchQuery(filter);
+  const { work: allPosts, totalWorksPages } = data || {
+    allPosts: [],
+    totalWorksPages: 1,
+  };
 
   const formatNumberToTr = (number) => `${(number / 1e6).toFixed(0)}tr`;
 
   const handleSearch = (e) => {
-    e.preventDefault();
-    dispatch(getPostsSearch(filter));
+    e?.preventDefault(); // Ngăn hành vi mặc định
+    // Cập nhật filter với trang đầu tiên
+    setFilter((prevFilter) => ({
+      ...prevFilter,
+      active_page: 1,
+    }));
+    // Đặt lại state page
+    setActive_Page(1);
   };
 
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const changePage = (e, newPage) => {
+    e?.preventDefault(); // Ngăn hành vi mặc định nếu e tồn tại
+
+    if (newPage >= 1 && newPage <= totalPages) {
+      setActive_Page(newPage); // Cập nhật state page hiện tại
+      // Cập nhật filter với trang mới
+      setFilter((prevFilter) => ({
+        ...prevFilter,
+        active_page: newPage,
+      }));
+      // Scroll lên đầu danh sách
+      window.scrollTo({
+        top:
+          document.querySelector(".container.mt-4:not(.sticky)")?.offsetTop -
+            120 || 0,
+        behavior: "smooth",
+      });
+    }
+  };
 
   const getVisiblePages = (page, totalPages) => {
     let start = Math.max(1, page - 2);
@@ -73,17 +93,18 @@ const {data: jobFunction} = useGetJobFunctionQuery();
     return pages;
   };
 
-  const changePage = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setPage(newPage);
-    }
-  };
-
   useEffect(() => {
-    dispatch(getAllPosts(page));
- 
-    setTotalPages(totalWorksPages);
-  }, [page, dispatch]);
+    // Không cần gọi refetch với filter mới vì setFilter đã trigger refetch
+    setTotalPages(totalWorksPages || 1);
+    console.log("Total pages:", totalWorksPages);
+  }, [totalWorksPages]);
+
+  // Thêm useEffect mới để refetch khi filter thay đổi
+  // useEffect(() => {
+  //   refetch();
+  //   // Log để debug
+  //   console.log("Fetching with filter:", filter);
+  // }, [filter, refetch]);
 
   const renderJob = () => {
     return allPosts?.map((job, index) => {
@@ -168,7 +189,7 @@ const {data: jobFunction} = useGetJobFunctionQuery();
               <select
                 className="form-select"
                 onChange={(e) =>
-                  setFilter({ ...filter, industry: e.target.value })
+                  setFilter({ ...filter, industry_id: e.target.value })
                 }
               >
                 {industry?.map((item, index) => (
@@ -185,7 +206,7 @@ const {data: jobFunction} = useGetJobFunctionQuery();
               <select
                 className="form-select"
                 onChange={(e) =>
-                  setFilter({ ...filter, job_function: e.target.value })
+                  setFilter({ ...filter, job_function_id: e.target.value })
                 }
               >
                 {jobFunction?.map((item, index) => (
@@ -283,64 +304,89 @@ const {data: jobFunction} = useGetJobFunctionQuery();
         </form>
       </div>
 
-      <div className="container mt-4">{renderJob()}</div>
+      <div className="container mt-4">
+        {isLoading ? (
+          <div className="d-flex justify-content-center my-5">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        ) : allPosts && allPosts.length > 0 ? (
+          renderJob()
+        ) : (
+          <div className="alert alert-info text-center">
+            Không tìm thấy việc làm phù hợp với tiêu chí tìm kiếm
+          </div>
+        )}
+      </div>
 
       <nav
         className="d-flex justify-content-center mt-4"
-        aria-label="Page navigation example"
+        aria-label="Page navigation"
       >
         <ul className="pagination">
-          <li className="page-item">
+          <li className={`page-item ${active_page <= 1 ? "disabled" : ""}`}>
             <a
               className="page-link"
-              href="#aaa"
+              href="#"
               aria-label="Previous"
-              onClick={() => changePage(page - 1)}
+              onClick={(e) => changePage(e, active_page - 1)}
             >
               <span aria-hidden="true">«</span>
             </a>
           </li>
 
-          <li className="page-item">
+          <li className={`page-item ${active_page <= 1 ? "disabled" : ""}`}>
             <a
               className="page-link"
-              href="#aaa"
-              aria-label="Previous"
-              onClick={() => changePage(1)}
+              href="#"
+              aria-label="First"
+              onClick={(e) => changePage(e, 1)}
             >
               <span aria-hidden="true">Đầu</span>
             </a>
           </li>
 
-          {getVisiblePages(page, totalPages).map((p) => (
-            <li key={p} className={`page-item ${p === page ? "active" : ""}`}>
+          {getVisiblePages(active_page, totalPages).map((p) => (
+            <li
+              key={p}
+              className={`page-item ${p === active_page ? "active" : ""}`}
+            >
               <a
                 className="page-link"
-                href="#aaa"
-                onClick={() => changePage(p)}
+                href="#"
+                onClick={(e) => changePage(e, p)}
               >
                 {p}
               </a>
             </li>
           ))}
 
-          <li className="page-item">
+          <li
+            className={`page-item ${
+              active_page >= totalPages ? "disabled" : ""
+            }`}
+          >
             <a
               className="page-link"
-              href="#aaa"
-              aria-label="Previous"
-              onClick={() => changePage(totalPages)}
+              href="#"
+              aria-label="Last"
+              onClick={(e) => changePage(e, totalPages)}
             >
               <span aria-hidden="true">Cuối</span>
             </a>
           </li>
 
-          <li className="page-item">
+          <li
+            className={`page-item ${
+              active_page >= totalPages ? "disabled" : ""
+            }`}
+          >
             <a
               className="page-link"
-              href="#aaa"
+              href="#"
               aria-label="Next"
-              onClick={() => changePage(page + 1)}
+              onClick={(e) => changePage(e, active_page + 1)}
             >
               <span aria-hidden="true">»</span>
             </a>

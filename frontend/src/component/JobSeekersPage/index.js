@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { useGetItemProfileQuery } from "../../redux_toolkit/JobseekerApi";
+import { useGetItemProfileQuery } from "../../redux_toolkit/jobseekerApi";
 
 export default function JobSeekerPage() {
   // Lấy thông tin user từ Redux store

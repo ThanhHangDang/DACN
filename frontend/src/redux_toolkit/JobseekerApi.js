@@ -89,5 +89,5 @@ export const {
     useUpdateProfileImageMutation,
     useUpdateItemProfileMutation,
     useAddItemProfileMutation,
-    useDeleteItemProfileMutation
+    useDeleteItemProfileMutation    
 } = jobseekerApi;

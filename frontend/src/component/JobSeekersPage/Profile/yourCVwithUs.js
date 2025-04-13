@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
-import { useAddItemProfileMutation,useDeleteItemProfileMutation,useUpdateItemProfileMutation,useGetItemProfileQuery } from "../../../redux_toolkit/JobseekerApi.js";
+import { useAddItemProfileMutation,useDeleteItemProfileMutation,useUpdateItemProfileMutation,useGetItemProfileQuery } from "../../../redux_toolkit/jobseekerApi.js";
 import { useGetLanguagesQuery,useGetEducationQuery,useGetTagsQuery } from "../../../redux_toolkit/CategoryApi.js";
 import formatDateToDDMMYYYY from "../../../utils/formatDate.js";
 const formatDateForInput = (dateString) => {

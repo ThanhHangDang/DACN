@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { useGetItemProfileQuery } from "../../../redux_toolkit/JobseekerApi.js";
+import { useGetItemProfileQuery } from "../../../redux_toolkit/jobseekerApi.js";
 
 export default function JobSeekerOverview() {
   const dispatch = useDispatch();
@@ -12,7 +12,9 @@ export default function JobSeekerOverview() {
     }
   );
 
-  const { suitablePosts } = useSelector((state) => state.post);
+  //****** * tạm thời chưa gợi ý job cho jobseeker (vì trước đó cũng chưa có làm)
+  // const { suitablePosts } = useSelector((state) => state.post);
+  const suitablePosts = [];
 
 
 
