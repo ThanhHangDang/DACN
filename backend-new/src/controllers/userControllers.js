@@ -32,10 +32,9 @@ const {
   // queryDeleteLanguage,
   // queryDeleteCertification,'
   queryItemProfile,
-  queryAddItemProfile,  
+  queryAddItemProfile,
   queryDeleteItemProfile,
   queryUpdateItemProfile,
-
 
   queryGetNotificationByID,
 } = require("../models/userModels.js");
@@ -44,8 +43,10 @@ const { queryGetWorkDetail } = require("../models/workModel.js");
 
 const getListEmployee = async (req, res) => {
   try {
+    console.log("Get List Employee");
     const listEmployee = await queryGetListEmployee();
     if (listEmployee) {
+      console.log("Danh sách nhân viên:", listEmployee);
       return res.status(200).json({ listEmployee });
     } else {
       return res.status(200).json({ listEmployee: [] });
@@ -527,7 +528,7 @@ const getItemProfile = async (req, res) => {
     }
     const userInfor = await queryItemProfile(type, profile_id);
     if (userInfor) {
-      return res.status(200).json({data: userInfor });
+      return res.status(200).json({ data: userInfor });
     } else {
       return res.status(200).json({ data: [] });
     }
@@ -537,19 +538,18 @@ const getItemProfile = async (req, res) => {
   }
 };
 
-
-
-
-const updateItemProfile = async (req, res, next) => {  
+const updateItemProfile = async (req, res, next) => {
   try {
-    const {type, data} = req.body;
+    const { type, data } = req.body;
     if (!type || !data) {
       return res.status(400).json({ message: "Thiếu thông tin." });
     }
-    data['create_at'] = new Date();
+    data["create_at"] = new Date();
     const affectedRows = await queryUpdateItemProfile(type, data);
     if (affectedRows === 0) {
-      return res.status(500).json({ message: "Cập nhật không thành công", err });
+      return res
+        .status(500)
+        .json({ message: "Cập nhật không thành công", err });
     }
     const userInfor = await queryItemProfile(type, data.profiel_id);
     return res.status(200).json({
@@ -557,7 +557,6 @@ const updateItemProfile = async (req, res, next) => {
       message: "Cập nhật hồ sơ thành công.",
     });
     // return res.success("Update thành công.");
-
   } catch (err) {
     return res.status(500).json({ message: "Lỗi server", err });
   }
@@ -565,11 +564,11 @@ const updateItemProfile = async (req, res, next) => {
 
 const deleteItemProfile = async (req, res, next) => {
   try {
-    const {type, data} = req.body;
+    const { type, data } = req.body;
     if (!type || !data) {
       return res.status(400).json({ message: "Thiếu thông tin." });
     }
-        // console.log("queryDeleteItemProfile", type, data);
+    // console.log("queryDeleteItemProfile", type, data);
     const affectedRows = await queryDeleteItemProfile(type, data);
     if (affectedRows === 0) {
       return res.status(500).json({ message: "Xóa không thành công", err });
@@ -580,7 +579,6 @@ const deleteItemProfile = async (req, res, next) => {
       data: userInfor,
       message: "Cập nhật hồ sơ thành công.",
     });
-
   } catch (err) {
     return res.status(500).json({ message: "Lỗi server", err });
   }
@@ -588,11 +586,11 @@ const deleteItemProfile = async (req, res, next) => {
 
 const addItemProfile = async (req, res, next) => {
   try {
-    const {type, data} = req.body;
+    const { type, data } = req.body;
     if (!type || !data) {
       return res.status(400).json({ message: "Thiếu thông tin." });
     }
-    data['create_at'] = new Date();
+    data["create_at"] = new Date();
     const affectedRows = await queryAddItemProfile(type, data);
     if (affectedRows === 0) {
       return next(new Error("Thêm không thành công."));
@@ -602,7 +600,6 @@ const addItemProfile = async (req, res, next) => {
       data: userInfor,
       message: "Cập nhật hồ sơ thành công.",
     });
-
   } catch (err) {
     return res.status(500).json({ message: "Lỗi server", err });
   }
@@ -658,7 +655,6 @@ module.exports = {
   deleteItemProfile,
   addItemProfile,
   updateItemProfile,
-
 
   getNotificationByID,
 };

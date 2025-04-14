@@ -54,7 +54,7 @@ const JobCard = ({ job }) => {
 };
 
 const JobListing = () => {
-   const [filter, setFilter] = useState({
+  const [filter, setFilter] = useState({
     title: "",
     industry_id: "",
     job_function_id: "",
@@ -100,12 +100,14 @@ const JobListing = () => {
               placeholder="Job title or company"
             />
             <h6 className="fw-bold mb-2">Location</h6>
-            <select 
+            <select
               className="form-select mb-3"
-              onChange={(e) => setFilter({
-                ...filter,
-                work_location: e.target.value
-              })}
+              onChange={(e) =>
+                setFilter({
+                  ...filter,
+                  work_location: e.target.value,
+                })
+              }
               value={filter.city_id}
             >
               <option value="">Choose city</option>
@@ -118,10 +120,12 @@ const JobListing = () => {
             <h6 className="fw-bold mb-2">Category</h6>
             <select
               className="form-select mb-3"
-              onChange={(e) => setFilter({
-                ...filter,
-                industry_id: e.target.value
-              })}
+              onChange={(e) =>
+                setFilter({
+                  ...filter,
+                  industry_id: e.target.value,
+                })
+              }
               value={filter.industry_id}
             >
               <option value="">Choose category</option>
@@ -134,18 +138,21 @@ const JobListing = () => {
             <h6 className="fw-bold mt-3">Job Type</h6>
             {cata_jobtype.map((type) => (
               <div className="form-check mb-2" key={type.id}>
-                <input 
-                  className="form-check-input" 
-                  type="checkbox" 
-                  id={`jobtype-${type.id}`} 
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  id={`jobtype-${type.id}`}
                   onChange={(e) => {
                     setFilter({
-                      ...filter, 
-                      working_type: e.target.checked ? type.name : ""
+                      ...filter,
+                      working_type: e.target.checked ? type.name : "",
                     });
                   }}
                 />
-                <label className="form-check-label" htmlFor={`jobtype-${type.id}`}>
+                <label
+                  className="form-check-label"
+                  htmlFor={`jobtype-${type.id}`}
+                >
                   {type.name}
                 </label>
               </div>

@@ -3,7 +3,10 @@ import { NavLink } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import calculateDaysRemaining from "../../../utils/calculateDaysRemaining.js";
-import { useGetCompanyInformationQuery,useGetPostByUserQuery } from "../../../redux_toolkit/guestApi.js";
+import {
+  useGetCompanyInformationQuery,
+  useGetPostByUserQuery,
+} from "../../../redux_toolkit/guestApi.js";
 import { useGetCitiesQuery } from "../../../redux_toolkit/CategoryApi.js";
 import CompanyHeader from "../../_component/ui/CompanyHeader.js";
 
@@ -11,8 +14,8 @@ export default function CompanyDetail() {
   const { companyId } = useParams();
   const { data: city } = useGetCitiesQuery(84); // 84 là mã quốc gia Việt Nam
   const { data: companyInformation } = useGetCompanyInformationQuery(companyId);
-  
-  const {data} = useGetPostByUserQuery(companyId);
+  console.log("companyInformation", companyInformation);
+  const { data } = useGetPostByUserQuery(companyId);
   const postsByUser = data?.work || [];
   const formatNumberToTr = (number) => `${(number / 1e6).toFixed(0)}tr`;
 

@@ -5,7 +5,11 @@ import { useGetItemProfileQuery } from "../../../redux_toolkit/jobseekerApi";
 
 export default function EmployeeDetail() {
   const { id } = useParams();
-  const { data: jobseekerDetail } = useGetItemProfileQuery({ type: "jobseeker", profile_id: id });
+  const { data } = useGetItemProfileQuery({
+    type: "jobseeker",
+    profile_id: id,
+  });
+  const jobseekerDetail = data || [];
   const formatNumberToTr = (number) => `${(number / 1e6).toFixed(0)}tr`;
 
   return (

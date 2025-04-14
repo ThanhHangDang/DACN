@@ -9,11 +9,9 @@ export default function EmployeeMaganePage() {
   const dispatch = useDispatch();
   // const { listEmployee } = useSelector((state) => state.user);
   const { isLogin, user } = useSelector((state) => state.auth);
-  const { data: listEmployee } = useGetlistJobseekerQuery(user?.user?.id, {
-    skip: !user?.user?.id, // Skip the query if user ID is not available
-  });
-
-  console.log("asdsdasdad", listEmployee);
+  const { data } = useGetlistJobseekerQuery();
+  const listEmployee = data?.listEmployee || [];
+  console.log("asdsdasdad", data);
 
   // useEffect(() => {
   //   dispatch(getListEmployee());
