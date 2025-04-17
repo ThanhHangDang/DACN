@@ -1,27 +1,35 @@
-import React  from "react"; //{ useEffect }
+import React from "react"; //{ useEffect }
 
 import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useGetItemProfileQuery } from "../../../redux_toolkit/jobseekerApi.js";
 import formatDateToDDMMYYYY from "../../../utils/formatDate.js";
 // import { type } from "@testing-library/user-event/dist/type/index.js";
+import JobCard from "../../../component/_component/ui/JobCard.js";
 
 export default function SavedWork() {
   const formatNumberToTr = (number) => `${(number / 1e6).toFixed(0)}tr`;
   // const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-    const {data:userInformation} = useGetItemProfileQuery({type: "Basic",profile_id: user?.user?.id});
-  const { data: listJobSave } = useGetItemProfileQuery({type: "save_job",profile_id: user?.user?.id});
+  const { data: userInformation } = useGetItemProfileQuery({
+    type: "Basic",
+    profile_id: user?.user?.id,
+  });
+  const { data: listJobSave } = useGetItemProfileQuery({
+    type: "save_job",
+    profile_id: user?.user?.id,
+  });
 
   console.log("List job save:", listJobSave);
 
   return (
     <>
       {listJobSave && listJobSave.length > 0 ? (
-        <div className="accordion accordion-flush" id="accordionFlushExample">
-          {listJobSave.map((job) => (
+        // <div className="accordion accordion-flush" id="accordionFlushExample">
+        <div className="col-lg-11 mt-4">
+          {listJobSave.map((job, index) => (
             <>
-              <div className="accordion-item">
+              {/* <div className="accordion-item">
                 <h2
                   className="accordion-header"
                   id={`flush-headingOne${job.job_id}`}
@@ -75,8 +83,7 @@ export default function SavedWork() {
                       </span>
                       <span>
                         Mô tả:{" "}
-                        {job.describle ||
-                          "Chưa có thông tin mô tả công việc"}
+                        {job.describle || "Chưa có thông tin mô tả công việc"}
                       </span>
                     </div>
                     <div className="d-flex align-items-center justify-content-end">
@@ -89,7 +96,8 @@ export default function SavedWork() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
+              <JobCard job={job} key={index} />
             </>
           ))}
         </div>

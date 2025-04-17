@@ -52,7 +52,9 @@ const SidebarLayout = ({ data = [] }) => {
             <NavLink
               to={item.path}
               key={index}
-              className="sidebar-link text-decoration-none p-3"
+              className={`${
+                collapsed ? "sidebar-link-collapsed" : "sidebar-link"
+              }  text-decoration-none p-3`}
               activeClassName="active"
             >
               <i className={`${item.icon} me-3`}>{""}</i>
