@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { useGetIndustriesQuery } from "../../../redux_toolkit/CategoryApi.js";
 import { useGetCompanyInforQuery } from "../../../redux_toolkit/employerApi.js";
-import CompanyHeader from "../../../component/_component/ui/CompanyHeader.js";
+import CompanyBackground from "../../../component/_component/ui/employer/CompanyBackground.js";
 
 export default function CompanyProfile() {
   const dispatch = useDispatch();
@@ -13,7 +13,7 @@ export default function CompanyProfile() {
   const id = user?.user.id;
   console.log("id", id);
   const { data } = useGetCompanyInforQuery(id);
-  const companyInformation = data|| {};
+  const companyInformation = data || {};
 
   const [updateCompany, setUpdateCompany] = useState({
     company_name: companyInformation.company_name || "",
@@ -25,21 +25,22 @@ export default function CompanyProfile() {
     describle: companyInformation.describle || "",
   });
 
-  const [logo, setLogo] = useState("");
+  // const [logo, setLogo] = useState("");
 
   const handleUpdateCompanyProfile = () => {
     console.log(updateCompany);
   };
 
-  const handleUpdateCompanyLogo = () => {
-    console.log(logo);
-  };
+  // const handleUpdateCompanyLogo = () => {
+  //   console.log(logo);
+  // };
 
   return (
     <div>
       <div className="bg-light rounded-2 me-2 my-2 p-2">
+        <CompanyBackground company={companyInformation} />
         {/* Logo công ty */}
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <label className="form-label fw-bold">Logo công ty</label>
           <div className="d-flex align-items-center justify-content-center mb-1">
             <img
@@ -54,23 +55,15 @@ export default function CompanyProfile() {
             style={{ height: "100px", borderColor: "#ccc" }}
           >
             <div className="text-center">
-              {/* <i
-                className="bi bi-image"
-                style={{ fontSize: "2rem", color: "#888" }}
-              ></i> */}
               <input
                 type="file"
                 className="form-control-file"
-                accept="image/jpeg, image/png, image/gif" // Chỉ cho phép chọn ảnh
+                accept="image/jpeg, image/png, image/gif"
                 id="fileInput"
                 onChange={(e) => {
                   setLogo(e.target.files[0]);
                 }}
               />
-              {/* <p className="mt-2 text-muted">
-                Upload ảnh ở đây{" "}
-                
-              </p> */}
             </div>
           </div>
         </div>
@@ -81,7 +74,7 @@ export default function CompanyProfile() {
           >
             Cập nhật
           </button>
-        </div>
+        </div> */}
       </div>
 
       <div className="bg-light rounded-2 me-2 my-2 p-2">

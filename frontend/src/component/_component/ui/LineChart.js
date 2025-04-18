@@ -89,7 +89,14 @@ const options = {
 
 const LineChartComponent = () => {
   return (
-    <div style={{ width: "100%", maxWidth: "800px", margin: "auto" }}>
+    <div
+      style={{
+        width: "100%",
+        maxWidth: "800px",
+        height: "90%",
+        margin: "auto",
+      }}
+    >
       <Line data={data} options={options} />
     </div>
   );
