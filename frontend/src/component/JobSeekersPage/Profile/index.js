@@ -784,16 +784,24 @@ export default function JobSeekerProfile() {
                   <i className="fas fa-briefcase" />
                   {userInformation?.title}
                 </p>
-                <p className="lh-1 d-inline me-5">
-                  {" "}
-                  <strong>Lĩnh vực: </strong>
-                  {userInformation?.job_function_name}
-                </p>
-                <p className="lh-1 d-inline">
-                  {" "}
-                  <strong>Cấp bậc hiện tại: </strong>
-                  {userInformation?.level_name}
-                </p>
+                <div className="row">
+                  <span className="col-md-6 col-sm-0">
+                    <p className="lh-1 d-inline me-5">
+                      {" "}
+                      <strong>Lĩnh vực: </strong>
+                      {userInformation?.job_function_name}
+                    </p>
+                  </span>
+
+                  <span className="col-md-5 col-sm-0">
+                    <p className="lh-1 d-inline">
+                      {" "}
+                      <strong>Cấp bậc hiện tại: </strong>
+                      {userInformation?.level_name}
+                    </p>
+                  </span>
+                </div>
+
                 <div className="row">
                   <span className="col-md-6 col-sm-0">
                     <i className="bi bi-briefcase-fill me-2"></i>
