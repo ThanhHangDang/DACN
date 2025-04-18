@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import LineChartComponent from "../../../component/_component/ui/LineChart.js";
 
 export default function EmployerOverview() {
   const { isLogin, user } = useSelector((state) => state.auth);
@@ -46,12 +47,19 @@ export default function EmployerOverview() {
               </div>
             </div>
           </div>
+          <div className="col">
+            <div className="card text-center border-warning">
+              <div className="card-body">
+                <h6 className="card-title">Tổng số hồ sơ</h6>
+                <h4 className="card-text text-warning">1370</h4>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="bg-light rounded-2 me-2 my-2 p-2">
+      {/* <div className="bg-light rounded-2 me-2 my-2 p-2">
         <div className="row mb-2 d-flex justify-content-between">
-          {/* Tổng số lượng hồ sơ */}
           <div className="col-md-8 mb-4">
             <h6 className="fw-bold">Tổng số lượng hồ sơ</h6>
             <div className="bg-light p-3 rounded text-danger fw-bold">1370</div>
@@ -64,7 +72,7 @@ export default function EmployerOverview() {
             </select>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div className="bg-light rounded-2 me-2 my-2 p-2">
         <div className="row mb-2 d-flex justify-content-between">
@@ -79,6 +87,13 @@ export default function EmployerOverview() {
               <option value="today">Hôm nay</option>
             </select>
           </div>
+        </div>
+
+        <div
+          className="d-flex justify-content-center"
+          style={{ height: "400px" }}
+        >
+          <LineChartComponent />
         </div>
       </div>
     </>

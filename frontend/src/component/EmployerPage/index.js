@@ -8,7 +8,9 @@ export default function EmployerPage() {
   const dispatch = useDispatch();
   const { isLogin, user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
-const { data: companyInformation } = useGetCompanyInformationQuery(user?.user.id);
+  const { data: companyInformation } = useGetCompanyInformationQuery(
+    user?.user.id
+  );
 
   const sidebar = [
     {

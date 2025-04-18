@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -14,11 +14,20 @@ export default function EmployerAccountSetting() {
     dispatch(logout());
   };
 
+  const [data, setData] = useState({
+    password: "",
+    rePassword: "",
+  });
+
+  const handleChangePassword = () => {
+    console.log("user: ", user?.user.id, " passwordchange: ", data.password);
+  };
+
   useEffect(() => {
     if (!isLogin || user?.user?.role !== 2) {
       navigate("/login");
     }
-  }, [user, isLogin]);
+  }, [navigate, user, isLogin]);
 
   return (
     <div>
@@ -30,11 +39,14 @@ export default function EmployerAccountSetting() {
         aria-labelledby="modalTitle"
         aria-hidden="true"
       >
-        <div className="modal-dialog modal-lg">
+        <div
+          className="modal-dialog modal-lg card shadow-lg w-100"
+          style={{ maxWidth: 480 }}
+        >
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title" id="modalTitle">
-                Đỗi mật khẩu
+              <h5 className="modal-title card-title h3" id="modalTitle">
+                Đổi mật khẩu
               </h5>
               <button
                 type="button"
@@ -45,43 +57,59 @@ export default function EmployerAccountSetting() {
             </div>
             <div className="modal-body">
               <form>
-                <div className="mb-3">
-                  <label htmlFor="jobTitle" className="form-label">
-                    Mật khẩu cũ
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="jobTitle"
-                    placeholder="Nhập chứng chỉ"
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label htmlFor="jobTitle" className="form-label">
+                <div className="mb-4">
+                  <label htmlFor="email" className="form-label text-muted">
                     Mật khẩu mới
                   </label>
                   <input
                     type="password"
                     className="form-control"
-                    id="jobTitle"
-                    placeholder="Nhập chứng chỉ"
+                    id="email"
+                    placeholder="Mật khẩu mới"
+                    required
+                    onChange={(e) => {
+                      setData({
+                        ...data,
+                        password: e.target.value,
+                      });
+                    }}
                   />
                 </div>
+                <div className="mb-4">
+                  <label htmlFor="password" className="form-label text-muted">
+                    Nhập lại mật khẩu
+                  </label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    id="password"
+                    placeholder="Nhập lại mật khẩu"
+                    required
+                    onChange={(e) => {
+                      setData({
+                        ...data,
+                        rePassword: e.target.value,
+                      });
+                    }}
+                  />
+                </div>
+                <div className="d-grid">
+                  <button
+                    type="button"
+                    data-bs-dismiss="modal"
+                    className="btn btn-dark btn-lg"
+                    disabled={
+                      !(
+                        data.password === data.rePassword &&
+                        data.password !== ""
+                      )
+                    }
+                    onClick={handleChangePassword}
+                  >
+                    Thay đổi
+                  </button>
+                </div>
               </form>
-            </div>
-
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Hủy
-              </button>
-              <button type="button" className="btn btn-primary">
-                Thêm
-              </button>
             </div>
           </div>
         </div>

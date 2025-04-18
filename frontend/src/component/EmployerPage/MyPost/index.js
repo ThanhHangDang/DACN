@@ -1,9 +1,14 @@
-import React, { useState } from "react"; //useEffect
+import React, { useState, useEffect } from "react"; //useEffect
 import { NavLink, useNavigate } from "react-router-dom"; //Outlet
 import { useSelector, useDispatch } from "react-redux";
-import {useGetIndustriesQuery,useGetJobFunctionQuery, useGetCitiesQuery,
-        useGetLanguagesQuery, useGetTagsQuery, useGetEducationQuery} from "../../../redux_toolkit/CategoryApi.js"; //useGetBenefitsQuery, useGetNationsQuery,useGetLevelsQuery,  useGetScalesQuery,useGetDistrictsQuery,
-
+import {
+  useGetIndustriesQuery,
+  useGetJobFunctionQuery,
+  useGetCitiesQuery,
+  useGetLanguagesQuery,
+  useGetTagsQuery,
+  useGetEducationQuery,
+} from "../../../redux_toolkit/CategoryApi.js"; //useGetBenefitsQuery, useGetNationsQuery,useGetLevelsQuery,  useGetScalesQuery,useGetDistrictsQuery,
 
 // import {
 //   // getPostsByUser,
@@ -11,8 +16,13 @@ import {useGetIndustriesQuery,useGetJobFunctionQuery, useGetCitiesQuery,
 //   postNewWork,
 //   editPostByUser,
 // } from "../../../redux/actions/postAction";
- import { useAddPostMutation,useDeletePostMutation,useUpdatePostMutation,useGetCompanyInformationQuery,useGetPostByUserQuery } from "../../../redux_toolkit/employerApi.js";
-
+import {
+  useAddPostMutation,
+  useDeletePostMutation,
+  useUpdatePostMutation,
+  useGetCompanyInformationQuery,
+  useGetPostByUserQuery,
+} from "../../../redux_toolkit/employerApi.js";
 
 export default function EmployerPost() {
   const dispatch = useDispatch();
@@ -29,7 +39,7 @@ export default function EmployerPost() {
   const { data: edu } = useGetEducationQuery();
   const { data: lang } = useGetLanguagesQuery();
   const userId = user?.user?.id;
-  const {data} = useGetPostByUserQuery(userId);
+  const { data } = useGetPostByUserQuery(userId);
   const postsByUser = data?.work || [];
   const [isAddPost, setIsAddPost] = useState(true);
 
@@ -162,19 +172,34 @@ export default function EmployerPost() {
     dispatch(deletePostByUser(user?.user?.id, postID));
   };
 
-  // useEffect(() => {
-  //   if (!isLogin || user?.user?.role !== 2) {
-  //     navigate("/login");
-  //   }
-  //   console.log("chay hang loat category: ");
-  //   dispatch(getCategoryTags());
-  //   dispatch(getCategoryJobFunction());
-  //   dispatch(getCategoryIndustry());
-  //   dispatch(getCategoryCity(84));
-  //   dispatch(getCategoryEdu());
-  //   dispatch(getCategoryLanguage());
-  //   dispatch(getPostsByUser(user?.user?.id));
-  // }, [dispatch]);
+  const handleExtendDays = (postID, days) => {
+    console.log(
+      "Gia hạn: ",
+      user?.user?.id,
+      " và bài post: ",
+      postID,
+      " thêm ",
+      days,
+      " ngày"
+    );
+  };
+
+  const handleShowHide = (postID, status) => {
+    console.log(
+      "Employer: ",
+      user?.user?.id,
+      " và bài post: ",
+      postID,
+      " Ản hiện ",
+      status
+    );
+  };
+
+  useEffect(() => {
+    if (!isLogin || user?.user?.role !== 2) {
+      navigate("/login");
+    }
+  }, [navigate, user, isLogin]);
 
   return (
     <>
@@ -797,6 +822,8 @@ export default function EmployerPost() {
                 <th scope="col">Hình thức</th>
                 <th scope="col">Số lượng</th>
                 <th scope="col">Ngày đăng</th>
+                <th scope="col">Ngày hết hạn</th>
+                <th scope="col"></th>
                 <th scope="col"></th>
                 <th scope="col"></th>
                 <th scope="col"></th>
@@ -813,6 +840,7 @@ export default function EmployerPost() {
                   <td>{post.working_type}</td>
                   <td>{post.quantity}</td>
                   <td>{new Date(post.date_post).toLocaleDateString()}</td>
+                  <td>{new Date(post.date_expi).toLocaleDateString()}</td>
                   <td
                     data-bs-toggle="modal"
                     data-bs-target="#addPostModal"
@@ -838,14 +866,69 @@ export default function EmployerPost() {
                       setIsAddPost(false);
                     }}
                   >
-                    <p className="text-primary">Sửa</p>
+                    <p className="text-primary custom-hover-3">Sửa</p>
                   </td>
                   <td>
-                    <p className="text-primary">Gia hạn</p>
+                    {/* <p className="text-primary">Gia hạn</p> */}
+                    <div className="dropdown">
+                      <div
+                        className="text-primary custom-hover-3"
+                        role="button"
+                        id="dropdownMenuLink"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        Gia hạn
+                      </div>
+                      <ul
+                        className="dropdown-menu"
+                        aria-labelledby="dropdownMenuLink"
+                      >
+                        <li>
+                          <p
+                            className="dropdown-item"
+                            onClick={() => handleExtendDays(post.job_id, 7)}
+                          >
+                            7 ngày
+                          </p>
+                        </li>
+                        <li>
+                          <p
+                            className="dropdown-item"
+                            onClick={() => handleExtendDays(post.job_id, 14)}
+                          >
+                            14 ngày
+                          </p>
+                        </li>
+                        <li>
+                          <p
+                            className="dropdown-item"
+                            onClick={() => handleExtendDays(post.job_id, 30)}
+                          >
+                            30 ngày
+                          </p>
+                        </li>
+                      </ul>
+                    </div>
+                  </td>
+                  <td>
+                    <p className="text-secondary custom-hover-3">
+                      {post.isHide ? (
+                        <span
+                          onClick={() => handleShowHide(post.job_id, false)}
+                        >
+                          <i className="bi bi-eye-fill"></i> Hiện
+                        </span>
+                      ) : (
+                        <span onClick={() => handleShowHide(post.job_id, true)}>
+                          <i className="bi bi-eye-slash-fill"></i> Ẩn
+                        </span>
+                      )}
+                    </p>
                   </td>
                   <td>
                     <p
-                      className="text-danger"
+                      className="text-danger custom-hover-3"
                       data-bs-toggle="modal"
                       data-bs-target="#confirmDeletePostModal"
                       onClick={() => {

@@ -285,7 +285,7 @@ const queryGetFollowedCompanyByID = async (id) => {
     `,
     [id]
   );
-  // console.log(followedCompany);
+  console.log(followedCompany);
   return followedCompany;
 };
 
@@ -361,12 +361,11 @@ try {
       `
       INSERT INTO ${profileTables['profile'][type].tableName} (${fields})
       VALUES (${placeholders});`,
-      values
-    );
-    return  result.affectedRows;
-  }
-}
-catch (error) {
+        values
+      );
+      return result.affectedRows;
+    }
+  } catch (error) {
     console.error("Error in queryAddItemProfile:", error);
     throw error;
   }
@@ -385,11 +384,13 @@ const queryUpdateItemProfile = async (type, data) => {
         if (profileTables['profile'][type]["updateItem"].includes(item)) {
           fieldsToUpdate_arr.push(`${item}=?`);
           values.push(data[item]);
-        }});        
-        const fieldsToUpdate = fieldsToUpdate_arr.join(", ");
-        // console.log("fieldsToUpdate_arr", fieldsToUpdate);
-        values.push(data[key]);
-        const [result] = await db.query(        `
+        }
+      });
+      const fieldsToUpdate = fieldsToUpdate_arr.join(", ");
+      // console.log("fieldsToUpdate_arr", fieldsToUpdate);
+      values.push(data[key]);
+      const [result] = await db.query(
+        `
         UPDATE profile_jobseeker
         SET ${fieldsToUpdate}
         WHERE ${key} = ?;`,
@@ -415,7 +416,7 @@ const queryUpdateItemProfile = async (type, data) => {
         WHERE ${whereClause};`,
         values
       );
-      return result.affectedRows;;
+      return result.affectedRows;
     }
   } catch (error) {
     console.error("Error in queryUpdateItemProfile:", error);
@@ -452,13 +453,13 @@ const queryGetItemProfile = async (type, profile_id) => {
   try {
     if (type === "Basic") {
       // Special case for Basic profile fields
-      const  result = queryGetUserInformation(profile_id);
+      const result = queryGetUserInformation(profile_id);
       return result;
     } else {
       if (!profileTables['profile'][type]) {
         throw new Error(`Invalid profile type: ${type}`);
       }
-     switch (type) {
+      switch (type) {
         case "experience":
           const exp = await queryGetExperienceByID(profile_id);
           return exp;
@@ -498,7 +499,9 @@ const queryGetItemProfile = async (type, profile_id) => {
           // console.log(jobSaved);
           return jobSaved;
         case "follow_employer":
-          const followedCompany_basic = await queryGetFollowedCompanyByID(profile_id);
+          const followedCompany_basic = await queryGetFollowedCompanyByID(
+            profile_id
+          );
           const followedCompany = [];
           // if (!followedCompany_basic) return followedCompany;
           for (const item of followedCompany_basic) {

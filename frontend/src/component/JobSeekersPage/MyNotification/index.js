@@ -4,14 +4,17 @@ import { useNavigate } from "react-router-dom";
 
 import { useSelector, useDispatch } from "react-redux";
 // import { getNotificationByUserID } from "../../../redux/actions/notificationAction.js"; // import
-import {useGetNotificationByUserIDQuery} from "../../../redux_toolkit/notificationApi";
+import { useGetNotificationByUserIDQuery } from "../../../redux_toolkit/notificationApi";
 export default function JobSeekerNotification() {
   const dispatch = useDispatch();
   const { isLogin, user } = useSelector((state) => state.auth);
   // const { notification } = useSelector((state) => state.notification);
-  const {data: notification} = useGetNotificationByUserIDQuery(user?.user?.id, {
-    skip: !user?.user?.id, // Skip the query if user ID is not available
-  });
+  const { data: notification } = useGetNotificationByUserIDQuery(
+    user?.user?.id,
+    {
+      skip: !user?.user?.id, // Skip the query if user ID is not available
+    }
+  );
 
   const navigate = useNavigate();
 
@@ -20,7 +23,7 @@ export default function JobSeekerNotification() {
       navigate("/login");
     }
     // dispatch(getNotificationByUserID(user?.user.id)); // dispatch
-  }, [isLogin, user]);
+  }, [navigate, isLogin, user]);
 
   return (
     <div>

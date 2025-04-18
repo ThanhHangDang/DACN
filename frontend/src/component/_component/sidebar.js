@@ -28,9 +28,9 @@ const SidebarLayout = ({ data = [] }) => {
   }, []);
 
   return (
-    <div className="d-flex">
+    <div className="d-flex" style={{ minHeight: "100vh" }}>
       <nav
-        className={`sidebar d-flex flex-column flex-shrink-0 position-fixed ${
+        className={`sidebar d-flex flex-column flex-shrink-0 position-relative ${
           collapsed ? "collapsed" : ""
         }`}
       >
@@ -52,7 +52,9 @@ const SidebarLayout = ({ data = [] }) => {
             <NavLink
               to={item.path}
               key={index}
-              className="sidebar-link text-decoration-none p-3"
+              className={`${
+                collapsed ? "sidebar-link-collapsed" : "sidebar-link"
+              }  text-decoration-none p-3`}
               activeClassName="active"
             >
               <i className={`${item.icon} me-3`}>{""}</i>

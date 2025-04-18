@@ -32,7 +32,7 @@ export default function JobSeekerCompany() {
           className="background-opacity .bg-gradient rounded-2 me-2 my-2 p-2 d-flex justify-content-center"
           style={{ minHeight: "300px" }}
         >
-          <div className="col-8 text-center mt-4">
+          <div className="col-lg-11 mt-4">
             <Outlet />
           </div>
         </div>
