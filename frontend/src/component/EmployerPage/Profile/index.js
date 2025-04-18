@@ -1,27 +1,40 @@
 import React from "react";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
 
 export default function EmployerProfile() {
   return (
-    <div>
-      <div className="rounded-2 me-2 my-2 p-2">
-        <div className="">
-          <NavLink to="/employer-profile" className="text-decoration-none">
-            <span className="me-5 fs-4">Hồ sơ công ty</span>
+    <div className="container my-3">
+      <ul className="nav nav-tabs">
+        <li className="nav-item">
+          <NavLink
+            to="/employer-profile"
+            className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+          >
+            Hồ sơ công ty
           </NavLink>
+        </li>
+        <li className="nav-item">
           <NavLink
             to="/employer-manage-employee"
-            className="text-decoration-none"
+            className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
           >
-            <span className="me-5 fs-4">Hồ sơ ứng tuyển</span>
+            Hồ sơ ứng tuyển
           </NavLink>
-          <NavLink to="/save-employee-profile" className="text-decoration-none">
-            <span className="fs-4">Hồ sơ đã lưu</span>
+        </li>
+        <li className="nav-item">
+          <NavLink
+            to="/save-employee-profile"
+            className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+          >
+            Hồ sơ đã lưu
           </NavLink>
-        </div>
-      </div>
+        </li>
+      </ul>
 
-      <Outlet />
+      {/* Nội dung sẽ được thay đổi theo route */}
+      <div className="mt-3">
+        <Outlet />
+      </div>
     </div>
   );
 }

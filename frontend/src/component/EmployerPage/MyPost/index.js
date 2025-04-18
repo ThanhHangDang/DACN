@@ -184,6 +184,17 @@ export default function EmployerPost() {
     );
   };
 
+  const handleShowHide = (postID, status) => {
+    console.log(
+      "Employer: ",
+      user?.user?.id,
+      " và bài post: ",
+      postID,
+      " Ản hiện ",
+      status
+    );
+  };
+
   return (
     <>
       {/* Modal thêm bài đăng */}
@@ -805,6 +816,8 @@ export default function EmployerPost() {
                 <th scope="col">Hình thức</th>
                 <th scope="col">Số lượng</th>
                 <th scope="col">Ngày đăng</th>
+                <th scope="col">Ngày hết hạn</th>
+                <th scope="col"></th>
                 <th scope="col"></th>
                 <th scope="col"></th>
                 <th scope="col"></th>
@@ -821,6 +834,7 @@ export default function EmployerPost() {
                   <td>{post.working_type}</td>
                   <td>{post.quantity}</td>
                   <td>{new Date(post.date_post).toLocaleDateString()}</td>
+                  <td>{new Date(post.date_expi).toLocaleDateString()}</td>
                   <td
                     data-bs-toggle="modal"
                     data-bs-target="#addPostModal"
@@ -890,6 +904,21 @@ export default function EmployerPost() {
                         </li>
                       </ul>
                     </div>
+                  </td>
+                  <td>
+                    <p className="text-secondary custom-hover-3">
+                      {post.isHide ? (
+                        <span
+                          onClick={() => handleShowHide(post.job_id, false)}
+                        >
+                          <i className="bi bi-eye-fill"></i> Hiện
+                        </span>
+                      ) : (
+                        <span onClick={() => handleShowHide(post.job_id, true)}>
+                          <i className="bi bi-eye-slash-fill"></i> Ẩn
+                        </span>
+                      )}
+                    </p>
                   </td>
                   <td>
                     <p
