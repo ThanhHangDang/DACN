@@ -99,6 +99,12 @@
   transition: filter 0.3s ease; /* Hiệu ứng mượt */
 }
 
+.custom-hover-3:hover{
+  cursor: pointer;
+  filter: brightness(1.9); /* Tăng độ sáng 20% */
+  transition: filter 0.3s ease; /* Hiệu ứng mượt */
+}
+
 .post-detail-bg{
   background-color: #D2E2FC;
 }
@@ -106,6 +112,8 @@
 .text-color{
   color: orangered;
 }
+
+
 
 
 

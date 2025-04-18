@@ -25,56 +25,14 @@ export default function CompanyProfile() {
     describle: companyInformation.describle || "",
   });
 
-  // const [logo, setLogo] = useState("");
-
   const handleUpdateCompanyProfile = () => {
     console.log(updateCompany);
   };
-
-  // const handleUpdateCompanyLogo = () => {
-  //   console.log(logo);
-  // };
 
   return (
     <div>
       <div className="bg-light rounded-2 me-2 my-2 p-2">
         <CompanyBackground company={companyInformation} />
-        {/* Logo công ty */}
-        {/* <div className="mb-4">
-          <label className="form-label fw-bold">Logo công ty</label>
-          <div className="d-flex align-items-center justify-content-center mb-1">
-            <img
-              src={companyInformation.logo}
-              alt=""
-              style={{ height: 80 }}
-              className=""
-            />
-          </div>
-          <div
-            className="border rounded d-flex align-items-center justify-content-center"
-            style={{ height: "100px", borderColor: "#ccc" }}
-          >
-            <div className="text-center">
-              <input
-                type="file"
-                className="form-control-file"
-                accept="image/jpeg, image/png, image/gif"
-                id="fileInput"
-                onChange={(e) => {
-                  setLogo(e.target.files[0]);
-                }}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="mb-3">
-          <button
-            className="btn btn-primary text-end"
-            onClick={handleUpdateCompanyLogo}
-          >
-            Cập nhật
-          </button>
-        </div> */}
       </div>
 
       <div className="bg-light rounded-2 me-2 my-2 p-2">
