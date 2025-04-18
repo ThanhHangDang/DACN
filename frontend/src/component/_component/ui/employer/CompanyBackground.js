@@ -90,16 +90,6 @@ const CompanyBackground = ({ company }) => {
           </div>
           <h3 className="mt-3 mb-1">{company.company_name}</h3>
           <p className="text-muted mb-3">{company.industry_name}</p>
-          {/* <div className="d-flex justify-content-center gap-2 mb-4">
-            <button className="btn btn-outline-primary">
-              <i className="fas fa-envelope me-2" />
-              Message
-            </button>
-            <button className="btn btn-primary">
-              <i className="fas fa-user-plus me-2" />
-              Connect
-            </button>
-          </div> */}
         </div>
       </div>
     </>

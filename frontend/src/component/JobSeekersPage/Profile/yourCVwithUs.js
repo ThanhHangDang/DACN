@@ -1,21 +1,30 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
-import { useAddItemProfileMutation,useDeleteItemProfileMutation,useUpdateItemProfileMutation,useGetItemProfileQuery } from "../../../redux_toolkit/jobseekerApi.js";
-import { useGetLanguagesQuery,useGetEducationQuery,useGetTagsQuery } from "../../../redux_toolkit/CategoryApi.js";
+import {
+  useAddItemProfileMutation,
+  useDeleteItemProfileMutation,
+  useUpdateItemProfileMutation,
+  useGetItemProfileQuery,
+} from "../../../redux_toolkit/jobseekerApi.js";
+import {
+  useGetLanguagesQuery,
+  useGetEducationQuery,
+  useGetTagsQuery,
+} from "../../../redux_toolkit/CategoryApi.js";
 import formatDateToDDMMYYYY from "../../../utils/formatDate.js";
 const formatDateForInput = (dateString) => {
   if (!dateString) return "";
-  
+
   try {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return ""; // Invalid date
-    
+
     // Thêm offset múi giờ để đảm bảo ngày được hiển thị đúng
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
     return `${year}-${month}-${day}`;
   } catch (error) {
     console.error("Error formatting date:", error);
@@ -25,20 +34,41 @@ const formatDateForInput = (dateString) => {
 export default function YourCVwithUs() {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const {data:userInformation} = useGetItemProfileQuery({type: "Basic",profile_id: user?.user?.id});
-  const {data:listExp} = useGetItemProfileQuery({type: "experience",profile_id: user?.user?.id});
-  const {data:listEducation} = useGetItemProfileQuery({type: "education",profile_id: user?.user?.id});
-  const {data:listProject} = useGetItemProfileQuery({type: "project",profile_id: user?.user?.id});
-  const {data:listSkill} = useGetItemProfileQuery({type: "skill",profile_id: user?.user?.id});
-  const {data:listLanguage} = useGetItemProfileQuery({type: "language",profile_id: user?.user?.id});
-  const {data:listCertification} = useGetItemProfileQuery({type: "certification",profile_id: user?.user?.id});
+  const { data: userInformation } = useGetItemProfileQuery({
+    type: "Basic",
+    profile_id: user?.user?.id,
+  });
+  const { data: listExp } = useGetItemProfileQuery({
+    type: "experience",
+    profile_id: user?.user?.id,
+  });
+  const { data: listEducation } = useGetItemProfileQuery({
+    type: "education",
+    profile_id: user?.user?.id,
+  });
+  const { data: listProject } = useGetItemProfileQuery({
+    type: "project",
+    profile_id: user?.user?.id,
+  });
+  const { data: listSkill } = useGetItemProfileQuery({
+    type: "skill",
+    profile_id: user?.user?.id,
+  });
+  const { data: listLanguage } = useGetItemProfileQuery({
+    type: "language",
+    profile_id: user?.user?.id,
+  });
+  const { data: listCertification } = useGetItemProfileQuery({
+    type: "certification",
+    profile_id: user?.user?.id,
+  });
   const [addItemProfile] = useAddItemProfileMutation();
   const [deleteItemProfile] = useDeleteItemProfileMutation();
   const [updateProfileItem] = useUpdateItemProfileMutation();
 
-  const {data: edu} = useGetEducationQuery();
-  const {data: tags} = useGetTagsQuery();
-  const {data: lang} = useGetLanguagesQuery();
+  const { data: edu } = useGetEducationQuery();
+  const { data: tags } = useGetTagsQuery();
+  const { data: lang } = useGetLanguagesQuery();
   console.log("listLanguage: ", listLanguage);
   const [experience, setExperience] = useState({
     profile_experience_id: "",
@@ -60,7 +90,7 @@ export default function YourCVwithUs() {
 
   const [dataDeleteModal, setDataDeleteModal] = useState({
     type: "",
-    data:{}
+    data: {},
   });
 
   const [careerTarget, setCareerTarget] = useState("");
@@ -75,8 +105,11 @@ export default function YourCVwithUs() {
   const [skillInput, setSkillInput] = useState("");
   const [skillAdd, setSkillAdd] = useState([]);
 
-  const [languageInput, setLanguageInput] = useState("");    const skillAdd_ID = [];
-  skillAdd.forEach((item) => {skillAdd_ID.push(item.tag_id)});
+  const [languageInput, setLanguageInput] = useState("");
+  const skillAdd_ID = [];
+  skillAdd.forEach((item) => {
+    skillAdd_ID.push(item.tag_id);
+  });
   const [languageAdd, setLanguageAdd] = useState([]);
 
   const [certification, setCertification] = useState({
@@ -90,10 +123,15 @@ export default function YourCVwithUs() {
   const [isAdd, setIsAdd] = useState(true);
 
   const handleUpdateCarreerTarget = async () => {
-    try{
-      await updateProfileItem({type:"Basic",data:{profile_id:userInformation?.jobseeker_id,career_target:careerTarget}}).unwrap();
-    }
-    catch (error) {
+    try {
+      await updateProfileItem({
+        type: "Basic",
+        data: {
+          profile_id: userInformation?.jobseeker_id,
+          career_target: careerTarget,
+        },
+      }).unwrap();
+    } catch (error) {
       console.error("Error adding Carreer Target:", error);
       toast.error("Update Carreer Target thất bại!");
     }
@@ -101,24 +139,29 @@ export default function YourCVwithUs() {
 
   const handleAddExperience = async () => {
     try {
-    if (isAdd) {
-      await addItemProfile({type:"experience",data:{profile_id:userInformation?.jobseeker_id,...experience}}).unwrap();
-      toast.success("Thêm Experience thành công!");
-    } else {
-      await updateProfileItem({type:"experience",data:{profile_id:userInformation?.jobseeker_id,...experience}}).unwrap();
-      toast.success("Update Experience thành công!");
-    }
+      if (isAdd) {
+        await addItemProfile({
+          type: "experience",
+          data: { profile_id: userInformation?.jobseeker_id, ...experience },
+        }).unwrap();
+        toast.success("Thêm Experience thành công!");
+      } else {
+        await updateProfileItem({
+          type: "experience",
+          data: { profile_id: userInformation?.jobseeker_id, ...experience },
+        }).unwrap();
+        toast.success("Update Experience thành công!");
+      }
 
-    setExperience({
-      profile_experience_id: "",
-      exp_title: "",
-      exp_company: "",
-      exp_from: "",
-      exp_to: "",
-      exp_description: "",
-    });
-  }
-  catch (error) {
+      setExperience({
+        profile_experience_id: "",
+        exp_title: "",
+        exp_company: "",
+        exp_from: "",
+        exp_to: "",
+        exp_description: "",
+      });
+    } catch (error) {
       console.error("Error adding experience:", error);
       toast.error("Thêm kinh nghiệm thất bại!");
     }
@@ -126,23 +169,28 @@ export default function YourCVwithUs() {
 
   const handleAddEducation = async () => {
     try {
-    if (isAdd) {
-     await addItemProfile({type:"education",data:{profile_id:userInformation?.jobseeker_id,...education}}).unwrap();
-     toast.success("Thêm Education thành công!");
-    } else {
-    await  updateProfileItem({type:"education",data:{profile_id:userInformation?.jobseeker_id,...education}}).unwrap();
-    toast.success("Update Education thành công!");
-    }
-    setEducation({
-      profile_education_id: "",
-      major: "",
-      school: "",
-      from_: "",
-      endYear: "",
-      to_: "",
-    });
-  }
-  catch (error) {
+      if (isAdd) {
+        await addItemProfile({
+          type: "education",
+          data: { profile_id: userInformation?.jobseeker_id, ...education },
+        }).unwrap();
+        toast.success("Thêm Education thành công!");
+      } else {
+        await updateProfileItem({
+          type: "education",
+          data: { profile_id: userInformation?.jobseeker_id, ...education },
+        }).unwrap();
+        toast.success("Update Education thành công!");
+      }
+      setEducation({
+        profile_education_id: "",
+        major: "",
+        school: "",
+        from_: "",
+        endYear: "",
+        to_: "",
+      });
+    } catch (error) {
       console.error("Error adding education:", error);
       toast.error("Thêm học vấn thất bại!");
     }
@@ -150,22 +198,27 @@ export default function YourCVwithUs() {
 
   const handleAddProject = async () => {
     try {
-    if (isAdd) {
-      await addItemProfile({type:"project",data:{profile_id:userInformation?.jobseeker_id,...project}}).unwrap();
-      toast.success("Thêm Project thành công!");
-    } else { 
-      await  updateProfileItem({type:"project",data:{profile_id:userInformation?.jobseeker_id,...project}}).unwrap();
-      toast.success("Update Project thành công!");
-    }
-    setProject({
-      profile_project_id: "",
-      project_name: "",
-      project_from: "",
-      project_to: "",
-      project_description: "",
-    });
-  }
-  catch (error) {
+      if (isAdd) {
+        await addItemProfile({
+          type: "project",
+          data: { profile_id: userInformation?.jobseeker_id, ...project },
+        }).unwrap();
+        toast.success("Thêm Project thành công!");
+      } else {
+        await updateProfileItem({
+          type: "project",
+          data: { profile_id: userInformation?.jobseeker_id, ...project },
+        }).unwrap();
+        toast.success("Update Project thành công!");
+      }
+      setProject({
+        profile_project_id: "",
+        project_name: "",
+        project_from: "",
+        project_to: "",
+        project_description: "",
+      });
+    } catch (error) {
       console.error("Error adding project:", error);
       toast.error("Thêm project thất bại!");
     }
@@ -184,14 +237,21 @@ export default function YourCVwithUs() {
 
   const handleAddSkill = async () => {
     try {
-    const skillAdd_ID = [];
-    skillAdd.forEach((item) => {skillAdd_ID.push(item.tag_id)});
-    await addItemProfile({type:"skill",data:{profile_id:userInformation?.jobseeker_id,values:skillAdd_ID}}).unwrap();
-    setSkillAdd([]);
-    setSkillInput("");
-    toast.success("Thêm skill thành công!");
-    }
-    catch (error) {
+      const skillAdd_ID = [];
+      skillAdd.forEach((item) => {
+        skillAdd_ID.push(item.tag_id);
+      });
+      await addItemProfile({
+        type: "skill",
+        data: {
+          profile_id: userInformation?.jobseeker_id,
+          values: skillAdd_ID,
+        },
+      }).unwrap();
+      setSkillAdd([]);
+      setSkillInput("");
+      toast.success("Thêm skill thành công!");
+    } catch (error) {
       console.error("Error adding skill:", error);
       toast.error("Thêm skillthất bại!");
     }
@@ -210,14 +270,18 @@ export default function YourCVwithUs() {
 
   const handleAddLanguage = async () => {
     try {
-    const languageID = [];
-    languageAdd.forEach((item) => {languageID.push(item.language_id)});
-    await addItemProfile({type:"language",data:{profile_id:userInformation?.jobseeker_id,values:languageID}}).unwrap();
-    toast.success("Thêm Language  thành công!");
-    setLanguageAdd([]);
-    setLanguageInput("");
-    }
-    catch (error) {
+      const languageID = [];
+      languageAdd.forEach((item) => {
+        languageID.push(item.language_id);
+      });
+      await addItemProfile({
+        type: "language",
+        data: { profile_id: userInformation?.jobseeker_id, values: languageID },
+      }).unwrap();
+      toast.success("Thêm Language  thành công!");
+      setLanguageAdd([]);
+      setLanguageInput("");
+    } catch (error) {
       console.error("Error adding Language:", error);
       toast.error("Thêm ngoại ngữ thất bại!");
     }
@@ -230,29 +294,28 @@ export default function YourCVwithUs() {
           type: "certification",
           data: {
             profile_id: userInformation?.jobseeker_id,
-            ...certification
-          }
+            ...certification,
+          },
         }).unwrap();
-      toast.success("Thêm Certification thành công!");
+        toast.success("Thêm Certification thành công!");
       } else {
         await updateProfileItem({
           type: "certification",
           data: {
             profile_id: userInformation?.jobseeker_id,
-            ...certification
+            ...certification,
             // certification đã có profile_certifications_id nhờ bạn đã thêm ở trên
-          }
+          },
         }).unwrap();
         toast.success("Cập nhật Certification thành công!");
       }
-  
+
       setCertification({
         profile_certifications_id: "", // Reset ID khi hoàn thành
         certifications: "",
         month_: "",
       });
-    }
-    catch (error) {
+    } catch (error) {
       console.error("Error adding Certification:", error);
       toast.error("Thêm chứng chỉ thất bại!");
     }
@@ -260,16 +323,14 @@ export default function YourCVwithUs() {
 
   const handleDeleteProfileItem = async () => {
     try {
-    console.log("dataDeleteModal: ", dataDeleteModal);
-   await deleteItemProfile(dataDeleteModal).unwrap();
-   toast.success("Xóa thành công!");
-    }
-    catch (error) {
+      console.log("dataDeleteModal: ", dataDeleteModal);
+      await deleteItemProfile(dataDeleteModal).unwrap();
+      toast.success("Xóa thành công!");
+    } catch (error) {
       console.error("Error Delete:", error);
       toast.error("Xóa thất bại!");
     }
   };
-
 
   return (
     <div>
@@ -368,13 +429,16 @@ export default function YourCVwithUs() {
                       Công việc
                     </label>
                     <input
-                      value={experience.exp_title || ""}  // Thêm || "" để tránh lỗi undefined
+                      value={experience.exp_title || ""} // Thêm || "" để tránh lỗi undefined
                       type="text"
                       className="form-control"
                       id="postTitle"
                       placeholder="Nhập công việc"
                       onChange={(e) => {
-                        setExperience({ ...experience, exp_title: e.target.value });
+                        setExperience({
+                          ...experience,
+                          exp_title: e.target.value,
+                        });
                       }}
                     />
                   </div>
@@ -796,21 +860,22 @@ export default function YourCVwithUs() {
                       }}
                     />
                     <ul className="list-group">
-                      {skillInput !== "" && tags
-                        ?.filter((tag) =>
-                          tag.tags_content
-                            .toLowerCase()
-                            .includes(skillInput.toLowerCase())
-                        )
-                        .map((skill) => (
-                          <li
-                            key={skill.tag_id}
-                            className="list-group-item list-group-item-action ms-2 mr-2"
-                            onClick={() => handleAddSkillOptions(skill)}
-                          >
-                            {skill.tags_content}
-                          </li>
-                        ))}
+                      {skillInput !== "" &&
+                        tags
+                          ?.filter((tag) =>
+                            tag.tags_content
+                              .toLowerCase()
+                              .includes(skillInput.toLowerCase())
+                          )
+                          .map((skill) => (
+                            <li
+                              key={skill.tag_id}
+                              className="list-group-item list-group-item-action ms-2 mr-2"
+                              onClick={() => handleAddSkillOptions(skill)}
+                            >
+                              {skill.tags_content}
+                            </li>
+                          ))}
                     </ul>
                     <div className="mt-2">
                       {skillAdd?.map((skill) => (
@@ -1089,7 +1154,10 @@ export default function YourCVwithUs() {
       </div>
       {/* End modal delete */}
 
-      <div className="bg-light rounded-2 me-2 my-2 p-4">
+      <div
+        className="container rounded-2 me-2 my-2 p-4 card shadow-sm"
+        style={{ maxWidth: "90vw", margin: "0 auto" }}
+      >
         <h5 className="fw-bold">Hoàn chỉnh hồ sơ</h5>
         <div className="d-flex justify-content-between align-items-center mt-3">
           <span
@@ -1144,9 +1212,9 @@ export default function YourCVwithUs() {
         </div>
       </div>
 
-      <div className="bg-light rounded-2 me-2 my-2 p-2">
+      <div className="container rounded-2 me-2 my-2 p-2 card shadow-sm">
         <span className="d-flex justify-content-between">
-          <h3>Mục tiêu nghề nghiệp</h3>
+          <h5 className="fw-bold">Mục tiêu nghề nghiệp</h5>
           <i
             className="bi bi-pencil-square text-primary custom-hover"
             data-bs-toggle="modal"
@@ -1159,15 +1227,18 @@ export default function YourCVwithUs() {
         </ul>
       </div>
 
-      <div className="bg-light rounded-2 me-2 my-2 p-2">
+      <div className="container rounded-2 me-2 my-2 p-2 card shadow-sm">
         <span className="">
-          <h3>Kinh nghiệm làm việc</h3>
+          <h5 className="fw-bold">Kinh nghiệm làm việc</h5>
           <p className="fst-italic">
             Mô tả kinh nghiệm làm việc của bạn càng chi tiết càng tốt
           </p>
           {listExp &&
             listExp?.map((exp, index) => (
-              <div className="bg-white rounded-2 me-2 my-2 p-2" key={index}>
+              <div
+                className="bg-light rounded-2 me-2 my-2 p-2 mb-2 shadow-sm"
+                key={index}
+              >
                 <div className="d-flex justify-content-between align-items-center rounded-2">
                   <span className="col-md-3">{exp.exp_title}</span>
                   <span className="col-md-3">{exp.exp_company}</span>
@@ -1188,8 +1259,8 @@ export default function YourCVwithUs() {
                           profile_experience_id: exp.profile_experience_id,
                           exp_title: exp.exp_title,
                           exp_company: exp.exp_company,
-                          exp_from: formatDateForInput(exp.exp_from),  // Sử dụng formatDateForInput
-                          exp_to: formatDateForInput(exp.exp_to),      // Sử dụng formatDateForInput
+                          exp_from: formatDateForInput(exp.exp_from), // Sử dụng formatDateForInput
+                          exp_to: formatDateForInput(exp.exp_to), // Sử dụng formatDateForInput
                           exp_description: exp.exp_description,
                         });
                       }}
@@ -1204,7 +1275,8 @@ export default function YourCVwithUs() {
                           type: "experience",
                           data: {
                             profile_id: userInformation?.jobseeker_id,
-                            profile_experience_id: exp.profile_experience_id,}   
+                            profile_experience_id: exp.profile_experience_id,
+                          },
                         });
                       }}
                     ></i>
@@ -1222,7 +1294,7 @@ export default function YourCVwithUs() {
           onClick={() => {
             setIsAdd(true);
             setExperience({
-              profile_experience_id: "", 
+              profile_experience_id: "",
               exp_title: "",
               exp_company: "",
               exp_from: "",
@@ -1237,12 +1309,15 @@ export default function YourCVwithUs() {
         </span>
       </div>
 
-      <div className="bg-light rounded-2 me-2 my-2 p-2">
+      <div className="container rounded-2 me-2 my-2 p-2 card shadow-sm">
         <span className="">
-          <h3>Học vấn</h3>
+          <h5 className="fw-bold">Học vấn</h5>
           {listEducation &&
             listEducation?.map((edu, index) => (
-              <div className="bg-white rounded-2 me-2 my-2 p-2" key={index}>
+              <div
+                className="bg-light rounded-2 me-2 my-2 p-2 mb-2 shadow-sm"
+                key={index}
+              >
                 <div className="d-flex justify-content-between align-items-center rounded-2">
                   <span className="col-md-3">{edu.major}</span>
                   <span className="col-md-2">{edu.education_title}</span>
@@ -1265,7 +1340,7 @@ export default function YourCVwithUs() {
                           education_id: edu.education_id,
                           school: edu.school,
                           from_: formatDateForInput(edu.from_), // Sử dụng formatDateForInput
-                            to_:formatDateForInput(edu.to_), // Sử dụng formatDateForInput
+                          to_: formatDateForInput(edu.to_), // Sử dụng formatDateForInput
                         });
                         // setModalUpdateID(2);
                       }}
@@ -1280,7 +1355,8 @@ export default function YourCVwithUs() {
                           type: "education",
                           data: {
                             profile_id: userInformation?.jobseeker_id,
-                            profile_education_id: edu.profile_education_id}   
+                            profile_education_id: edu.profile_education_id,
+                          },
                         });
                       }}
                     ></i>
@@ -1312,13 +1388,16 @@ export default function YourCVwithUs() {
         </span>
       </div>
 
-      <div className="bg-light rounded-2 me-2 my-2 p-2">
+      <div className="container rounded-2 me-2 my-2 p-2 card shadow-sm">
         <span className="">
-          <h3>Dự án</h3>
+          <h5 className="fw-bold">Dự án</h5>
           <p className="fst-italic">Mô tả dự án để thu hút nhà tuyển dụng</p>
           {listProject &&
             listProject?.map((pro, index) => (
-              <div className="bg-white rounded-2 me-2 my-2 p-2" key={index}>
+              <div
+                className="bg-light rounded-2 me-2 my-2 p-2 mb-2 shadow-sm"
+                key={index}
+              >
                 <div className="d-flex justify-content-between align-items-center rounded-2">
                   <span className="col-md-3">{pro.project_name}</span>
                   <span className="col-md-3"></span>
@@ -1345,7 +1424,6 @@ export default function YourCVwithUs() {
                             .split("T")[0],
                           project_description: pro.project_description,
                         });
-
                       }}
                     ></i>
                     <i
@@ -1355,10 +1433,11 @@ export default function YourCVwithUs() {
                       onClick={() => {
                         setDataDeleteModal({
                           ...dataDeleteModal,
-                          type:"project",
+                          type: "project",
                           data: {
-                                  profile_id: userInformation?.jobseeker_id,
-                                  profile_project_id: pro.profile_project_id}
+                            profile_id: userInformation?.jobseeker_id,
+                            profile_project_id: pro.profile_project_id,
+                          },
                         });
                       }}
                     ></i>
@@ -1390,9 +1469,9 @@ export default function YourCVwithUs() {
         </span>
       </div>
 
-      <div className="bg-light rounded-2 me-2 my-2 p-2">
-        <span className="">
-          <h3>Kỹ năng</h3>
+      <div className="container rounded-2 me-2 my-2 p-2 card shadow-sm">
+        <h5 className="fw-bold">Kỹ năng</h5>
+        <span className="d-flex">
           {listSkill &&
             listSkill?.map((skl, index) => (
               <div key={index}>
@@ -1407,9 +1486,9 @@ export default function YourCVwithUs() {
                       ...dataDeleteModal,
                       type: "skill",
                       data: {
-                              profile_id: userInformation?.jobseeker_id,
-                              skill_id: skl.skill_id
-                            }
+                        profile_id: userInformation?.jobseeker_id,
+                        skill_id: skl.skill_id,
+                      },
                     });
                   }}
                 >
@@ -1429,9 +1508,9 @@ export default function YourCVwithUs() {
         </span>
       </div>
 
-      <div className="bg-light rounded-2 me-2 my-2 p-2">
-        <span className="">
-          <h3>Ngoại ngữ</h3>
+      <div className="container rounded-2 me-2 my-2 p-2 card shadow-sm">
+        <h5 className="fw-bold">Ngoại ngữ</h5>
+        <span className="d-flex">
           {listLanguage &&
             listLanguage?.map((lang, index) => (
               <div key={index}>
@@ -1448,7 +1527,7 @@ export default function YourCVwithUs() {
                       data: {
                         profile_id: userInformation?.jobseeker_id,
                         language_id: lang.language_id,
-                      }
+                      },
                     });
                   }}
                 >
@@ -1468,12 +1547,15 @@ export default function YourCVwithUs() {
         </span>
       </div>
 
-      <div className="bg-light rounded-2 me-2 my-2 p-2">
+      <div className="container rounded-2 me-2 my-2 p-2 card shadow-sm">
         <span className="">
-          <h3>Chứng chỉ</h3>
+          <h5 className="fw-bold">Chứng chỉ</h5>
           {listCertification &&
             listCertification?.map((cer, index) => (
-              <div className="bg-white rounded-2 me-2 my-2 p-2" key={index}>
+              <div
+                className="bg-light rounded-2 me-2 my-2 p-2 mb-2 shadow-sm"
+                key={index}
+              >
                 <div className="d-flex justify-content-between align-items-center rounded-2">
                   <span className="col-md-3">{cer.certifications || ""}</span>
                   <span className="col-md-3"></span>
@@ -1489,7 +1571,8 @@ export default function YourCVwithUs() {
                         setIsAdd(false);
                         setCertification({
                           ...certification,
-                          profile_certifications_id: cer.profile_certifications_id, 
+                          profile_certifications_id:
+                            cer.profile_certifications_id,
                           certifications: cer.certifications,
                           month_: new Date(cer.month_)
                             .toISOString()
@@ -1510,7 +1593,7 @@ export default function YourCVwithUs() {
                             profile_id: userInformation?.jobseeker_id,
                             profile_certifications_id:
                               cer.profile_certifications_id,
-                          }
+                          },
                         });
                       }}
                     ></i>
