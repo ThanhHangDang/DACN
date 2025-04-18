@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
 // import { getListEmployee } from "../../../redux/actions/userAction.js";
@@ -7,6 +7,7 @@ import { useGetlistJobseekerQuery } from "../../../redux_toolkit/employerApi";
 
 export default function EmployeeMaganePage() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   // const { listEmployee } = useSelector((state) => state.user);
   const { isLogin, user } = useSelector((state) => state.auth);
   const { data } = useGetlistJobseekerQuery();
@@ -16,6 +17,11 @@ export default function EmployeeMaganePage() {
   // useEffect(() => {
   //   dispatch(getListEmployee());
   // }, []);
+  useEffect(() => {
+    if (!isLogin || user?.user?.role !== 2) {
+      navigate("/login");
+    }
+  }, [navigate, user, isLogin]);
 
   const renderEmployee = () => {
     return (

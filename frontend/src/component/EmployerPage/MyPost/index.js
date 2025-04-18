@@ -1,4 +1,4 @@
-import React, { useState } from "react"; //useEffect
+import React, { useState, useEffect } from "react"; //useEffect
 import { NavLink, useNavigate } from "react-router-dom"; //Outlet
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -194,6 +194,12 @@ export default function EmployerPost() {
       status
     );
   };
+
+  useEffect(() => {
+    if (!isLogin || user?.user?.role !== 2) {
+      navigate("/login");
+    }
+  }, [navigate, user, isLogin]);
 
   return (
     <>

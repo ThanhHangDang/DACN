@@ -28,9 +28,9 @@ const SidebarLayout = ({ data = [] }) => {
   }, []);
 
   return (
-    <div className="d-flex">
+    <div className="d-flex" style={{ minHeight: "100vh" }}>
       <nav
-        className={`sidebar d-flex flex-column flex-shrink-0 position-fixed ${
+        className={`sidebar d-flex flex-column flex-shrink-0 position-relative ${
           collapsed ? "collapsed" : ""
         }`}
       >

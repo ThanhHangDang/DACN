@@ -27,7 +27,7 @@ export default function EmployerAccountSetting() {
     if (!isLogin || user?.user?.role !== 2) {
       navigate("/login");
     }
-  }, [user, isLogin]);
+  }, [navigate, user, isLogin]);
 
   return (
     <div>

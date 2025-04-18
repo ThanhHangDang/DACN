@@ -1,7 +1,16 @@
-import React from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import React, { useEffect } from "react";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function EmployerProfile() {
+  const navigate = useNavigate();
+  const { isLogin, user } = useSelector((state) => state.auth);
+  useEffect(() => {
+    if (!isLogin || user?.user?.role !== 2) {
+      navigate("/login");
+    }
+  }, [navigate, user, isLogin]);
+
   return (
     <div className="container my-3">
       <ul className="nav nav-tabs">

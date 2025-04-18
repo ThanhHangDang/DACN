@@ -9,15 +9,19 @@ body {
 
 .sidebar {
     width: var(--sidebar-width);
-    height: 100vh;
+    /* height: 100vh; */
     background: linear-gradient(135deg, #1a1c2e 0%, #16181f 100%);
     transition: all 0.3s ease;
-    min-height: 500px;
+    /* min-height: 110vh; */
 }
 
 .sidebar.collapsed {
     width: var(--sidebar-width-collapsed);
 }
+
+
+  
+  
 
 .sidebar-link {
     color: #a0a3bd;
@@ -79,7 +83,7 @@ body {
 }
 
 .main-content {
-    margin-left: var(--sidebar-width);
+    /* margin-left: var(--sidebar-width); */
     background-color: #f8f9fa;
     min-height: 100vh;
     padding: 20px;
@@ -88,7 +92,7 @@ body {
 }
 
 .collapsed~.main-content {
-    margin-left: var(--sidebar-width-collapsed);
+    /* margin-left: var(--sidebar-width-collapsed); */
 }
 
 .toggle-btn {

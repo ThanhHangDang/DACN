@@ -75,10 +75,9 @@ export default function JobSeekerOverview() {
 
   useEffect(() => {
     if (!isLogin || user?.user.role !== 3) {
-      console.log("check: co chay", user?.user.role);
       navigate("/login");
     }
-  }, [dispatch, isLogin, navigate, user]);
+  }, [isLogin, navigate, user]);
 
   return (
     <>
