@@ -1,36 +1,35 @@
 const bcrypt = require("bcrypt");
+const ApiError = require("../utils/ApiError");
 const {
   findUserByUsername,
   loginExecute,
 } = require("../models/authencationModels.js");
 
-const login = async (req, res) => {
-  const { username, password } = req.body.params;
-
-  if (!username || !password) {
-    return res
-      .status(400)
-      .json({ message: "Tài khoản hoặc mật khẩu không đúng." });
-  }
-
+/**
+ * Xử lý đăng nhập
+ */
+const login = async (req, res, next) => {
   try {
+    const { username, password } = req.body.params;
+
+    // Kiểm tra dữ liệu đầu vào
+    if (!username || !password) {
+      throw new ApiError("Tài khoản hoặc mật khẩu không đúng.", 400);
+    }
+
     // Tìm người dùng trong cơ sở dữ liệu
     const user = await findUserByUsername(username);
 
     if (!user) {
-      return res
-        .status(401)
-        .json({ message: "Tài khoản hoặc mật khẩu không đúng." });
+      throw new ApiError("Tài khoản hoặc mật khẩu không đúng.", 401);
     }
 
     const userLogin = await loginExecute(username, password);
 
     if (!userLogin) {
-      return res
-        .status(401)
-        .json({ message: "Tài khoản hoặc mật khẩu không đúng." });
+      throw new ApiError("Tài khoản hoặc mật khẩu không đúng.", 401);
     }
-    // console.log("dang chay login");
+
     const token = "token";
     req.session.userLogin = {
       id: userLogin.user_id,
@@ -38,41 +37,91 @@ const login = async (req, res) => {
       role: userLogin.role_id,
       create_date: userLogin.create_at,
     };
-     // Tạo token ở đây nếu cần thiết
-    return res
-      .status(200)
-      .json({ message: "Đăng nhập thành công.", user: req.session.userLogin, token:token });
+    
+    // Trả về thành công sử dụng res.success
+    return res.success(
+      {
+        user: req.session.userLogin, 
+        token: token
+      }, 
+      "Đăng nhập thành công.",
+      200
+    );
   } catch (error) {
-    console.error("Login error:", error);
-    res.status(500).json({ message: "Có lỗi khi đăng nhập." });
+    // Xử lý các lỗi không xác định
+    if (!(error instanceof ApiError)) {
+      return next(new ApiError("Có lỗi khi đăng nhập.", 500));
+    }
+    return next(error);
   }
 };
 
-const isLogin = (req, res) => {
-  // console.log("isLogin", req.session.userLogin);
-  if (req.session.userLogin) {
-    return res
-      .status(200)
-      .json({ loggedIn: true, user: req.session.userLogin });
+/**
+ * Kiểm tra trạng thái đăng nhập
+ */
+const isLogin = (req, res, next) => {
+  try {
+    if (req.session.userLogin) {
+      return res.success(
+        { loggedIn: true, user: req.session.userLogin },
+        "Đã đăng nhập",
+        200
+      );
+    }
+    
+    return res.success(
+      { loggedIn: false },
+      "Chưa đăng nhập",
+      200
+    );
+  } catch (error) {
+    return next(new ApiError("Lỗi kiểm tra trạng thái đăng nhập", 500));
   }
-  res.status(401).json({ loggedIn: false, message: "Chưa đăng nhập" });
 };
 
-const logout = (req, res) => {
+/**
+ * Xử lý đăng xuất
+ */
+const logout = (req, res, next) => {
   req.session.destroy((err) => {
     if (err) {
       console.log(err);
-      return res.status(500).json({ message: "Đăng xuất thất bại" });
+      return next(new ApiError("Đăng xuất thất bại", 500));
     }
 
     res.clearCookie("connect.sid");
-    return res.status(200).json({ message: "Đăng xuất thành công" });
+    return res.success(null, "Đăng xuất thành công", 200);
   });
 };
 
-const register = async (req, res) => {
-  const { dataRegister } = req.body.params;
-  console.log(dataRegister);
+/**
+ * Xử lý đăng ký tài khoản
+ */
+const register = async (req, res, next) => {
+  try {
+    const { dataRegister } = req.body.params;
+    
+    // Kiểm tra dữ liệu đầu vào
+    if (!dataRegister) {
+      throw new ApiError("Thiếu thông tin đăng ký", 400);
+    }
+    
+    console.log(dataRegister);
+    
+    // Logic đăng ký sẽ được triển khai sau
+    // ...
+    
+    return res.success(
+      { registered: true },
+      "Đăng ký thành công",
+      200
+    );
+  } catch (error) {
+    if (!(error instanceof ApiError)) {
+      return next(new ApiError("Có lỗi khi đăng ký.", 500));
+    }
+    return next(error);
+  }
 };
 
 module.exports = {

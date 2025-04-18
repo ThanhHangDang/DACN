@@ -1,17 +1,19 @@
 const express = require("express");
 
 const authencationRoutes = require("./authencationRoutes.js");
-const workRoutes = require("./workRoutes.js");
-const companyRoutes = require("./companyRoutes.js");
-const userRoutes = require("./userRoutes.js");
 const categoryRoutes = require("./categoryRoutes.js");
+const jobseekerRoutes = require("./jobseekerRoutes.js");
+const employerRoutes = require("./employerRoutes.js");
+const guestRoutes = require("./guestRoutes.js");
+const notificationRoutes = require("./notificationRoutes.js");
+
 
 const routes = express();
-
-routes.use("/auth", authencationRoutes);
-routes.use("/work", workRoutes);
-routes.use("/company", companyRoutes);
-routes.use("/user", userRoutes);
 routes.use("/category", categoryRoutes);
+routes.use("/auth", authencationRoutes);
+routes.use("/jobseeker", jobseekerRoutes);
+routes.use("/employer", employerRoutes);
+routes.use("/guest", guestRoutes);
+routes.use("/notification", notificationRoutes);
 
 module.exports = routes;

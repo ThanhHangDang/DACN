@@ -1,21 +1,6 @@
 const db = require("../config/databaseConfig.js");
 const profileTables = require("../config/table_for_jobseeker.js");
-const { queryGetWorkDetail } = require("./workModel");
-const queryGetListEmployee = async () => {
-  const [listEmployee] = await db.query(
-    `
-    select 
-      js.avatar,
-      js.jobseeker_id,
-      pjs.full_name,
-      pjs.year_exp,
-      pjs.title
-    from user_jobseeker js
-    join profile_jobseeker pjs on js.jobseeker_id = pjs.profile_id;
-    `
-  );
-  return listEmployee;
-};
+const { queryGetWorkDetail } = require("./employerModels.js");
 
 const queryGetEmployeeDetail = async (id) => {
   const [employeeDetail] = await db.query(
@@ -303,6 +288,7 @@ const queryGetFollowedCompanyByID = async (id) => {
   // console.log(followedCompany);
   return followedCompany;
 };
+
 const queryGetBasicCompany = async (id) => {
   const [result] = await db.query(
     `SELECT * FROM (Select * FROM company where company_id = ?) as t1
@@ -311,26 +297,6 @@ const queryGetBasicCompany = async (id) => {
     [id]
   );
   return result;
-};
-
-const queryGetCompanyInformation = async (id) => {
-  const [result] = await db.query(
-    `SELECT * FROM (Select * FROM company where company_id = ?) as t1
-    JOIN catalog_scale cs on cs.scale_id= t1.scale_id  JOIN company_location cl ON cl.company_id = t1.company_id 
-    JOIN catalog_industry ci where ci.industry_id=t1.industry_id`,
-    [id]
-  );
-  const [result2] = await db.query(
-    `
-      SELECT DISTINCT ctb.benefit_name
-      FROM company_benefit cob
-      JOIN catalog_benefit ctb ON ctb.benefit_id = cob.benefit_id
-      WHERE cob.company_id = ?
-    `,
-    [id]
-  );
-  const finalResult = { ...result[0], company_benefits: result2 };
-  return finalResult;
 };
 
 const queryUpdateJobseekerProfileImage = async (id, url) => {
@@ -346,32 +312,16 @@ const queryUpdateJobseekerProfileImage = async (id, url) => {
   return affectedRows;
 };
 
-
-const queryGetNotificationByID = async (id) => {
-  const [notification] = await db.query(
-    `
-        SELECT m.*, mr.*, u.username
-        FROM message m
-        LEFT JOIN message_recipients mr ON m.message_id = mr.message_id AND mr.recipient_id = ?
-        LEFT JOIN user_ u ON mr.recipient_id = u.user_id
-        WHERE m.is_global = TRUE OR mr.recipient_id IS NOT NULL
-     ;
-    `,
-    [id]
-  );
-  return notification;
-};
-
-
 const queryAddItemProfile = async (type, data) => {
-  if (!profileTables[type] || profileTables[type].tableName === undefined || profileTables[type].key === "Basic") {
+  if (!profileTables['profile'][type] || profileTables['profile'][type].tableName === undefined || profileTables['profile'][type].key === "Basic") {
     throw new Error(`Invalid profile type: ${type}`);
   }
+  console.log("data Add ",type);
 try {
   if (type==="language" || type==="skill") { // array of objects
     const profile_id = data.profile_id;
     const arr = data.values;    
-    const fieldsArray = profileTables[type]["addItem"];    
+    const fieldsArray = profileTables['profile'][type]["addItem"];    
     const values = [];
     const placeholder_arr=[];
     arr.forEach(item => { 
@@ -383,14 +333,15 @@ try {
     const placeholders = placeholder_arr.join(", ");
     const [result] = await db.query(
       `
-      INSERT INTO ${profileTables[type].tableName} (${fields})
+      INSERT INTO ${profileTables['profile'][type].tableName} (${fields})
       VALUES ${placeholders};`,
       values
     );
     return  result.affectedRows;}
   else {
-    const fieldsArray = profileTables[type]["addItem"];    
+    const fieldsArray = profileTables['profile'][type]["addItem"];    
     const values = [];
+    console.log("data Add ",data);
     fieldsArray.forEach(field => {
       if (data[field] !== undefined) {
         values.push(data[field]);
@@ -402,13 +353,13 @@ try {
     const placeholders = values.map(() => "?").join(", ");
 
 
-    // console.log(      `
-    //   INSERT INTO ${profileTables[type].tableName} (${fields})
-    //   VALUES (${placeholders});`,
-    //   values)
+    console.log(      `
+      INSERT INTO ${profileTables['profile'][type].tableName} (${fields})
+      VALUES (${placeholders});`,
+      values)
     const [result] = await db.query(
       `
-      INSERT INTO ${profileTables[type].tableName} (${fields})
+      INSERT INTO ${profileTables['profile'][type].tableName} (${fields})
       VALUES (${placeholders});`,
       values
     );
@@ -426,12 +377,12 @@ const queryUpdateItemProfile = async (type, data) => {
   try {
     if (type === "Basic") {
       // Special case for Basic profile fields
-      const key = profileTables[type]["key"][0]; // bang nay chi co 1 key
+      const key = profileTables['profile'][type]["key"][0]; // bang nay chi co 1 key
       console.log("data Update Basic ",data);
       const fieldsToUpdate_arr = [];
       const values = [];
       Object.keys(data).forEach((item) => {
-        if (profileTables[type]["updateItem"].includes(item)) {
+        if (profileTables['profile'][type]["updateItem"].includes(item)) {
           fieldsToUpdate_arr.push(`${item}=?`);
           values.push(data[item]);
         }});        
@@ -447,19 +398,19 @@ const queryUpdateItemProfile = async (type, data) => {
       return result.affectedRows;
     } else {
       // console.log("data Update other ",data);
-      if (!profileTables[type]) {
+      if (!profileTables['profile'][type]) {
         throw new Error(`Invalid profile type: ${type}`);
       }
       const values = [];
-      const fieldsToUpdate = profileTables[type]["updateItem"];   
+      const fieldsToUpdate = profileTables['profile'][type]["updateItem"];   
       const fields = fieldsToUpdate.map((item) => `${item} = ?`).join(", ");
-      const fieldKey = profileTables[type]["key"];
+      const fieldKey = profileTables['profile'][type]["key"];
       const whereClause = fieldKey.map((item) => `${item} = ?`).join(" AND ");
       fieldsToUpdate.map((item) => values.push(data[item]));
       fieldKey.map((item) => values.push(data[item]));
       const [result] = await db.query(
         `
-        UPDATE ${profileTables[type].tableName}
+        UPDATE ${profileTables['profile'][type].tableName}
         SET ${fields}
         WHERE ${whereClause};`,
         values
@@ -471,39 +422,40 @@ const queryUpdateItemProfile = async (type, data) => {
     throw error;
   }
 };
+
 const queryDeleteItemProfile = async (type, data) => {
   try {
 
-    if (!profileTables[type]) {
+    if (!profileTables['profile'][type]) {
       throw new Error(`Invalid profile type: ${type}`);
     }
     const values = [];
-    const fieldsToDelete = profileTables[type]["key"]; 
+    const fieldsToDelete = profileTables['profile'][type]["key"]; 
     const whereClause = fieldsToDelete.map((item) => `${item} = ?`).join(" AND ");
     fieldsToDelete.map((item) => values.push(data[item]));
     const [result] = await db.query(
       `
-    DELETE FROM ${profileTables[type].tableName}
+    DELETE FROM ${profileTables['profile'][type].tableName}
     WHERE ${whereClause};`,
       values
     );
     // console.log(result);
     // console.log(result.affectedRows);
-    return result.affectedRows;;
+    return result.affectedRows>0;
   } catch (error) {
     console.error(`Error in queryDeleteItemProfile:`, error);
     throw error;
   }
 };
 
-const queryItemProfile = async (type, profile_id) => {
+const queryGetItemProfile = async (type, profile_id) => {
   try {
     if (type === "Basic") {
       // Special case for Basic profile fields
       const  result = queryGetUserInformation(profile_id);
       return result;
     } else {
-      if (!profileTables[type]) {
+      if (!profileTables['profile'][type]) {
         throw new Error(`Invalid profile type: ${type}`);
       }
      switch (type) {
@@ -565,14 +517,310 @@ const queryItemProfile = async (type, profile_id) => {
     throw error;
   }
 };
+/////////////////////////////////////////////////////////
+// Profile related queries
+
+// Resume related queries
+const queryAddResume = async (profile_id, resumeData) => { 
+  try {
+    const { cv_name, cv_link } = resumeData;
+    const create_at = new Date();
+    
+    const [result] = await db.query(
+      `INSERT INTO profile_cv (profile_id, cv_name, cv_link, create_at) 
+       VALUES (?, ?, ?, ?)`,
+      [profile_id, cv_name, cv_link, create_at]
+    );
+    
+    return result.insertId >0;
+  }
+  catch (error) {
+    console.error("Error in queryAddResume:", error);
+    throw error;
+  }
+
+};
+
+const queryGetResume = async (profile_id) => {
+  try {
+    const [resumes] = await db.query(
+      `SELECT cv_id, cv_name, cv_link, create_at
+       FROM profile_cv
+       WHERE profile_id = ?
+       ORDER BY create_at DESC`,
+      [profile_id]
+    );
+    
+    return resumes;
+  }
+  catch (error) {
+    console.error("Error in queryGetResume:", error);
+    throw error;
+  }
+
+};
+
+const queryDeleteResume = async (profile_id,cv_id) => {
+  try 
+  {
+    const [result] = await db.query(
+      `DELETE FROM profile_cv 
+       WHERE cv_id = ? AND profile_id = ?`,
+      [cv_id, profile_id]
+    );
+    
+    return result.affectedRows > 0;
+  }
+  catch (error)
+  {
+    console.error("Error in queryDeleteResume:", error);
+    throw error;
+  }
+
+};
+
+// Job application related queries
+const queryGetListJobApplication = async (profile_id) => {
+  try {
+    const [jobApplications] = await db.query(
+      `
+      SELECT 
+      j.title,
+      j.job_id,
+      j.date_post,
+      j.date_expi,
+      cc.city_id,
+      cc.city_name as work_location,
+      j.salary_max,
+      j.salary_min,
+      j.industry_id,
+      j.describle,
+      ci.industry_name,
+      j.job_function_id,
+      cj.job_function_name,
+      c.company_id,
+      c.company_name,
+      c.logo,
+      c.background
+      FROM
+      (SELECT ja.*
+       FROM logs_jobseeker_apply_job ja
+       WHERE ja.jobseeker_id = ?) lja
+       JOIN job j ON lja.job_id = j.job_id
+       JOIN catalog_industry ci ON j.industry_id = ci.industry_id
+       JOIN catalog_job_function cj ON j.job_function_id = cj.job_function_id
+      JOIN company c ON j.employer_id = c.company_id
+      JOIN catalog_city cc ON j.work_location = cc.city_id
+      WHERE j.status_ = 1 and j.date_expi > NOW();
+       `,
+      [profile_id]
+    );
+    if (jobApplications.length > 0) {
+      return jobApplications;
+    } else {
+      return []; // No job applications found
+    }
+  }
+  catch (error) {
+    console.error("Error in queryGetListJobApplication:", error);
+    throw error;
+  }
+};
+
+const queryApplyToJob = async (profile_id, job_id) => {
+  try {
+    const create_at = new Date();
+    const [result] = await db.query(
+      `Insert INTO logs_jobseeker_apply_job (job_id, jobseeker_id, create_at)
+      VALUES (?, ?, ?)`,
+      [job_id, profile_id, create_at]
+    );
+    if (result.affectedRows > 0) {
+      return true; // Application successful
+    } else {
+      return false; // Application failed
+    }
+  }
+catch (error) {
+    console.error("Error in queryApplyToJob:", error);
+    throw error;
+  }
+};
+
+// Company review and following
+const queryAddCompanyReview = async ( profile_id, company_id,score,content) => {
+  try{
+    const [result] = await db.query(
+      `INSERT INTO logs_review (jobseeker_id, company_id, score, content, create_at) 
+       VALUES (?, ?, ?, ?, now())`,
+      [profile_id, company_id, score, content]
+    );
+    console.log(result);
+    return result.affectedRows > 0;
+  }
+  catch (error) {
+    console.log("quẳng lỗi vào đây");
+    console.error("Error in queryAddCompanyReview:", error);
+    throw error;
+  }
+};
+
+const queryGetListCompanyFollowing = async (profile_id) => {
+  try{
+    const [followedCompanies] = await db.query(
+      `SELECT
+        c.company_id, 
+        c.company_name, 
+        c.logo, 
+        c.background,
+        c.industry_id,
+        ci.industry_name,
+        (select count(*) from job j where j.employer_id = ljfe.jobseeker_id and j.status_=1 and j.date_expi>=now()) as job_count
+      FROM 
+        (select * from logs_jobseeker_follow_employer lj where lj.jobseeker_id = ? ) ljfe
+        JOIN company c on ljfe.employer_id = c.company_id 
+        JOIN catalog_industry ci on c.industry_id = ci.industry_id`,
+      [profile_id]);
+      if (followedCompanies.length > 0) {
+        return followedCompanies;
+      } else {
+        return [];} // No followed companies found
+  }
+  catch (error) {
+    console.error("Error in queryGetListCompanyFollowing:", error);
+    throw error;
+  }
+};
+
+const queryDeleteCompanyFollowing = async (profile_id, company_id) => {
+  try 
+  {
+    const [result] = await db.query(
+      `DELETE FROM logs_jobseeker_follow_employer 
+       WHERE jobseeker_id = ? AND employer_id = ?`,
+      [profile_id, company_id]
+    );
+    return result.affectedRows > 0; // Return true if deletion was successful
+  }
+  catch (error) 
+  {
+    console.error("Error in queryDeleteCompanyFollowing:", error);
+    throw error;
+  }
+};
+
+const queryAddCompanyFollowing = async (profile_id, company_id) => {
+  try {
+    const create_at = new Date();
+    const [result] = await db.query(
+      `INSERT INTO logs_jobseeker_follow_employer (jobseeker_id, employer_id, create_at) 
+       VALUES (?, ?, ?)`,
+      [profile_id, company_id, create_at]);
+    return result.affectedRows > 0;    
+  }
+  catch
+  (error) {
+      console.error("Error in queryAddCompanyFollowing:", error);
+      throw error;
+    }
+};
+
+// Job saving related queries
+const queryGetListJobSaving = async (profile_id) => {
+  try 
+  {
+    const [savedJobs] = await db.query(
+      `SELECT 
+      j.title,
+      j.job_id,
+      j.date_post,
+      j.date_expi,
+      cc.city_id,
+      cc.city_name as work_location,
+      j.salary_max,
+      j.salary_min,
+      j.industry_id,
+      j.describle,
+      ci.industry_name,
+      j.job_function_id,
+      cj.job_function_name,
+      c.company_id,
+      c.company_name,
+      c.logo,
+      c.background
+    FROM
+    (SELECT js.*
+     FROM logs_jobseeker_save_job js
+     WHERE js.jobseeker_id = ?) ljsj
+     JOIN job j ON ljsj.job_id = j.job_id
+     JOIN catalog_industry ci ON j.industry_id = ci.industry_id
+     JOIN catalog_job_function cj ON j.job_function_id = cj.job_function_id
+    JOIN company c ON j.employer_id = c.company_id
+    JOIN catalog_city cc ON j.work_location = cc.city_id
+    WHERE j.status_ = 1 and j.date_expi > NOW();`,
+    [profile_id]
+    );
+    if (savedJobs.length > 0) {
+      return savedJobs;
+    }
+    else return []; // No saved jobs found
+  }
+  catch (error) {
+    console.error("Error in queryGetListJobSaving:", error);
+    throw error;
+  }
+};
+
+const queryAddJobSaving = async (profile_id,job_id) => {
+  try 
+  {
+    const create_at = new Date();
+    const [result] = await db.query(
+      `INSERT INTO logs_jobseeker_save_job (job_id, jobseeker_id, create_at) 
+       VALUES (?, ?, ?)`,
+      [job_id, profile_id, create_at]
+    );
+    return result.affectedRows > 0;
+  }
+  catch (error) {
+    console.error("Error in queryAddJobSaving:", error);
+    throw error;
+  }
+};
+
+const queryDeleteJobSaving = async (profile_id, job_id) => {
+  try
+  {
+    const [result] = await db.query(
+      `DELETE FROM logs_jobseeker_save_job 
+       WHERE jobseeker_id = ? AND job_id = ?`,
+      [profile_id, job_id]
+    );
+    console.log(result);
+    return result.affectedRows > 0; // Return true if deletion was successful
+  }
+  catch (error) {
+    console.error("Error in queryDeleteJobSaving:", error);
+    throw error;
+  }
+};
+
 module.exports = {
-  queryGetListEmployee,
-  queryGetEmployeeDetail,
-  queryGetCompanyInformation,
-  queryUpdateJobseekerProfileImage,
-  queryItemProfile,
-  queryAddItemProfile,  
+  queryGetItemProfile,
   queryDeleteItemProfile,
+  queryAddItemProfile,
   queryUpdateItemProfile,
-  queryGetNotificationByID,
+  queryUpdateJobseekerProfileImage,
+  queryAddResume,
+  queryGetResume,
+  queryDeleteResume,
+  queryGetListJobApplication,
+  queryApplyToJob,
+  queryAddCompanyReview,
+  queryGetListCompanyFollowing,
+  queryDeleteCompanyFollowing,
+  queryAddCompanyFollowing,
+  queryGetListJobSaving,
+  queryAddJobSaving,
+  queryDeleteJobSaving
 };
