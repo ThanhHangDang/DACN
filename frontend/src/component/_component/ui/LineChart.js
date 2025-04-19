@@ -54,7 +54,7 @@ const options = {
 const LineChartComponent = ({ labelChoice, data1, data2, data3 }) => {
   // Dữ liệu ví dụ
   const data = {
-    labels: labelChoice.map((dateStr) =>
+    labels: labelChoice?.map((dateStr) =>
       format(parse(dateStr, "dd/MM/yyyy", new Date()), "dd/MM")
     ) || ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5"],
     datasets: [

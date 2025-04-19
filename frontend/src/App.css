@@ -1,32 +1,9 @@
 /* CSS cho thanh header */
 @media (min-width: 992px) {
-  .dropdown-menu-define {
-    width: 80% !important; /* Điều chỉnh chiều rộng dropdown tùy ý */
-    position: fixed !important;
-    top: 21% !important;    /* Đặt dropdown ở giữa chiều dọc */
-    left: 50% !important;   /* Đặt dropdown ở giữa chiều ngang */
-    transform: translate(-50%, -50%) !important; /* Dịch chuyển để căn chính xác vào giữa */
-    z-index: 1050; 
-    border: 3px solid rgb(13 110 253) !important;
-    animation:forwards !important;
-    transition: 0.4s ease-in-out !important;
-  }
+  
 
-  .dropdown-menu-define p{
-    cursor: pointer;
-  }
-
-  .dropdown-menu-define p:hover{
-    cursor: pointer;
-    text-shadow: 0 0 40px blue;
-    transition: 0.6s ease-in-out;
-  }
-
-  .vertical-line {
-    width: 0.5px !important; /* Độ rộng của đường thẳng */
-    height: 30px !important; /* Chiều cao của đường thẳng */
-    /* background-color: black; */
-  }
+  
+  
 }
 
 .carousel-indicators [data-bs-target]{
