@@ -201,38 +201,73 @@ const Header = () => {
                 style={{ width: "200px" }}
               />
               <div className="navbar-nav mb-2 mb-lg-0">
-                <a
-                  className="nav-link  me-lg-3 text-secondary "
-                  href="#aaa"
-                  id="navbarDropdown"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  {" "}
-                  {user?.user.logo ? (
-                    <img
-                      src={user?.user.logo}
-                      alt="Avatar"
-                      className="rounded-circle"
-                      width="32"
-                      height="32"
-                    />
-                  ) : (
-                    <i
-                      className="bi bi-person-circle ms-2 me-2"
-                      style={{
-                        fontSize: "24px",
-                      }}
-                    ></i>
-                  )}
-                </a>
-                <ul
-                  className="dropdown-menu dropdown-menu-end me-1"
-                  aria-labelledby="navbarDropdown"
-                >
-                  {renderProfile()}
-                </ul>
+                {isLogin ? (
+                  <>
+                    {" "}
+                    <a
+                      className="nav-link  me-lg-3 text-secondary "
+                      href="#aaa"
+                      id="navbarDropdown"
+                      role="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      {" "}
+                      {user?.user.logo ? (
+                        <img
+                          src={user?.user.logo}
+                          alt="Avatar"
+                          className="rounded-circle"
+                          width="32"
+                          height="32"
+                        />
+                      ) : (
+                        <i
+                          className="bi bi-person-circle ms-2 me-2"
+                          style={{
+                            fontSize: "24px",
+                          }}
+                        ></i>
+                      )}
+                    </a>
+                    <ul
+                      className="dropdown-menu dropdown-menu-end me-1"
+                      aria-labelledby="navbarDropdown"
+                    >
+                      <li>
+                        <button
+                          className="dropdown-item"
+                          onClick={handleViewProfile}
+                        >
+                          Hồ sơ của bạn
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          className="dropdown-item"
+                          onClick={handleLogout}
+                        >
+                          Đăng xuất
+                        </button>
+                      </li>
+                    </ul>
+                  </>
+                ) : (
+                  <>
+                    <div className="d-flex align-items-center">
+                      <span className="me-2">
+                        <NavLink className="dropdown-item" to="/login">
+                          Đăng nhập
+                        </NavLink>
+                      </span>
+                      <button className="btn btn-primary">
+                        <NavLink className="dropdown-item" to="/auth">
+                          Đăng ký
+                        </NavLink>
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -321,6 +356,37 @@ const Header = () => {
           ) : (
             ""
           )}
+
+          <div className="mb-4">
+            <h6 className="fw-bold">Tài khoản</h6>
+            <ul className="list-unstyled ps-3 text-muted">
+              {isLogin ? (
+                <>
+                  <li onClick={handleViewProfile}>Hồ sơ của bạn</li>
+                  <li onClick={handleLogout}>Đăng xuất</li>
+                </>
+              ) : (
+                <>
+                  <li>
+                    <NavLink
+                      className="text-decoration-none text-secondary"
+                      to="/login"
+                    >
+                      Đăng nhập
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      className="text-decoration-none text-secondary"
+                      to="/auth"
+                    >
+                      Đăng ký
+                    </NavLink>
+                  </li>
+                </>
+              )}
+            </ul>
+          </div>
 
           {/* <div className="d-flex align-items-center justify-content-between mt-5 px-2">
             <span className="badge bg-light text-dark d-flex align-items-center">
