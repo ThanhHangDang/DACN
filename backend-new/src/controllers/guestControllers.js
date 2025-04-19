@@ -11,7 +11,7 @@ const {
 
 const getPublicJobDetail = async (req, res, next) => {
   try {
-    const job_id = req.query.job_id;
+    const job_id = req.query.id;
 
     if (!job_id) {
       return next(new ApiError("Thiếu ID bài đăng", 400));
@@ -22,13 +22,14 @@ const getPublicJobDetail = async (req, res, next) => {
     if (!data || data.length === 0) {
       return next(new ApiError("Không tìm thấy bài đăng", 404));
     }
-
+      console.log("data", data);
     return res.success(data, "Lấy chi tiết bài đăng thành công");
   } catch (err) {
     return next(new ApiError("Lỗi khi lấy chi tiết bài đăng", 500));
   }
 };
-
+// const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+// await delay(5000); // Giả lập độ trễ 5 giây
 const getListJobBySearch = async (req, res, next) => {
       try {
       const searchData = req.query;
@@ -53,7 +54,7 @@ const getListJobBySearch = async (req, res, next) => {
 
 const getListJobOfCompany = async (req, res, next) => {
   try {
-    const company_id = req.query.company_id;
+    const company_id = req.query.id;
     console.log("company_id", company_id);
     if (!company_id) {
       return next(new ApiError("Thiếu ID bài đăng", 400));
@@ -77,9 +78,9 @@ const getListJobOfCompany = async (req, res, next) => {
 
 const getListLeadingCompany = async (req, res, next) => {
   try {
-
-    const paging_size = 20;  
-    const data = await queryGetListLeadingCompany();  
+    const paging_size = Number(req.query?.paging_size)||20;
+    // console.log("paging_size", paging_size);
+    const data = await queryGetListLeadingCompany(paging_size);  
     const total_count = data.length > 0 ? data[0].total_count : 0;
     const totalWorksPages = Math.ceil(total_count / paging_size);
   
@@ -95,6 +96,7 @@ const getListLeadingCompany = async (req, res, next) => {
 const getListCompanyBySearch = async (req, res, next) => {
 try {
   const searchData = req.query;
+  console.log("searchData", searchData);
   if (!searchData) {
     return next(new ApiError("Thiếu thông tin filter", 400));
   }
@@ -103,10 +105,10 @@ try {
   const data = await queryGetListCompanyBySearch(searchData);
 
   const total_count = data.length > 0 ? data[0].total_count : 0;
-  const totalWorksPages = Math.ceil(total_count / paging_size);
+  const totalPages = Math.ceil(total_count / paging_size);
 
   return res.success(
-    {companies: data || [], totalWorksPages},
+    {companies: data || [], totalPages},
     "Tìm kiếm bài đăng thành công"
   );
 } catch (err) {

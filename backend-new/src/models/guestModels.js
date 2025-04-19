@@ -151,16 +151,14 @@ const queryGetPublicJobDetail = async (workId) => {
         (select * from job_require_language where job_require_language.job_id = j.job_id) as jrl 
       JOIN
         catalog_language ctl ON ctl.language_id = jrl.language_id) AS languages,
-    (SELECT COALESCE(
+     (SELECT COALESCE(
         JSON_ARRAYAGG(
             JSON_OBJECT(
-                'certification', ctc.certification)
+                'certification', jrc.certification)
             ), JSON_ARRAY())
             FROM job_require_certification jrc
-
-        
-            
-      
+            where jrc.job_id = j.job_id
+            ) as certification         
   FROM
       (select * from job where status_ = 1 and job_id =?) as j
   JOIN
@@ -380,7 +378,8 @@ const queryGetListJobOfCompany = async (companyId) => {
   return result;
 };
 
-const queryGetListLeadingCompany = async (limit) => {
+const queryGetListLeadingCompany = async (paging_size) => {
+  try {
   const [companies] = await db.query( `
               SELECT
                   c.company_id,
@@ -416,8 +415,13 @@ const queryGetListLeadingCompany = async (limit) => {
                   JOIN catalog_industry ci ON c.industry_id = ci.industry_id
                   JOIN catalog_scale cs on cs.scale_id = c.scale_id
                   ORDER BY count_job_posted DESC, count_follower DESC, average_score DESC
-                  LIMIT 20 OFFSET 0;`);
+                  LIMIT ? OFFSET 0;`,[paging_size]);
 return companies;
+  }
+  catch (error) {
+    console.error("Error fetching leading companies:", error);
+    throw error; // Rethrow the error to be handled by the calling function
+  }
 };
 
 const queryGetListCompanyBySearch = async (searchData) => {
