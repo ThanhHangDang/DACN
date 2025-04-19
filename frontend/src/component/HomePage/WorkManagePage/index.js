@@ -43,11 +43,12 @@ const JobListing = () => {
   // const [active_page, setActive_Page] = useState(1);
   // const [totalPages, setTotalPages] = useState(1);
   const { data, isLoading, error, refetch } = useGetPostSearchQuery(filter);
-  const { work: jobs, totalWorksPages } = data || {
-    work: [],
+  console.log("data", data);
+  const { jobs, totalWorksPages } = data || {
+    jobs: [],
     totalWorksPages: 1,
   };
-  console.log("city", cata_industry);
+  console.log("city", jobs);
 
   return (
     <div className="container-fluid p-3">

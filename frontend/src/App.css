@@ -115,5 +115,27 @@
 
 
 
+.skill-badge {
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  display: inline-block;
+}
 
+.skill-badge:hover {
+  background-color: #0d6efd !important;
+  transform: translateY(-2px);
+}
+
+.skill-link {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  border: 1px solid #dee2e6;
+  background-color: #f8f9fa;
+}
+
+.skill-link:hover {
+  background-color: #e9ecef !important;
+  border-color: #adb5bd;
+}
 

@@ -9,9 +9,13 @@ export default function HomePage() {
   const navigate = useNavigate();
 
   const [currentPage, setCurrentPage] = useState(1);
-  const { data: leadingCompany } = useGetLeadingCompaniesQuery();
-  const { data: latestWork } = useGetLatestWorkQuery();
-const { currentDate } = useGetTimeQuery();
+  const { data: data_leadingCompany } = useGetLeadingCompaniesQuery({paging_size:5});
+  const { data: latestWorkResponse, isLoading, isError, error } = useGetLatestWorkQuery({paging_size:27});
+  const latestWork = latestWorkResponse?.jobs || [];
+  // const totalWorksPages = latestWorkResponse?.totalWorksPages || 0;
+  
+  const leadingCompany = data_leadingCompany?.companies; // Access the jobs property from the API response
+  const { currentDate } = useGetTimeQuery();
 
   const { isLogin, user } = useSelector((state) => state.auth);
 
@@ -25,6 +29,16 @@ const { currentDate } = useGetTimeQuery();
       navigate("/employer-overview");
     }
   }, [dispatch]);
+
+  // Inside your component
+  if (isLoading) {
+    return <div className="text-center py-4">Đang tải dữ liệu...</div>;
+  }
+
+  if (isError) {
+    console.error("Error fetching latest jobs:", error);
+    return <div className="text-center py-4">Không thể tải dữ liệu. Vui lòng thử lại sau.</div>;
+  }
 
   // Pagination
   const currentWorks = latestWork?.slice(
@@ -71,6 +85,14 @@ const { currentDate } = useGetTimeQuery();
   };
 
   const renderLatestWork = () => {
+    if (!latestWork || latestWork.length === 0) {
+      return (
+        <div className="text-center py-4">
+          <p>Không có việc làm mới</p>
+        </div>
+      );
+    }
+    
     return currentWorks?.map((work, index) => {
       return (
         <div

@@ -16,7 +16,7 @@ export default function CompanyDetail() {
   const { data: companyInformation } = useGetCompanyInformationQuery(companyId);
   console.log("companyInformation", companyInformation);
   const { data } = useGetPostByUserQuery(companyId);
-  const postsByUser = data?.work || [];
+  const postsByUser = data?.jobs || [];
   const formatNumberToTr = (number) => `${(number / 1e6).toFixed(0)}tr`;
 
   return (
@@ -123,8 +123,11 @@ export default function CompanyDetail() {
               </p>
 
               <p>
-                {companyInformation?.address
-                  ? companyInformation.address
+                {companyInformation?.company_location
+                  ? companyInformation.company_location.map((location) => (
+                    <p>
+                    {location.address} -  {location.city_name}
+                    </p>))
                   : "Chưa có thông tin"}
               </p>
               <h6 className="fw-bold">Chia sẻ công ty tới bạn bè</h6>

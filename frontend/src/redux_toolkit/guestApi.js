@@ -9,78 +9,78 @@ export const guestApi = createApi({
     // Get company information by ID
     getCompanyInformation: builder.query({
       query: (id) => ({
-        url: "/user/get-employer-information",
-        params: { id },
+        url: "guest/company-detail",
+        params: {id} ,
       }),
-      transformResponse: (response) => response.companyInfor,
+      transformResponse: (response) => response.data,
     }),
     // Get all companies with pagination
     getAllCompanies: builder.query({
-      query: (page = 1) => {
-        console.log("Requesting getAllCompanies with page:", page);
+      query: (searchData={active_page:1,page_size:10}) => {
+        console.log("Requesting getAllCompanies with page:", searchData);
         return {
-          url: "/company/get-all-company",
-          params: { page },
-        };
-      },
+          url: "/guest/companies",
+          params: searchData,
+        };    },
+      transformResponse: (response) => { return response.data;},
     }),
     // Get company by ID
     getCompanyById: builder.query({
       query: (id) => ({
-        url: `/company/get-company-by-id`,
+        url: `guest/company-detail`,
         params: { id },
       }),
-      transformResponse: (response) => response,
+      transformResponse: (response) => { return response.data;},
     }),
     // Get leading companies
     getLeadingCompanies: builder.query({
-      query: () => ({
-        url: "/company/get-leading-company",
+      query: (searchData={paging_size:10}) => ({
+        url: "/guest/leading-company",
+        params: searchData,
       }),
-      transformResponse: (response) => {
-        // console.log("redux receive getLeadingCompanies",response);
-        return response.data;},
+      transformResponse: (response) => {  return response.data;},
     }),
     // Get latest work/jobs
     getLatestWork: builder.query({
-      query: () => ({
-        url: "/work/get-latest-work",
-      }),
-      transformResponse: (response) => {
-        // console.log("redux receive getLatestWork",response);
+      query: (searchData = {paging_size:10}) => ({
+        url: "/guest/jobs",
+        params: searchData,
+      }),    
+      transformResponse: (response) => { 
+        console.log("Requesting getLatestWork with searchData:", response);
         return response.data;},
     }),
     // Get all posts with pagination
     getAllPost: builder.query({
-      query: (page = 1) => ({
-        url: "/work/get-all-post",
-        params: { page },
+      query: (searchData = {paging_size:10}) => ({
+        url: "/guest/jobs",
+        params: searchData,
       }),
+      transformResponse: (response) => { return response.data;},
     }),
     // Get all posts by search query
     getPostSearch: builder.query({
-      query: (search = {}) => ({
-        url: "/work/get-works-by-search",
-        params: search,
+      query: (searchData = {paging_size:10}) => ({
+        url: "/guest/jobs",
+        params: searchData,
       }),
+      transformResponse: (response) => { return response.data;},
     }),
     // Get post detail by ID
     getPostDetail: builder.query({
-      query: (postId) => ({
-        url: "/work/get-work-detail",
-        params: { postId },
+      query: (id) => ({
+        url: "/guest/job-detail",
+        params: { id },
       }),
+      transformResponse: (response) => { return response.data;},
     }),
     // Get all posts by user ID
     getPostByUser: builder.query({
-      query: (userId) => ({
-        url: "/work/get-works-by-user",
-        params: { userId },
+      query: (id) => ({
+        url: "/guest/jobs-of-company",
+        params: { id },
       }),
-      transformResponse: (response) => {
-        console.log("redux receive getPostByUser", response);
-        return response;
-      },
+      transformResponse: (response) => { return response.data;},
     }),
   }),
 });

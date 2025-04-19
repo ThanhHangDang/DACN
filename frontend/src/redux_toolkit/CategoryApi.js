@@ -5,43 +5,58 @@ export const categoryApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: domain }),
   endpoints: (builder) => ({
     getIndustries: builder.query({
-        query: () => '/category/getCategory_Industry',
-        // transformResponse: (response) => {return response.data}
+        query: () => '/category/category-industry',
+        transformResponse: (response) => {return response.data;        },
     }),
     getJobFunction: builder.query({
-        query: () => '/category/getCategory_JobFunction'
+        query: () => '/category/category-jobfunction',
+        transformResponse: (response) => {return response.data;        },
     }),
     getBenefits: builder.query({
-        query: () => '/category/getCatalog_Benefit'
+        query: () => '/category/category-benefit',
+        transformResponse: (response) => {return response.data;        },
     }),
     getNations: builder.query({
-        query: () => '/category/getCategory_Nation'
+        query: () => ({
+          url: '/category/category-nation',
+        }),
+        transformResponse: (response) => {return response.data;        },
     }),
     getCities: builder.query({
-        query: (id) => ({
-          url:`/category/getCategory_City`,
-          params:  id })   
+        query: (nation) => ({
+          url:`/category/category-city`,
+          params:  {nation} }),
+        transformResponse: (response) => {
+          console.log("redux receive getCities", response);
+          return response.data;        },   
       }),
     getDistricts: builder.query({
-        query: (id) => `/category/getCategory_District/${id}`
+        query: (id) => `/category/category-district/${id}`,
+        transformResponse: (response) => {return response.data;        },
     }),
     getLanguages: builder.query({
-      query: () => '/category/getCategory_Language'
+      query: () => '/category/category-language',
+      transformResponse: (response) => {return response.data;        },
     }),
     getLevels: builder.query({
-      query: () => '/category/getCategory_Level'
+      query: () => '/category/category-level',
+      transformResponse: (response) => {return response.data;        },
     }),
     getScales: builder.query({
-      query: () => '/category/getCategory_Scale'
+      query: () => '/category/category-scale',
+      transformResponse: (response) => {return response.data;        },
     }),
     getEducation: builder.query({
-      query: () => '/category/getCategory_Education'
+      query: () => '/category/category-education',
+      transformResponse: (response) => {return response.data;        },
     }),
     getTags: builder.query({
-        query: () => '/category/getCategory_Tags'
+        query: () => '/category/category-tags',
+        transformResponse: (response) => {return response.data;        },
       }),
     getTime: builder.query({
-        query: () => '/category/get-time'
+        query: () => '/category/time',
+        transformResponse: (response) => {return response.data;        },
       }), 
   }),
 });

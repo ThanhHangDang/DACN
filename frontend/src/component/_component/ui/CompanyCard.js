@@ -28,7 +28,7 @@ export default function CompanyCard({ company }) {
           </NavLink>
           <p className="mb-1 text-muted">
             {company?.count_follower ? company.count_follower : "0"} lượt theo
-            dõi • {company?.total_jobs ? company.total_jobs : "0"} tin tuyển
+            dõi • {company?.count_job_posted ? company.count_job_posted : "0"} tin tuyển
             dụng
           </p>
           <div className="mb-2">
