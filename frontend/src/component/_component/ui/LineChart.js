@@ -11,6 +11,7 @@ import {
   Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
+import { parse, format } from "date-fns";
 
 // Đăng ký các thành phần
 ChartJS.register(
@@ -22,43 +23,6 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-
-// Dữ liệu ví dụ
-const data = {
-  labels: ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5"],
-  datasets: [
-    {
-      label: "Tăng trưởng A",
-      data: [40, 55, 70, 60, 80],
-      fill: false,
-      borderColor: "rgb(75, 192, 192)",
-      tension: 0.4,
-      pointBackgroundColor: "white",
-      pointBorderColor: "rgb(75, 192, 192)",
-      pointBorderWidth: 2,
-    },
-    {
-      label: "Tăng trưởng B",
-      data: [20, 35, 50, 45, 60],
-      fill: false,
-      borderColor: "rgb(255, 99, 132)",
-      tension: 0.4,
-      pointBackgroundColor: "white",
-      pointBorderColor: "rgb(255, 99, 132)",
-      pointBorderWidth: 2,
-    },
-    {
-      label: "Tăng trưởng C",
-      data: [10, 25, 35, 55, 75],
-      fill: false,
-      borderColor: "rgb(255, 206, 86)",
-      tension: 0.4,
-      pointBackgroundColor: "white",
-      pointBorderColor: "rgb(255, 206, 86)",
-      pointBorderWidth: 2,
-    },
-  ],
-};
 
 // Tuỳ chọn biểu đồ
 const options = {
@@ -87,7 +51,46 @@ const options = {
   },
 };
 
-const LineChartComponent = () => {
+const LineChartComponent = ({ labelChoice, data1, data2, data3 }) => {
+  // Dữ liệu ví dụ
+  const data = {
+    labels: labelChoice.map((dateStr) =>
+      format(parse(dateStr, "dd/MM/yyyy", new Date()), "dd/MM")
+    ) || ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5"],
+    datasets: [
+      {
+        label: "Việc làm đã ứng tuyển",
+        data: data1 || [40, 55, 70, 60, 80],
+        fill: false,
+        borderColor: "rgb(75, 192, 192)",
+        tension: 0.4,
+        pointBackgroundColor: "white",
+        pointBorderColor: "rgb(75, 192, 192)",
+        pointBorderWidth: 2,
+      },
+      {
+        label: "Lượt xem hồ sơ",
+        data: data2 || [20, 35, 50, 45, 60],
+        fill: false,
+        tension: 0.4,
+        pointBackgroundColor: "white",
+        borderColor: "rgb(255, 206, 86)",
+        pointBorderColor: "rgb(255, 206, 86)",
+        pointBorderWidth: 2,
+      },
+      {
+        label: "Lượt lưu hồ sơ",
+        data: data3 || [10, 25, 35, 55, 75],
+        fill: false,
+        tension: 0.4,
+        pointBackgroundColor: "white",
+        borderColor: "rgb(255, 99, 132)",
+        pointBorderColor: "rgb(255, 99, 132)",
+        pointBorderWidth: 2,
+      },
+    ],
+  };
+
   return (
     <div
       style={{

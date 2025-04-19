@@ -24,21 +24,21 @@ export default function JobSeekerAccountSetting() {
   });
 
   const handleChangePassword = () => {
-    console.log("user: ", user?.user.id, " passwordchange: ", data.password);
+    console.log("user: ", user?.user?.id, " passwordchange: ", data.password);
   };
 
   useEffect(() => {
     if (!isLogin || user?.user?.role !== 3) {
       navigate("/login");
     }
-  }, [user, isLogin]);
+  }, [navigate, user, isLogin]);
 
   return (
     <div>
       {/* Modal đổi mật khẩu */}
       <div
         className="modal fade"
-        id="changePasswordE"
+        id="changePassword1"
         tabIndex={-1}
         aria-labelledby="modalTitle"
         aria-hidden="true"
@@ -156,7 +156,7 @@ export default function JobSeekerAccountSetting() {
         <span
           className="text-primary text-decoration-underline text-decoration-primary d-block mt-2 me-4 ms-3 custom-hover-2"
           data-bs-toggle="modal"
-          data-bs-target="#changePassword"
+          data-bs-target="#changePassword1"
         >
           Đổi mật khẩu
         </span>

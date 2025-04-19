@@ -16,7 +16,7 @@ export default function SaveEmployeeProfile() {
   return (
     <div>
       <div className="bg-light rounded-2 me-2 my-2 p-2">
-        <h3>Quản lý hồ sơ ứng viên</h3>
+        <h5 className="fw-bold">Quản lý hồ sơ ứng viên</h5>
       </div>
 
       <div className="bg-light rounded-2 me-2 my-2 p-2">

@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useParams, NavLink } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 // import { getPostDetails } from "../../redux/actions/postAction.js";
-import {useGetPostDetailQuery} from "../../../redux_toolkit/guestApi.js"
+import { useGetPostDetailQuery } from "../../../redux_toolkit/guestApi.js";
 import formatDateToDDMMYYYY from "../../../utils/formatDate.js";
 import calculateDaysRemaining from "../../../utils/calculateDaysRemaining.js";
 import CompanyHeader from "../../../component/_component/ui/CompanyHeader.js";
@@ -15,7 +15,11 @@ export default function WorkDetail() {
   const formatNumberToTr = (number) => `${(number / 1e6).toFixed(0)}tr`;
 
   // const postDetail = useSelector((state) => state.post.postDetail);
-  const { data: postDetail, isLoading,refetch } = useGetPostDetailQuery(id, {
+  const {
+    data: postDetail,
+    isLoading,
+    refetch,
+  } = useGetPostDetailQuery(id, {
     refetchOnMountOrArgChange: true,
   });
   console.log(postDetail);
@@ -72,7 +76,7 @@ export default function WorkDetail() {
 
               <h5 className="mt-3">Mô tả công việc</h5>
               <ul>
-              {postDetail?.describle
+                {postDetail?.describle
                   ?.split("00pizon00")
                   .map((item, index) => (
                     <li key={index}>{item}</li>
@@ -80,8 +84,8 @@ export default function WorkDetail() {
               </ul>
 
               <h5 className="mt-3">Yêu cầu ứng viên</h5>
-              <ul>   
-              {postDetail?.more_requirements
+              <ul>
+                {postDetail?.more_requirements
                   ?.split("00pizon00")
                   ?.map((item, index) => (
                     <li key={index}>{item}</li>
@@ -132,10 +136,13 @@ export default function WorkDetail() {
                   <strong>Kỹ năng:</strong> {postDetail?.job_skills}
                 </li>
                 <li>
-                  <strong>Giờ làm việc:</strong>{" "}
-                  {postDetail?.working_time
-                    ? postDetail?.working_time
-                    : "Chưa có thông tin"}
+                  {postDetail?.working_time ? (
+                    <>
+                      <strong>Giờ làm việc:</strong> {postDetail.working_time}
+                    </>
+                  ) : (
+                    ""
+                  )}
                 </li>
               </ul>
             </div>

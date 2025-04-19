@@ -56,14 +56,14 @@ const CompanyBackground = ({ company }) => {
 
       <div className="col-12 mb-4">
         <div
-          className="profile-header position-relative mb-4"
+          className="profile-header position-relative mb-4 shadow-sm"
           style={
             company.background
               ? { backgroundImage: `url(${company.background})` }
               : {}
           }
         >
-          <div className="position-absolute top-0 end-0 p-3">
+          <div className="position-absolute top-0 end-0 p-3 ">
             <button
               className="btn btn-light"
               onClick={handleButtonBackgoundClick}

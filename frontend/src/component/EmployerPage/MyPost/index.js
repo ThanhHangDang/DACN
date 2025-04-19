@@ -832,7 +832,7 @@ export default function EmployerPost() {
             <tbody>
               {postsByUser?.map((post) => (
                 <tr key={post.job_id}>
-                  <td>
+                  <td className="text-start">
                     <NavLink to={`/post-detail/${post.job_id}`}>
                       {post.title}
                     </NavLink>

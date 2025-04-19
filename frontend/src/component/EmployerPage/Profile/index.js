@@ -41,7 +41,7 @@ export default function EmployerProfile() {
       </ul>
 
       {/* Nội dung sẽ được thay đổi theo route */}
-      <div className="mt-3">
+      <div className="container mt-3">
         <Outlet />
       </div>
     </div>

@@ -30,12 +30,12 @@ export default function CompanyProfile() {
   };
 
   return (
-    <div>
-      <div className="bg-light rounded-2 me-2 my-2 p-2">
+    <div className="card shadow-sm">
+      <div className=" rounded-2 me-2 my-2 p-2">
         <CompanyBackground company={companyInformation} />
       </div>
 
-      <div className="bg-light rounded-2 me-2 my-2 p-2">
+      <div className="rounded-2 me-2 my-2 p-2">
         <div className="row mb-3">
           {/* Tên công ty */}
           <div className="col-md-6">
