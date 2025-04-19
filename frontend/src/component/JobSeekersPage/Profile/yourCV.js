@@ -5,7 +5,14 @@ export default function yourCV() {
     <div>
       <div className="container rounded-2 me-2 my-2 p-2 card shadow-sm">
         <h5 className="fw-bold">Hồ sơ đính kèm của bạn</h5>
-        <div className="border border-primary rounded-2 p-2 d-flex justify-content-between">
+        <div className="border border-primary rounded-2 p-2 d-flex justify-content-between m-1">
+          <span>
+            <i className="bi bi-paperclip"></i>ThanhHangDang_Intern_CV.pdf
+          </span>
+          <span>Tải lên: 9/11/2024</span>
+        </div>
+
+        <div className="border border-primary rounded-2 p-2 d-flex justify-content-between m-1">
           <span>
             <i className="bi bi-paperclip"></i>ThanhHangDang_Intern_CV.pdf
           </span>

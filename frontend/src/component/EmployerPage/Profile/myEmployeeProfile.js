@@ -78,8 +78,16 @@ export default function EmployeeProfileManage() {
 
   return (
     <div>
-      <div className="bg-light rounded-2 me-2 my-2 p-2">
-        <h3>Quản lý hồ sơ ứng viên</h3>
+      <div className="bg-light rounded-2 me-2 my-2 p-2 d-flex justify-content-between">
+        <h5 className="fw-bold">Quản lý hồ sơ ứng viên</h5>
+        <div>
+          <select className="form-select form-select-sm w-auto">
+            <option>Filter by JobName</option>
+            {data?.map((item, index) => {
+              return <option value={item.job}>{item.job}</option>;
+            })}
+          </select>
+        </div>
       </div>
 
       <div className="bg-light rounded-2 me-2 my-2 p-2">
@@ -112,8 +120,8 @@ export default function EmployeeProfileManage() {
                     }}
                   />
                 </td>
-                <td>{item.name}</td>
-                <td>{item.job}</td>
+                <td className="text-start">{item.name}</td>
+                <td className="text-start">{item.job}</td>
                 <td>{item.age}</td>
                 <td>{item.dateApplied}</td>
                 <td>

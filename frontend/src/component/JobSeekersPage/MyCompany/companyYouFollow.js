@@ -49,16 +49,13 @@ export default function CompanyYouFollow() {
                     {" "}
                     {/* {getRelativeTimeString(company.created_at)} */}
                   </span>
-                  {company.isFollow ? (
-                    <i
-                      className="bi bi-heart-fill text-danger"
-                      onClick={() => {
-                        handleUnFollow(company.company_id);
-                      }}
-                    ></i>
-                  ) : (
-                    <i className="bi bi-heart"></i>
-                  )}
+
+                  <i
+                    className="bi bi-heart-fill text-danger"
+                    onClick={() => {
+                      handleUnFollow(company.company_id);
+                    }}
+                  ></i>
                 </div>
                 <div className="d-flex align-items-center mb-2">
                   <img

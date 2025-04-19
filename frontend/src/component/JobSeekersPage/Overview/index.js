@@ -1,9 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useGetItemProfileQuery } from "../../../redux_toolkit/jobseekerApi.js";
 import SkillsContainer from "../../../component/_component/ui/jobseeker/PercentContainer.js";
 import LineChartComponent from "../../../component/_component/ui/LineChart.js";
+import { format, subDays } from "date-fns";
 
 export default function JobSeekerOverview() {
   const dispatch = useDispatch();
@@ -73,6 +74,56 @@ export default function JobSeekerOverview() {
     });
   };
 
+  const appliedCount = null;
+  const viewProfileCount = null;
+  const savedProfileCount = null;
+
+  const [rangeLabel, setRangeLabel] = useState([
+    "12/04/2025",
+    "13/04/2025",
+    "14/04/2025",
+    "15/04/2025",
+    "16/04/2025",
+  ]);
+  const [days, setDays] = useState(7);
+  const handleChangeChartTime = () => {
+    console.log(days);
+    const endDate = new Date(); // Ngày hiện tại
+    const dateRange = [];
+
+    // Xác định bước nhảy theo số ngày đã chọn
+    let step;
+    if (days === 7) {
+      step = 1;
+    } else if (days === 14 || days === 30) {
+      step = Math.floor(days / 5);
+    } else {
+      step = Math.floor(days / 5); // fallback
+    }
+
+    // Lấy 5 mốc thời gian, từ hiện tại lùi về trước
+    for (let i = 4; i >= 0; i--) {
+      const date = new Date(endDate);
+      date.setDate(endDate.getDate() - i * step);
+      dateRange.push(format(date, "dd/MM/yyyy"));
+    }
+
+    console.log(dateRange);
+    setRangeLabel(dateRange);
+  };
+
+  const handleGetChartDataByDateRange = () => {
+    console.log("Query số lượng theo từng ngày trong range: ", rangeLabel);
+    console.log(
+      "Trả về 3 mảng có 5 giá trị, xong set state lại cho appliedCount, viewProfileCount, savedProfileCount, dùng redux state "
+    );
+  };
+
+  useEffect(() => {
+    handleChangeChartTime();
+    handleGetChartDataByDateRange();
+  }, [days]);
+
   useEffect(() => {
     if (!isLogin || user?.user.role !== 3) {
       navigate("/login");
@@ -82,19 +133,29 @@ export default function JobSeekerOverview() {
   return (
     <>
       <div className="bg-light rounded-2 me-2 my-2 p-2">
-        <h3>Tổng quan</h3>
+        <h5 className="fw-bold">Tổng quan</h5>
         <SkillsContainer percent={80} />
       </div>
 
       <div className="bg-light rounded-2 me-2 my-2 p-2">
-        <h3>Hoạt động của bạn</h3>
+        <h5 className="fw-bold">Hoạt động của bạn</h5>
         <div className="row justify-content-md-around ">
           <div className="col-md-8">
-            <LineChartComponent />
-            <select className="form-select form-select-sm w-auto">
-              <option>7 ngày</option>
-              <option>14 ngày</option>
-              <option>30 ngày</option>
+            <LineChartComponent
+              labelChoice={rangeLabel}
+              data1={appliedCount}
+              data2={viewProfileCount}
+              data3={savedProfileCount}
+            />
+            <select
+              className="form-select form-select-sm w-auto"
+              onChange={(e) => {
+                setDays(e.target.value);
+              }}
+            >
+              <option value={7}>7 ngày</option>
+              <option value={14}>14 ngày</option>
+              <option value={30}>30 ngày</option>
             </select>
           </div>
           <div className=" col-md-4 d-flex justify-content-md-around justify-content-sm-center text-center flex-column">
@@ -116,7 +177,7 @@ export default function JobSeekerOverview() {
 
       <div className="bg-light rounded-2 me-2 my-2 p-2">
         <div className="d-flex justify-content-between align-items-center mb-2">
-          <h3>Công việc phù hợp</h3>
+          <h5 className="fw-bold">Công việc phù hợp</h5>
           <NavLink to="/post" className="text-primary">
             Xem tất cả
           </NavLink>
