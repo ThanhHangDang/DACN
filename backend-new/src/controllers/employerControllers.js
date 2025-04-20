@@ -91,7 +91,7 @@ const getJobseekerCV = async (req, res, next) => {
 
 const getListJobByUser = async (req, res, next) => {
   try {
-    const company_id = req.query.company_id;
+    const company_id = req.query.employer_id;
     
     if (!company_id) {
       return next(new ApiError("Thiếu ID nhà tuyển dụng", 400));
@@ -215,7 +215,7 @@ const deleteJobByUser = async (req, res, next) => {
 
 const getCompanyInformation = async (req, res, next) => {
   try {
-    const company_id = req.query.company_id;
+    const company_id = req.query.employer_id;
     
     if (!company_id) {
       return next(new ApiError("Thiếu ID công ty", 400));

@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useParams, NavLink } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 // import { getPostDetails } from "../../redux/actions/postAction.js";
-import { useGetPostDetailQuery } from "../../../redux_toolkit/guestApi.js";
+import { useGetJobDetailQuery } from "../../../redux_toolkit/guestApi.js";
 import formatDateToDDMMYYYY from "../../../utils/formatDate.js";
 import calculateDaysRemaining from "../../../utils/calculateDaysRemaining.js";
 import CompanyHeader from "../../../component/_component/ui/CompanyHeader.js";
@@ -20,7 +20,7 @@ export default function WorkDetail() {
     data: postDetail,
     isLoading,
     refetch,
-  } = useGetPostDetailQuery(id, {
+  } = useGetJobDetailQuery(id, {
     refetchOnMountOrArgChange: true,
   });
   console.log(postDetail);

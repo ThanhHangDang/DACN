@@ -810,8 +810,7 @@ const queryGetListJobSaving = async (profile_id) => {
      JOIN catalog_industry ci ON j.industry_id = ci.industry_id
      JOIN catalog_job_function cj ON j.job_function_id = cj.job_function_id
     JOIN company c ON j.employer_id = c.company_id
-    JOIN catalog_city cc ON j.work_location = cc.city_id
-    WHERE j.status_ = 1 and j.date_expi >= NOW();`,
+    JOIN catalog_city cc ON j.work_location = cc.city_id;`,
     [profile_id]
     );
     if (savedJobs.length > 0) {

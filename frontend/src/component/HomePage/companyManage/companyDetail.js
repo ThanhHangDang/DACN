@@ -4,8 +4,8 @@ import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import calculateDaysRemaining from "../../../utils/calculateDaysRemaining.js";
 import {
-  useGetCompanyInformationQuery,
-  useGetJobByUserQuery,
+   useGetCompanyInformationQuery,
+   useGetJobByUserQuery
 } from "../../../redux_toolkit/guestApi.js";
 import { useGetCitiesQuery } from "../../../redux_toolkit/CategoryApi.js";
 import CompanyHeader from "../../_component/ui/CompanyHeader.js";

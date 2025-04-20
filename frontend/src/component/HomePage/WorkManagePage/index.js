@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
 // import { NavLink, useNavigate } from "react-router-dom";
-import { useGetPostSearchQuery } from "../../../redux_toolkit/guestApi";
+import { useGetJobSearchQuery } from "../../../redux_toolkit/guestApi";
 import {
   useGetCitiesQuery,
   useGetIndustriesQuery,
@@ -43,7 +43,7 @@ const JobListing = () => {
 
   // const [active_page, setActive_Page] = useState(1);
   // const [totalPages, setTotalPages] = useState(1);
-  const { data, isLoading, error, refetch } = useGetPostSearchQuery(filter);
+  const { data, isLoading, error, refetch } = useGetJobSearchQuery(filter);
   console.log("data", data);
   const { jobs, totalWorksPages } = data || {
     jobs: [],

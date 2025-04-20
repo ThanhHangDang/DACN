@@ -9,7 +9,7 @@ export default function EmployerProfile() {
     if (!isLogin || user?.role !== 2) {
       navigate("/login");
     }
-  }, [navigate, user, isLogin]);
+  }, [user, isLogin]);
 
   return (
     <div className="container my-3">

@@ -2,7 +2,8 @@ import React from "react"; //{ useEffect }
 
 import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { useGetItemProfileQuery } from "../../../redux_toolkit/jobseekerApi.js";
+import {     useGetJobsavingQuery,
+    useDeleteJobSavingMutation, } from "../../../redux_toolkit/jobseekerApi.js";
 import formatDateToDDMMYYYY from "../../../utils/formatDate.js";
 // import { type } from "@testing-library/user-event/dist/type/index.js";
 import JobCard from "../../../component/_component/ui/JobCard.js";
@@ -11,15 +12,12 @@ export default function SavedWork() {
   const formatNumberToTr = (number) => `${(number / 1e6).toFixed(0)}tr`;
   // const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const { data: userInformation } = useGetItemProfileQuery({
-    type: "Basic",
-    profile_id: user?.id,
-  });
-  const { data: listJobSave } = useGetItemProfileQuery({
-    type: "save_job",
-    profile_id: user?.id,
-  });
-
+  // const { data: userInformation } = useGetItemProfileQuery({
+  //   type: "Basic",
+  //   profile_id: user?.id,
+  // });
+  const { data } = useGetJobsavingQuery( user?.id );
+const listJobSave = data?.jobs || [];
   console.log("List job save:", listJobSave);
 
   return (
