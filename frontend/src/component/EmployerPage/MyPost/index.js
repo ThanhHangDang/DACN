@@ -38,14 +38,14 @@ export default function EmployerPost() {
   const { data: city } = useGetCitiesQuery(84);
   const { data: edu } = useGetEducationQuery();
   const { data: lang } = useGetLanguagesQuery();
-  const userId = user?.user?.id;
+  const userId = user?.id;
   const { data } = useGetPostByUserQuery(userId);
   const postsByUser = data?.work || [];
   const [isAddPost, setIsAddPost] = useState(true);
 
   const [newPost, setNewPost] = useState({
     job_id: "0",
-    employer_id: user?.user?.id,
+    employer_id: user?.id,
     title: "",
     date_post: new Date().toISOString(),
     industry_id: 20,
@@ -139,7 +139,7 @@ export default function EmployerPost() {
     setNewPost({
       ...newPost,
       job_id: 0,
-      employer_id: user?.user?.id,
+      employer_id: user?.id,
       title: "",
       date_post: new Date().toISOString(),
       industry_id: 20,
@@ -169,13 +169,13 @@ export default function EmployerPost() {
   const [postID, setPostID] = useState(0);
 
   const handleDeletePost = () => {
-    dispatch(deletePostByUser(user?.user?.id, postID));
+    dispatch(deletePostByUser(user?.id, postID));
   };
 
   const handleExtendDays = (postID, days) => {
     console.log(
       "Gia hạn: ",
-      user?.user?.id,
+      user?.id,
       " và bài post: ",
       postID,
       " thêm ",
@@ -187,7 +187,7 @@ export default function EmployerPost() {
   const handleShowHide = (postID, status) => {
     console.log(
       "Employer: ",
-      user?.user?.id,
+      user?.id,
       " và bài post: ",
       postID,
       " Ản hiện ",
@@ -196,7 +196,7 @@ export default function EmployerPost() {
   };
 
   useEffect(() => {
-    if (!isLogin || user?.user?.role !== 2) {
+    if (!isLogin || user?.role !== 2) {
       navigate("/login");
     }
   }, [navigate, user, isLogin]);

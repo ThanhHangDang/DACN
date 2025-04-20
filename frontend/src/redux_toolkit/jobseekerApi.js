@@ -19,7 +19,7 @@ export const jobseekerApi = createApi({
     endpoints: (builder) => ({
         getItemProfile: builder.query({
             query: ({type,profile_id}) => ({
-                url:`/user/profile`,
+                url:`/jobseeker/profile`,
                 params: { type, profile_id},
             }),
             transformResponse: (response) => {
@@ -39,7 +39,7 @@ export const jobseekerApi = createApi({
                 formData.append("image", image);
                 
                 return {
-                    url: '/user/update-jobseeker-profile-image',
+                    url: '/jobseeker/update-jobseeker-profile-image',
                     method: 'POST',
                     body: formData,
                     // Không cần set Content-Type vì fetchBaseQuery tự xử lý với FormData
@@ -56,7 +56,7 @@ export const jobseekerApi = createApi({
         
         updateItemProfile: builder.mutation({
             query: ({ type, data }) => ({
-                url: `/user/profile`,
+                url: `/jobseeker/profile`,
                 method: 'PUT',
                 body: { type, data }, // Sửa lỗi cú pháp
             }),
@@ -65,7 +65,7 @@ export const jobseekerApi = createApi({
         
         addItemProfile: builder.mutation({
             query: ({ type, data }) => ({
-                url: `/user/profile`,
+                url: `/jobseeker/profile`,
                 method: 'POST',
                 body: { type, data }, // Sửa lỗi cú pháp
             }),
@@ -74,7 +74,7 @@ export const jobseekerApi = createApi({
         
         deleteItemProfile: builder.mutation({
             query: ({ type, data }) => ({
-                url: `/user/profile`,
+                url: `/jobseeker/profile`,
                 method: 'DELETE',
                 body: { type, data },
             }),

@@ -10,7 +10,7 @@ export default function JobSeekerWork() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isLogin || user?.user?.role !== 3) {
+    if (!isLogin || user?.role !== 3) {
       navigate("/login");
     }
   }, [isLogin, navigate, user]);

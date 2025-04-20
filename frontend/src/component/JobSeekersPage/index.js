@@ -7,7 +7,7 @@ import SidebarLayout from "../../component/_component/sidebar";
 export default function JobSeekerPage() {
   // Lấy thông tin user từ Redux store
   const { isLogin, user } = useSelector((state) => state.auth);
-  console.log("User tại JobSeekerPage:", user?.user?.id);
+  console.log("User tại JobSeekerPage:", user);
   const navigate = useNavigate();
 
   const data = [
@@ -49,14 +49,14 @@ export default function JobSeekerPage() {
     isLoading,
     error,
   } = useGetItemProfileQuery(
-    { type: "Basic", profile_id: user?.user?.id },
+    { type: "Basic", profile_id: user?.id },
     {
-      skip: !user?.user?.id,
+      skip: !user?.id,
     }
   );
-
+  console.log("data tại JobSeekerPage:", userInformation);
   useEffect(() => {
-    if (!isLogin || user?.user?.role !== 3) {
+    if (!isLogin || user?.role !== 3) {
       navigate("/login");
     }
   }, [isLogin, navigate, user]);

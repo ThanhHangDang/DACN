@@ -3,12 +3,15 @@ import axios from 'axios';
 import domain from '../config/domain';
 // import { toast } from 'react-toastify';
 
+
+
 export const loginUser = createAsyncThunk('auth/login',
     async ({username, password},{ rejectWithValue }) => {
         try{
+          console.log("bat dau chay loginUser chay api");
             const response = await axios.post(`${domain}/auth/login`, {params: {username, password}}, {withCredentials: true});
-            if (response.data.token) {              
-              localStorage.setItem('token', response.data.token);
+            if (response.data.data?.token) {
+              localStorage.setItem('token', response.data.data.token);
           }
             return response.data;
         }
@@ -18,7 +21,7 @@ export const loginUser = createAsyncThunk('auth/login',
     }
 );
 
-export const checkLoginStatus = createAsyncThunk('auth/',
+export const checkLoginStatus = createAsyncThunk('auth/check',
     async (_,{rejectWithValue}) => {
       console.log("checkLoginStatus chay");
         try {
@@ -27,7 +30,7 @@ export const checkLoginStatus = createAsyncThunk('auth/',
               console.log("Not logged in");
                 return rejectWithValue('Not logged in');
             }
-            const response = await axios.get(`${domain}/auth/`, 
+            const response = await axios.get(`${domain}/auth/check`, 
                 {   withCredentials: true, 
                     // headers: {Authorization: `Bearer ${token}`}
                   } );
@@ -89,10 +92,10 @@ export const logout = createAsyncThunk(
           state.error = null;
         })
         .addCase(loginUser.fulfilled, (state, action) => {
-          console.log("dang chay reducer loginUser", action.payload.user);
+          console.log("dang chay reducer loginUser", action);
           state.loading = false;
           state.isLogin = true;
-          state.user = action.payload;
+          state.user = action.payload.data.user;
         })
         .addCase(loginUser.rejected, (state, action) => {
           state.loading = false;
@@ -103,7 +106,7 @@ export const logout = createAsyncThunk(
         .addCase(checkLoginStatus.fulfilled, (state, action) => {
           state.isLogin = true;
           console.log("checkLoginStatus chay reducer", action);
-          state.user = action.payload;
+          state.user = action.payload.data.user;
         })
         .addCase(checkLoginStatus.rejected, (state) => {
           state.isLogin = false;

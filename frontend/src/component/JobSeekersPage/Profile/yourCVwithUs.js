@@ -36,31 +36,31 @@ export default function YourCVwithUs() {
   const { user } = useSelector((state) => state.auth);
   const { data: userInformation } = useGetItemProfileQuery({
     type: "Basic",
-    profile_id: user?.user?.id,
+    profile_id: user?.id,
   });
   const { data: listExp } = useGetItemProfileQuery({
     type: "experience",
-    profile_id: user?.user?.id,
+    profile_id: user?.id,
   });
   const { data: listEducation } = useGetItemProfileQuery({
     type: "education",
-    profile_id: user?.user?.id,
+    profile_id: user?.id,
   });
   const { data: listProject } = useGetItemProfileQuery({
     type: "project",
-    profile_id: user?.user?.id,
+    profile_id: user?.id,
   });
   const { data: listSkill } = useGetItemProfileQuery({
     type: "skill",
-    profile_id: user?.user?.id,
+    profile_id: user?.id,
   });
   const { data: listLanguage } = useGetItemProfileQuery({
     type: "language",
-    profile_id: user?.user?.id,
+    profile_id: user?.id,
   });
   const { data: listCertification } = useGetItemProfileQuery({
     type: "certification",
-    profile_id: user?.user?.id,
+    profile_id: user?.id,
   });
   const [addItemProfile] = useAddItemProfileMutation();
   const [deleteItemProfile] = useDeleteItemProfileMutation();

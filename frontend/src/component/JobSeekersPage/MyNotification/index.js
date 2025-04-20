@@ -10,19 +10,19 @@ export default function JobSeekerNotification() {
   const { isLogin, user } = useSelector((state) => state.auth);
   // const { notification } = useSelector((state) => state.notification);
   const { data: notification } = useGetNotificationByUserIDQuery(
-    user?.user?.id,
+    user?.id,
     {
-      skip: !user?.user?.id, // Skip the query if user ID is not available
+      skip: !user?.id, // Skip the query if user ID is not available
     }
   );
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isLogin || user?.user?.role !== 3) {
+    if (!isLogin || user?.role !== 3) {
       navigate("/login");
     }
-    // dispatch(getNotificationByUserID(user?.user.id)); // dispatch
+    // dispatch(getNotificationByUserID(user?.id)); // dispatch
   }, [navigate, isLogin, user]);
 
   return (

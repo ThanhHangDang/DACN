@@ -6,7 +6,7 @@ export default function EmployerProfile() {
   const navigate = useNavigate();
   const { isLogin, user } = useSelector((state) => state.auth);
   useEffect(() => {
-    if (!isLogin || user?.user?.role !== 2) {
+    if (!isLogin || user?.role !== 2) {
       navigate("/login");
     }
   }, [navigate, user, isLogin]);

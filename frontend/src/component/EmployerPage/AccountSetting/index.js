@@ -20,11 +20,11 @@ export default function EmployerAccountSetting() {
   });
 
   const handleChangePassword = () => {
-    console.log("user: ", user?.user.id, " passwordchange: ", data.password);
+    console.log("user: ", user?.id, " passwordchange: ", data.password);
   };
 
   useEffect(() => {
-    if (!isLogin || user?.user?.role !== 2) {
+    if (!isLogin || user?.role !== 2) {
       navigate("/login");
     }
   }, [navigate, user, isLogin]);
@@ -128,7 +128,7 @@ export default function EmployerAccountSetting() {
         >
           <div>
             <p className="mb-1 fw-bold">
-              Username: <span className="fw-normal">{user?.user.username}</span>
+              Username: <span className="fw-normal">{user?.username}</span>
             </p>
             <p className="mb-0 fw-bold">
               Password: <span className="fw-normal">******</span>
@@ -136,7 +136,7 @@ export default function EmployerAccountSetting() {
           </div>
           <div>
             <p className="mb-0 text-muted">
-              Ngày tạo: {user?.user.create_date}
+              Ngày tạo: {user?.create_date}
             </p>
           </div>
         </div>

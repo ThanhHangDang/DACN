@@ -7,7 +7,7 @@ import { vi } from "date-fns/locale";
 
 export default function CompanyYouFollow() {
   const { user } = useSelector((state) => state.auth);
-  const jobseekerId = user?.user?.id;
+  const jobseekerId = user?.id;
 
   // Using RTK Query hook instead of dispatch + useEffect
   const { data: listFollowEmployer, isLoading } = useGetItemProfileQuery({
@@ -30,7 +30,7 @@ export default function CompanyYouFollow() {
   };
 
   const handleUnFollow = (company_id) => {
-    console.log(user?.user?.id);
+    console.log(user?.id);
     console.log(company_id);
   };
 

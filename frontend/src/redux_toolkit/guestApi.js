@@ -1,6 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import domain from "../config/domain";
-import { get } from "jquery";
 
 export const guestApi = createApi({
   reducerPath: "guestApi",
@@ -12,7 +11,7 @@ export const guestApi = createApi({
         url: "guest/company-detail",
         params: {id} ,
       }),
-      transformResponse: (response) => response.data,
+      transformResponse: (response) => response,
     }),
     // Get all companies with pagination
     getAllCompanies: builder.query({

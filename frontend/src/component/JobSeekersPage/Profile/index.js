@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import {
   useGetCitiesQuery,
   useGetLevelsQuery,
@@ -42,7 +43,7 @@ export default function JobSeekerProfile() {
   const { isLogin, user } = useSelector((state) => state.auth);
   const { data: edu } = useGetItemProfileQuery({
     type: "education",
-    profile_id: user?.user?.id,
+    profile_id: user?.id,
   });
   const highestEducation = edu?.reduce((highest, current) => {
     return current.education_id > highest.education_id ? current : highest;
@@ -52,7 +53,7 @@ export default function JobSeekerProfile() {
   console.log(`Level cao nhất: ${highestEducation?.education_title}`);
 
   // Debug
-  console.log("User ID:", user?.user?.id);
+  console.log("User ID:", user?.id);
   const { data: level } = useGetLevelsQuery();
   const { data: city } = useGetCitiesQuery(84);
 
@@ -66,9 +67,9 @@ export default function JobSeekerProfile() {
     error,
     refetch,
   } = useGetItemProfileQuery(
-    { type: "Basic", profile_id: user?.user?.id },
+    { type: "Basic", profile_id: user?.id },
     {
-      skip: !user?.user?.id,
+      skip: !user?.id,
       refetchOnMountOrArgChange: true,
     }
   );
@@ -84,7 +85,7 @@ export default function JobSeekerProfile() {
   const [updateItemProfile, { isLoading: isUpdatingJob }] =
     useUpdateItemProfileMutation();
 
-  const [hideStatus, setHideStatus] = useState(false);
+  // const [hideStatus, setHideStatus] = useState(false);
 
   const [expectedJob, setExpectedJob] = useState({
     city_id: "",
@@ -109,7 +110,7 @@ export default function JobSeekerProfile() {
 
   // Kiểm tra đăng nhập
   useEffect(() => {
-    if (!isLogin || user?.user?.role !== 3) {
+    if (!isLogin || user?.role !== 3) {
       navigate("/login");
     }
   }, [isLogin, navigate, user]);
@@ -150,7 +151,7 @@ export default function JobSeekerProfile() {
       await updateItemProfile({
         type: "Basic",
         data: {
-          profile_id: user?.user?.id,
+          profile_id: user?.id,
           ...expectedJob,
         },
       }).unwrap();
@@ -167,7 +168,7 @@ export default function JobSeekerProfile() {
       await updateItemProfile({
         type: "Basic",
         data: {
-          profile_id: user?.user?.id,
+          profile_id: user?.id,
           ...updateProfileData,
         },
       }).unwrap();
@@ -187,7 +188,7 @@ export default function JobSeekerProfile() {
 
     try {
       await updateProfileImage({
-        id: user?.user?.id,
+        id: user?.id,
         image: image,
       }).unwrap();
       toast.success("Cập nhật ảnh đại diện thành công!");
@@ -735,13 +736,39 @@ export default function JobSeekerProfile() {
       <div className="bg-light rounded-2 me-2 my-2 p-2">
         <div className="d-flex justify-content-start align-items-center mb-2">
           <h3 className="me-2">Hồ sơ của bạn</h3>
-          <NavLink to="/adadas" className="text-primary">
-            {hideStatus ? (
-              <i className="bi bi-eye"></i>
-            ) : (
-              <i className="bi bi-eye-slash"></i>
-            )}
-          </NavLink>
+          {userInformation?.status_ === 1 ? (
+            <OverlayTrigger
+              placement="bottom"
+              overlay={
+                <Tooltip>Tài khoản bạn đang hoạt động bình thường</Tooltip>
+              }
+            >
+              <span className="text-success">
+                <span
+                  className="bg-success d-inline-block rounded-circle me-2"
+                  style={{ width: "10px", height: "10px" }}
+                ></span>
+                Active
+              </span>
+            </OverlayTrigger>
+          ) : (
+            <OverlayTrigger
+              placement="bottom"
+              overlay={
+                <Tooltip>
+                  Tài khoản bạn đang bị khóa, vui lòng liên hệ admin để được hỗ trợ
+                </Tooltip>
+              }
+            >
+              <span className="text-danger">
+                <span
+                  className="bg-danger d-inline-block rounded-circle me-2"
+                  style={{ width: "10px", height: "10px" }}
+                ></span>
+                Blocked
+              </span>
+            </OverlayTrigger>
+          )}
         </div>
       </div>
 

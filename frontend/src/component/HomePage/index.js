@@ -25,7 +25,7 @@ export default function HomePage() {
   const totalPages = latestWork ? Math.ceil(latestWork.length / pageSize) : 0;
 
   useEffect(() => {
-    if (isLogin && user?.user?.role === 2) {
+    if (isLogin && user?.role === 2) {
       navigate("/employer-overview");
     }
   }, [dispatch]);
@@ -144,7 +144,7 @@ export default function HomePage() {
     return leadingCompany?.map((company, index) => {
       return (
         <div
-          key={company.Company_ID}
+          key={company.company_id}
           className="card col-lg-2 col-md-3 m-md-2 col-sm-10 align-items-center m-sm-4"
         >
           <img

@@ -8,7 +8,7 @@ export default function SaveEmployeeProfile() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isLogin && !(user?.user.role === 2)) {
+    if (!isLogin && !(user?.role === 2)) {
       navigate("/login");
     }
   }, [isLogin, navigate, user]);

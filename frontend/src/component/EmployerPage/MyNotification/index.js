@@ -7,14 +7,14 @@ export default function EmployerNotification() {
   const { isLogin, user } = useSelector((state) => state.auth);
 
   // *********** lấy sãn notification ở đây, @pizon đưa vào frontend đi em
-  const { data: notification } = useGetNotificationByUserIDQuery(user?.user?.id, {
-    skip: !user?.user?.id, // Skip the query if user ID is not available
+  const { data: notification } = useGetNotificationByUserIDQuery(user?.id, {
+    skip: !user?.id, // Skip the query if user ID is not available
   });
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isLogin || user?.user?.role !== 2) {
+    if (!isLogin || user?.role !== 2) {
       navigate("/login");
     }
   }, [isLogin, navigate, user]);

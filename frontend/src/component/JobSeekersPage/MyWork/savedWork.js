@@ -13,11 +13,11 @@ export default function SavedWork() {
   const { user } = useSelector((state) => state.auth);
   const { data: userInformation } = useGetItemProfileQuery({
     type: "Basic",
-    profile_id: user?.user?.id,
+    profile_id: user?.id,
   });
   const { data: listJobSave } = useGetItemProfileQuery({
     type: "save_job",
-    profile_id: user?.user?.id,
+    profile_id: user?.id,
   });
 
   console.log("List job save:", listJobSave);

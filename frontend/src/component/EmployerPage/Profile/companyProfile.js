@@ -10,7 +10,7 @@ export default function CompanyProfile() {
   const { isLogin, user } = useSelector((state) => state.auth);
   const { data: industry } = useGetIndustriesQuery();
   const navigate = useNavigate();
-  const id = user?.user.id;
+  const id = user?.id;
   console.log("id", id);
   const { data } = useGetCompanyInforQuery(id);
   const companyInformation = data || {};

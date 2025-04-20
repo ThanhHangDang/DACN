@@ -14,9 +14,9 @@ export default function JobSeekerOverview() {
     isLoading,
     error,
   } = useGetItemProfileQuery(
-    { type: "Basic", profile_id: user?.user?.id },
+    { type: "Basic", profile_id: user?.id },
     {
-      skip: !user?.user?.id,
+      skip: !user?.id,
     }
   );
 
@@ -125,7 +125,7 @@ export default function JobSeekerOverview() {
   }, [days]);
 
   useEffect(() => {
-    if (!isLogin || user?.user.role !== 3) {
+    if (!isLogin || user?.role !== 3) {
       navigate("/login");
     }
   }, [isLogin, navigate, user]);

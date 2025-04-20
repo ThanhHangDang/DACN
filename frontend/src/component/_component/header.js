@@ -11,19 +11,19 @@ const Header = () => {
   // Lấy state từ Redux
   const { isLogin, user } = useSelector((state) => state.auth);
 
-  console.log("header check ", user?.user);
+  console.log("header check ",isLogin, user);
 
   const handleLogout = () => {
     dispatch(logout());
   };
 
   const handleViewProfile = () => {
-    if (!isLogin) {
+    if (!isLogin|| !user) {
       navigate("/login");
     } else {
-      if (user.user.role === 2) {
+      if (user?.role === 2) {
         navigate("/employer-overview");
-      } else if (user.user.role === 3) {
+      } else if (user?.role === 3) {
         navigate("/jobseeker-overview");
       }
     }
@@ -180,7 +180,7 @@ const Header = () => {
                 </ul>
               </li>
 
-              {user?.user.role === 2 ? (
+              {user?.role === 2 ? (
                 <li className="d-flex nav-item align-items-center custom-hover-3">
                   <NavLink className="dropdown-item" to="/employee">
                     Tìm kiếm ứng viên
@@ -213,9 +213,9 @@ const Header = () => {
                       aria-expanded="false"
                     >
                       {" "}
-                      {user?.user.logo ? (
+                      {user?.logo ? (
                         <img
-                          src={user?.user.logo}
+                          src={user?.logo}
                           alt="Avatar"
                           className="rounded-circle"
                           width="32"
@@ -339,7 +339,7 @@ const Header = () => {
             </ul>
           </div>
 
-          {user?.user.role === 2 ? (
+          {user?.role === 2 ? (
             <>
               <h6 className="fw-bold">Về chúng tôi</h6>
               <ul className="list-unstyled ps-3 text-muted">

@@ -9,7 +9,7 @@ export default function EmployerPage() {
   const { isLogin, user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const { data: companyInformation } = useGetCompanyInformationQuery(
-    user?.user.id
+    user?.id
   );
 
   const sidebar = [

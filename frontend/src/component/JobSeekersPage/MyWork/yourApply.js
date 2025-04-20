@@ -26,11 +26,11 @@ export default function YourApply() {
   const { user } = useSelector((state) => state.auth);
   const { data: listJobApply } = useGetItemProfileQuery({
     type: "apply_job",
-    profile_id: user?.user?.id,
+    profile_id: user?.id,
   });
   const { data: userInformation } = useGetItemProfileQuery({
     type: "Basic",
-    profile_id: user?.user?.id,
+    profile_id: user?.id,
   });
   return (
     <>
