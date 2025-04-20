@@ -193,13 +193,13 @@ const Header = () => {
 
             {/* Search + Right Options */}
             <div className="d-flex align-items-center gap-4">
-              <input
+              {/* <input
                 className="form-control form-control-sm"
                 type="search"
                 placeholder="Tìm kiếm..."
                 aria-label="Search"
                 style={{ width: "200px" }}
-              />
+              /> */}
               <div className="navbar-nav mb-2 mb-lg-0">
                 {isLogin ? (
                   <>
