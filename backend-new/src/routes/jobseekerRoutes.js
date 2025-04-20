@@ -29,9 +29,9 @@ jobseekerRoutes.put("/profile", updateItemProfile);
 jobseekerRoutes.delete("/profile", deleteItemProfile);
 jobseekerRoutes.post("/avatar-imagine", upload.single("image"), updateJobseekerProfileImage);
 
-jobseekerRoutes.post("/cv", upload.single("resume"), addResume);
-jobseekerRoutes.get("/cv", getResume);
-jobseekerRoutes.delete("/cv", deleteResume);
+jobseekerRoutes.post("/profile-cv", upload.single("resume"), addResume);
+jobseekerRoutes.get("/profile-cv", getResume);
+jobseekerRoutes.delete("/profile-cv", deleteResume);
 
 jobseekerRoutes.get("/job-applications", getListJobApplication); // lấy
 jobseekerRoutes.post("/job-application", applyToJob);

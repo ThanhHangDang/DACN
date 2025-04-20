@@ -286,11 +286,41 @@ const queryGetJobSavedByID = async (id) => {
 const queryGetFollowedCompanyByID = async (id) => {
   const [followedCompany] = await db.query(
     `
-    SELECT employer_id 
+    SELECT
+    c.company_id,
+    c.company_name,
+    c.logo,
+    c.background,
+    c.describle,
+    c.count_follower,
+    cs.scale_id,
+    cs.scale_max,
+    cs.scale_min,
+    ci.industry_id,
+    ci.industry_name,
+    (SELECT COALESCE(
+          JSON_ARRAYAGG(
+              JSON_OBJECT(
+                  'city_id', cl.city_id,
+                  'city_name', ct.city_name,
+                  'address', cl.address))
+          , JSON_ARRAY())
+	  from 
+          (select * FROM company_location where company_location.company_id = c.company_id) as cl
+          JOIN catalog_city ct ON ct.city_id = cl.city_id
+          ) AS company_location,
+    (SELECT count(*) from logs_jobseeker_follow_employer ljfe where ljfe.employer_id = c.company_id) as count_follower,
+    (SELECT count(*) from job j where j.employer_id = c.company_id and j.status_=1 and j.date_expi >= NOW()) as count_job_posted,
+    (SELECT AVG(lr.score) FROM logs_review lr WHERE lr.company_id = c.company_id) AS average_score
     FROM
-      logs_jobseeker_follow_employer 
-    WHERE
-      jobseeker_id = ?;
+      (select employer_id from logs_jobseeker_follow_employer WHERE  jobseeker_id = ?) as main_table
+    JOIN
+      (select * from company
+        join user_employer e on company.company_id = e.employer_id
+        WHERE e.status_ = 1) as c ON main_table.employer_id = c.company_id
+    JOIN catalog_industry ci ON c.industry_id = ci.industry_id
+    JOIN catalog_scale cs on cs.scale_id = c.scale_id    
+    ORDER BY count_job_posted DESC, count_follower DESC, average_score DESC;
     `,
     [id]
   );
