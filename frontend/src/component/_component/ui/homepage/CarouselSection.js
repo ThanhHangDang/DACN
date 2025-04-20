@@ -3,7 +3,8 @@ import React from "react";
 // import "bootstrap-icons/font/bootstrap-icons.css";
 import { NavLink } from "react-router-dom";
 
-const HeroSection = ({ logo }) => {
+const HeroSection = ( {listcompany} ) => {
+  console.log("listcompany", listcompany);  
   return (
     <div
       className="text-white text-center py-5"
@@ -101,14 +102,14 @@ const HeroSection = ({ logo }) => {
           </div>
         </div>
 
-        {/* Logos section */}
+        {/* listcompanys section */}
         <div className="d-flex flex-wrap justify-content-center gap-5 mt-4">
-          {/* <img src="/img/logos/spotify.png" alt="Spotify" height="30" />
-          <img src="/img/logos/slack.png" alt="Slack" height="30" />
-          <img src="/img/logos/adobe.png" alt="Adobe" height="30" />
-          <img src="/img/logos/asana.png" alt="Asana" height="30" />
-          <img src="/img/logos/linear.png" alt="Linear" height="30" /> */}
-          {logo?.map((item, index) => {
+          {/* <img src="/img/listcompanys/spotify.png" alt="Spotify" height="30" />
+          <img src="/img/listcompanys/slack.png" alt="Slack" height="30" />
+          <img src="/img/listcompanys/adobe.png" alt="Adobe" height="30" />
+          <img src="/img/listcompanys/asana.png" alt="Asana" height="30" />
+          <img src="/img/listcompanys/linear.png" alt="Linear" height="30" /> */}
+          {listcompany?.map((item, index) => {
             return (
               <NavLink to={`/company-detail/${item.company_id}`} key={index}>
                 <img

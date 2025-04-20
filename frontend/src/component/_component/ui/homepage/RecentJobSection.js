@@ -24,7 +24,7 @@ const RecentJobSection = ({ job }) => {
 
       <div>
         {job?.map((item, index) => {
-          return <JobCard key={index} />;
+          return <JobCard key={index} job={item} />;
         })}
       </div>
     </div>

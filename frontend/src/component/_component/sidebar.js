@@ -55,7 +55,7 @@ const SidebarLayout = ({ data = [] }) => {
               className={`${
                 collapsed ? "sidebar-link-collapsed" : "sidebar-link"
               }  text-decoration-none p-3`}
-              activeClassName="active"
+              activeclassname="active"
             >
               <i className={`${item.icon} me-3`}>{""}</i>
               <span className="hide-on-collapse">{item.title}</span>

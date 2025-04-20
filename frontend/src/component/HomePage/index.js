@@ -19,8 +19,12 @@ export default function HomePage() {
   const navigate = useNavigate();
 
   const [currentPage, setCurrentPage] = useState(1);
-  const { data: leadingCompany } = useGetLeadingCompaniesQuery();
-  const { data: latestWorkResponse } = useGetLatestWorkQuery();
+  const { data: data_leadingCompany } = useGetLeadingCompaniesQuery({paging_size:5});
+  const { data: latestWorkResponse, isLoading, isError, error } = useGetLatestWorkQuery({paging_size:27});
+  console.log("data_leadingCompany", data_leadingCompany);  
+  const leadingCompany = data_leadingCompany?.companies || [];
+  const latestWork = latestWorkResponse?.jobs || [];
+  console.log("latestWork", latestWork);  
   const { currentDate } = useGetTimeQuery();
 
   const { isLogin, user } = useSelector((state) => state.auth);
@@ -184,7 +188,7 @@ export default function HomePage() {
 
   return (
     <>
-      <HeroSection logo={leadingCompany} />
+      <HeroSection listcompany={leadingCompany} />
       <RecentJobSection job={latestWork} />
       <MainCategorySection />
       <BeOurEmployer />

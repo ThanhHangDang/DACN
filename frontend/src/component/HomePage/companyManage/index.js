@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { useGetAllCompaniesQuery } from "../../../redux_toolkit/guestApi.js";
+import { useGetCompanyBySearchQuery } from "../../../redux_toolkit/guestApi.js";
 import { useGetIndustriesQuery, useGetCitiesQuery } from "../../../redux_toolkit/CategoryApi.js";
 import CompanyCard from "../../_component/ui/CompanyCard.js";
 
@@ -9,7 +9,7 @@ export default function ListCompany() {
   const [isPageChanging, setIsPageChanging] = useState(false); // Add this near the top of your component
 
   // Add more detailed query information
-  const { data, isLoading: companiesLoading, isError, error, refetch } = useGetAllCompaniesQuery({ paging_size: 12, active_page: page });
+  const { data, isLoading: companiesLoading, isError, error, refetch } = useGetCompanyBySearchQuery({ paging_size: 12, active_page: page });
   const { data: industries } = useGetIndustriesQuery();
   const { data: cities } = useGetCitiesQuery(84); // 84 là mã quốc gia Việt Nam
 

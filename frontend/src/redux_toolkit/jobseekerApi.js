@@ -39,7 +39,7 @@ export const jobseekerApi = createApi({
                 formData.append("image", image);
                 
                 return {
-                    url: '/jobseeker/update-jobseeker-profile-image',
+                    url: '/jobseeker/avatar-imagine',
                     method: 'POST',
                     body: formData,
                     // Không cần set Content-Type vì fetchBaseQuery tự xử lý với FormData
@@ -48,7 +48,6 @@ export const jobseekerApi = createApi({
             },
             // Transform response để trả về dữ liệu như action cũ
             transformResponse: (response) => response.data,
-            // Invalidate các tags liên quan để UI được cập nhật
             invalidatesTags: (result, error, { id }) => [
                 { type: 'Basic', id }
             ]
@@ -79,6 +78,134 @@ export const jobseekerApi = createApi({
                 body: { type, data },
             }),
             invalidatesTags: (result, error, { type }) => [{ type }],  
+        }),
+        getJobsaving: builder.query({
+            query: (profile_id) => ({
+                url: '/jobseeker/job-saving',
+                params: { profile_id },
+            }),
+            transformResponse: (response) => {
+                return response.data;
+            },
+            providesTags: ['JobSaving'],
+        }),
+        addJobSaving: builder.mutation({
+            query: (data) => ({
+                url: '/jobseeker/job-saving',
+                method: 'POST',
+                body: data,
+            }),
+            invalidatesTags: ['JobSaving'],
+        }),
+        deleteJobSaving: builder.mutation({
+            query: (data) => ({
+                url: '/jobseeker/job-saving',
+                method: 'DELETE',
+                body: data,
+            }),
+            invalidatesTags: ['JobSaving'],
+        }),
+        getFollowingCompany: builder.query({
+            query: (profile_id) => ({
+                url: '/jobseeker/company-following',
+                params: { profile_id },
+            }),
+            transformResponse: (response) => {
+                return response.data;
+            },
+            providesTags: ['FollowingCompany'],
+        }),
+        addFollowingCompany: builder.mutation({
+            query: (data) => ({
+                url: '/jobseeker/company-following',
+                method: 'POST',
+                body: data,
+            }),
+            invalidatesTags: ['FollowingCompany'],
+        }),
+        deleteFollowingCompany: builder.mutation({
+            query: (data) => ({
+                url: '/jobseeker/company-following',
+                method: 'DELETE',
+                body: data,
+            }),
+            invalidatesTags: ['FollowingCompany'],
+        }),
+        addCompanyReview: builder.mutation({
+            query: (data) => ({
+                url: '/jobseeker/company-rating',
+                method: 'POST',
+                body: data,
+            }),
+            invalidatesTags: ['CompanyReview'],
+        }),
+        deleteCompanyReview: builder.mutation({
+            query: (review_id) => ({
+                url: '/jobseeker/company-rating',
+                method: 'DELETE',
+                body: { review_id },
+            }),
+            invalidatesTags: ['CompanyReview'],
+        }),
+        getCompanyReview: builder.query({
+            query: (profile_id) => ({
+                url: '/jobseeker/company-rating',
+                params: { profile_id },
+            }),
+            transformResponse: (response) => {
+                return response.data;
+            },
+            providesTags: ['CompanyReview'],
+        }),
+        getJobApply: builder.query({
+            query: (profile_id) => ({
+                url: '/jobseeker/job-applications',
+                params: { profile_id },
+            }),
+            transformResponse: (response) => {
+                return response.data;
+            },
+            providesTags: ['JobApply'],
+        }),
+        addJobApply: builder.mutation({
+            query: ({profile_id,job_id}) => ({
+                url: '/jobseeker/job-application',
+                method: 'POST',
+                body: {profile_id,job_id},
+            }),
+            invalidatesTags: ['JobApply'],
+        }),
+        getProfileCV: builder.query({
+            query: (profile_id) => ({
+                url: '/jobseeker/profile-cv',
+                params: { profile_id },
+            }),
+            transformResponse: (response) => {
+                return response.data;
+            },
+            providesTags: ['CV'],
+        }),
+        addProfileCV: builder.mutation({
+            query: ({ profile_id, file }) => {
+                const formData = new FormData();
+                formData.append('profile_id', profile_id);
+                formData.append('file', file);
+                
+                return {
+                    url: '/jobseeker/profile-cv',
+                    method: 'POST',
+                    body: formData,
+                };
+            },
+            invalidatesTags: ['CV'],
+        }),
+        deleteProfileCV: builder.mutation({
+            query: ({profile_id,cv_id}) => ({
+                url: '/jobseeker/profile-cv',
+                method: 'DELETE',
+                body: { profile_id, cv_id },
+            }),
+            invalidatesTags: ['CV'],
         }),
     })   
 });

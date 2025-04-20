@@ -14,7 +14,7 @@ export const guestApi = createApi({
       transformResponse: (response) => response,
     }),
     // Get all companies with pagination
-    getAllCompanies: builder.query({
+    getCompanyBySearch: builder.query({
       query: (searchData={active_page:1,page_size:10}) => {
         console.log("Requesting getAllCompanies with page:", searchData);
         return {
@@ -49,14 +49,6 @@ export const guestApi = createApi({
         console.log("Requesting getLatestWork with searchData:", response);
         return response.data;},
     }),
-    // Get all posts with pagination
-    getAllPost: builder.query({
-      query: (searchData = {paging_size:10}) => ({
-        url: "/guest/jobs",
-        params: searchData,
-      }),
-      transformResponse: (response) => { return response.data;},
-    }),
     // Get all posts by search query
     getPostSearch: builder.query({
       query: (searchData = {paging_size:10}) => ({
@@ -86,11 +78,10 @@ export const guestApi = createApi({
 
 export const {
  useGetCompanyInformationQuery,
- useGetAllCompaniesQuery,
+ useGetCompanyBySearchQuery,
  useGetCompanyByIdQuery,
  useGetLeadingCompaniesQuery,
  useGetLatestWorkQuery,
- useGetAllPostQuery,
  useGetPostSearchQuery,
  useGetPostDetailQuery,
  useGetPostByUserQuery

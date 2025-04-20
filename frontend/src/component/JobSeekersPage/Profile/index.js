@@ -49,11 +49,6 @@ export default function JobSeekerProfile() {
     return current.education_id > highest.education_id ? current : highest;
   }, edu[0]);
 
-  // Sử dụng
-  console.log(`Level cao nhất: ${highestEducation?.education_title}`);
-
-  // Debug
-  console.log("User ID:", user?.id);
   const { data: level } = useGetLevelsQuery();
   const { data: city } = useGetCitiesQuery(84);
 
@@ -76,7 +71,6 @@ export default function JobSeekerProfile() {
 
   // Debug API response
   console.log("UserInformation response:", userInformation);
-  console.log("Error:", error);
 
   // const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation();
   const [updateProfileImage, { isLoading: isUpdatingImage }] =
@@ -113,7 +107,7 @@ export default function JobSeekerProfile() {
     if (!isLogin || user?.role !== 3) {
       navigate("/login");
     }
-  }, [isLogin, navigate, user]);
+  }, [isLogin, user]);
 
   // Cập nhật form data khi có thông tin user - đảm bảo đưa cả birthday vào
   useEffect(() => {
@@ -756,7 +750,8 @@ export default function JobSeekerProfile() {
               placement="bottom"
               overlay={
                 <Tooltip>
-                  Tài khoản bạn đang bị khóa, vui lòng liên hệ admin để được hỗ trợ
+                  Tài khoản bạn đang bị khóa, vui lòng liên hệ admin để được hỗ
+                  trợ
                 </Tooltip>
               }
             >
