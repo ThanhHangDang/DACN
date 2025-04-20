@@ -19,7 +19,8 @@ const {
   rateCandidate,
   deleteCandidate,
   getListJobApplication,
-  rejectJobApplication
+  rejectJobApplication,
+  inviteCandidateApply
 } = require("../controllers/employerControllers.js");
 
 const { upload } = require("../middlewares/imageUpload.js");
@@ -49,6 +50,8 @@ employerRoutes.delete("/candidate", deleteCandidate); // xóa ứng viên khỏi
 
 employerRoutes.get("/job-applications", getListJobApplication );  // lấy danh sách ứng viên đã ứng tuyển
 employerRoutes.delete("/job-applications", rejectJobApplication); // dùng để reject ứng viên
+
+employerRoutes.post("/job-invitations", inviteCandidateApply); 
 
 module.exports = employerRoutes ;
 

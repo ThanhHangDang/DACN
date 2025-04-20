@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import { useGetItemProfileQuery } from "../../../redux_toolkit/jobseekerApi";
+import { useGetItemProfileQuery } from "../../../redux_toolkit/jobseekerApi.js";
 import TitleComponent from "../../_component/ui/TitleComponent.js";
 
 export default function EmployeeDetail() {

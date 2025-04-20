@@ -111,6 +111,7 @@ export const jobseekerApi = createApi({
                 params: { profile_id },
             }),
             transformResponse: (response) => {
+                console.log("getFollowingCompany APIIIIIIIIIII", response);
                 return response.data;
             },
             providesTags: ['FollowingCompany'],
@@ -216,5 +217,18 @@ export const {
     useUpdateProfileImageMutation,
     useUpdateItemProfileMutation,
     useAddItemProfileMutation,
-    useDeleteItemProfileMutation    
+    useDeleteItemProfileMutation,
+    useGetJobsavingQuery,
+    useDeleteJobSavingMutation,
+    useGetFollowingCompanyQuery,
+    useAddFollowingCompanyMutation,
+    useDeleteFollowingCompanyMutation,
+    useAddCompanyReviewMutation,
+    useDeleteCompanyReviewMutation,
+    useGetCompanyReviewQuery,
+    useGetJobApplyQuery,
+    useAddJobApplyMutation,
+    useGetProfileCVQuery,
+    useAddProfileCVMutation,
+    useDeleteProfileCVMutation        
 } = jobseekerApi;

@@ -1,20 +1,19 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useGetItemProfileQuery } from "../../../redux_toolkit/jobseekerApi";
+import { useGet } from "../../../redux_toolkit/jobseekerApi";
 import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
+import { useGetFollowingCompanyQuery, useDeleteFollowingCompanyMutation } from "../../../redux_toolkit/jobseekerApi";
+import { toast } from "react-toastify";
 
 export default function CompanyYouFollow() {
   const { user } = useSelector((state) => state.auth);
-  const jobseekerId = user?.id;
-
+  const profile_id = user?.id;
+  const [deleteFollowingCompany] = useDeleteFollowingCompanyMutation();
   // Using RTK Query hook instead of dispatch + useEffect
-  const { data: listFollowEmployer, isLoading } = useGetItemProfileQuery({
-    type: "follow_employer",
-    profile_id: jobseekerId,
-  });
-
+  const { data: listFollowEmployer, isLoading } = useGetFollowingCompanyQuery( profile_id);
+console.log("listFollowEmployer", listFollowEmployer);  
   if (isLoading) {
     return <div className="text-center">Loading...</div>;
   }
@@ -29,9 +28,24 @@ export default function CompanyYouFollow() {
     }
   };
 
-  const handleUnFollow = (company_id) => {
-    console.log(user?.id);
-    console.log(company_id);
+  const handleUnFollow = async (company_id) => {
+    try 
+    {
+      const response = await deleteFollowingCompany({
+        profile_id: profile_id,
+        company_id: company_id,
+      }).unwrap();
+      if (response.success) {
+        toast.success("Đã bỏ theo dõi công ty này!");
+      }
+      else {
+        toast.error("Có lỗi đã xảy ra, vui lòng thử lại!");
+      }
+    }
+    catch (error) {
+      console.error("Error unfollowing company:", error);
+      toast.error("Có lỗi đã xảy ra, vui lòng thử lại!");
+    }    
   };
 
   return (
@@ -91,12 +105,16 @@ export default function CompanyYouFollow() {
                     <i class="bi bi-people-fill"></i>{" "}
                     {company.count_follower ? company.count_follower : "0"}
                   </span>
-                  <span className="badge bg-light text-dark">
-                    <i className="bi bi-geo-alt-fill me-1"></i>
-                    {company.company_location?.address
-                      ? company.company_location?.address
-                      : "Chưa có thông tin"}
-                  </span>
+                  {company.company_location.length > 0 ? company.company_location.map((location, index) => (
+                    <span key={index} className="badge bg-light text-dark">
+                      <i className="bi bi-geo-alt-fill me-1"></i>
+                      {location.address}
+                    </span>
+                  )) : (
+                    <span className="badge bg-light text-dark">
+                      Chưa có thông tin
+                    </span>
+                  )}                      
                 </div>
               </div>
             </div>

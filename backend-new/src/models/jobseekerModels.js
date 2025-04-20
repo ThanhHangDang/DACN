@@ -653,7 +653,7 @@ const queryGetListJobApplication = async (profile_id) => {
        JOIN catalog_job_function cj ON j.job_function_id = cj.job_function_id
       JOIN company c ON j.employer_id = c.company_id
       JOIN catalog_city cc ON j.work_location = cc.city_id
-      WHERE j.status_ = 1 and j.date_expi > NOW();
+      WHERE j.status_ = 1 and j.date_expi >= NOW();
        `,
       [profile_id]
     );
@@ -717,12 +717,24 @@ const queryGetListCompanyFollowing = async (profile_id) => {
         c.background,
         c.industry_id,
         ci.industry_name,
-        (select count(*) from job j where j.employer_id = ljfe.jobseeker_id and j.status_=1 and j.date_expi>=now()) as job_count
+        (select count(*) from job j where j.employer_id = ljfe.employer_id and j.status_=1 and j.date_expi>=now()) as count_job_posted,
+        ROUND(COALESCE((SELECT AVG(lr.score) FROM logs_review lr WHERE lr.company_id = c.company_id), 0), 1) AS average_score,
+        ( SELECT COALESCE(
+          JSON_ARRAYAGG(
+              JSON_OBJECT(
+                  'city_id', cl.city_id,
+                  'city_name', ct.city_name,
+                  'address', cl.address))
+          , JSON_ARRAY())
+        FROM
+          (select * FROM company_location where company_location.company_id = c.company_id) as cl
+          JOIN catalog_city ct ON ct.city_id = cl.city_id) as company_location
       FROM 
         (select * from logs_jobseeker_follow_employer lj where lj.jobseeker_id = ? ) ljfe
         JOIN company c on ljfe.employer_id = c.company_id 
         JOIN catalog_industry ci on c.industry_id = ci.industry_id`,
       [profile_id]);
+      console.log(followedCompanies);
       if (followedCompanies.length > 0) {
         return followedCompanies;
       } else {
@@ -799,7 +811,7 @@ const queryGetListJobSaving = async (profile_id) => {
      JOIN catalog_job_function cj ON j.job_function_id = cj.job_function_id
     JOIN company c ON j.employer_id = c.company_id
     JOIN catalog_city cc ON j.work_location = cc.city_id
-    WHERE j.status_ = 1 and j.date_expi > NOW();`,
+    WHERE j.status_ = 1 and j.date_expi >= NOW();`,
     [profile_id]
     );
     if (savedJobs.length > 0) {

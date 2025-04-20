@@ -182,7 +182,7 @@ const Header = () => {
 
               {user?.role === 2 ? (
                 <li className="d-flex nav-item align-items-center custom-hover-3">
-                  <NavLink className="dropdown-item" to="/employee">
+                  <NavLink className="dropdown-item" to="/candidate">
                     Tìm kiếm ứng viên
                   </NavLink>
                 </li>
@@ -345,7 +345,7 @@ const Header = () => {
               <ul className="list-unstyled ps-3 text-muted">
                 <li className="d-flex nav-item align-items-center">
                   <NavLink
-                    to="/employee"
+                    to="/candidate"
                     className="text-decoration-none text-secondary"
                   >
                     Tìm kiếm ứng viên

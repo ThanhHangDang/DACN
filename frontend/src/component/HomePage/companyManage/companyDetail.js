@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import calculateDaysRemaining from "../../../utils/calculateDaysRemaining.js";
 import {
   useGetCompanyInformationQuery,
-  useGetPostByUserQuery,
+  useGetJobByUserQuery,
 } from "../../../redux_toolkit/guestApi.js";
 import { useGetCitiesQuery } from "../../../redux_toolkit/CategoryApi.js";
 import CompanyHeader from "../../_component/ui/CompanyHeader.js";
@@ -16,7 +16,7 @@ export default function CompanyDetail() {
   const { data: city } = useGetCitiesQuery(84); // 84 là mã quốc gia Việt Nam
   const { data: companyInformation } = useGetCompanyInformationQuery(companyId);
   console.log("companyInformation", companyInformation);
-  const { data } = useGetPostByUserQuery(companyId);
+  const { data } = useGetJobByUserQuery(companyId);
   const postsByUser = data?.jobs || [];
   const formatNumberToTr = (number) => `${(number / 1e6).toFixed(0)}tr`;
 
@@ -125,53 +125,56 @@ export default function CompanyDetail() {
                   <strong>Địa chỉ công ty:</strong>
                 </p>
 
-              <p>
-                {companyInformation?.company_location
-                  ? companyInformation.company_location.map((location) => (
+                <p>
+                  {companyInformation?.company_location
+                    ? companyInformation.company_location.map((location, index) => (
+                        <p key={index}>
+                          {location.address} - {location.city_name}
+                        </p>
+                      ))
+                    : "Chưa có thông tin"}
+                </p>
+                <h6 className="fw-bold">Chia sẻ công ty tới bạn bè</h6>
+                <div className="d-flex gap-2">
+                  <button className="btn btn-outline-primary btn-sm">
+                    <i className="bi bi-facebook"></i> Facebook
+                  </button>
+                  <button className="btn btn-outline-info btn-sm">
+                    <i className="bi bi-twitter"></i> Twitter
+                  </button>
+                  <button className="btn btn-outline-secondary btn-sm">
+                    <i className="bi bi-linkedin"></i> LinkedIn
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="card mt-4">
+              <div className="card-body text-center">
+                <div className="row list-group list-group-horizontal">
+                  <div className="col-md-4 list-group-item">
+                    <h6 className="fw-bold">Lương, Thưởng Và Chế Độ Phúc Lợi</h6>
+                    <p>Chính sách lương thưởng hấp dẫn, nhiều phúc lợi đặc biệt.</p>
+                  </div>
+                  <div className="col-md-4 list-group-item">
+                    <h6 className="fw-bold">Thời Gian Làm Việc Và Nghỉ Ngơi</h6>
                     <p>
-                    {location.address} -  {location.city_name}
-                    </p>))
-                  : "Chưa có thông tin"}
-              </p>
-              <h6 className="fw-bold">Chia sẻ công ty tới bạn bè</h6>
-              <div className="d-flex gap-2">
-                <button className="btn btn-outline-primary btn-sm">
-                  <i className="bi bi-facebook"></i> Facebook
-                </button>
-                <button className="btn btn-outline-info btn-sm">
-                  <i className="bi bi-twitter"></i> Twitter
-                </button>
-                <button className="btn btn-outline-secondary btn-sm">
-                  <i className="bi bi-linkedin"></i> LinkedIn
-                </button>
+                      Môi trường làm việc năng động, giờ làm việc linh hoạt, nghỉ phép
+                      đầy đủ.
+                    </p>
+                  </div>
+                  <div className="col-md-4 list-group-item">
+                    <h6 className="fw-bold">Đào Tạo Và Phát Triển</h6>
+                    <p>
+                      Chương trình đào tạo chuyên môn, phát triển kỹ năng cá nhân.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div className="card mt-4">
-        <div className="card-body text-center">
-          <div className="row list-group list-group-horizontal">
-            <div className="col-md-4 list-group-item">
-              <h6 className="fw-bold">Lương, Thưởng Và Chế Độ Phúc Lợi</h6>
-              <p>Chính sách lương thưởng hấp dẫn, nhiều phúc lợi đặc biệt.</p>
-            </div>
-            <div className="col-md-4 list-group-item">
-              <h6 className="fw-bold">Thời Gian Làm Việc Và Nghỉ Ngơi</h6>
-              <p>
-                Môi trường làm việc năng động, giờ làm việc linh hoạt, nghỉ phép
-                đầy đủ.
-              </p>
-            </div>
-            <div className="col-md-4 list-group-item">
-              <h6 className="fw-bold">Đào Tạo Và Phát Triển</h6>
-              <p>
-                Chương trình đào tạo chuyên môn, phát triển kỹ năng cá nhân.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    </>
   );
 }

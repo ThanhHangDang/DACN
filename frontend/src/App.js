@@ -40,8 +40,8 @@ import EmployerAccountSetting from "./component/EmployerPage/AccountSetting/inde
 import WorkMangePage from "./component/HomePage/WorkManagePage/index.js";
 import WorkDetail from "./component/HomePage/WorkManagePage/workDetail.js";
 
-import EmployeeMaganePage from "./component/EmployerPage/EmployeeMaganePage/index.js";
-import EmployeeDetail from "./component/EmployerPage/EmployeeMaganePage/employeeDetail.js";
+import CandidateMaganePage from "./component/EmployerPage/CandidateMaganePage/index.js";
+import JobseekerDetail from "./component/EmployerPage/CandidateMaganePage/JobseekerDetail.js";
 
 import ListCompany from "./component/HomePage/companyManage/index.js";
 import CompanyDetail from "./component/HomePage/companyManage/companyDetail.js";
@@ -116,9 +116,9 @@ function App() {
 
           <Route path="/post-detail/:id" Component={WorkDetail} />
 
-          <Route path="/employee" Component={EmployeeMaganePage} />
+          <Route path="/candidates" Component={CandidateMaganePage} />
 
-          <Route path="/employee-detail/:id" Component={EmployeeDetail} />
+          <Route path="/candidate-detail/:id" Component={JobseekerDetail} />
 
           {/* Anh Đạt làm 2 cái này */}
           <Route path="/list-company" Component={ListCompany} />

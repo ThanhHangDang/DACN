@@ -22,9 +22,9 @@ module.exports = {
   // Company location information
   company_location: {
     tableName: 'company_location',
-    key: ['company_id', 'city_id'],
-    fields: ['company_id', 'city_id', 'address'],
-    updateItem: ['address'],
+    key: ['location_id'],
+    fields: ['location_id','company_id', 'city_id', 'address'],
+    updateItem: ['city_id','address'],
     addItem: ['company_id', 'city_id', 'address']
   },
   

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { useGetAllCompaniesQuery } from "../../../redux_toolkit/guestApi.js";
+import { useGetCompanyBySearchQuery } from "../../../redux_toolkit/guestApi.js";
 import { useGetIndustriesQuery, useGetCitiesQuery } from "../../../redux_toolkit/CategoryApi.js";
 import CompanyCard from "../../_component/ui/CompanyCard.js";
 import TitleComponent from "../../_component/ui/TitleComponent.js";

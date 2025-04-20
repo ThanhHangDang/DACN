@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   useGetLeadingCompaniesQuery,
   useGetLatestWorkQuery,
+  useGetGeneralInfoQuery
 } from "../../redux_toolkit/guestApi.js";
 import { useGetTimeQuery } from "../../redux_toolkit/CategoryApi.js";
 
@@ -17,12 +18,11 @@ import FounderSection from "../../component/_component/ui/homepage/OurFounder.js
 export default function HomePage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const {data: generalInfo} = useGetGeneralInfoQuery();
   const [currentPage, setCurrentPage] = useState(1);
-  const { data: data_leadingCompany } = useGetLeadingCompaniesQuery({paging_size:5});
-  const { data: latestWorkResponse, isLoading, isError, error } = useGetLatestWorkQuery({paging_size:27});
-  console.log("data_leadingCompany", data_leadingCompany);  
-  const leadingCompany = data_leadingCompany?.companies || [];
+  const { data: latestWorkResponse, isLoading, isError, error } = useGetLatestWorkQuery({paging_size:8});
+
+  // const leadingCompany = generalInfo?.leadingcompany || [];
   const latestWork = latestWorkResponse?.jobs || [];
   console.log("latestWork", latestWork);  
   const { currentDate } = useGetTimeQuery();
@@ -155,40 +155,9 @@ export default function HomePage() {
       );
     });
   };
-
-  const renderLeadingCompany = () => {
-    if (!leadingCompany || leadingCompany.length === 0) {
-      return <div>Chưa có thông tin công ty</div>;
-    }
-    return leadingCompany?.map((company, index) => {
-      return (
-        <div
-          key={company.Company_ID}
-          className="card col-lg-2 col-md-3 m-md-2 col-sm-10 align-items-center m-sm-4"
-        >
-          <img
-            src={company.logo}
-            className="card-img-top mt-2"
-            alt="..."
-            style={{ width: "80%", minHeight: "150px" }}
-          />
-          <div className="card-body text-center">
-            <h5
-              className="card-title text-truncate"
-              style={{ maxWidth: "200px" }}
-            >
-              {company.company_name}
-            </h5>
-            <p className="btn btn-primary">Việc mới</p>
-          </div>
-        </div>
-      );
-    });
-  };
-
   return (
     <>
-      <HeroSection listcompany={leadingCompany} />
+      <HeroSection generalInfo={generalInfo} />
       <RecentJobSection job={latestWork} />
       <MainCategorySection />
       <BeOurEmployer />

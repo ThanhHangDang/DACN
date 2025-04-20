@@ -23,7 +23,7 @@ export default function WorkDetail() {
   } = useGetPostDetailQuery(id, {
     refetchOnMountOrArgChange: true,
   });
-  // console.log(postDetail);
+  console.log(postDetail);
 
   // useEffect(() => {
   //   // dispatch(getPostDetails(id));
@@ -113,11 +113,18 @@ export default function WorkDetail() {
 
                 <h5 className="mt-3">Từ khóa:</h5>
                 <div>
-                  {postDetail?.job_skills?.split(",")?.map((item, index) => (
-                    <span key={index} className="badge bg-secondary me-2">
-                      {item}
-                    </span>
-                  ))}
+                {postDetail?.job_skills 
+                      ? postDetail.job_skills?.slice() // Create a copy of the array to avoid mutating the original
+                      .sort((a, b) => a.skill_name.length - b.skill_name.length) // Sort by name length (shortest first)
+                      .map(item => (
+                      <NavLink
+                        key={item.skill_id}
+                        to={`/post?skill_id=${item.skill_id}`}
+                        className="badge bg-secondary me-2 mb-2 text-decoration-none skill-badge"
+                      >
+                        {item.skill_name}
+                      </NavLink>) )
+                      : ("Chưa có thông tin")}
                 </div>
               </div>
             </div>
@@ -142,35 +149,8 @@ export default function WorkDetail() {
                     <strong>Ngành nghề:</strong> {postDetail?.industry_name}
                   </li>
                   <li>
-                    <strong>Kỹ năng:</strong> {postDetail?.job_skills}
-                  </li>
-                  <li>
-                    {postDetail?.working_time ? (
-                      <>
-                        <strong>Giờ làm việc:</strong> {postDetail.working_time}
-                      </>
-                    ) : (
-                      ""
-                    )}
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-<<<<<<< HEAD
-              <h5 className="mt-3">Các phúc lợi dành cho bạn</h5>
-              <ul>
-                {postDetail?.catalog_benefit?.split(",")?.map((item, index) => (
-                  <li key={index}>{item}</li>
-                ))}
-              </ul>
-
-              <h5 className="mt-3">Địa điểm làm việc</h5>
-              <p>{postDetail?.address}</p>
-
-              <h5 className="mt-3">Từ khóa:</h5>
-              <div>
-              {postDetail?.job_skills 
+                  <strong>Kỹ năng:</strong>{" "}
+                    {postDetail?.job_skills 
                       ? postDetail.job_skills?.slice() // Create a copy of the array to avoid mutating the original
                       .sort((a, b) => a.skill_name.length - b.skill_name.length) // Sort by name length (shortest first)
                       .map(item => (
@@ -182,7 +162,17 @@ export default function WorkDetail() {
                         {item.skill_name}
                       </NavLink>) )
                       : ("Chưa có thông tin")}
-=======
+                  </li>
+                  <li>
+                  <strong>Giờ làm việc:</strong>{" "}
+                  {postDetail?.working_time
+                    ? postDetail?.working_time
+                    : "Chưa có thông tin"}
+                  </li>
+                </ul>
+              </div>
+            </div>
+
             <div className="card">
               <div className="card-body">
                 <h5>Việc làm tương tự</h5>
@@ -203,84 +193,10 @@ export default function WorkDetail() {
                     </a>
                   </li>
                 </ul>
->>>>>>> cc2a05748b5be0cd44191ca95416f9d2de88c035
               </div>
             </div>
           </div>
         </div>
-<<<<<<< HEAD
-
-        {/* Right Column */}
-        <div className="col-lg-4">
-          <div className="card mb-4">
-            <div className="card-body">
-              <CompanyHeader
-                companyInformation={postDetail}
-                heightBg={"150px"}
-                logoSize={"30px"}
-              />
-              <h5>Thông tin việc làm</h5>
-              <ul className="list-unstyled">
-                <li>
-                  <strong>Ngày đăng:</strong>{" "}
-                  {formatDateToDDMMYYYY(postDetail?.date_post)}
-                </li>
-                <li>
-                  <strong>Ngành nghề:</strong> {postDetail?.industry_name}
-                </li>
-                <li>
-                    <strong>Kỹ năng:</strong>{" "}
-                    {postDetail?.job_skills 
-                      ? postDetail.job_skills?.slice() // Create a copy of the array to avoid mutating the original
-                      .sort((a, b) => a.skill_name.length - b.skill_name.length) // Sort by name length (shortest first)
-                      .map(item => (
-                      <NavLink
-                        key={item.skill_id}
-                        to={`/post?skill_id=${item.skill_id}`}
-                        className="badge bg-secondary me-2 mb-2 text-decoration-none skill-badge"
-                      >
-                        {item.skill_name}
-                      </NavLink>) )
-                      : ("Chưa có thông tin")}
-                  </li>
-                <li>
-                  {postDetail?.working_time ? (
-                    <>
-                      <strong>Giờ làm việc:</strong> {postDetail.working_time}
-                    </>
-                  ) : (
-                    ""
-                  )}
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="card-body">
-              <h5>Việc làm tương tự</h5>
-              <ul className="list-unstyled">
-                <li>
-                  <a href="#" className="text-decoration-none">
-                    Junior AI Engineer - Navigos Search
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-decoration-none">
-                    AI Engineer - Samsung Electronics Vietnam
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-decoration-none">
-                    Data Engineer - Công ty TNHH FPT Smart Cloud
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-=======
->>>>>>> cc2a05748b5be0cd44191ca95416f9d2de88c035
       </div>
     </>
   );

@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
 // import { getListEmployee } from "../../../redux/actions/userAction.js";
-import { useGetlistJobseekerQuery } from "../../../redux_toolkit/employerApi";
+import { useGetlistJobseekerQuery } from "../../../redux_toolkit/employerApi.js";
 import TitleComponent from "../../_component/ui/TitleComponent.js";
 
 export default function EmployeeMaganePage() {
@@ -53,7 +53,7 @@ export default function EmployeeMaganePage() {
                           : "Chưa có kinh nghiệm"}
                       </p>
                       <NavLink
-                        to={`/employee-detail/${candidate.jobseeker_id}`}
+                        to={`/candidate-detail/${candidate.jobseeker_id}`}
                         className="btn btn-primary"
                       >
                         Chi tiết

@@ -7,6 +7,7 @@ const {
   queryGetListJobOfCompany,
   queryGetListLeadingCompany,
   queryGetListCompanyBySearch,
+  queryGetGeneralInfo
 } = require("../models/guestModels.js");
 
 const getPublicJobDetail = async (req, res, next) => {
@@ -131,6 +132,16 @@ const getPublicInformationOfCompany = async (req, res, next) => {
   }
 };
 
+const getGeneralInfo = async (req, res, next) => {
+  try {
+    const data = await queryGetGeneralInfo();
+    console.log("data", data);
+    return res.success(data || {}, "Lấy thông tin tổng quan thành công");
+  } catch (err) {
+    return next(new ApiError("Có lỗi khi lấy thông tin công ty", 500));
+  }
+};
+
 module.exports = {
   getPublicInformationOfCompany,
   getPublicJobDetail,
@@ -138,4 +149,5 @@ module.exports = {
   getListJobOfCompany,
   getListLeadingCompany,
   getListCompanyBySearch,
+  getGeneralInfo
 };

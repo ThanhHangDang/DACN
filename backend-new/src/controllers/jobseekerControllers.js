@@ -76,14 +76,14 @@ const getItemProfile = async (req, res, next) => {
 const updateItemProfile = async (req, res, next) => {
   try {
     const { type, data } = req.body;
-    
+    console.log("updateItemProfile", type, data);
     if (!type || !data) {
       return next(new ApiError("Thiếu thông tin cần thiết", 400));
     }
     
-    if (!data.profile_id) {
-      return next(new ApiError("Thiếu thông tin ID hồ sơ", 400));
-    }
+    // if (!data.profile_id) {
+    //   return next(new ApiError("Thiếu thông tin ID hồ sơ", 400));
+    // }
     
     data.create_at = new Date();
     
@@ -328,17 +328,18 @@ const addCompanyReview = async (req, res, next) => {
 };
 
 const getListCompanyFollowing = async (req, res, next) => {
-  try {
+  try {  
   const profile_id = req.query.profile_id;
   if (!profile_id) {
     return next(new ApiError("Thiếu thông tin ID người dùng", 400));
   }
   const data = await queryGetListCompanyFollowing(profile_id);
+  console.log("getListCompanyFollowing", data);
   if (!data) {
     return next(new ApiError("Không tìm thấy thông tin công ty đã theo dõi", 404));
   }
   return res.success(
-    { companies: data || [] },
+    data,
     "Lấy danh sách công ty đã theo dõi thành công"
   );
 }

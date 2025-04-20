@@ -1,9 +1,10 @@
 const db = require("../config/databaseConfig.js");
 
-const queryGetPublicInformationOfCompany = async (id) => { 
+const queryGetPublicInformationOfCompany = async (id) => {
   // Lấy thông tin công khai của công ty đang được active (trả về null nếu không tìm thấy/ bị khóa bởi admin)
-  const [result] = await db.query(
-    `
+  try {
+    const [result] = await db.query(
+      `
      SELECT 
       c.company_id,
       c.company_name,
@@ -74,17 +75,23 @@ const queryGetPublicInformationOfCompany = async (id) => {
           WHERE e.status_ = 1 and company_id = ?) as c
         JOIN catalog_industry ci ON ci.industry_id = c.industry_id
         JOIN catalog_scale cs ON cs.scale_id = c.scale_id;        
-    `,[id]
-  );
-  if (result.length === 0) {
-    return null;
+    `,
+      [id]
+    );
+    if (result.length === 0) {
+      return null;
+    }
+    return result[0];
+  } catch (error) {
+    console.error("Error fetching company information:", error);
+    throw error; // Rethrow the error to be handled by the calling function
   }
-  return result[0];
-};   
+};
 
 const queryGetPublicJobDetail = async (workId) => {
-  const [work] = await db.query(
-    `
+  try {
+    const [work] = await db.query(
+      `
   SELECT 
     j.job_id,
 	  j.title, 
@@ -174,12 +181,17 @@ const queryGetPublicJobDetail = async (workId) => {
   JOIN
       catalog_education edu ON j.require_education = edu.education_id;
     `,
-    [workId]
-  );
-  return work[0];
+      [workId]
+    );
+    return work[0];
+  } catch (error) {
+    console.error("Error fetching job details:", error);
+    throw error; // Rethrow the error to be handled by the calling function
+  }
 };
 
 const queryGetListJobBySearch = async (searchData) => {
+  try {
     const {
       title,
       industry_id = null,
@@ -194,13 +206,12 @@ const queryGetListJobBySearch = async (searchData) => {
       require_education = null,
       require_experience = null,
       date_from = null,
-      paging_size=10,
-      page=1,
+      paging_size = 10,
+      page = 1,
     } = searchData;
 
     const status_ = 1; // Chỉ lấy các công việc đang hoạt động
-     let query =
-      `
+    let query = `
       SELECT 
         j.job_id,
         j.title, 
@@ -254,7 +265,7 @@ const queryGetListJobBySearch = async (searchData) => {
       conditions.push("j.title LIKE ?");
       values.push(title2);
     }
-  
+
     if (industry_id) {
       conditions.push("j.industry_id = ?");
       values.push(industry_id);
@@ -311,18 +322,22 @@ const queryGetListJobBySearch = async (searchData) => {
     if (conditions.length > 0) {
       query += " WHERE " + conditions.join(" AND ");
     }
-    query +=
-     ` ORDER BY j.date_post DESC
+    query += ` ORDER BY j.date_post DESC
     LIMIT ? OFFSET ?;`;
     values.push(Number(paging_size));
-    values.push((Number(page)-1)*Number(paging_size));
+    values.push((Number(page) - 1) * Number(paging_size));
     const [result] = await db.query(query, values);
     return result;
-  };
-  
+  } catch (error) {
+    console.error("Error fetching jobs by search:", error);
+    throw error; // Rethrow the error to be handled by the calling function
+  }
+};
+
 const queryGetListJobOfCompany = async (companyId) => {
-  console.log("companyId", companyId);
-  const [result] = await db.query(
+  try {
+    console.log("companyId", companyId);
+    const [result] = await db.query(
       `
       SELECT 
         j.job_id,
@@ -369,18 +384,25 @@ const queryGetListJobOfCompany = async (companyId) => {
           catalog_level lvl ON j.level_id = lvl.level_id
       JOIN
           catalog_education edu ON j.require_education = edu.education_id;
-        `,[companyId]);
+        `,
+      [companyId]
+    );
 
-        console.log("result", result);
-  if (result.length === 0) {
-    return null;
+    console.log("result", result);
+    if (result.length === 0) {
+      return null;
+    }
+    return result;
+  } catch (error) {
+    console.error("Error fetching jobs of company:", error);
+    throw error; // Rethrow the error to be handled by the calling function
   }
-  return result;
 };
 
 const queryGetListLeadingCompany = async (paging_size) => {
   try {
-  const [companies] = await db.query( `
+    const [companies] = await db.query(
+      `
               SELECT
                   c.company_id,
                   c.company_name,
@@ -415,23 +437,25 @@ const queryGetListLeadingCompany = async (paging_size) => {
                   JOIN catalog_industry ci ON c.industry_id = ci.industry_id
                   JOIN catalog_scale cs on cs.scale_id = c.scale_id
                   ORDER BY count_job_posted DESC, count_follower DESC, average_score DESC
-                  LIMIT ? OFFSET 0;`,[paging_size]);
-return companies;
-  }
-  catch (error) {
+                  LIMIT ? OFFSET 0;`,
+      [paging_size]
+    );
+    return companies;
+  } catch (error) {
     console.error("Error fetching leading companies:", error);
     throw error; // Rethrow the error to be handled by the calling function
   }
 };
 
 const queryGetListCompanyBySearch = async (searchData) => {
-  const {     
-    title= "",
-    industry= "",
-    work_location= "",
-    scale_id= "",  
-    paging_size=10,
-    active_page=1,   
+  try {
+    const {
+      title = "",
+      industry = "",
+      work_location = "",
+      scale_id = "",
+      paging_size = 10,
+      active_page = 1,
     } = searchData;
     let query = `
 SELECT
@@ -469,36 +493,111 @@ SELECT
     JOIN catalog_scale cs on cs.scale_id = c.scale_id
 `;
 
-const conditions = [];
-const values = [];
-if (work_location) {
-  query +=` JOIN 
+    const conditions = [];
+    const values = [];
+    if (work_location) {
+      query += ` JOIN 
     (SELECT * FROM company_location cl WHERE cl.city_id = ?) AS cl1 ON c.company_id = cl1.company_id`;
-  values.push(work_location);}
+      values.push(work_location);
+    }
 
-if (title) {
-  conditions.push('c.company_name LIKE ? ');
-  values.push(`%${title}%`);
-}
-if (industry) {
-  conditions.push(`i.industry_name = ? `);
-  values.push(industry);}
+    if (title) {
+      conditions.push("c.company_name LIKE ? ");
+      values.push(`%${title}%`);
+    }
+    if (industry) {
+      conditions.push(`i.industry_name = ? `);
+      values.push(industry);
+    }
 
-if (scale_id) {
-  conditions.push(`c.scale = ? `);
-  values.push(scale_id);}
+    if (scale_id) {
+      conditions.push(`c.scale = ? `);
+      values.push(scale_id);
+    }
 
-if (conditions.length > 0) {
-  query += ` WHERE ${conditions.join(' AND ')}`;
-}
-query += `ORDER BY count_job_posted DESC, count_follower DESC, average_score DESC
+    if (conditions.length > 0) {
+      query += ` WHERE ${conditions.join(" AND ")}`;
+    }
+    query += `ORDER BY count_job_posted DESC, count_follower DESC, average_score DESC
          LIMIT ? OFFSET ?;`;
-values.push(Number(paging_size));
-values.push((Number(active_page)-1)*Number(paging_size));
-const [companies] = await db.query(query, values);
-return companies;
+    values.push(Number(paging_size));
+    values.push((Number(active_page) - 1) * Number(paging_size));
+    const [companies] = await db.query(query, values);
+    return companies;
+  } catch (error) {
+    console.error("Error fetching companies by search:", error);
+    throw error; // Rethrow the error to be handled by the calling function
+  }
 };
 
+const queryGetGeneralInfo = async () => {
+  try {
+    const [leadingcompany] = await db.query(
+      `
+      SELECT
+                  c.company_id,
+                  c.company_name,
+                  c.logo,
+                  c.background,
+                  c.describle,
+                  c.count_follower,
+                  cs.scale_id,
+                  cs.scale_max,
+                  cs.scale_min,
+                  ci.industry_id,
+                  ci.industry_name,
+                  (SELECT COALESCE(
+                        JSON_ARRAYAGG(
+                            JSON_OBJECT(
+                                'city_id', cl.city_id,
+                                'city_name', ct.city_name,
+                                'address', cl.address))
+                        , JSON_ARRAY())
+                  from 
+                        (select * FROM company_location where company_location.company_id = c.company_id) as cl
+                        JOIN catalog_city ct ON ct.city_id = cl.city_id
+                        ) AS company_location,
+                  (SELECT count(*) from logs_jobseeker_follow_employer ljfe where ljfe.employer_id = c.company_id) as count_follower,
+                  (SELECT count(*) from job j where j.employer_id = c.company_id and j.status_=1 and j.date_expi >= NOW()) as count_job_posted,
+                  (SELECT AVG(lr.score) FROM logs_review lr WHERE lr.company_id = c.company_id) AS average_score,
+                  COUNT(*) OVER() AS total_count
+                  FROM
+                    (select * from company
+                      join user_employer e on company.company_id = e.employer_id
+                      WHERE e.status_ = 1) as c
+                  JOIN catalog_industry ci ON c.industry_id = ci.industry_id
+                  JOIN catalog_scale cs on cs.scale_id = c.scale_id
+                  ORDER BY count_job_posted DESC, count_follower DESC, average_score DESC
+                  LIMIT 5 OFFSET 0;
+      `
+    );
+    const [job_count] = await db.query(
+      `
+      SELECT count(*) as total_job from job j where j.status_ = 1 and j.date_expi >= NOW() ;
+      `
+    );
+    const [company_count] = await db.query(
+      `
+      SELECT count(*) as total_company from user_employer c where c.status_ = 1 ;
+      `
+    );
+    const [jobseeker_count] = await db.query(
+      `
+      SELECT count(*)  as total_jobseeker from user_jobseeker p where p.status_ = 1;
+      `
+    );
+    const result = {
+      leadingcompany: leadingcompany,
+      job_count: job_count[0].total_job,
+      company_count: company_count[0].total_company,
+      jobseeker_count: jobseeker_count[0].total_jobseeker,
+    };
+    return result;
+  } catch (error) {
+    console.error("Error fetching general info:", error);
+    throw error; // Rethrow the error to be handled by the calling function
+  }
+};
 
 module.exports = {
   queryGetPublicInformationOfCompany,
@@ -506,6 +605,6 @@ module.exports = {
   queryGetListJobBySearch,
   queryGetListJobOfCompany,
   queryGetListLeadingCompany,
-  queryGetListCompanyBySearch,  
-  };
-  
+  queryGetListCompanyBySearch,
+  queryGetGeneralInfo
+};

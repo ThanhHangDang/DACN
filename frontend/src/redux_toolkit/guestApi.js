@@ -11,7 +11,7 @@ export const guestApi = createApi({
         url: "guest/company-detail",
         params: {id} ,
       }),
-      transformResponse: (response) => response,
+      transformResponse: (response) => response.data,
     }),
     // Get all companies with pagination
     getCompanyBySearch: builder.query({
@@ -73,7 +73,13 @@ export const guestApi = createApi({
       }),
       transformResponse: (response) => { return response.data;},
     }),
-  }),
+    getGeneralInfo: builder.query({
+      query: () => ({
+        url: "/guest/general-info",
+      }),
+      transformResponse: (response) => { return response.data;},
+    }),
+})
 });
 
 export const {
@@ -84,5 +90,6 @@ export const {
  useGetLatestWorkQuery,
  useGetPostSearchQuery,
  useGetPostDetailQuery,
- useGetPostByUserQuery
+ useGetJobByUserQuery,
+ useGetGeneralInfoQuery
 } = guestApi;

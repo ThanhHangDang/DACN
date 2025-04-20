@@ -1,9 +1,10 @@
 export default function FounderSection() {
+  const url = "https://png.pngtree.com/png-clipart/20190924/original/pngtree-user-vector-avatar-png-image_4830521.jpg";
   const testimonials = [
     {
       name: "Thanh Hang Dang",
       role: "Founder",
-      avatar: "/images/avatar1.jpg",
+      avatar: url,
       rating: 5,
       title: "Amazing services",
       text: "Metus faucibus sed turpis lectus feugiat tincidunt. Rhoncus sed tristique in dolor. Mus etiam et vestibulum venenatis",
@@ -11,7 +12,7 @@ export default function FounderSection() {
     {
       name: "Van Nhan Truong",
       role: "Founder",
-      avatar: "/images/avatar2.jpg",
+      avatar: url,
       rating: 5,
       title: "Everything simple",
       text: "Mus etiam et vestibulum venenatis viverra ut. Elit morbi bibendum ullamcorper augue faucibus",
@@ -19,7 +20,7 @@ export default function FounderSection() {
     {
       name: "Thanh Dat Nguyen",
       role: "Founder",
-      avatar: "/images/avatar3.jpg",
+      avatar: url,
       rating: 5,
       title: "Awesome, thank you!",
       text: "Rhoncus sed tristique in dolor. Mus etiam et vestibulum venenatis viverra ut. Elit morbi bibendum ullamcorper augue faucibus. Nulla et tempor montes",

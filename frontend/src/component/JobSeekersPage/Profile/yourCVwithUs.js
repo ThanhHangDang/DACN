@@ -64,8 +64,9 @@ export default function YourCVwithUs() {
   });
   const [addItemProfile] = useAddItemProfileMutation();
   const [deleteItemProfile] = useDeleteItemProfileMutation();
-  const [updateProfileItem] = useUpdateItemProfileMutation();
-
+  // const [updateProfileItem] = useUpdateItemProfileMutation();
+  const [updateItemProfile, { isLoading: isUpdatingJob }] =
+    useUpdateItemProfileMutation();
   const { data: edu } = useGetEducationQuery();
   const { data: tags } = useGetTagsQuery();
   const { data: lang } = useGetLanguagesQuery();
@@ -124,10 +125,10 @@ export default function YourCVwithUs() {
 
   const handleUpdateCarreerTarget = async () => {
     try {
-      await updateProfileItem({
+      await updateItemProfile({
         type: "Basic",
         data: {
-          profile_id: userInformation?.jobseeker_id,
+          profile_id: userInformation?.profile_id,
           career_target: careerTarget,
         },
       }).unwrap();
@@ -142,13 +143,13 @@ export default function YourCVwithUs() {
       if (isAdd) {
         await addItemProfile({
           type: "experience",
-          data: { profile_id: userInformation?.jobseeker_id, ...experience },
+          data: { profile_id: userInformation?.profile_id, ...experience },
         }).unwrap();
         toast.success("Thêm Experience thành công!");
       } else {
-        await updateProfileItem({
+        await updateItemProfile({
           type: "experience",
-          data: { profile_id: userInformation?.jobseeker_id, ...experience },
+          data: { profile_id: userInformation?.profile_id, ...experience },
         }).unwrap();
         toast.success("Update Experience thành công!");
       }
@@ -172,13 +173,13 @@ export default function YourCVwithUs() {
       if (isAdd) {
         await addItemProfile({
           type: "education",
-          data: { profile_id: userInformation?.jobseeker_id, ...education },
+          data: { profile_id: userInformation?.profile_id, ...education },
         }).unwrap();
         toast.success("Thêm Education thành công!");
       } else {
-        await updateProfileItem({
+        await updateItemProfile({
           type: "education",
-          data: { profile_id: userInformation?.jobseeker_id, ...education },
+          data: { profile_id: userInformation?.profile_id, ...education },
         }).unwrap();
         toast.success("Update Education thành công!");
       }
@@ -201,13 +202,13 @@ export default function YourCVwithUs() {
       if (isAdd) {
         await addItemProfile({
           type: "project",
-          data: { profile_id: userInformation?.jobseeker_id, ...project },
+          data: { profile_id: userInformation?.profile_id, ...project },
         }).unwrap();
         toast.success("Thêm Project thành công!");
       } else {
-        await updateProfileItem({
+        await updateItemProfile({
           type: "project",
-          data: { profile_id: userInformation?.jobseeker_id, ...project },
+          data: { profile_id: userInformation?.profile_id, ...project },
         }).unwrap();
         toast.success("Update Project thành công!");
       }
@@ -244,7 +245,7 @@ export default function YourCVwithUs() {
       await addItemProfile({
         type: "skill",
         data: {
-          profile_id: userInformation?.jobseeker_id,
+          profile_id: userInformation?.profile_id,
           values: skillAdd_ID,
         },
       }).unwrap();
@@ -276,7 +277,7 @@ export default function YourCVwithUs() {
       });
       await addItemProfile({
         type: "language",
-        data: { profile_id: userInformation?.jobseeker_id, values: languageID },
+        data: { profile_id: userInformation?.profile_id, values: languageID },
       }).unwrap();
       toast.success("Thêm Language  thành công!");
       setLanguageAdd([]);
@@ -293,16 +294,16 @@ export default function YourCVwithUs() {
         await addItemProfile({
           type: "certification",
           data: {
-            profile_id: userInformation?.jobseeker_id,
+            profile_id: userInformation?.profile_id,
             ...certification,
           },
         }).unwrap();
         toast.success("Thêm Certification thành công!");
       } else {
-        await updateProfileItem({
+        await updateItemProfile({
           type: "certification",
           data: {
-            profile_id: userInformation?.jobseeker_id,
+            profile_id: userInformation?.profile_id,
             ...certification,
             // certification đã có profile_certifications_id nhờ bạn đã thêm ở trên
           },
@@ -1274,7 +1275,7 @@ export default function YourCVwithUs() {
                           ...dataDeleteModal,
                           type: "experience",
                           data: {
-                            profile_id: userInformation?.jobseeker_id,
+                            profile_id: userInformation?.profile_id,
                             profile_experience_id: exp.profile_experience_id,
                           },
                         });
@@ -1354,7 +1355,7 @@ export default function YourCVwithUs() {
                           ...dataDeleteModal,
                           type: "education",
                           data: {
-                            profile_id: userInformation?.jobseeker_id,
+                            profile_id: userInformation?.profile_id,
                             profile_education_id: edu.profile_education_id,
                           },
                         });
@@ -1435,7 +1436,7 @@ export default function YourCVwithUs() {
                           ...dataDeleteModal,
                           type: "project",
                           data: {
-                            profile_id: userInformation?.jobseeker_id,
+                            profile_id: userInformation?.profile_id,
                             profile_project_id: pro.profile_project_id,
                           },
                         });
@@ -1486,7 +1487,7 @@ export default function YourCVwithUs() {
                       ...dataDeleteModal,
                       type: "skill",
                       data: {
-                        profile_id: userInformation?.jobseeker_id,
+                        profile_id: userInformation?.profile_id,
                         skill_id: skl.skill_id,
                       },
                     });
@@ -1525,7 +1526,7 @@ export default function YourCVwithUs() {
                       ...dataDeleteModal,
                       type: "language",
                       data: {
-                        profile_id: userInformation?.jobseeker_id,
+                        profile_id: userInformation?.profile_id,
                         language_id: lang.language_id,
                       },
                     });
@@ -1590,7 +1591,7 @@ export default function YourCVwithUs() {
                           ...dataDeleteModal,
                           type: "certification",
                           data: {
-                            profile_id: userInformation?.jobseeker_id,
+                            profile_id: userInformation?.profile_id,
                             profile_certifications_id:
                               cer.profile_certifications_id,
                           },

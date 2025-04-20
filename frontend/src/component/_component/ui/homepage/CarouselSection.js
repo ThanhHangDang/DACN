@@ -3,8 +3,9 @@ import React from "react";
 // import "bootstrap-icons/font/bootstrap-icons.css";
 import { NavLink } from "react-router-dom";
 
-const HeroSection = ( {listcompany} ) => {
-  console.log("listcompany", listcompany);  
+const HeroSection = ( {generalInfo} ) => {
+  const {leadingcompany,count_job_posted,company_count,jobseeker_count} = generalInfo || {leadingcompany:[],count_job_posted:0,company_count:0,jobseeker_count:0}
+  
   return (
     <div
       className="text-white text-center py-5"
@@ -72,44 +73,45 @@ const HeroSection = ( {listcompany} ) => {
         </div>
 
         {/* Stats Section */}
-        <div className="row justify-content-center text-white-50">
+        <div className="row justify-content-center text-white-50">          
           <div className="col-6 col-md-3 mb-4">
+          <NavLink to="/post" className="text-decoration-none text-white-50">
             <div className="d-flex flex-column align-items-center">
               <div className="bg-success rounded p-3 mb-2">
                 <i className="bi bi-briefcase-fill fs-4 text-white"></i>
               </div>
-              <h5 className="text-white mb-0">25,850</h5>
+              <h5 className="text-white mb-0">{count_job_posted}</h5>
               <small>Công việc</small>
             </div>
+          </NavLink>
           </div>
           <div className="col-6 col-md-3 mb-4">
+          <NavLink to="/candidates" className="text-decoration-none text-white-50">
             <div className="d-flex flex-column align-items-center">
               <div className="bg-success rounded p-3 mb-2">
                 <i className="bi bi-people-fill fs-4 text-white"></i>
               </div>
-              <h5 className="text-white mb-0">10,250</h5>
+              <h5 className="text-white mb-0">{jobseeker_count}</h5>
               <small>Ứng viên</small>
             </div>
+            </NavLink>
           </div>
           <div className="col-6 col-md-3 mb-4">
+          <NavLink to="/list-company" className="text-decoration-none text-white-50">
             <div className="d-flex flex-column align-items-center">
               <div className="bg-success rounded p-3 mb-2">
                 <i className="bi bi-buildings-fill fs-4 text-white"></i>
               </div>
-              <h5 className="text-white mb-0">18,400</h5>
+              <h5 className="text-white mb-0">{company_count}</h5>
               <small>Công ty</small>
             </div>
+            </NavLink>
           </div>
         </div>
 
-        {/* listcompanys section */}
+        {/* leadingcompanys section */}
         <div className="d-flex flex-wrap justify-content-center gap-5 mt-4">
-          {/* <img src="/img/listcompanys/spotify.png" alt="Spotify" height="30" />
-          <img src="/img/listcompanys/slack.png" alt="Slack" height="30" />
-          <img src="/img/listcompanys/adobe.png" alt="Adobe" height="30" />
-          <img src="/img/listcompanys/asana.png" alt="Asana" height="30" />
-          <img src="/img/listcompanys/linear.png" alt="Linear" height="30" /> */}
-          {listcompany?.map((item, index) => {
+          {leadingcompany?.map((item, index) => {
             return (
               <NavLink to={`/company-detail/${item.company_id}`} key={index}>
                 <img

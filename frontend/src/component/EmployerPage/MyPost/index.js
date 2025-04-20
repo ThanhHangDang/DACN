@@ -17,19 +17,18 @@ import {
 //   editPostByUser,
 // } from "../../../redux/actions/postAction";
 import {
-  useAddPostMutation,
-  useDeletePostMutation,
-  useUpdatePostMutation,
-  useGetCompanyInformationQuery,
-  useGetPostByUserQuery,
+  useGetJobByUserQuery,
+  useAddJobMutation,
+  useUpdateJobMutation,
+  useDeleteJobMutation,
 } from "../../../redux_toolkit/employerApi.js";
 
 export default function EmployerPost() {
   const dispatch = useDispatch();
 
-  const deletePostByUser = useDeletePostMutation();
-  const postNewWork = useAddPostMutation();
-  const editPostByUser = useUpdatePostMutation();
+  const deletePostByUser = useDeleteJobMutation();
+  const postNewWork = useAddJobMutation();
+  const editPostByUser = useUpdateJobMutation();
   const { isLogin, user } = useSelector((state) => state.auth);
 
   const { data: tags } = useGetTagsQuery();
@@ -39,8 +38,9 @@ export default function EmployerPost() {
   const { data: edu } = useGetEducationQuery();
   const { data: lang } = useGetLanguagesQuery();
   const userId = user?.id;
-  const { data } = useGetPostByUserQuery(userId);
-  const postsByUser = data?.work || [];
+  const { data } = useGetJobByUserQuery(userId);
+  console.log("data: ", data);
+  const postsByUser = data?.jobs || [];
   const [isAddPost, setIsAddPost] = useState(true);
 
   const [newPost, setNewPost] = useState({
