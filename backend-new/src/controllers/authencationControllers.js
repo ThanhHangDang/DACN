@@ -25,7 +25,7 @@ const login = async (req, res, next) => {
     }
 
     const userLogin = await loginExecute(username, password);
-
+    // console.log("userLogin", userLogin);
     if (!userLogin) {
       throw new ApiError("Tài khoản hoặc mật khẩu không đúng.", 401);
     }
@@ -35,9 +35,10 @@ const login = async (req, res, next) => {
       id: userLogin.user_id,
       username: userLogin.username,
       role: userLogin.role_id,
+      logo: userLogin.logo||"",
       create_date: userLogin.create_at,
     };
-    
+    console.log("username", username);
     // Trả về thành công sử dụng res.success
     return res.success(
       {
@@ -60,17 +61,18 @@ const login = async (req, res, next) => {
  * Kiểm tra trạng thái đăng nhập
  */
 const isLogin = (req, res, next) => {
+  console.log("check login");
   try {
     if (req.session.userLogin) {
       return res.success(
-        { loggedIn: true, user: req.session.userLogin },
+        { isLogin: true, user: req.session.userLogin },
         "Đã đăng nhập",
         200
       );
     }
     
     return res.success(
-      { loggedIn: false },
+      { isLogin: false },
       "Chưa đăng nhập",
       200
     );

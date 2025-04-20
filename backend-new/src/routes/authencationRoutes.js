@@ -9,7 +9,7 @@ const {
 
 const authencationRoutes = express.Router();
 
-authencationRoutes.get("/", isLogin); //kiểm tra đã đăng nhập chưa
+authencationRoutes.get("/check", isLogin); //kiểm tra đã đăng nhập chưa
 authencationRoutes.post("/login", login); //Đăng nhập
 authencationRoutes.delete("/logout", logout); //Đăng xuất
 authencationRoutes.post("/register", register);

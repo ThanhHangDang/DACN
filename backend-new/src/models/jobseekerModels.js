@@ -71,7 +71,10 @@ const queryGetUserInformation = async (id) => {
   const [userInfor] = await db.query(
     `
     SELECT 
-      js.*,
+      js.avatar,
+      u.user_id as profile_id,
+      u.role_id as role,
+      js.status_,
       u.username,
       u.email,
       u.phone_number,
@@ -117,7 +120,7 @@ const queryGetUserInformation = async (id) => {
     `,
     [id]
   );
-  console.log(userInfor);
+  // console.log(userInfor);
   return userInfor[0];
 };
 
@@ -245,18 +248,24 @@ const queryGetCertificateByID = async (id) => {
 };
 
 const queryGetJobAppliedByID = async (id) => {
-  const [jobApplied] = await db.query(
-    `
-  SELECT 
-      ja.*
-    FROM
-      logs_jobseeker_apply_job ja
-    WHERE
-      ja.jobseeker_id  =   ?;
-    `,
-    [id]
-  );
-  return jobApplied;
+  try{
+    const [jobApplied] = await db.query(
+      `
+    SELECT 
+        ja.*
+      FROM
+        logs_jobseeker_apply_job ja
+      WHERE
+        ja.jobseeker_id  =   ?;
+      `,
+      [id]
+    );
+    return jobApplied;
+  }
+  catch (error) { 
+    console.error("Error in queryGetJobAppliedByID:", error);
+    throw error;
+  }
 };
 
 const queryGetJobSavedByID = async (id) => {
