@@ -1,5 +1,6 @@
 import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
+import { NavLink } from "react-router-dom";
 
 const JobCard = ({ job }) => {
   const getRelativeTimeString = (dateString) => {
@@ -36,7 +37,12 @@ const JobCard = ({ job }) => {
             {job?.work_location_name}
           </span>
         </div>
-        <button className="btn btn-success btn-sm">Job Details</button>
+        <NavLink
+          to={`/post-detail/${job?.job_id}`}
+          className="btn btn-success btn-sm"
+        >
+          Job Details
+        </NavLink>
       </div>
     </div>
   );
