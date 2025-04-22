@@ -1,6 +1,8 @@
 import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
 import { NavLink } from "react-router-dom";
+import LoginModal from "./LoginModal.js";
+import { useDispatch, useSelector } from "react-redux";
 
 const JobCard = ({ job }) => {
   const getRelativeTimeString = (dateString) => {
@@ -12,15 +14,30 @@ const JobCard = ({ job }) => {
       return dateString; // Trả về date_post gốc nếu có lỗi
     }
   };
+
+  const { user } = useSelector((state) => state.auth);
+  const handleSaveJob = () => {
+    console.log("Jobseeker: ", user?.id, " lưu Job: ", job?.job_id);
+  };
+
   return (
     <div className="card mb-3 shadow-sm job-card">
+      <LoginModal />
       <div className="card-body">
         <div className="d-flex justify-content-between">
           <span className="text-success small fw-semibold">
             {" "}
             {getRelativeTimeString(job?.date_post)}
           </span>
-          <i className="bi bi-bookmark"></i>
+          {user?.role === 3 ? (
+            <i className="bi bi-bookmark" onClick={handleSaveJob}></i>
+          ) : (
+            <i
+              className="bi bi-bookmark"
+              data-bs-toggle="modal"
+              data-bs-target="#LoginModal"
+            ></i>
+          )}
         </div>
         <div className="d-flex justify-content-start">
           <div>

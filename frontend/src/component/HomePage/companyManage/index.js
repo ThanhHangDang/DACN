@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { useGetCompanyBySearchQuery } from "../../../redux_toolkit/guestApi.js";
-import { useGetIndustriesQuery, useGetCitiesQuery } from "../../../redux_toolkit/CategoryApi.js";
+import {
+  useGetIndustriesQuery,
+  useGetCitiesQuery,
+} from "../../../redux_toolkit/CategoryApi.js";
 import CompanyCard from "../../_component/ui/CompanyCard.js";
 import TitleComponent from "../../_component/ui/TitleComponent.js";
 
@@ -10,33 +13,42 @@ export default function ListCompany() {
   const [isPageChanging, setIsPageChanging] = useState(false); // Add this near the top of your component
 
   // Add more detailed query information
-  const { data, isLoading: companiesLoading, isError, error, refetch } = useGetCompanyBySearchQuery({ paging_size: 12, active_page: page });
+  const {
+    data,
+    isLoading: companiesLoading,
+    isError,
+    error,
+    refetch,
+  } = useGetCompanyBySearchQuery({ paging_size: 12, active_page: page });
   const { data: industries } = useGetIndustriesQuery();
   const { data: cities } = useGetCitiesQuery(84); // 84 là mã quốc gia Việt Nam
 
-  const { companies: listCompany, totalPages } = data || { companies: [], totalPages: 1 };
+  const { companies: listCompany, totalPages } = data || {
+    companies: [],
+    totalPages: 1,
+  };
   // Lấy dữ liệu trực tiếp từ kết quả query
 
   const getVisiblePages = (currentPage, totalPages) => {
     const delta = 2; // Number of pages to show on each side
     let range = [];
-    
+
     // Calculate start and end page
     let start = Math.max(1, currentPage - delta);
     let end = Math.min(totalPages, currentPage + delta);
-    
+
     // Adjust if we're at the beginning or end
     if (currentPage <= delta) {
       end = Math.min(totalPages, 2 * delta + 1);
     } else if (currentPage >= totalPages - delta) {
       start = Math.max(1, totalPages - 2 * delta);
     }
-    
+
     // Generate page numbers
     for (let i = start; i <= end; i++) {
       range.push(i);
     }
-    
+
     return range;
   };
 
@@ -55,7 +67,7 @@ export default function ListCompany() {
     console.log("API data received:", data);
     console.log("Companies:", listCompany);
     console.log("Total pages:", totalPages);
-    
+
     if (data) {
       setIsPageChanging(false);
     }
@@ -64,17 +76,20 @@ export default function ListCompany() {
   const PaginationComponent = () => {
     // Don't render pagination if there are no companies or only one page
     if (!listCompany?.length || totalPages <= 1) return null;
-    
+
     // Calculate visible pages
     const visiblePages = getVisiblePages(page, totalPages);
     const showStartEllipsis = visiblePages[0] > 1;
     const showEndEllipsis = visiblePages[visiblePages.length - 1] < totalPages;
-    
+
     return (
-      <nav className="d-flex justify-content-center mt-4" aria-label="Page navigation">
+      <nav
+        className="d-flex justify-content-center mt-4"
+        aria-label="Page navigation"
+      >
         <ul className="pagination">
           {/* Previous button */}
-          <li className={`page-item ${page === 1 ? 'disabled' : ''}`}>
+          <li className={`page-item ${page === 1 ? "disabled" : ""}`}>
             <button
               className="page-link"
               onClick={() => page > 1 && changePage(page - 1)}
@@ -83,45 +98,39 @@ export default function ListCompany() {
               &laquo;
             </button>
           </li>
-          
+
           {/* First page button */}
           {showStartEllipsis && (
             <li className="page-item">
-              <button
-                className="page-link"
-                onClick={() => changePage(1)}
-              >
+              <button className="page-link" onClick={() => changePage(1)}>
                 1
               </button>
             </li>
           )}
-          
+
           {/* Start ellipsis */}
           {showStartEllipsis && (
             <li className="page-item disabled">
               <span className="page-link">...</span>
             </li>
           )}
-          
+
           {/* Page numbers */}
-          {visiblePages.map(p => (
-            <li key={p} className={`page-item ${p === page ? 'active' : ''}`}>
-              <button
-                className="page-link"
-                onClick={() => changePage(p)}
-              >
+          {visiblePages.map((p) => (
+            <li key={p} className={`page-item ${p === page ? "active" : ""}`}>
+              <button className="page-link" onClick={() => changePage(p)}>
                 {p}
               </button>
             </li>
           ))}
-          
+
           {/* End ellipsis */}
           {showEndEllipsis && (
             <li className="page-item disabled">
               <span className="page-link">...</span>
             </li>
           )}
-          
+
           {/* Last page button */}
           {showEndEllipsis && (
             <li className="page-item">
@@ -133,9 +142,9 @@ export default function ListCompany() {
               </button>
             </li>
           )}
-          
+
           {/* Next button */}
-          <li className={`page-item ${page === totalPages ? 'disabled' : ''}`}>
+          <li className={`page-item ${page === totalPages ? "disabled" : ""}`}>
             <button
               className="page-link"
               onClick={() => page < totalPages && changePage(page + 1)}
