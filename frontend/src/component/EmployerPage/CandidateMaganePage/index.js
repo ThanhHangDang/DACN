@@ -194,7 +194,11 @@ export default function CandidatesMaganePage() {
                         className="text-truncate card-title"
                         style={{ maxWidth: "200px" }}
                       >
-                        {candidate.full_name}
+                        <NavLink
+                          to={`/candidate-detail/${candidate.jobseeker_id}`}
+                        >
+                          {candidate.full_name}
+                        </NavLink>
                       </h5>
                       <p className="card-text">{candidate.title}</p>
                       <p className="text-muted">

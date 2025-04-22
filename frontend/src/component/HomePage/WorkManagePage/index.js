@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 // import { useDispatch, useSelector } from "react-redux";
 import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
-// import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useGetJobSearchQuery } from "../../../redux_toolkit/guestApi";
+import { useSelector } from "react-redux";
 import {
   useGetCitiesQuery,
   useGetIndustriesQuery,
@@ -13,8 +14,10 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import JobCard from "../../../component/_component/ui/JobCard.js";
 import TitleComponent from "../../_component/ui/TitleComponent.js";
+import { toast } from "react-toastify";
 
 const JobListing = () => {
+  const navigate = useNavigate();
   const [filter, setFilter] = useState({
     title: "",
     industry_id: "",
@@ -50,6 +53,14 @@ const JobListing = () => {
     totalWorksPages: 1,
   };
   console.log("city", jobs);
+  const { isLogin, user } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (user?.role === 2) {
+      toast.error("Vui lòng đăng nhập vai trò người tìm việc!");
+      navigate("/");
+    }
+  }, [navigate, user]);
 
   return (
     <>

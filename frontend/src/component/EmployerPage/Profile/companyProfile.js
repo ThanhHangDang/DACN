@@ -6,7 +6,7 @@ import {
   useGetScalesQuery,
   useGetCitiesQuery,
 } from "../../../redux_toolkit/CategoryApi.js";
-import { 
+import {
   useGetCompanyInforQuery,
   useUpdateCompanyInforMutation,
   useAddCompanyInforMutation,
@@ -22,16 +22,20 @@ export default function CompanyProfile() {
   const { data: scale } = useGetScalesQuery();
   const { data: cities } = useGetCitiesQuery(84); // 84 for Vietnam
   const navigate = useNavigate();
-  
+
   const id = user?.id;
   const { data, refetch } = useGetCompanyInforQuery(id);
   const companyInformation = data || {};
-  
+
   // RTK Query mutations
-  const [updateCompanyProfile, { isLoading: isUpdating }] = useUpdateCompanyInforMutation();
-  const [addCompanyLocation, { isLoading: isAddingLocation }] = useAddCompanyInforMutation();
-  const [updateCompanyLocation, { isLoading: isUpdatingLocation }] = useUpdateCompanyInforMutation();
-  const [deleteCompanyLocation, { isLoading: isDeletingLocation }] = useDeleteCompanyInforMutation();
+  const [updateCompanyProfile, { isLoading: isUpdating }] =
+    useUpdateCompanyInforMutation();
+  const [addCompanyLocation, { isLoading: isAddingLocation }] =
+    useAddCompanyInforMutation();
+  const [updateCompanyLocation, { isLoading: isUpdatingLocation }] =
+    useUpdateCompanyInforMutation();
+  const [deleteCompanyLocation, { isLoading: isDeletingLocation }] =
+    useDeleteCompanyInforMutation();
 
   //  const [addCompanyInfor, { isLoading: isAdding }] = useAddCompanyInforMutation();
   // const [deleteCompanyInfor, { isLoading: isDeleting }] = useDeleteCompanyInforMutation();
@@ -45,11 +49,11 @@ export default function CompanyProfile() {
   });
 
   // New location state
-  const [newLocation, setNewLocation] = useState({ 
-    address: "", 
-    city_id: "" 
+  const [newLocation, setNewLocation] = useState({
+    address: "",
+    city_id: "",
   });
-  
+
   // Edit location state
   const [editLocation, setEditLocation] = useState(null);
 
@@ -70,16 +74,20 @@ export default function CompanyProfile() {
   const handleUpdateCompanyProfile = async () => {
     try {
       // Validate required fields
-      if (!updateCompany.company_name || !updateCompany.phone_number || !updateCompany.industry_id) {
+      if (
+        !updateCompany.company_name ||
+        !updateCompany.phone_number ||
+        !updateCompany.industry_id
+      ) {
         toast.error("Vui lòng điền đầy đủ thông tin bắt buộc");
         return;
       }
 
       const result = await updateCompanyProfile({
         company_id: id,
-        ...updateCompany
+        ...updateCompany,
       }).unwrap();
-      
+
       toast.success("Cập nhật thông tin công ty thành công");
       refetch(); // Refresh company data
     } catch (error) {
@@ -96,21 +104,21 @@ export default function CompanyProfile() {
         return;
       }
 
-     const response =  await addCompanyLocation({type: "company_location", data: {
-        company_id: companyInformation.company_id,
-        address: newLocation.address,
-        city_id: newLocation.city_id}
+      const response = await addCompanyLocation({
+        type: "company_location",
+        data: {
+          company_id: companyInformation.company_id,
+          address: newLocation.address,
+          city_id: newLocation.city_id,
+        },
       }).unwrap();
       if (response.success) {
         setNewLocation({ address: "", city_id: "" }); // Reset form
         toast.success("Thêm địa chỉ công ty thành công");
         refetch(); // Refresh locations list
-      }
-      else
-      {
+      } else {
         toast.error("Thêm địa chỉ công ty thất bại");
       }
-
     } catch (error) {
       console.error("Failed to add location:", error);
       toast.error("Thêm địa chỉ công ty thất bại");
@@ -125,19 +133,20 @@ export default function CompanyProfile() {
         return;
       }
 
-      const result  = await updateCompanyLocation({ type: "company_location", data: {
-        location_id: editLocation.location_id,
-        address: editLocation.address,
-        city_id: editLocation.city_id}
+      const result = await updateCompanyLocation({
+        type: "company_location",
+        data: {
+          location_id: editLocation.location_id,
+          address: editLocation.address,
+          city_id: editLocation.city_id,
+        },
       }).unwrap();
-      
+
       if (result.success) {
-      setEditLocation(null); // Exit edit mode
-      toast.success("Cập nhật địa chỉ công ty thành công");
-      refetch(); // Refresh locations list
-      }
-      else
-      {
+        setEditLocation(null); // Exit edit mode
+        toast.success("Cập nhật địa chỉ công ty thành công");
+        refetch(); // Refresh locations list
+      } else {
         toast.error("Cập nhật địa chỉ công ty thất bại");
       }
     } catch (error) {
@@ -150,13 +159,14 @@ export default function CompanyProfile() {
   const handleDeleteLocation = async (locationId) => {
     try {
       if (window.confirm("Bạn có chắc chắn muốn xóa địa chỉ này không?")) {
-        const response =   await deleteCompanyLocation( {type:'company_location', data:{location_id: locationId}} ).unwrap();
+        const response = await deleteCompanyLocation({
+          type: "company_location",
+          data: { location_id: locationId },
+        }).unwrap();
         if (response.success) {
-        toast.success("Xóa địa chỉ công ty thành công");
-        refetch(); // Refresh locations list
-        }
-        else
-        {
+          toast.success("Xóa địa chỉ công ty thành công");
+          refetch(); // Refresh locations list
+        } else {
           toast.error("Xóa địa chỉ công ty thất bại");
         }
       }
@@ -174,7 +184,7 @@ export default function CompanyProfile() {
 
       <div className="rounded-2 me-2 my-2 p-2">
         <h5 className="mb-3 border-bottom pb-2">Thông tin công ty</h5>
-        
+
         <div className="row mb-3">
           {/* Tên công ty */}
           <div className="col-md-6">
@@ -269,7 +279,7 @@ export default function CompanyProfile() {
           <label className="form-label">Sơ lược về công ty</label>
           <textarea
             className="form-control"
-            rows="5"
+            rows="8"
             placeholder="Sơ lược về công ty của bạn..."
             value={updateCompany.describle}
             onChange={(e) => {
@@ -292,25 +302,31 @@ export default function CompanyProfile() {
         <h5 className="mt-4 mb-3 border-bottom pb-2">Địa chỉ công ty</h5>
 
         {/* List existing locations */}
-        {Array.isArray(companyInformation.company_location) && companyInformation.company_location.length > 0 ? (
+        {Array.isArray(companyInformation.company_location) &&
+        companyInformation.company_location.length > 0 ? (
           <div className="list-group mb-3">
             {companyInformation.company_location.map((location) => (
-              <div key={location.location_id} className="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+              <div
+                key={location.location_id}
+                className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+              >
                 <div>
                   <strong>{location.address}</strong>
-                  <span className="ms-2 badge bg-light text-dark">{location.city_name}</span>
+                  <span className="ms-2 badge bg-light text-dark">
+                    {location.city_name}
+                  </span>
                 </div>
                 <div>
                   {editLocation?.location_id === location.location_id ? (
                     <div className="d-flex gap-2">
-                      <button 
+                      <button
                         className="btn btn-success btn-sm"
                         onClick={handleUpdateLocation}
                         disabled={isUpdatingLocation}
                       >
                         <i className="bi bi-check-lg"></i> Lưu
                       </button>
-                      <button 
+                      <button
                         className="btn btn-secondary btn-sm"
                         onClick={() => setEditLocation(null)}
                       >
@@ -319,7 +335,7 @@ export default function CompanyProfile() {
                     </div>
                   ) : (
                     <div className="d-flex gap-2">
-                      <button 
+                      <button
                         className="btn btn-outline-primary btn-sm"
                         onClick={() => {
                           console.log("Edit location:", location);
@@ -328,7 +344,7 @@ export default function CompanyProfile() {
                       >
                         <i className="bi bi-pencil"></i> Sửa
                       </button>
-                      <button 
+                      <button
                         className="btn btn-outline-danger btn-sm"
                         onClick={() => {
                           console.log("Delete location:", location);
@@ -347,7 +363,7 @@ export default function CompanyProfile() {
         ) : (
           <div className="alert alert-info">Chưa có địa chỉ nào được thêm</div>
         )}
-        
+
         {/* Edit location form */}
         {editLocation && (
           <div className="card p-3 mb-3 bg-light">
@@ -359,20 +375,24 @@ export default function CompanyProfile() {
                   className="form-control"
                   placeholder="Nhập địa chỉ chi tiết"
                   value={editLocation.address || ""}
-                  onChange={(e) => setEditLocation({
-                    ...editLocation,
-                    address: e.target.value
-                  })}
+                  onChange={(e) =>
+                    setEditLocation({
+                      ...editLocation,
+                      address: e.target.value,
+                    })
+                  }
                 />
               </div>
               <div className="col-md-4 mb-2">
-                <select 
+                <select
                   className="form-select"
                   value={editLocation.city_id || ""}
-                  onChange={(e) => setEditLocation({
-                    ...editLocation,
-                    city_id: e.target.value
-                  })}
+                  onChange={(e) =>
+                    setEditLocation({
+                      ...editLocation,
+                      city_id: e.target.value,
+                    })
+                  }
                 >
                   <option value="">Chọn Tỉnh/Thành phố</option>
                   {cities?.map((city) => (
@@ -396,14 +416,18 @@ export default function CompanyProfile() {
                 className="form-control"
                 placeholder="Nhập địa chỉ chi tiết (ví dụ: 130 Sương Nguyệt Ánh, Phường Bến Thành)"
                 value={newLocation?.address || ""}
-                onChange={(e) => setNewLocation({...newLocation, address: e.target.value})}
+                onChange={(e) =>
+                  setNewLocation({ ...newLocation, address: e.target.value })
+                }
               />
             </div>
             <div className="col-md-4 mb-2">
-              <select 
+              <select
                 className="form-select"
                 value={newLocation?.city_id || ""}
-                onChange={(e) => setNewLocation({...newLocation, city_id: e.target.value})}
+                onChange={(e) =>
+                  setNewLocation({ ...newLocation, city_id: e.target.value })
+                }
               >
                 <option value="">Chọn Tỉnh/Thành phố</option>
                 {cities?.map((city) => (
@@ -415,12 +439,13 @@ export default function CompanyProfile() {
             </div>
           </div>
           <div>
-            <button 
+            <button
               className="btn btn-primary btn-sm mt-2"
               onClick={handleAddLocation}
               disabled={isAddingLocation}
             >
-              <i className="bi bi-plus-circle"></i> {isAddingLocation ? "Đang thêm..." : "Thêm địa chỉ"}
+              <i className="bi bi-plus-circle"></i>{" "}
+              {isAddingLocation ? "Đang thêm..." : "Thêm địa chỉ"}
             </button>
           </div>
         </div>

@@ -1,11 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import calculateDaysRemaining from "../../../utils/calculateDaysRemaining.js";
 import {
-   useGetCompanyInformationQuery,
-   useGetJobByUserQuery
+  useGetCompanyInformationQuery,
+  useGetJobByUserQuery,
 } from "../../../redux_toolkit/guestApi.js";
 import { useGetCitiesQuery } from "../../../redux_toolkit/CategoryApi.js";
 import CompanyHeader from "../../_component/ui/CompanyHeader.js";
@@ -19,6 +19,34 @@ export default function CompanyDetail() {
   const { data } = useGetJobByUserQuery(companyId);
   const postsByUser = data?.jobs || [];
   const formatNumberToTr = (number) => `${(number / 1e6).toFixed(0)}tr`;
+
+  //Filter
+  const [keyword, setKeyWord] = useState("");
+  const [keyLocation, setKeyLocation] = useState("");
+
+  //Client Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const postsPerPage = 5;
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+
+  const filteredPosts = postsByUser.filter((post) => {
+    const matchKeyword = String(post.title || "")
+      .toUpperCase()
+      .includes((keyword || "").toUpperCase());
+
+    const matchLocation =
+      keyLocation === "" || String(post.city_id) === String(keyLocation);
+
+    return matchKeyword && matchLocation;
+  });
+
+  const currentPosts = filteredPosts.slice(indexOfFirstPost, indexOfLastPost);
+  const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [keyword, keyLocation]);
 
   return (
     <>
@@ -56,33 +84,101 @@ export default function CompanyDetail() {
             <div className="card">
               <div className="card-body">
                 <h6 className="fw-bold">Tuyển dụng</h6>
-                <div className="input-group mb-3">
+                <div className="input-group mb-3 ">
                   <input
                     type="text"
-                    className="form-control"
+                    className="form-control "
                     placeholder="Tên công việc, vị trí ứng tuyển..."
+                    onChange={(e) => {
+                      setKeyWord(e.target.value);
+                    }}
                   />
-                  <select className="form-select">
-                    <option selected>Tất cả tỉnh/thành phố</option>
+                  <select
+                    className="form-select"
+                    onChange={(e) => {
+                      console.log(e.target.value);
+                      setKeyLocation(e.target.value);
+                    }}
+                  >
+                    <option value="" selected>
+                      Tất cả tỉnh/thành phố
+                    </option>
                     {city?.map((option) => (
                       <option value={option.city_id} key={option.city_id}>
                         {option.city_name}
                       </option>
                     ))}
                   </select>
-                  <button className="btn btn-success">Tìm kiếm</button>
+                  {/* <button className="btn btn-success">Tìm kiếm</button> */}
                 </div>
                 <div className="list-group">
-                  {postsByUser.length > 0 ? (
-                    postsByUser.map((option) => (
+                  {/* {postsByUser.length > 0 ? (
+                    postsByUser
+                      .filter((post) => {
+                        const matchKeyword = String(post.title || "")
+                          .toUpperCase()
+                          .includes((keyword || "").toUpperCase());
+
+                        const matchLocation =
+                          keyLocation === "" ||
+                          String(post.city_id) === String(keyLocation);
+
+                        return matchKeyword && matchLocation;
+                      })
+                      .map((option) => (
+                        <div
+                          className="list-group-item d-flex justify-content-between align-items-center"
+                          key={option.job_id}
+                        >
+                          <div>
+                            <h6 className="mb-0">
+                              <NavLink to={`/post-detail/${option?.job_id}`}>
+                                {option.title}
+                              </NavLink>
+                            </h6>
+                            <p className="text-muted mb-0">
+                              {option.city_name} |{" "}
+                              {calculateDaysRemaining(option.date_expi) > 0
+                                ? `Còn ${calculateDaysRemaining(
+                                    option.date_expi
+                                  )} ngày để ứng tuyển`
+                                : "Hết hạn"}
+                            </p>
+                          </div>
+                          <div className="text-end">
+                            <span className="badge bg-success">
+                              {option.salary_min === 0 &&
+                              option.salary_max === 0
+                                ? "Thỏa thuận"
+                                : `${formatNumberToTr(
+                                    option.salary_min
+                                  )} - ${formatNumberToTr(
+                                    option.salary_max
+                                  )} đ/tháng`}
+                            </span>
+                            <button className="btn btn-outline-success btn-sm ms-3">
+                              Ứng tuyển
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                  ) : (
+                    <p>Chưa có bài đăng nào</p>
+                  )} */}
+
+                  {filteredPosts.length > 0 ? (
+                    currentPosts.map((option) => (
                       <div
                         className="list-group-item d-flex justify-content-between align-items-center"
                         key={option.job_id}
                       >
                         <div>
-                          <h6 className="mb-0">{option.title}</h6>
+                          <h6 className="mb-0">
+                            <NavLink to={`/post-detail/${option?.job_id}`}>
+                              {option.title}
+                            </NavLink>
+                          </h6>
                           <p className="text-muted mb-0">
-                            {/* {option.company_name} |  */}
                             {option.city_name} |{" "}
                             {calculateDaysRemaining(option.date_expi) > 0
                               ? `Còn ${calculateDaysRemaining(
@@ -110,6 +206,27 @@ export default function CompanyDetail() {
                   ) : (
                     <p>Chưa có bài đăng nào</p>
                   )}
+                  {totalPages > 1 && (
+                    <nav className="mt-4">
+                      <ul className="pagination justify-content-center">
+                        {[...Array(totalPages)].map((_, index) => (
+                          <li
+                            key={index}
+                            className={`page-item ${
+                              currentPage === index + 1 ? "active" : ""
+                            }`}
+                          >
+                            <button
+                              className="page-link"
+                              onClick={() => setCurrentPage(index + 1)}
+                            >
+                              {index + 1}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </nav>
+                  )}
                 </div>
               </div>
             </div>
@@ -127,11 +244,13 @@ export default function CompanyDetail() {
 
                 <p>
                   {companyInformation?.company_location
-                    ? companyInformation.company_location.map((location, index) => (
-                        <p key={index}>
-                          {location.address} - {location.city_name}
-                        </p>
-                      ))
+                    ? companyInformation.company_location.map(
+                        (location, index) => (
+                          <p key={index}>
+                            {location.address} - {location.city_name}
+                          </p>
+                        )
+                      )
                     : "Chưa có thông tin"}
                 </p>
                 <h6 className="fw-bold">Chia sẻ công ty tới bạn bè</h6>
@@ -153,20 +272,25 @@ export default function CompanyDetail() {
               <div className="card-body text-center">
                 <div className="row list-group list-group-horizontal">
                   <div className="col-md-4 list-group-item">
-                    <h6 className="fw-bold">Lương, Thưởng Và Chế Độ Phúc Lợi</h6>
-                    <p>Chính sách lương thưởng hấp dẫn, nhiều phúc lợi đặc biệt.</p>
+                    <h6 className="fw-bold">
+                      Lương, Thưởng Và Chế Độ Phúc Lợi
+                    </h6>
+                    <p>
+                      Chính sách lương thưởng hấp dẫn, nhiều phúc lợi đặc biệt.
+                    </p>
                   </div>
                   <div className="col-md-4 list-group-item">
                     <h6 className="fw-bold">Thời Gian Làm Việc Và Nghỉ Ngơi</h6>
                     <p>
-                      Môi trường làm việc năng động, giờ làm việc linh hoạt, nghỉ phép
-                      đầy đủ.
+                      Môi trường làm việc năng động, giờ làm việc linh hoạt,
+                      nghỉ phép đầy đủ.
                     </p>
                   </div>
                   <div className="col-md-4 list-group-item">
                     <h6 className="fw-bold">Đào Tạo Và Phát Triển</h6>
                     <p>
-                      Chương trình đào tạo chuyên môn, phát triển kỹ năng cá nhân.
+                      Chương trình đào tạo chuyên môn, phát triển kỹ năng cá
+                      nhân.
                     </p>
                   </div>
                 </div>

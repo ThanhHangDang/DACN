@@ -1,6 +1,8 @@
 import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
 import { NavLink } from "react-router-dom";
+import LoginModal from "./LoginModal.js";
+import { useDispatch, useSelector } from "react-redux";
 
 const JobCard = ({ job }) => {
   const getRelativeTimeString = (dateString) => {
@@ -12,37 +14,76 @@ const JobCard = ({ job }) => {
       return dateString; // Trả về date_post gốc nếu có lỗi
     }
   };
+
+  const { user } = useSelector((state) => state.auth);
+  const handleSaveJob = () => {
+    console.log("Jobseeker: ", user?.id, " lưu Job: ", job?.job_id);
+  };
+
   return (
     <div className="card mb-3 shadow-sm job-card">
+      <LoginModal />
       <div className="card-body">
         <div className="d-flex justify-content-between">
           <span className="text-success small fw-semibold">
             {" "}
             {getRelativeTimeString(job?.date_post)}
           </span>
-          <i className="bi bi-heart"></i>
+          {user?.role === 3 ? (
+            <i className="bi bi-bookmark" onClick={handleSaveJob}></i>
+          ) : (
+            <i
+              className="bi bi-bookmark"
+              data-bs-toggle="modal"
+              data-bs-target="#LoginModal"
+            ></i>
+          )}
         </div>
-        <h5 className="card-title fw-bold">{job?.title}</h5>
-        <p className="card-text mb-2">{job?.company_name}</p>
-        <div className="d-flex flex-wrap gap-3 mb-2">
-          <span className="badge bg-light text-dark">
-            {job?.job_function_name}
-          </span>
-          <span className="badge bg-light text-dark">{job?.working_type}</span>
-          <span className="badge bg-light text-dark">
-            {job?.salary_max} - {job?.salary_min}
-          </span>
-          <span className="badge bg-light text-dark">
-            <i className="bi bi-geo-alt-fill me-1"></i>
-            {job?.work_location_name}
-          </span>
+        <div className="d-flex justify-content-start">
+          <div>
+            <img
+              src={job?.company_logo || job?.logo}
+              alt="Logo"
+              className="img-fluid me-2 rounded-1 me-3"
+              style={{ width: 80, height: 80 }}
+            />
+          </div>
+          <div>
+            <h5 className="card-title fw-bold">
+              <NavLink to={`/post-detail/${job?.job_id}`}>{job?.title}</NavLink>
+            </h5>
+            <p className="card-text mb-2">
+              <NavLink
+                to={`/company-detail/${job?.company_id || job?.employer_id}`}
+                className="text-decoration-none custom-hover-3"
+              >
+                {job?.company_name}
+              </NavLink>
+            </p>
+            <div className="d-flex flex-wrap gap-3 mb-2">
+              <span className="badge bg-light text-dark">
+                {job?.job_function_name}
+              </span>
+              <span className="badge bg-light text-dark">
+                {job?.working_type}
+              </span>
+              <span className="badge bg-light text-dark">
+                {job?.salary_max} - {job?.salary_min}
+              </span>
+              <span className="badge bg-light text-dark">
+                <i className="bi bi-geo-alt-fill me-1"></i>
+                {job?.work_location_name}
+              </span>
+            </div>
+          </div>
         </div>
-        <NavLink
+
+        {/* <NavLink
           to={`/post-detail/${job?.job_id}`}
           className="btn btn-success btn-sm"
         >
           Job Details
-        </NavLink>
+        </NavLink> */}
       </div>
     </div>
   );

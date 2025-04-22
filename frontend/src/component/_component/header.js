@@ -11,14 +11,14 @@ const Header = () => {
   // Lấy state từ Redux
   const { isLogin, user } = useSelector((state) => state.auth);
 
-  console.log("header check ",isLogin, user);
+  console.log("header check ", isLogin, user);
 
   const handleLogout = () => {
     dispatch(logout());
   };
 
   const handleViewProfile = () => {
-    if (!isLogin|| !user) {
+    if (!isLogin || !user) {
       navigate("/login");
     } else {
       if (user?.role === 2) {
