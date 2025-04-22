@@ -11,14 +11,14 @@ const Header = () => {
   // Lấy state từ Redux
   const { isLogin, user } = useSelector((state) => state.auth);
 
-  console.log("header check ",isLogin, user);
+  console.log("header check ", isLogin, user);
 
   const handleLogout = () => {
     dispatch(logout());
   };
 
   const handleViewProfile = () => {
-    if (!isLogin|| !user) {
+    if (!isLogin || !user) {
       navigate("/login");
     } else {
       if (user?.role === 2) {
@@ -182,7 +182,7 @@ const Header = () => {
 
               {user?.role === 2 ? (
                 <li className="d-flex nav-item align-items-center custom-hover-3">
-                  <NavLink className="dropdown-item" to="/candidate">
+                  <NavLink className="dropdown-item" to="/candidates">
                     Tìm kiếm ứng viên
                   </NavLink>
                 </li>
@@ -345,7 +345,7 @@ const Header = () => {
               <ul className="list-unstyled ps-3 text-muted">
                 <li className="d-flex nav-item align-items-center">
                   <NavLink
-                    to="/candidate"
+                    to="/candidates"
                     className="text-decoration-none text-secondary"
                   >
                     Tìm kiếm ứng viên
