@@ -97,7 +97,7 @@ export const employerApi = createApi({
 
 
     getlistJobseeker: builder.query({
-      query: (searchData) => ({
+      query: (searchData={page_size:10}) => ({
         url: "/employer/jobseekers",
         params: searchData,
       }),

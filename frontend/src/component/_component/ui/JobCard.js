@@ -20,7 +20,7 @@ const JobCard = ({ job }) => {
             {" "}
             {getRelativeTimeString(job?.date_post)}
           </span>
-          <i className="bi bi-bookmark"></i>
+          <i className="bi bi-heart"></i>
         </div>
         <h5 className="card-title fw-bold">{job?.title}</h5>
         <p className="card-text mb-2">{job?.company_name}</p>

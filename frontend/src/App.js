@@ -30,8 +30,8 @@ import Invitation from "./component/JobSeekersPage/MyWork/invitation.js";
 import EmployerPage from "./component/EmployerPage/index.js";
 import EmployerOverview from "./component/EmployerPage/Overview/index.js";
 import EmployerProfile from "./component/EmployerPage/Profile/index.js";
-import EmployeeProfileManage from "./component/EmployerPage/Profile/myEmployeeProfile.js";
-import SaveEmployeeProfile from "./component/EmployerPage/Profile/saveEmployeeProfile.js";
+import CandidateProfileManage from "./component/EmployerPage/Profile/myCandidateProfile.js";
+import SaveCandidateProfile from "./component/EmployerPage/Profile/saveCandidateProfile.js";
 import CompanyProfile from "./component/EmployerPage/Profile/companyProfile.js";
 import EmployerPost from "./component/EmployerPage/MyPost/index.js";
 import EmployerNotification from "./component/EmployerPage/MyNotification/index.js";
@@ -94,11 +94,11 @@ function App() {
               <Route path="/employer-profile" Component={CompanyProfile} />
               <Route
                 path="/employer-manage-employee"
-                Component={EmployeeProfileManage}
+                Component={CandidateProfileManage}
               />
               <Route
                 path="/save-employee-profile"
-                Component={SaveEmployeeProfile}
+                Component={SaveCandidateProfile}
               />
             </Route>
             <Route path="/employer-post" Component={EmployerPost} />

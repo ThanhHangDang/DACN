@@ -38,7 +38,7 @@ const login = async (req, res, next) => {
       logo: userLogin.logo||"",
       create_date: userLogin.create_at,
     };
-    console.log("username", username);
+    // console.log("username", username);
     // Trả về thành công sử dụng res.success
     return res.success(
       {
@@ -61,7 +61,7 @@ const login = async (req, res, next) => {
  * Kiểm tra trạng thái đăng nhập
  */
 const isLogin = (req, res, next) => {
-  console.log("check login");
+  // console.log("check login");
   try {
     if (req.session.userLogin) {
       return res.success(

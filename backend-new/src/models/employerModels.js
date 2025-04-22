@@ -111,80 +111,66 @@ const queryPostJob = async (data) => {};
 
 ///////////////////////////////////////////////////////////////////////////
 // Jobseeker Queries
-const queryGetListJobseekerBySearch = async (searchParams) => {
+const queryGetListJobseekerBySearch = async (searchData) => {
   const {
     job_function_id = null,
-    district_id = null,
     level_id = null,
     year_exp = null,
     age_min = null,
     age_max = null,
     gender = null,
-    status_ = null,
     language_id = null,
     education_id = null,
     paging_size = 10,
     active_page = 1,
+    skill_id = null,
+    sort_by = "latest",
+    ...props
   } = searchData;
+  const status_ = 1;
   let query = `
     SELECT 
-    e.jobseeker_id,
-    p.*,
-    c.*,
+    p.profile_id,
+    p.full_name,
+    p.title,
+    p.year_exp,
+    p.career_target,
+    u.email,
+    u.phone_number,
     e.status_ ,
+    e.avatar,
+    e.is_open_for_job,
     i.job_function_name,
-    d.district_name,
-    ct.city_name,
-    n.nation_name,
+    cl.level_name, 
+    COALESCE((Select avg(lrj.score) from logs_employer_rate_jobseeker lrj where lrj.jobseeker_id = p.profile_id),0) as score,
     COUNT(*) OVER() AS total_count
 FROM 
-    user_ AS c
+    user_ AS u
 JOIN 
-    user_jobseeker AS e ON c.user_id = e.jobseeker_id
-LEFT JOIN
-    profile_jobseeker AS p ON c.user_id = p.profile_id
-LEFT JOIN 
+    user_jobseeker AS e ON u.user_id = e.jobseeker_id
+JOIN
+    profile_jobseeker AS p ON u.user_id = p.profile_id
+JOIN 
     catalog_job_function AS i ON i.job_function_id= p.job_function_id
-LEFT JOIN 
-    catalog_district AS d ON p.district_id = d.district_id
-LEFT JOIN 
-    catalog_city AS ct ON d.city_id = ct.city_id
-LEFT JOIN 
-    catalog_nation AS n ON ct.nation_id = n.nation_id
+JOIN
+    catalog_level AS cl ON cl.level_id = p.level_id
     `;
+
   const conditions = [];
   const values = [];
-
-  if (title) {
-    let temp_query =
-      " (e.jobseeker_id like ? or c.email like ? or c.username LIKE? or p.full_name LIKE ?)";
-    conditions.push(temp_query);
-    const temp_value = `%${title}%`;
-    values.push(temp_value);
-    values.push(temp_value);
-    values.push(temp_value);
-    values.push(temp_value);
+  if (education_id) {
+    query += `JOIN 
+    (select * from profile_education where profile_education.education_id >=?) as pedu ON p.profile_id = pedu.profile_id`;
+    values.push(education_id);
   }
   if (job_function_id) {
     conditions.push(`i.job_function_id = ?`);
-    values.push(job_function);
+    values.push(job_function_id);
   }
-  if (district_id) {
-    conditions.push(`d.district_id =?`);
-    values.push(district_id);
-  }
+
   if (level_id) {
     conditions.push(`p.level_id =?`);
     values.push(level_id);
-  }
-  if (year_exp) {
-    if (level_id > 5) {
-      conditions.push(`p.year_exp >?`);
-      values.push(5);
-    } else {
-      conditions.push(`p.year_exp =?`);
-      values.push(level_id);
-    }
   }
   if (age_min) {
     conditions.push(`YEAR(CURDATE()) - YEAR(p.birthday) >=?`);
@@ -196,30 +182,70 @@ LEFT JOIN
   }
 
   if (gender) {
-    conditions.push(`p.gender =?`);
-    values.push(Number(gender));
+    conditions.push(`p.gender = ? `);
+    values.push(gender);
   }
   if (status_) {
-    conditions.push(`e.status_ =?`);
+    conditions.push(`e.status_ = ? `);
     values.push(status_);
   }
-  if (education_id) {
-    query += `LEFT JOIN profile_education as pedu ON p.profile_id = pedu.profile_id`;
-    conditions.push(`pedu.language =?`);
-    values.push(education_id);
-  }
   if (language_id) {
-    query += `LEFT JOIN profile_language as plang ON p.profile_id = plang.profile_id`;
+    query += `JOIN profile_language as plang ON p.profile_id = plang.profile_id`;
     conditions.push(`plang.language_id =?`);
     values.push(language_id);
+  }
+
+
+  if (year_exp) {
+    switch (year_exp) {
+      case '0': {
+        conditions.push(`p.year_exp <= ?`);
+        values.push(1);
+        break;
+      }
+      case '1': {
+        conditions.push(`p.year_exp >=?`);
+        conditions.push(`p.year_exp <=?`);
+        values.push(1);
+        values.push(3);
+        break;
+      }
+      case '2': {
+        conditions.push(`p.year_exp >=?`);
+        conditions.push(`p.year_exp <=?`);
+        values.push(3);
+        values.push(5);
+        break;
+      }
+      case '3': {
+        conditions.push(`p.year_exp >=?`);
+        values.push(5);
+        break;
+      }
+      case '4': {
+        conditions.push(`p.year_exp >=?`);
+        values.push(10);
+        break;
+      }
+    }
   }
   if (conditions.length > 0) {
     query += " WHERE " + conditions.join(" AND ");
   }
-  query += ` ORDER BY c.user_id ASC
-LIMIT ? OFFSET ?;`;
+  if (sort_by) {
+    if (sort_by === "latest") {
+      query += ` ORDER BY p.create_at DESC `;
+    } else if (sort_by === "complete") {
+      query += ` ORDER BY p.percent_complete ASC`;
+    } else if (sort_by === "rating") {
+      query += ` ORDER BY score DESC`;
+    }
+  }
+  query += ` LIMIT ? OFFSET ?;`;
   values.push(Number(paging_size));
   values.push((Number(active_page) - 1) * Number(paging_size));
+  // console.log("query", query);
+  // console.log("values", values);
   const [result] = await db.query(query, values);
   return result;
 };
@@ -370,11 +396,10 @@ const queryGetListJobByUser = async (employer_id) => {
       catalog_level lvl ON j.level_id = lvl.level_id
   JOIN
       catalog_education edu ON j.require_education = edu.education_id;
-      `,[employer_id]
+      `,
+      [employer_id]
     );
     return listJob;
-
-
   } catch (error) {
     console.error("Error getting list job by user:", error);
     throw error; // Ném lại lỗi để xử lý ở nơi gọi hàm
@@ -728,9 +753,9 @@ const queryDeleteJobByUser = async (jobId, userId) => {
 
 // Company Queries
 const queryGetCompanyInformation = async (company_id) => {
-try {
-  const [companyInfo] = await db.query(
-    `SELECT 
+  try {
+    const [companyInfo] = await db.query(
+      `SELECT 
       c.company_id,
       c.company_name,
       c.logo,
@@ -803,16 +828,13 @@ try {
         (select * from user_employer where employer_id = ?) as u
         JOIN catalog_industry ci ON ci.industry_id = c.industry_id
         JOIN catalog_scale cs ON cs.scale_id = c.scale_id;  `,
-    [company_id,company_id]
-  );
-  return companyInfo[0];
-}
-catch (error) {
-  console.error("Error getting company information:", error);
-  throw error; // Ném lại lỗi để xử lý ở nơi gọi hàm
-};
-
-
+      [company_id, company_id]
+    );
+    return companyInfo[0];
+  } catch (error) {
+    console.error("Error getting company information:", error);
+    throw error; // Ném lại lỗi để xử lý ở nơi gọi hàm
+  }
 };
 
 const queryAddItemCompanyProfile = async (company_id, data) => {};
@@ -894,13 +916,8 @@ const queryDeleteCandidate = async (employer_id, jobseeker_id) => {
   }
 };
 
-const queryInviteJobseekerApply = async (employer_id,  job_id,jobseeker_id) => {
+const queryInviteJobseekerApply = async (employer_id, job_id, jobseeker_id) => {
   try {
-
-
-
-
-
   } catch (error) {
     console.error("Error saving candidate:", error);
     throw error; // Ném lại lỗi để xử lý ở nơi gọi hàm
@@ -909,10 +926,6 @@ const queryInviteJobseekerApply = async (employer_id,  job_id,jobseeker_id) => {
 
 const queryGetInvitedJobseeker = async (employer_id) => {
   try {
-
-
-
-
   } catch (error) {
     console.error("Error saving candidate:", error);
     throw error; // Ném lại lỗi để xử lý ở nơi gọi hàm
@@ -921,10 +934,6 @@ const queryGetInvitedJobseeker = async (employer_id) => {
 // Application Queries
 const queryGetListJobApplication = async (employer_id) => {
   try {
-
-
-
-
   } catch (error) {
     console.error("Error saving candidate:", error);
     throw error; // Ném lại lỗi để xử lý ở nơi gọi hàm
@@ -932,17 +941,14 @@ const queryGetListJobApplication = async (employer_id) => {
 };
 const queryGetListJobApplicationByJob = async (employer_id, job_id) => {
   try {
-
-
   } catch (error) {
     console.error("Error saving candidate:", error);
     throw error; // Ném lại lỗi để xử lý ở nơi gọi hàm
   }
 };
 
-const queryRejectJobApplication = async (employer_id, job_id,jobseeker_id ) => {
+const queryRejectJobApplication = async (employer_id, job_id, jobseeker_id) => {
   try {
-
   } catch (error) {
     console.error("Error saving candidate:", error);
     throw error; // Ném lại lỗi để xử lý ở nơi gọi hàm
@@ -951,17 +957,11 @@ const queryRejectJobApplication = async (employer_id, job_id,jobseeker_id ) => {
 
 const queryAddNotification = async (employer_id, jobseeker_id, job_id) => {
   try {
-
-
-
   } catch (error) {
     console.error("Error saving candidate:", error);
     throw error; // Ném lại lỗi để xử lý ở nơi gọi hàm
   }
 };
-
-
-
 
 module.exports = {
   queryGetListJobseekerBySearch,

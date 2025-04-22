@@ -336,7 +336,7 @@ const queryGetListJobBySearch = async (searchData) => {
 
 const queryGetListJobOfCompany = async (companyId) => {
   try {
-    console.log("companyId", companyId);
+    // console.log("companyId", companyId);
     const [result] = await db.query(
       `
       SELECT 
@@ -388,7 +388,7 @@ const queryGetListJobOfCompany = async (companyId) => {
       [companyId]
     );
 
-    console.log("result", result);
+    // console.log("result", result);
     if (result.length === 0) {
       return null;
     }

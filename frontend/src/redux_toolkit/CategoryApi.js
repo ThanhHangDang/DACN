@@ -40,7 +40,9 @@ export const categoryApi = createApi({
     }),
     getLevels: builder.query({
       query: () => '/category/category-level',
-      transformResponse: (response) => {return response.data;        },
+      transformResponse: (response) => {
+        console.log("redux receive getLevels", response);
+        return response.data;        },
     }),
     getScales: builder.query({
       query: () => '/category/category-scale',

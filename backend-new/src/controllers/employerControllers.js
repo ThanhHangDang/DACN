@@ -29,6 +29,7 @@ const {
 const getListJobseekerBySearch = async (req, res, next) => {
   try {
     const searchData = req.query;
+    // console.log("searchData", searchData);
     if (!searchData) {
       return next(new ApiError("Thiếu thông tin tìm kiếm", 400));
     }
@@ -40,7 +41,7 @@ const getListJobseekerBySearch = async (req, res, next) => {
     const totalPages = Math.ceil(total_count / paging_size);
 
     return res.success(
-      { jobseekers: data || [], totalPages },
+      { jobseekers: data || [], totalPages,total_count },
       "Tìm kiếm ứng viên thành công"
     );
   } catch (err) {

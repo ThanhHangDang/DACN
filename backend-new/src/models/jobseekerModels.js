@@ -324,7 +324,7 @@ const queryGetFollowedCompanyByID = async (id) => {
     `,
     [id]
   );
-  console.log(followedCompany);
+  // console.log(followedCompany);
   return followedCompany;
 };
 
@@ -355,7 +355,7 @@ const queryAddItemProfile = async (type, data) => {
   if (!profileTables['profile'][type] || profileTables['profile'][type].tableName === undefined || profileTables['profile'][type].key === "Basic") {
     throw new Error(`Invalid profile type: ${type}`);
   }
-  console.log("data Add ",type);
+  // console.log("data Add ",type);
 try {
   if (type==="language" || type==="skill") { // array of objects
     const profile_id = data.profile_id;
@@ -380,7 +380,7 @@ try {
   else {
     const fieldsArray = profileTables['profile'][type]["addItem"];    
     const values = [];
-    console.log("data Add ",data);
+    // console.log("data Add ",data);
     fieldsArray.forEach(field => {
       if (data[field] !== undefined) {
         values.push(data[field]);
@@ -392,16 +392,16 @@ try {
     const placeholders = values.map(() => "?").join(", ");
 
 
-    console.log(      `
-      INSERT INTO ${profileTables['profile'][type].tableName} (${fields})
-      VALUES (${placeholders});`,
-      values)
-    const [result] = await db.query(
-      `
-      INSERT INTO ${profileTables['profile'][type].tableName} (${fields})
-      VALUES (${placeholders});`,
-        values
-      );
+    // console.log(      `
+    //   INSERT INTO ${profileTables['profile'][type].tableName} (${fields})
+    //   VALUES (${placeholders});`,
+    //   values)
+    // const [result] = await db.query(
+    //   `
+    //   INSERT INTO ${profileTables['profile'][type].tableName} (${fields})
+    //   VALUES (${placeholders});`,
+    //     values
+    //   );
       return result.affectedRows;
     }
   } catch (error) {
@@ -416,7 +416,7 @@ const queryUpdateItemProfile = async (type, data) => {
     if (type === "Basic") {
       // Special case for Basic profile fields
       const key = profileTables['profile'][type]["key"][0]; // bang nay chi co 1 key
-      console.log("data Update Basic ",data);
+      // console.log("data Update Basic ",data);
       const fieldsToUpdate_arr = [];
       const values = [];
       Object.keys(data).forEach((item) => {
@@ -697,11 +697,10 @@ const queryAddCompanyReview = async ( profile_id, company_id,score,content) => {
        VALUES (?, ?, ?, ?, now())`,
       [profile_id, company_id, score, content]
     );
-    console.log(result);
+    // console.log(result);
     return result.affectedRows > 0;
   }
   catch (error) {
-    console.log("quẳng lỗi vào đây");
     console.error("Error in queryAddCompanyReview:", error);
     throw error;
   }
@@ -734,7 +733,7 @@ const queryGetListCompanyFollowing = async (profile_id) => {
         JOIN company c on ljfe.employer_id = c.company_id 
         JOIN catalog_industry ci on c.industry_id = ci.industry_id`,
       [profile_id]);
-      console.log(followedCompanies);
+      // console.log(followedCompanies);
       if (followedCompanies.length > 0) {
         return followedCompanies;
       } else {
@@ -849,7 +848,7 @@ const queryDeleteJobSaving = async (profile_id, job_id) => {
        WHERE jobseeker_id = ? AND job_id = ?`,
       [profile_id, job_id]
     );
-    console.log(result);
+    // console.log(result);
     return result.affectedRows > 0; // Return true if deletion was successful
   }
   catch (error) {

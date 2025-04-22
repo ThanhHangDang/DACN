@@ -76,7 +76,7 @@ const getItemProfile = async (req, res, next) => {
 const updateItemProfile = async (req, res, next) => {
   try {
     const { type, data } = req.body;
-    console.log("updateItemProfile", type, data);
+    // console.log("updateItemProfile", type, data);
     if (!type || !data) {
       return next(new ApiError("Thiếu thông tin cần thiết", 400));
     }
@@ -275,7 +275,7 @@ const deleteResume = async (req, res, next) => {
 const getListJobApplication = async (req, res, next) => {
   try {
   const profile_id = req.query.profile_id;
-  console.log("getListJobApplication", profile_id);
+  // console.log("getListJobApplication", profile_id);
   if (!profile_id) {
     return next(new ApiError("Thiếu thông tin ID người dùng", 400));
   }
@@ -334,7 +334,7 @@ const getListCompanyFollowing = async (req, res, next) => {
     return next(new ApiError("Thiếu thông tin ID người dùng", 400));
   }
   const data = await queryGetListCompanyFollowing(profile_id);
-  console.log("getListCompanyFollowing", data);
+  // console.log("getListCompanyFollowing", data);
   if (!data) {
     return next(new ApiError("Không tìm thấy thông tin công ty đã theo dõi", 404));
   }

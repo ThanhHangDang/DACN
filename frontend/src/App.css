@@ -124,3 +124,53 @@
   margin-right: 5px;
   border: 1px solid white; 
 }
+
+.range-container {
+  margin-top: 1.5rem;
+}
+
+.range-title {
+  font-weight: bold;
+  margin-bottom: 1rem;
+  margin-top: 1.5rem;
+}
+
+.custom-track {
+  height: 8px;
+  background: #dee2e6;
+  border-radius: 4px;
+  position: relative;
+  margin: 2rem 0 1rem 0;
+}
+
+.custom-track-filled {
+  position: absolute;
+  height: 8px;
+  background: #0d6efd;
+  border-radius: 4px;
+}
+
+.custom-thumb {
+  height: 16px;                  /* 👈 nhỏ hơn */
+  width: 16px;
+  background-color: #0d6efd;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 1.5px solid white;     /* 👈 border mảnh hơn */
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2); /* 👈 bóng nhẹ hơn */
+  position: absolute; /* 👈 quan trọng */
+  top: 50%;           /* 👈 đưa vào giữa */
+  transform: translate(-50%, -50%); /* 👈 canh giữa cả ngang và dọc */
+  /* align-items: center;
+  justify-content: center; */
+}
+
+.thumb-tooltip {
+  position: absolute;
+  top: -32px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #000;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
