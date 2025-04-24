@@ -153,9 +153,9 @@ const Header = () => {
                   aria-labelledby="resourceDropdown"
                 >
                   <li>
-                    <a className="dropdown-item" href="#aaa">
+                    <NavLink className="dropdown-item" to="/about">
                       Giới thiệu công ty
-                    </a>
+                    </NavLink>
                   </li>
                   <li>
                     <a className="dropdown-item" href="#aaa">
@@ -163,19 +163,19 @@ const Header = () => {
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item" href="#aaa">
+                    <NavLink className="dropdown-item" to="/contact">
                       Liên hệ
-                    </a>
+                    </NavLink>
                   </li>
                   <li>
-                    <a className="dropdown-item" href="#aaa">
+                    <NavLink className="dropdown-item" to="/policy">
                       Chính sách bảo mật
-                    </a>
+                    </NavLink>
                   </li>
                   <li>
-                    <a className="dropdown-item" href="#aaaa">
+                    <NavLink className="dropdown-item" to="/terms">
                       Điều khoản dịch vụ
-                    </a>
+                    </NavLink>
                   </li>
                 </ul>
               </li>
@@ -331,11 +331,39 @@ const Header = () => {
           <div className="mb-4">
             <h6 className="fw-bold">Về chúng tôi</h6>
             <ul className="list-unstyled ps-3 text-muted">
-              <li>Giới thiệu công ty</li>
+              <li>
+                <NavLink
+                  to="/about"
+                  className="text-decoration-none text-secondary"
+                >
+                  Giới thiệu công ty
+                </NavLink>
+              </li>
               <li>Hỗ trợ</li>
-              <li>Liên hệ</li>
-              <li>Chính sách bảo mật</li>
-              <li>Điều khoản dịch vụ</li>
+              <li>
+                <NavLink
+                  to="/contact"
+                  className="text-decoration-none text-secondary"
+                >
+                  Liên hệ
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/policy"
+                  className="text-decoration-none text-secondary"
+                >
+                  Chính sách bảo mật
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/terms"
+                  className="text-decoration-none text-secondary"
+                >
+                  Điều khoản dịch vụ
+                </NavLink>
+              </li>
             </ul>
           </div>
 

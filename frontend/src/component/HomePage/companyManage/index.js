@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useGetCompanyBySearchQuery } from "../../../redux_toolkit/guestApi.js";
 import {
   useGetIndustriesQuery,
@@ -7,10 +7,14 @@ import {
 } from "../../../redux_toolkit/CategoryApi.js";
 import CompanyCard from "../../_component/ui/CompanyCard.js";
 import TitleComponent from "../../_component/ui/TitleComponent.js";
+import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 export default function ListCompany() {
+  const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [isPageChanging, setIsPageChanging] = useState(false); // Add this near the top of your component
+  const { isLogin, user } = useSelector((state) => state.auth);
 
   // Add more detailed query information
   const {
@@ -61,6 +65,13 @@ export default function ListCompany() {
       window.scrollTo(0, 0);
     }
   };
+
+  useEffect(() => {
+    if (user?.role === 2) {
+      toast.error("Vui lòng đăng nhập vai trò người tìm việc!");
+      navigate("/");
+    }
+  }, [navigate, user]);
 
   useEffect(() => {
     console.log("Current page:", page);

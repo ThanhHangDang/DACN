@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useParams, NavLink } from "react-router-dom";
+import { useParams, NavLink, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 // import { getPostDetails } from "../../redux/actions/postAction.js";
 import { useGetJobDetailQuery } from "../../../redux_toolkit/guestApi.js";
@@ -7,9 +7,12 @@ import formatDateToDDMMYYYY from "../../../utils/formatDate.js";
 import calculateDaysRemaining from "../../../utils/calculateDaysRemaining.js";
 import CompanyHeader from "../../../component/_component/ui/CompanyHeader.js";
 import TitleComponent from "../../_component/ui/TitleComponent.js";
+import { toast } from "react-toastify";
+import LoginModal from "../../_component/ui/LoginModal.js";
 
 export default function WorkDetail() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   const { id } = useParams();
 
@@ -25,13 +28,29 @@ export default function WorkDetail() {
   });
   console.log(postDetail);
 
-  // useEffect(() => {
-  //   // dispatch(getPostDetails(id));
-  //   refetch();
-  // }, [id]);
+  const handleSaveJob = () => {
+    console.log("Jobseeker: ", user?.id, " lưu Job: ", postDetail?.job_id);
+  };
+
+  const handleApplyJob = () => {
+    console.log(
+      "Jobseeker: ",
+      user?.id,
+      " handdleApplyJob: ",
+      postDetail?.job_id
+    );
+  };
+
+  useEffect(() => {
+    if (user?.role === 2) {
+      toast.error("Vui lòng đăng nhập vai trò người tìm việc!");
+      navigate("/");
+    }
+  }, [navigate, user]);
 
   return (
     <>
+      <LoginModal />
       <TitleComponent title={"Work Detail"} description={""} />
       <div className="container my-5">
         <nav aria-label="breadcrumb mt-3">
@@ -75,9 +94,39 @@ export default function WorkDetail() {
                   {postDetail?.views} lượt xem •{" "}
                   {postDetail?.work_location_name}
                 </p>
-
-                <button className="btn btn-danger me-2">Ứng tuyển</button>
-                <button className="btn btn-outline-secondary">Lưu</button>
+                {user?.role === 3 ? (
+                  <>
+                    <button
+                      className="btn btn-danger me-2"
+                      onClick={handleApplyJob}
+                    >
+                      Ứng tuyển
+                    </button>
+                    <button
+                      className="btn btn-outline-secondary"
+                      onClick={handleSaveJob}
+                    >
+                      Lưu
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      className="btn btn-danger me-2"
+                      data-bs-toggle="modal"
+                      data-bs-target="#LoginModal"
+                    >
+                      Ứng tuyển
+                    </button>
+                    <button
+                      className="btn btn-outline-secondary"
+                      data-bs-toggle="modal"
+                      data-bs-target="#LoginModal"
+                    >
+                      Lưu
+                    </button>
+                  </>
+                )}
 
                 <hr />
 
@@ -88,6 +137,53 @@ export default function WorkDetail() {
                     .map((item, index) => item && <li key={index}>{item}</li>)}
                 </ul>
 
+                <h5 className="mt-3">Yêu cầu công việc</h5>
+                <ul>
+                  {postDetail?.education_title && (
+                    <li>
+                      <strong>Học vấn:</strong> {postDetail?.education_title}
+                    </li>
+                  )}
+                  {postDetail?.job_level_name && (
+                    <li>
+                      <strong>Cấp bậc:</strong> {postDetail?.job_level_name}
+                    </li>
+                  )}
+                  {postDetail?.require_age_min !== undefined &&
+                    postDetail?.require_age_max !== undefined && (
+                      <li>
+                        <strong>Độ tuổi:</strong>{" "}
+                        {postDetail.require_age_min === 0 &&
+                        postDetail.require_age_max === 0
+                          ? "Không yêu cầu"
+                          : postDetail.require_age_min &&
+                            postDetail.require_age_max
+                          ? `từ ${postDetail.require_age_min} đến ${postDetail.require_age_max}`
+                          : postDetail.require_age_min
+                          ? `từ ${postDetail.require_age_min} trở lên`
+                          : `tối đa ${postDetail.require_age_max}`}
+                      </li>
+                    )}
+
+                  {postDetail?.require_gender && (
+                    <li>
+                      <strong>Giới tính:</strong> {postDetail?.require_gender}
+                    </li>
+                  )}
+                  {postDetail?.require_marital_status && (
+                    <li>
+                      <strong>Tình trạng hôn nhân:</strong>{" "}
+                      {postDetail?.require_marital_status}
+                    </li>
+                  )}
+                  {postDetail?.working_type && (
+                    <li>
+                      <strong>Loại hình làm việc:</strong>{" "}
+                      {postDetail?.working_type}
+                    </li>
+                  )}
+                </ul>
+
                 <h5 className="mt-3">Yêu cầu ứng viên</h5>
                 <ul>
                   {postDetail?.more_requirements
@@ -96,13 +192,28 @@ export default function WorkDetail() {
                 </ul>
 
                 <h5 className="mt-3">Các phúc lợi dành cho bạn</h5>
-                <ul>
-                  {postDetail?.catalog_benefit
-                    ?.split(",")
-                    ?.map((item, index) => (
-                      <li key={index}>{item}</li>
-                    ))}
-                </ul>
+                <div className="d-flex flex-wrap justify-content-around">
+                  {postDetail?.company_benefits &&
+                    postDetail?.company_benefits.map(
+                      (item, index) =>
+                        item && (
+                          <div
+                            key={index}
+                            className="col-md-3 card d-flex text-center align-items-center"
+                          >
+                            <div className="card-body d-flex flex-column  align-items-center">
+                              <i className={`fa ${item.benefit_icon} me-2`}></i>
+                              <p className="card-text fw-bold m-0">
+                                {item.benefit_name}
+                              </p>
+                              <p className="card-text text-muted text-break">
+                                {item.benefit_value}
+                              </p>
+                            </div>
+                          </div>
+                        )
+                    )}
+                </div>
 
                 <h5 className="mt-3">Địa điểm làm việc</h5>
                 <p>{postDetail?.address}</p>
@@ -182,17 +293,17 @@ export default function WorkDetail() {
                 <h5>Việc làm tương tự</h5>
                 <ul className="list-unstyled">
                   <li>
-                    <a href="#" className="text-decoration-none">
+                    <a href="#a" className="text-decoration-none">
                       Junior AI Engineer - Navigos Search
                     </a>
                   </li>
                   <li>
-                    <a href="#" className="text-decoration-none">
+                    <a href="#a" className="text-decoration-none">
                       AI Engineer - Samsung Electronics Vietnam
                     </a>
                   </li>
                   <li>
-                    <a href="#" className="text-decoration-none">
+                    <a href="#a" className="text-decoration-none">
                       Data Engineer - Công ty TNHH FPT Smart Cloud
                     </a>
                   </li>

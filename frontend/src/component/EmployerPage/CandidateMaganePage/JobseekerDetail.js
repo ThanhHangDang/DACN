@@ -6,18 +6,27 @@ import TitleComponent from "../../_component/ui/TitleComponent.js";
 import CandidateDetail from "../../_component/ui/DetailCandidateLayout.js";
 import { useGetJobseekerDetailQuery } from "../../../redux_toolkit/employerApi.js";
 
-
 export default function EmployeeDetail() {
   const { isLogin, user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const { id } = useParams();
-  console.log("id", id);  
-  const { data } = useGetJobseekerDetailQuery({jobseeker_id: id, employer_id: user?.id});
-  const {education_info = [],certification_info=[],experience_info=[],project_info=[],language_info=[],
-      skill_info=[],cv_link,ratingData
-      ,...basic} = data || {};
- console.log("data", data); 
-
+  console.log("id", id);
+  const { data } = useGetJobseekerDetailQuery({
+    jobseeker_id: id,
+    employer_id: user?.id,
+  });
+  const {
+    education_info = [],
+    certification_info = [],
+    experience_info = [],
+    project_info = [],
+    language_info = [],
+    skill_info = [],
+    cv_link,
+    ratingData,
+    ...basic
+  } = data || {};
+  console.log("data", data);
 
   useEffect(() => {
     if (!isLogin || user?.role !== 2) {
@@ -31,15 +40,17 @@ export default function EmployeeDetail() {
         title={"Candicate Detail"}
         description={"Let choose a right Candicate for your Camany!"}
       />
-      <CandidateDetail     basic={basic}
-  education_info={education_info}
-  certification_info={certification_info}
-  experience_info={experience_info}
-  project_info={project_info}
-  language_info={language_info}
-  skill_info={skill_info}
-  cv_link={cv_link}
-  ratingData={ratingData} />
+      <CandidateDetail
+        basic={basic}
+        education_info={education_info}
+        certification_info={certification_info}
+        experience_info={experience_info}
+        project_info={project_info}
+        language_info={language_info}
+        skill_info={skill_info}
+        cv_link={cv_link}
+        ratingData={ratingData}
+      />
     </>
   );
 }
