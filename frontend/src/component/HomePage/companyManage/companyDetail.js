@@ -48,6 +48,10 @@ export default function CompanyDetail() {
   const currentPosts = filteredPosts.slice(indexOfFirstPost, indexOfLastPost);
   const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
 
+  const handleApplyJob = (id) => {
+    console.log("Jobseeker: ", user?.id, " handdleApplyJob: ", id);
+  };
+
   useEffect(() => {
     if (user?.role === 2) {
       toast.error("Vui lòng đăng nhập vai trò người tìm việc!");
@@ -154,9 +158,22 @@ export default function CompanyDetail() {
                                   option.salary_max
                                 )} đ/tháng`}
                           </span>
-                          <button className="btn btn-outline-success btn-sm ms-3">
-                            Ứng tuyển
-                          </button>
+                          {user?.role === 3 ? (
+                            <button
+                              className="btn btn-outline-success btn-sm ms-3"
+                              onClick={() => handleApplyJob(option.job_id)}
+                            >
+                              Ứng tuyển
+                            </button>
+                          ) : (
+                            <button
+                              className="btn btn-outline-success btn-sm ms-3"
+                              data-bs-toggle="modal"
+                              data-bs-target="#LoginModal"
+                            >
+                              Ứng tuyển
+                            </button>
+                          )}
                         </div>
                       </div>
                     ))

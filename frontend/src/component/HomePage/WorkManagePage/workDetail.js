@@ -32,7 +32,7 @@ export default function WorkDetail() {
     console.log("Jobseeker: ", user?.id, " lưu Job: ", postDetail?.job_id);
   };
 
-  const handdleApplyJob = () => {
+  const handleApplyJob = () => {
     console.log(
       "Jobseeker: ",
       user?.id,
@@ -98,7 +98,7 @@ export default function WorkDetail() {
                   <>
                     <button
                       className="btn btn-danger me-2"
-                      onClick={handdleApplyJob}
+                      onClick={handleApplyJob}
                     >
                       Ứng tuyển
                     </button>
