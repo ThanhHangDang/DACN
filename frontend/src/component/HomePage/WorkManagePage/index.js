@@ -38,10 +38,18 @@ const JobListing = () => {
   });
   const { data: cata_city } = useGetCitiesQuery(84); // 84 là mã quốc gia Việt Nam
   const { data: cata_industry } = useGetIndustriesQuery();
-  // const { data: cata_jobFunction } = useGetJobFunctionQuery();
+  const { data: cata_jobFunction } = useGetJobFunctionQuery();
   const cata_jobtype = [
     { id: 1, name: "Full time" },
     { id: 2, name: "Part time" },
+  ];
+const sort_by = ["Tin mới cập nhật", "Tin được quan tâm nhất", "Mức lương cao nhất"];
+  const year_exp_arr = [
+    { id: 1, name: "Dưới 1 năm", value: 0 },
+    { id: 2, name: "Từ 1 đến 3 năm", value: 1 },
+    { id: 3, name: "Từ 3-5 năm", value: 2 },
+    { id: 4, name: "Trên 5 năm", value: 3 },
+    { id: 5, name: "Trên 10 năm", value: 4 },
   ];
 
   // const [active_page, setActive_Page] = useState(1);
@@ -62,6 +70,11 @@ const JobListing = () => {
     }
   }, [navigate, user]);
 
+
+  // useEffect(() => {
+
+  // }, [filter]);
+
   return (
     <>
       <TitleComponent
@@ -72,12 +85,12 @@ const JobListing = () => {
         <div className="row">
           <div className="col-lg-3 mb-4 ">
             <div className="p-3 border rounded shadow-sm bg-light">
-              <h6 className="fw-bold mb-3">Search by Job Title</h6>
+              <h6 className="fw-bold mb-3">Tìm kiếm theo chức danh</h6>
               <input
                 className="form-control mb-3"
-                placeholder="Job title or company"
+                placeholder="Tên công việc bạn muốn tìm kiếm"
               />
-              <h6 className="fw-bold mb-2">Location</h6>
+              <h6 className="fw-bold mb-2">Tìm kiếm theo địa điểm làm việc</h6>
               <select
                 className="form-select mb-3"
                 onChange={(e) =>
@@ -88,14 +101,14 @@ const JobListing = () => {
                 }
                 value={filter.city_id}
               >
-                <option value="">Choose city</option>
+                <option value="">Chọn tỉnh thành</option>
                 {cata_city?.map((c) => (
                   <option key={c.city_id} value={c.city_id}>
                     {c.city_name}
                   </option>
                 ))}
               </select>
-              <h6 className="fw-bold mb-2">Category</h6>
+              <h6 className="fw-bold mb-2">Tìm kiếm theo lĩnh vực</h6>
               <select
                 className="form-select mb-3"
                 onChange={(e) =>
@@ -106,14 +119,51 @@ const JobListing = () => {
                 }
                 value={filter.industry_id}
               >
-                <option value="">Choose category</option>
+                <option value="">Chọn lĩnh vực bạn quan tâm</option>
                 {cata_industry?.map((c) => (
                   <option key={c.industry_id} value={c.industry_id}>
                     {c.industry_name}
                   </option>
                 ))}
               </select>
-              <h6 className="fw-bold mt-3">Job Type</h6>
+              <h6 className="fw-bold mb-2">Tìm kiếm theo ngành nghề</h6>
+              <select
+                className="form-select mb-3"
+                onChange={(e) =>
+                  setFilter({
+                    ...filter,
+                    job_function_id: e.target.value,
+                  })
+                }
+                value={filter.job_function_id}
+              >
+                <option value="">Chọn ngành nghề bạn quan tâm</option>
+                {cata_jobFunction?.map((c) => (
+                  <option key={c.job_function_id} value={c.job_function_id}>
+                    {c.job_function_name}
+                  </option>
+                ))}
+              </select>
+              <h6 className="fw-bold mb-2">Tìm kiếm mức độ yêu cầu kinh nghiệm</h6>
+              <select
+                className="form-select mb-3"
+                onChange={(e) =>
+                  setFilter({
+                    ...filter,
+                    job_function_id: e.target.value,
+                  })
+                }
+                value={filter.job_function_id}
+              >
+                <option value="">Chọn mức kinh nghiệm phù hợp với bạn</option>
+                {year_exp_arr?.map((c) => (
+                  <option key={c.id} value={c.value}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+
+              <h6 className="fw-bold mt-3">Hình thức công việc</h6>
               {cata_jobtype.map((type) => (
                 <div className="form-check mb-2" key={type.id}>
                   <input
@@ -142,7 +192,7 @@ const JobListing = () => {
               <h6 className="fw-bold mt-3">Date Posted</h6>
               {/* Add date checkboxes */}
 
-              <h6 className="fw-bold mt-3">Salary</h6>
+              <h6 className="fw-bold mt-3">Mức lương mong muốn</h6>
               <input type="range" className="form-range mb-2" />
               <div className="d-flex justify-content-between small">
                 <span>$0</span>
@@ -176,8 +226,18 @@ const JobListing = () => {
           <div className="col-lg-9">
             <div className="d-flex justify-content-between align-items-center mb-3">
               <div className="text-muted small">Showing 6-6 of 10 results</div>
-              <select className="form-select form-select-sm w-auto">
-                <option>Sort by latest</option>
+              <select className="form-select form-select-sm w-auto"
+              onChange={(e) =>
+                setFilter({
+                  ...filter,
+                  job_function_id: e.target.value,
+                })
+              }
+              value={filter.job_function_id}>
+                {sort_by.map((sort, index) => (
+                <option>{sort}</option>
+              ))}
+              
               </select>
             </div>
             {jobs.map((job, index) => (

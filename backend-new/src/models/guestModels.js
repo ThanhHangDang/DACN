@@ -208,6 +208,7 @@ const queryGetListJobBySearch = async (searchData) => {
       date_from = null,
       paging_size = 10,
       page = 1,
+      ...prop
     } = searchData;
 
     const status_ = 1; // Chỉ lấy các công việc đang hoạt động
@@ -276,7 +277,7 @@ const queryGetListJobBySearch = async (searchData) => {
     }
     if (work_location) {
       conditions.push("j.work_location = ?");
-      values.push(citi_id);
+      values.push(work_location);
     }
     const currentDate = new Date().toISOString().split("T")[0];
     if (status_) {
