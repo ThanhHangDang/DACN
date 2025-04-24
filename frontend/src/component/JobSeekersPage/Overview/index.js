@@ -239,7 +239,7 @@ export default function JobSeekerOverview() {
           </NavLink>
         </div>
 
-        <div className="row rounded-2 p-2 d-flex justify-content-between">
+        <div className="row rounded-2 p-2 d-flex ">
           {isLoadingSuitable ? (
             <div className="text-center py-3">
               Đang tải công việc phù hợp...

@@ -457,7 +457,7 @@ export default function EmployerPost() {
                     id="benefits"
                     rows={3}
                     placeholder="Nhập mô tả công việc"
-                    value={newPost.describle.replace(/00pizon00/g, "\n")}
+                    value={newPost.describle.replace(/%00endl/g, "\n")}
                     onChange={(e) =>
                       setNewPost({
                         ...newPost,
@@ -818,16 +818,13 @@ export default function EmployerPost() {
                       className="form-control"
                       id="postTitle"
                       placeholder="Nhập yêu cầu khác"
-                      value={newPost.more_requirement.replace(
-                        /00pizon00/g,
-                        "\n"
-                      )}
+                      value={newPost.more_requirement.replace(/%00endl/g, "\n")}
                       onChange={(e) =>
                         setNewPost({
                           ...newPost,
                           more_requirement: e.target.value.replace(
                             /\n/g,
-                            "00pizon00"
+                            "%00endl"
                           ),
                         })
                       }
@@ -836,8 +833,7 @@ export default function EmployerPost() {
                           e.preventDefault(); // Ngăn không cho xuống dòng (đối với textarea) hoặc submit form
                           setNewPost((prev) => ({
                             ...prev,
-                            more_requirement:
-                              prev.more_requirement + "00pizon00",
+                            more_requirement: prev.more_requirement + "%00endl",
                           }));
                         }
                       }}

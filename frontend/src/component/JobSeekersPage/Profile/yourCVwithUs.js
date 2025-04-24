@@ -94,7 +94,9 @@ export default function YourCVwithUs() {
     data: {},
   });
 
-  const [careerTarget, setCareerTarget] = useState("");
+  const [careerTarget, setCareerTarget] = useState(
+    userInformation?.career_target || ""
+  );
 
   const [project, setProject] = useState({
     project_name: "",
@@ -363,16 +365,21 @@ export default function YourCVwithUs() {
                     Mục tiêu nghề nghiệp
                   </label>
                   <textarea
+                    type="text"
                     className="form-control"
                     id="benefits"
                     rows={4}
                     placeholder="Nhập mục tiêu nghề nghiệp"
-                    defaultValue={
-                      careerTarget
-                        ? careerTarget
-                        : userInformation?.career_target
+                    value={careerTarget.replace(/%00endl/g, "\n")}
+                    onChange={(e) =>
+                      setCareerTarget(e.target.value.replace(/\n/g, "%00endl"))
                     }
-                    onChange={(e) => setCareerTarget(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        setCareerTarget((prev) => (prev || "") + "%00endl");
+                      }
+                    }}
                   />
                 </div>
               </form>
@@ -1224,7 +1231,9 @@ export default function YourCVwithUs() {
         </span>
 
         <ul>
-          <li>{userInformation.career_target}</li>
+          {userInformation?.career_target
+            ?.split("%00endl")
+            ?.map((item, index) => item && <li key={index}>{item}</li>)}
         </ul>
       </div>
 
@@ -1237,7 +1246,7 @@ export default function YourCVwithUs() {
           {listExp &&
             listExp?.map((exp, index) => (
               <div
-                className="bg-light rounded-2 me-2 my-2 p-2 mb-2 shadow-sm"
+                className="bg-light rounded-2 me-2 my-2 p-2 mb-2 shadow-sm custom-hover-4"
                 key={index}
               >
                 <div className="d-flex justify-content-between align-items-center rounded-2">
@@ -1316,7 +1325,7 @@ export default function YourCVwithUs() {
           {listEducation &&
             listEducation?.map((edu, index) => (
               <div
-                className="bg-light rounded-2 me-2 my-2 p-2 mb-2 shadow-sm"
+                className="bg-light rounded-2 me-2 my-2 p-2 mb-2 shadow-sm custom-hover-4"
                 key={index}
               >
                 <div className="d-flex justify-content-between align-items-center rounded-2">
@@ -1396,7 +1405,7 @@ export default function YourCVwithUs() {
           {listProject &&
             listProject?.map((pro, index) => (
               <div
-                className="bg-light rounded-2 me-2 my-2 p-2 mb-2 shadow-sm"
+                className="bg-light rounded-2 me-2 my-2 p-2 mb-2 shadow-sm custom-hover-4"
                 key={index}
               >
                 <div className="d-flex justify-content-between align-items-center rounded-2">
@@ -1554,7 +1563,7 @@ export default function YourCVwithUs() {
           {listCertification &&
             listCertification?.map((cer, index) => (
               <div
-                className="bg-light rounded-2 me-2 my-2 p-2 mb-2 shadow-sm"
+                className="bg-light rounded-2 me-2 my-2 p-2 mb-2 shadow-sm custom-hover-4"
                 key={index}
               >
                 <div className="d-flex justify-content-between align-items-center rounded-2">

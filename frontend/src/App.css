@@ -82,6 +82,11 @@
   transition: filter 0.3s ease; /* Hiệu ứng mượt */
 }
 
+.custom-hover-4:hover{
+  transform: scale(1.007);
+  cursor: pointer;
+}
+
 .post-detail-bg{
   background-color: #D2E2FC;
 }

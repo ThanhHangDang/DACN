@@ -84,19 +84,15 @@ export default function WorkDetail() {
                 <h5 className="mt-3">Mô tả công việc</h5>
                 <ul>
                   {postDetail?.describle
-                    ?.split("00pizon00")
-                    .map((item, index) => (
-                      <li key={index}>{item}</li>
-                    ))}
+                    ?.split("%00endl")
+                    .map((item, index) => item && <li key={index}>{item}</li>)}
                 </ul>
 
                 <h5 className="mt-3">Yêu cầu ứng viên</h5>
                 <ul>
                   {postDetail?.more_requirements
-                    ?.split("00pizon00")
-                    ?.map((item, index) => (
-                      <li key={index}>{item}</li>
-                    ))}
+                    ?.split("%00endl")
+                    ?.map((item, index) => item && <li key={index}>{item}</li>)}
                 </ul>
 
                 <h5 className="mt-3">Các phúc lợi dành cho bạn</h5>
@@ -113,18 +109,22 @@ export default function WorkDetail() {
 
                 <h5 className="mt-3">Từ khóa:</h5>
                 <div>
-                {postDetail?.job_skills 
-                      ? postDetail.job_skills?.slice() // Create a copy of the array to avoid mutating the original
-                      .sort((a, b) => a.skill_name.length - b.skill_name.length) // Sort by name length (shortest first)
-                      .map(item => (
-                      <NavLink
-                        key={item.skill_id}
-                        to={`/post?skill_id=${item.skill_id}`}
-                        className="badge bg-secondary me-2 mb-2 text-decoration-none skill-badge"
-                      >
-                        {item.skill_name}
-                      </NavLink>) )
-                      : ("Chưa có thông tin")}
+                  {postDetail?.job_skills
+                    ? postDetail.job_skills
+                        ?.slice() // Create a copy of the array to avoid mutating the original
+                        .sort(
+                          (a, b) => a.skill_name.length - b.skill_name.length
+                        ) // Sort by name length (shortest first)
+                        .map((item) => (
+                          <NavLink
+                            key={item.skill_id}
+                            to={`/post?skill_id=${item.skill_id}`}
+                            className="badge bg-secondary me-2 mb-2 text-decoration-none skill-badge"
+                          >
+                            {item.skill_name}
+                          </NavLink>
+                        ))
+                    : "Chưa có thông tin"}
                 </div>
               </div>
             </div>
@@ -149,25 +149,29 @@ export default function WorkDetail() {
                     <strong>Ngành nghề:</strong> {postDetail?.industry_name}
                   </li>
                   <li>
-                  <strong>Kỹ năng:</strong>{" "}
-                    {postDetail?.job_skills 
-                      ? postDetail.job_skills?.slice() // Create a copy of the array to avoid mutating the original
-                      .sort((a, b) => a.skill_name.length - b.skill_name.length) // Sort by name length (shortest first)
-                      .map(item => (
-                      <NavLink
-                        key={item.skill_id}
-                        to={`/post?skill_id=${item.skill_id}`}
-                        className="badge bg-secondary me-2 mb-2 text-decoration-none skill-badge"
-                      >
-                        {item.skill_name}
-                      </NavLink>) )
-                      : ("Chưa có thông tin")}
+                    <strong>Kỹ năng:</strong>{" "}
+                    {postDetail?.job_skills
+                      ? postDetail.job_skills
+                          ?.slice() // Create a copy of the array to avoid mutating the original
+                          .sort(
+                            (a, b) => a.skill_name.length - b.skill_name.length
+                          ) // Sort by name length (shortest first)
+                          .map((item) => (
+                            <NavLink
+                              key={item.skill_id}
+                              to={`/post?skill_id=${item.skill_id}`}
+                              className="badge bg-secondary me-2 mb-2 text-decoration-none skill-badge"
+                            >
+                              {item.skill_name}
+                            </NavLink>
+                          ))
+                      : "Chưa có thông tin"}
                   </li>
                   <li>
-                  <strong>Giờ làm việc:</strong>{" "}
-                  {postDetail?.working_time
-                    ? postDetail?.working_time
-                    : "Chưa có thông tin"}
+                    <strong>Giờ làm việc:</strong>{" "}
+                    {postDetail?.working_time
+                      ? postDetail?.working_time
+                      : "Chưa có thông tin"}
                   </li>
                 </ul>
               </div>
