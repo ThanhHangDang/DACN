@@ -267,35 +267,39 @@ export default function CompanyDetail() {
                 </div>
               </div>
             </div>
-
-            <div className="card mt-4">
-              <div className="card-body text-center">
-                <div className="row list-group list-group-horizontal">
-                  <div className="col-md-4 list-group-item">
-                    <h6 className="fw-bold">
-                      Lương, Thưởng Và Chế Độ Phúc Lợi
-                    </h6>
-                    <p>
-                      Chính sách lương thưởng hấp dẫn, nhiều phúc lợi đặc biệt.
-                    </p>
-                  </div>
-                  <div className="col-md-4 list-group-item">
-                    <h6 className="fw-bold">Thời Gian Làm Việc Và Nghỉ Ngơi</h6>
-                    <p>
-                      Môi trường làm việc năng động, giờ làm việc linh hoạt,
-                      nghỉ phép đầy đủ.
-                    </p>
-                  </div>
-                  <div className="col-md-4 list-group-item">
-                    <h6 className="fw-bold">Đào Tạo Và Phát Triển</h6>
-                    <p>
-                      Chương trình đào tạo chuyên môn, phát triển kỹ năng cá
-                      nhân.
-                    </p>
+            {companyInformation?.company_benefits && (
+              <div className="card mt-4">
+                <div className="card-body text-center">
+                  <h6 className="fw-bold text-start">
+                    Các phúc lợi dành cho bạn
+                  </h6>
+                  <div className="list-group ">
+                    {companyInformation?.company_benefits &&
+                      companyInformation?.company_benefits.map(
+                        (item, index) =>
+                          item && (
+                            <div
+                              key={index}
+                              className="card d-flex text-center align-items-center mb-1"
+                            >
+                              <div className="card-body d-flex flex-column  align-items-center">
+                                <i
+                                  className={`fa ${item.benefit_icon} me-2`}
+                                ></i>
+                                <p className="card-text fw-bold m-0">
+                                  {item.benefit_name}
+                                </p>
+                                <p className="card-text text-muted text-break">
+                                  {item.benefit_value}
+                                </p>
+                              </div>
+                            </div>
+                          )
+                      )}
                   </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
