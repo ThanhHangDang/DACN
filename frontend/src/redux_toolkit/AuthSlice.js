@@ -127,8 +127,9 @@ export const logout = createAsyncThunk(
         })
         .addCase(registerUser.fulfilled, (state, action) => {
           state.loading = false;
-          state.isLogin = true;
-          state.user = action.payload;
+          state.isLogin = false;
+          // state.user = action.payload;
+          state.user= null;
         })
         .addCase(registerUser.rejected, (state, action) => {
           state.loading = false;

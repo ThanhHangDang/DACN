@@ -5,7 +5,7 @@ import Header from "./component/_component/header.js";
 import Footer from "./component/_component/footer.js";
 
 import Login from "./component/AuthPage/login.js";
-import Auth from "./component/AuthPage/auth.js";
+import Register from "./component/AuthPage/register.js";
 import ResetPassword from "./component/AuthPage/resetPassword.js";
 
 import HomePage from "./component/HomePage/index.js";
@@ -62,7 +62,7 @@ function App() {
           <Route path="/" Component={HomePage} />
 
           <Route path="/login" Component={Login} />
-          <Route path="/auth" Component={Auth} />
+          <Route path="/register" Component={Register} />
           <Route path="/reset-password" Component={ResetPassword} />
 
           <Route Component={JobSeekerPage}>

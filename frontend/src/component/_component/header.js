@@ -51,7 +51,7 @@ const Header = () => {
           </NavLink>
         </li>
         <li>
-          <NavLink className="dropdown-item" to="/auth">
+          <NavLink className="dropdown-item" to="/register">
             Đăng ký
           </NavLink>
         </li>
@@ -261,7 +261,7 @@ const Header = () => {
                         </NavLink>
                       </span>
                       <button className="btn btn-primary">
-                        <NavLink className="dropdown-item" to="/auth">
+                        <NavLink className="dropdown-item" to="/register">
                           Đăng ký
                         </NavLink>
                       </button>
@@ -406,7 +406,7 @@ const Header = () => {
                   <li>
                     <NavLink
                       className="text-decoration-none text-secondary"
-                      to="/auth"
+                      to="/register"
                     >
                       Đăng ký
                     </NavLink>

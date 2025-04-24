@@ -7,6 +7,7 @@ const {
   getListLeadingCompany,
   getListCompanyBySearch,
   getGeneralInfo,
+  getRelatedJobs
 
 } = require("../controllers/guestControllers.js");
 
@@ -18,6 +19,7 @@ guestRoutes.get("/leading-company", getListLeadingCompany);
 guestRoutes.get("/companies", getListCompanyBySearch);
 guestRoutes.get("/company-detail", getPublicInformationOfCompany);
 guestRoutes.get("/general-info", getGeneralInfo);
+guestRoutes.get("/related-jobs", getRelatedJobs);
 module.exports = guestRoutes;
 
 

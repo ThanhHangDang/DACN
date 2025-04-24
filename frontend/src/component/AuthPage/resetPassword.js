@@ -47,7 +47,7 @@ export default function ResetPassword() {
         <div className="row d-flex justify-content-end">
           <div className="col-8 d-flex justify-content-end">
             <p className="me-2">Bạn chưa có tài khoản?</p>
-            <NavLink to="/auth" className="text-primary">
+            <NavLink to="/register" className="text-primary">
               Đăng ký
             </NavLink>
           </div>

@@ -1,11 +1,40 @@
-import React from "react";
+import React, { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 // import "bootstrap/dist/css/bootstrap.min.css";
 // import "bootstrap-icons/font/bootstrap-icons.css";
-import { NavLink } from "react-router-dom";
+// import { NavLink } from "react-router-dom";
 
 const HeroSection = ( {generalInfo} ) => {
-  const {leadingcompany,count_job_posted,company_count,jobseeker_count} = generalInfo || {leadingcompany:[],count_job_posted:0,company_count:0,jobseeker_count:0}
+  const navigate = useNavigate();
+  const {leadingcompany,job_count,company_count,jobseeker_count} = generalInfo || {leadingcompany:[],job_count:0,company_count:0,jobseeker_count:0}
+  const [searchInput, setSearchInput] = useState("");
+  const [inputError, setInputError] = useState("");
+  // Hàm xử lý khi thay đổi input
+  const handleInputChange = (e) => {
+    setSearchInput(e.target.value);
+    // Xóa thông báo lỗi khi người dùng bắt đầu nhập
+    if (e.target.value.trim() !== "") {
+      setInputError("");
+    }
+  };
   
+  // Hàm xử lý khi click nút tìm kiếm
+  const handleSearch = () => {
+    // Kiểm tra nếu input rỗng
+    if (searchInput.trim() === "") {
+      setInputError("Vui lòng nhập từ khóa tìm kiếm");
+      return;
+    }    
+    // Chuyển hướng đến trang /post với param title
+    navigate(`/post?title=${encodeURIComponent(searchInput.trim())}`);
+  };
+  
+  // Hàm xử lý khi nhấn Enter trong input
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
   return (
     <div
       className="text-white text-center py-5"
@@ -37,36 +66,49 @@ const HeroSection = ( {generalInfo} ) => {
             style={{ maxWidth: "900px", overflowX: "auto" }}
           >
             {/* Input (mobile & desktop cùng lúc, chỉ 1 cái cần thiết thôi) */}
+            {/*      Input với validation  - VANNHAN_04_24 */}
             <input
               type="text"
-              className="form-control border-0 rounded-0 rounded-start"
-              placeholder="Job Title or Company"
-              style={{ maxWidth: "250px", flexShrink: 1, minWidth: 0 }}
+              className='form-control border-0 rounded-0 rounded-start'
+              placeholder={inputError?  inputError:"Tìm kiếm công việc cho sự nghiệp của bạn" }
+              style={{ maxWidth: "80%", flexShrink: 1, minWidth: 0 }}
+              value={searchInput}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
             />
-
+                {inputError && (
+                <div className="invalid-feedback text-start position-absolute">
+                  {inputError}
+                </div>
+              )}  
+              
             {/* Location */}
-            <select
+            {/* tạm thời tắt search location - VANNHAN_04_24 */}
+            {/* <select
               className="form-select border-0 rounded-0 d-none d-md-block"
               style={{ maxWidth: "200px", flexShrink: 1, minWidth: 0 }}
             >
               <option>Select Location</option>
-            </select>
+            </select> */}
 
             {/* Category */}
-            <select
+            {/* tạm thời tắt search Category - VANNHAN_04_24 */}
+            {/* <select
               className="form-select border-0 rounded-0 d-none d-md-block"
               style={{ maxWidth: "200px", flexShrink: 1, minWidth: 0 }}
             >
               <option>Select Category</option>
-            </select>
+            </select> */}
 
             {/* Button lớn */}
-            <button className="btn btn-success rounded-0 rounded-end px-4 d-none d-md-flex align-items-center">
+            <button className="btn btn-success rounded-0 rounded-end px-4 d-none d-md-flex align-items-center"
+                  onClick={handleSearch}>
               <i className="bi bi-search me-2"></i> Search Job
             </button>
 
             {/* Button nhỏ */}
-            <button className="btn btn-success d-flex d-md-none align-items-center px-3">
+            <button className="btn btn-success d-flex d-md-none align-items-center px-3"
+                  onClick={handleSearch}>
               <i className="bi bi-search"></i>
             </button>
           </div>
@@ -80,7 +122,7 @@ const HeroSection = ( {generalInfo} ) => {
               <div className="bg-success rounded p-3 mb-2">
                 <i className="bi bi-briefcase-fill fs-4 text-white"></i>
               </div>
-              <h5 className="text-white mb-0">{count_job_posted}</h5>
+              <h5 className="text-white mb-0">{job_count}</h5>
               <small>Công việc</small>
             </div>
           </NavLink>

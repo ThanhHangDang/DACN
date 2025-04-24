@@ -1,25 +1,131 @@
-import React, { useState,useEffect }from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
 import Rating from "./RatingSection.js";
-// import { format } from "date-fns";
+import {
+  useInviteCandidateApplyJobMutation,
+  useAddCandidateMutation,
+  useDeleteCandidateMutation,
+  useGetListJobForInvitationQuery,
+} from "../../../redux_toolkit/employerApi.js";
 import formatSafeDate from "../../../utils/formatSafeDate.js";
+import InviteJobModal from "./InviteJobModal"; // Import modal component
+import { toast } from "react-toastify"; // Import toast nếu cần thông báo
+import { use } from "react";
+
 const CandidateDetail = ({
   basic,
   certification_info,
-  cv_link,
   education_info,
   experience_info,
   language_info,
   project_info,
   skill_info,
   ratingData,
+  isSaved
 }) => {
-  const handleFollowCandidate = () => {
-    console.log("Follow candidate clicked!");
-    // Add your follow candidate logic here
+  const { isLogin, user } = useSelector((state) => state.auth);
+  console.log("basic", isSaved);
+  const [inviteCandidateApplyJob] = useInviteCandidateApplyJobMutation();
+  const [addCandidate] = useAddCandidateMutation();
+  const [deleteCandidate] = useDeleteCandidateMutation();
+  const [saveStatus, setSaveStatus] = useState(isSaved);
+  // Lấy danh sách job cho employer hiện tại và jobseeker cụ thể
+  const { data: jobData, isLoading: isLoadingJobs } =
+    useGetListJobForInvitationQuery(
+      { employer_id: user?.id, jobseeker_id: basic?.profile_id },
+      { skip: !user?.id || !basic?.profile_id }
+    );
+  console.log("jobData", jobData);
+  // State quản lý modal
+  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [invitedJobs, setInvitedJobs] = useState([]);
+
+  // Hàm xử lý khi người dùng nhấn "Gửi thư mời"
+  const handleSendInviteJob = () => {
+    setShowInviteModal(true);
   };
 
-  console.log("ratingData", ratingData);
+  // Hàm xử lý khi người dùng chọn job và submit từ modal
+  const handleInviteSubmit = async (selectedJobIds) => {
+    if (selectedJobIds.length > 0) {
+      try {
+        // Gọi API để gửi thư mời
+        const response = await inviteCandidateApplyJob({
+          employer_id: user?.id,
+          jobseeker_id: basic?.profile_id,
+          job_ids: selectedJobIds,
+        }).unwrap();
+
+        // Lưu danh sách job đã gửi thư mời
+        setInvitedJobs(selectedJobIds);
+        if (response.success) {
+          // Hiển thị thông báo thành công          
+          toast.success(
+            `Đã gửi ${selectedJobIds.length} thư mời đến ứng viên!`
+          );
+        } else {
+          toast.error("Gửi thư mời thất bại, vui lòng thử lại");
+        }
+      } catch (error) {
+        // Hiển thị thông báo lỗi
+        toast.error(
+          "Gửi thư mời thất bại: " +
+            (error.data?.message || "Vui lòng thử lại sau")
+        );
+      }
+    }
+  };
+
+  const handleSaveCandidate = async () => {
+    // console.log("Follow candidate clicked!");
+    // Add your follow candidate logic here
+    try {
+      const response = await addCandidate({
+        employer_id: user?.id,
+        jobseeker_id: basic?.profile_id,
+      }).unwrap();
+      if (response.success) {
+        // setSaveStatus(true);
+        toast.success("Đã lưu hồ sơ ứng viên thành công!");
+      } else {
+        toast.error("Lưu hồ sơ ứng viên thất bại, vui lòng thử lại");
+      }
+    } catch (error) {
+      toast.error(
+        "Lưu hồ sơ ứng viên thất bại: " +
+          (error.data?.message || "Vui lòng thử lại sau")
+      );
+    }
+  };
+  const handleUnSaveCandidate = async () => {
+    try {
+      const response = await deleteCandidate({
+        employer_id: user?.id,
+        jobseeker_id: basic?.profile_id,
+      }).unwrap();
+      if (response.success) {
+        // setSaveStatus(false);
+        toast.success("Đã xóa hồ sơ ứng viên thành công!");
+      } else {
+        toast.error("Xóa hồ sơ ứng viên thất bại, vui lòng thử lại");
+      }
+    } catch (error) {
+      toast.error(
+        "Xóa hồ sơ ứng viên thất bại: " +
+          (error.data?.message || "Vui lòng thử lại sau")
+      );
+    }
+  };
+  useEffect(() => {
+    if(isSaved){
+      setSaveStatus(true);
+    }
+    else{
+      setSaveStatus(false);
+    }
+  }
+  , [isSaved]);
   return (
     <div className="container my-4">
       {/* Header */}
@@ -47,7 +153,6 @@ const CandidateDetail = ({
             </span>
           </div>
           <div className="text-muted small mt-2">
-            {/* <div>Origin: Career Site</div> */}
             <div>Chức danh hiện tại: {basic?.title || "Hidden"}</div>
             <div>Cấp bậc hiện tại: {basic?.level_name || "Hidden"}</div>
             <div>
@@ -59,13 +164,27 @@ const CandidateDetail = ({
         <div className="ms-auto">
           <button
             className="btn btn-primary me-2"
-            onClick={handleFollowCandidate}
+            onClick={handleSendInviteJob}
+            disabled={!jobData || jobData.length === 0 || isLoadingJobs}
           >
-            Follow
+            {isLoadingJobs ? (
+              <span className="spinner-border spinner-border-sm me-1"></span>
+            ) : null}
+            Gửi thư mời
           </button>
-          <a href={basic?.email} className="btn btn-outline-success">
-            Send Email
-          </a>
+          {saveStatus?
+          (<button
+            className="btn btn-outline-danger me-2"
+            onClick={saveStatus? handleUnSaveCandidate:handleSaveCandidate}
+          >
+             Bỏ lưu hồ sơ
+          </button>):(<button
+            className="btn btn-outline-primary me-2"
+            onClick={saveStatus? handleUnSaveCandidate:handleSaveCandidate}
+          >
+             Lưu hồ sơ
+          </button>)
+          }
         </div>
       </div>
 
@@ -106,9 +225,6 @@ const CandidateDetail = ({
                   return (
                     <div key={index}>
                       <p className="fw-bold mb-1">{item.exp_title}</p>
-                      {/* <p className="text-muted small mb-3">
-                        Fulltime • Jogja • Onsite
-                      </p> */}
                       <div className="col-md-6">
                         <p>
                           Comapany: <strong>{item.exp_company}</strong>
@@ -154,16 +270,9 @@ const CandidateDetail = ({
                       </p>
                       <p className="mb-1">
                         From:{" "}
-                        <strong>
-                          {/* {format(new Date(item.from_), "MM/yyyy")} */}
-                          {formatSafeDate(item.from_, "MM/yyyy")}
-                        </strong>{" "}
+                        <strong>{formatSafeDate(item.from_, "MM/yyyy")}</strong>{" "}
                         To:{" "}
-                        <strong>
-                          {" "}
-                          {/* {format(new Date(item.to_), "MM/yyyy")} */}
-                          {formatSafeDate(item.to_, "MM/yyyy")}
-                        </strong>
+                        <strong> {formatSafeDate(item.to_, "MM/yyyy")}</strong>
                       </p>
                       <p className="mb-5">
                         <strong>Level:</strong> {item.education_title}
@@ -188,12 +297,10 @@ const CandidateDetail = ({
                         <p>
                           From:{" "}
                           <strong>
-                            {/* {format(new Date(item.project_from), "MM/yyyy")} */}
                             {formatSafeDate(item.project_from, "MM/yyyy")}
                           </strong>{" "}
                           To:{" "}
                           <strong>
-                            {/* {format(new Date(item.project_to), "MM/yyyy")} */}
                             {formatSafeDate(item.project_to, "MM/yyyy")}
                           </strong>
                         </p>
@@ -258,7 +365,6 @@ const CandidateDetail = ({
                       </p>
                       <p className="mb-5">
                         <strong>Month:</strong>{" "}
-                        {/* {formatSafeDate(item.month_)} */}
                         {formatSafeDate(item.month, "MM/yyyy")}
                       </p>
                     </div>
@@ -311,7 +417,7 @@ const CandidateDetail = ({
 
           <div className="card">
             {ratingData ? (
-              <Rating ratingData={ratingData} profile_id = {basic?.profile_id} />
+              <Rating ratingData={ratingData} profile_id={basic?.profile_id} />
             ) : (
               <div className="card-body text-center text-muted">
                 Không có dữ liệu đánh giá
@@ -320,6 +426,14 @@ const CandidateDetail = ({
           </div>
         </div>
       </div>
+
+      {/* Modal component */}
+      <InviteJobModal
+        show={showInviteModal}
+        onHide={() => setShowInviteModal(false)}
+        onSubmit={handleInviteSubmit}
+        jobList={Array.isArray(jobData) ? jobData : []}
+      />
     </div>
   );
 };

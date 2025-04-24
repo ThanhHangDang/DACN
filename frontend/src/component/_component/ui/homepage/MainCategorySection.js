@@ -1,15 +1,6 @@
-export default function MainCategorySection() {
-  const categories = [
-    { icon: "bi-seedling", title: "Agriculture", jobs: "1254" },
-    { icon: "bi-recycle", title: "Metal Production", jobs: "816" },
-    { icon: "bi-bag", title: "Commerce", jobs: "2082" },
-    { icon: "bi-building", title: "Construction", jobs: "1520" },
-    { icon: "bi-suitcase", title: "Hotels & Tourism", jobs: "1022" },
-    { icon: "bi-mortarboard", title: "Education", jobs: "1496" },
-    { icon: "bi-cash-coin", title: "Financial Services", jobs: "1529" },
-    { icon: "bi-truck", title: "Transport", jobs: "1244" },
-  ];
-
+import { NavLink } from "react-router-dom";
+export default function MainCategorySection({JobCountByIndustry}) {
+  const categories =  JobCountByIndustry? JobCountByIndustry: [];
   return (
     <section className="py-5" style={{ backgroundColor: "#e9f6f6" }}>
       <div className="container">
@@ -25,10 +16,15 @@ export default function MainCategorySection() {
           {categories.map((cat, index) => (
             <div className="col-12 col-sm-6 col-md-4 col-lg-3" key={index}>
               <div className="bg-white text-center p-4 rounded-4 shadow-sm h-100 hover-shadow transition">
+                          <NavLink
+                            to={`/post?industry_id=${cat.industry_id}`}
+                            className="text-success text-decoration-underline fw-semibold"
+                          >
                 <i className={`bi ${cat.icon} fs-1 text-success mb-3`}></i>
-                <h6 className="fw-bold">{cat.title}</h6>
+                <h6 className="fw-bold">{cat.industry_name}</h6>
+                          </NavLink>
                 <div className="badge bg-light text-success mt-2 px-3 py-2">
-                  {cat.jobs} jobs
+                  {cat.job_count} jobs
                 </div>
               </div>
             </div>

@@ -20,6 +20,7 @@ const {
   queryGetListJobApplication,
   queryRejectJobApplication,
   queryInviteJobseekerApply,
+  queryGetListJobForInvite,
   queryGetInvitedJobseeker,
   queryGetListJobApplicationByJob,
 
@@ -414,9 +415,9 @@ const getListCandidate = async (req, res, next) => {
 
 const saveCandidate = async (req, res, next) => {
   try {
-    const { company_id, jobseeker_id } = req.body;
+    const { employer_id, jobseeker_id } = req.body;
     
-    if (!company_id || !jobseeker_id) {
+    if (!employer_id || !jobseeker_id) {
       return next(new ApiError("Thiếu thông tin công ty hoặc ứng viên", 400));
     }
     
@@ -425,13 +426,13 @@ const saveCandidate = async (req, res, next) => {
     //   return next(new ApiError("Không có quyền thực hiện hành động này", 403));
     // }
     
-    const result = await querySaveCandidate(company_id, jobseeker_id);
+    const result = await querySaveCandidate(employer_id, jobseeker_id);
     
     if (!result) {
       return next(new ApiError("Lưu ứng viên thất bại", 500));
     }
     
-    return res.success({ saved: true }, "Lưu ứng viên thành công");
+    return res.success({ }, "Lưu ứng viên thành công");
   } catch (err) {
     return next(new ApiError("Lỗi khi lưu thông tin ứng viên", 500));
   }
@@ -464,9 +465,9 @@ const rateCandidate = async (req, res, next) => {
 
 const deleteCandidate = async (req, res, next) => {
   try {
-    const { company_id, jobseeker_id } = req.body;
+    const { employer_id, jobseeker_id } = req.body;
     
-    if (!company_id || !jobseeker_id) {
+    if (!employer_id || !jobseeker_id) {
       return next(new ApiError("Thiếu thông tin công ty hoặc ứng viên", 400));
     }
     
@@ -475,7 +476,7 @@ const deleteCandidate = async (req, res, next) => {
     //   return next(new ApiError("Không có quyền thực hiện hành động này", 403));
     // }
     
-    const result = await queryDeleteCandidate(company_id, jobseeker_id);
+    const result = await queryDeleteCandidate(employer_id, jobseeker_id);
     
     if (!result) {
       return next(new ApiError("Xóa ứng viên đã lưu thất bại", 404));
@@ -540,10 +541,10 @@ const rejectJobApplication = async (req, res, next) => {
 
 const inviteCandidateApply = async (req, res, next) => {
   try {
-    const { company_id, job_id, jobseeker_id } = req.body;
+    const { employer_id, jobseeker_id, job_ids } = req.body;
     
-    if (!company_id || !jobseeker_id) {
-      return next(new ApiError("Thiếu thông tin công ty hoặc ứng viên", 400));
+    if (!employer_id || !jobseeker_id || !job_ids) {
+      return next(new ApiError("Thiếu thông tin công ty hoặc ứng viên hoặc job_id", 400));
     }
     
     // Kiểm tra quyền
@@ -551,13 +552,13 @@ const inviteCandidateApply = async (req, res, next) => {
     //   return next(new ApiError("Không có quyền thực hiện hành động này", 403));
     // }
     
-    const result = await queryInviteJobseekerApply(company_id, job_id, jobseeker_id);
+    const result = await queryInviteJobseekerApply(employer_id, jobseeker_id, job_ids);
     
     if (!result) {
       return next(new ApiError("Lưu ứng viên thất bại", 500));
     }
     
-    return res.success({ saved: true }, "Lưu ứng viên thành công");
+    return res.success({ }, "Lưu ứng viên thành công");
   } catch (err) {
     return next(new ApiError("Lỗi khi lưu thông tin ứng viên", 500));
   }
@@ -587,6 +588,30 @@ const getOverview = async (req, res, next) => {
   }
 };
 
+const getListJobForInvite = async (req, res, next) => {
+  try {
+    const { employer_id, jobseeker_id } = req.query;
+    
+    if (!employer_id, !jobseeker_id) {
+      return next(new ApiError("Thiếu ID công ty/ ứng viên", 400));
+    }
+    
+    // Kiểm tra quyền
+    // if (req.session?.userLogin?.company_id !== parseInt(company_id)) {
+    //   return next(new ApiError("Không có quyền truy cập dữ liệu này", 403));
+    // }
+    
+    const data = await queryGetListJobForInvite(employer_id, jobseeker_id);
+    
+    return res.success(
+       data || [] ,
+      "Lấy danh sách việc làm thành công"
+    );
+  } catch (err) {
+    return next(new ApiError("Lỗi khi lấy danh sách việc làm", 500));
+  }
+};
+
 module.exports = {
   getListJobseekerBySearch,
   getJobseekerDetail,
@@ -609,5 +634,6 @@ module.exports = {
   getListJobApplication,
   rejectJobApplication,
   inviteCandidateApply,
-  getOverview
+  getOverview,
+  getListJobForInvite
 };
