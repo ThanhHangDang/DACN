@@ -9,6 +9,7 @@ import CompanyHeader from "../../../component/_component/ui/CompanyHeader.js";
 import TitleComponent from "../../_component/ui/TitleComponent.js";
 import { toast } from "react-toastify";
 import LoginModal from "../../_component/ui/LoginModal.js";
+import { format } from "date-fns";
 
 export default function WorkDetail() {
   const dispatch = useDispatch();
@@ -137,90 +138,215 @@ export default function WorkDetail() {
                     .map((item, index) => item && <li key={index}>{item}</li>)}
                 </ul>
 
-                <h5 className="mt-3">Yêu cầu công việc</h5>
-                <ul>
+                <h5 className="mt-3">Thông tin việc làm</h5>
+                <div className="row row-cols-1 row-cols-md-2 g-3">
+                  {postDetail?.date_post && (
+                    <div className="d-flex align-items-center mb-3">
+                      <i
+                        className={`fa fa-calendar fa-lg text-primary me-3 mt-1 ms-2`}
+                      ></i>
+                      <div>
+                        <p className="mb-1 fw-bold">Ngày đăng</p>
+                        <p className="mb-0 text-muted">
+                          {format(postDetail?.date_post, "dd/MM/yyyy")}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {postDetail?.job_function_name && (
+                    <div className="d-flex align-items-center mb-3">
+                      <i
+                        className={`fa fa-sitemap fa-lg text-primary me-3 mt-1 ms-2`}
+                      ></i>
+                      <div>
+                        <p className="mb-1 fw-bold">Ngành nghề</p>
+                        <p className="mb-0 text-muted">
+                          {postDetail?.job_function_name}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {postDetail?.industry_name && (
+                    <div className="d-flex align-items-center mb-3">
+                      <i
+                        className={`fa fa-briefcase fa-lg text-primary me-3 mt-1 ms-2`}
+                      ></i>
+                      <div>
+                        <p className="mb-1 fw-bold">Lĩnh vực</p>
+                        <p className="mb-0 text-muted">
+                          {postDetail?.industry_name}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {postDetail?.require_experience !== undefined && (
+                    <div className="d-flex align-items-center mb-3">
+                      <i
+                        className={`fa fa-handshake-o fa-lg text-primary me-3 mt-1 ms-2`}
+                      ></i>
+                      <div>
+                        <p className="mb-1 fw-bold">Kinh nghiệm</p>
+                        <p className="mb-0 text-muted">
+                          {postDetail?.require_experience > 0
+                            ? postDetail?.require_experience
+                            : "Không yêu cầu"}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
                   {postDetail?.education_title && (
-                    <li>
-                      <strong>Học vấn:</strong> {postDetail?.education_title}
-                    </li>
+                    <div className="d-flex align-items-center mb-3">
+                      <i
+                        className={`fa fa-graduation-cap fa-lg text-primary me-3 mt-1 ms-2`}
+                      ></i>
+                      <div>
+                        <p className="mb-1 fw-bold">Trình độ học vấn</p>
+                        <p className="mb-0 text-muted">
+                          {postDetail?.education_title}
+                        </p>
+                      </div>
+                    </div>
                   )}
+
+                  {postDetail?.working_time && (
+                    <div className="d-flex align-items-center mb-3">
+                      <i
+                        className={`fa fa-hourglass fa-lg text-primary me-3 mt-1 ms-2`}
+                      ></i>
+                      <div>
+                        <p className="mb-1 fw-bold">Giờ làm việc</p>
+                        <p className="mb-0 text-muted">
+                          {postDetail?.working_time}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
                   {postDetail?.job_level_name && (
-                    <li>
-                      <strong>Cấp bậc:</strong> {postDetail?.job_level_name}
-                    </li>
+                    <div className="d-flex align-items-center mb-3">
+                      <i
+                        className={`fa fa-user fa-lg text-primary me-3 mt-1 ms-2`}
+                      ></i>
+                      <div>
+                        <p className="mb-1 fw-bold">Cấp bậc</p>
+                        <p className="mb-0 text-muted">
+                          {postDetail?.job_level_name}
+                        </p>
+                      </div>
+                    </div>
                   )}
-                  {postDetail?.require_age_min !== undefined &&
-                    postDetail?.require_age_max !== undefined && (
-                      <li>
-                        <strong>Độ tuổi:</strong>{" "}
-                        {postDetail.require_age_min === 0 &&
-                        postDetail.require_age_max === 0
-                          ? "Không yêu cầu"
-                          : postDetail.require_age_min &&
-                            postDetail.require_age_max
-                          ? `từ ${postDetail.require_age_min} đến ${postDetail.require_age_max}`
-                          : postDetail.require_age_min
-                          ? `từ ${postDetail.require_age_min} trở lên`
-                          : `tối đa ${postDetail.require_age_max}`}
-                      </li>
-                    )}
+
+                  {postDetail?.languages.length > 0 && (
+                    <div className="d-flex align-items-center mb-3">
+                      <i
+                        className={`fa fa-language fa-lg text-primary me-3 mt-1 ms-2`}
+                      ></i>
+                      <div>
+                        <p className="mb-1 fw-bold">Cấp bậc</p>
+                        <p className="mb-0 text-muted">
+                          {postDetail?.languages.map((item) => (
+                            <span key={item.language_id}>
+                              {item.language_name}{" "}
+                            </span>
+                          ))}
+                        </p>
+                      </div>
+                    </div>
+                  )}
 
                   {postDetail?.require_gender && (
-                    <li>
-                      <strong>Giới tính:</strong> {postDetail?.require_gender}
-                    </li>
+                    <div className="d-flex align-items-center mb-3">
+                      <i
+                        className={`fa fa-venus-mars fa-lg text-primary me-3 mt-1 ms-2`}
+                      ></i>
+                      <div>
+                        <p className="mb-1 fw-bold">Giới tính</p>
+                        <p className="mb-0 text-muted">
+                          {postDetail?.require_gender}
+                        </p>
+                      </div>
+                    </div>
                   )}
-                  {postDetail?.require_marital_status && (
-                    <li>
-                      <strong>Tình trạng hôn nhân:</strong>{" "}
-                      {postDetail?.require_marital_status}
-                    </li>
-                  )}
-                  {postDetail?.working_type && (
-                    <li>
-                      <strong>Loại hình làm việc:</strong>{" "}
-                      {postDetail?.working_type}
-                    </li>
-                  )}
-                </ul>
 
-                <h5 className="mt-3">Yêu cầu ứng viên</h5>
-                <ul>
-                  {postDetail?.more_requirements
-                    ?.split("%00endl")
-                    ?.map((item, index) => item && <li key={index}>{item}</li>)}
-                </ul>
+                  {postDetail?.require_marital_status && (
+                    <div className="d-flex align-items-center mb-3">
+                      <i
+                        className={`fa fa-heart fa-lg text-primary me-3 mt-1 ms-2`}
+                      ></i>
+                      <div>
+                        <p className="mb-1 fw-bold">Tình trạng hôn nhân</p>
+                        <p className="mb-0 text-muted">
+                          {postDetail?.require_marital_status}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {postDetail?.working_type && (
+                    <div className="d-flex align-items-center mb-3">
+                      <i
+                        className={`fa fa-clock-o fa-lg text-primary me-3 mt-1 ms-2`}
+                      ></i>
+                      <div>
+                        <p className="mb-1 fw-bold">Loại hình làm việc</p>
+                        <p className="mb-0 text-muted">
+                          {postDetail?.working_type}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {postDetail?.more_requirements && (
+                  <>
+                    <h5 className="mt-3">Yêu cầu ứng viên</h5>
+                    <ul>
+                      {postDetail.more_requirements
+                        .split("%00endl")
+                        .map(
+                          (item, index) => item && <li key={index}>{item}</li>
+                        )}
+                    </ul>
+                  </>
+                )}
 
                 <h5 className="mt-3">Các phúc lợi dành cho bạn</h5>
-                <div className="d-flex flex-wrap justify-content-around">
-                  {postDetail?.company_benefits &&
-                    postDetail?.company_benefits.map(
-                      (item, index) =>
-                        item && (
-                          <div
-                            key={index}
-                            className="col-md-3 card d-flex text-center align-items-center"
-                          >
-                            <div className="card-body d-flex flex-column  align-items-center">
-                              <i className={`fa ${item.benefit_icon} me-2`}></i>
-                              <p className="card-text fw-bold m-0">
-                                {item.benefit_name}
-                              </p>
-                              <p className="card-text text-muted text-break">
-                                {item.benefit_value}
-                              </p>
-                            </div>
+                <div className="d-flex flex-column gap-3">
+                  {postDetail?.company_benefits?.map(
+                    (item, index) =>
+                      item && (
+                        <div
+                          key={index}
+                          className="card p-3 d-flex flex-row align-items-center gap-3"
+                        >
+                          <i
+                            className={`fa ${item.benefit_icon} fa-lg text-primary me-3 mt-1`}
+                            style={{ minWidth: "24px" }}
+                          ></i>
+                          <div>
+                            <p className="fw-bold mb-1">{item.benefit_name}</p>
+                            <p className="text-muted mb-0">
+                              {item.benefit_value}
+                            </p>
                           </div>
-                        )
-                    )}
+                        </div>
+                      )
+                  )}
                 </div>
 
                 <h5 className="mt-3">Địa điểm làm việc</h5>
-                <p>{postDetail?.address}</p>
+                <p>
+                  <i class="fa fa-map-marker fa-lg text-primary me-3 mt-1 ms-2"></i>
+                  {postDetail?.address}
+                </p>
 
                 <h5 className="mt-3">Từ khóa:</h5>
                 <div>
-                  {postDetail?.job_skills
+                  {postDetail?.job_skills.length > 0
                     ? postDetail.job_skills
                         ?.slice() // Create a copy of the array to avoid mutating the original
                         .sort(
