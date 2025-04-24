@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import calculateDaysRemaining from "../../../utils/calculateDaysRemaining.js";
@@ -10,8 +10,10 @@ import {
 import { useGetCitiesQuery } from "../../../redux_toolkit/CategoryApi.js";
 import CompanyHeader from "../../_component/ui/CompanyHeader.js";
 import TitleComponent from "../../_component/ui/TitleComponent.js";
+import { toast } from "react-toastify";
 
 export default function CompanyDetail() {
+  const navigate = useNavigate();
   const { companyId } = useParams();
   const { data: city } = useGetCitiesQuery(84); // 84 là mã quốc gia Việt Nam
   const { data: companyInformation } = useGetCompanyInformationQuery(companyId);
@@ -19,6 +21,8 @@ export default function CompanyDetail() {
   const { data } = useGetJobByUserQuery(companyId);
   const postsByUser = data?.jobs || [];
   const formatNumberToTr = (number) => `${(number / 1e6).toFixed(0)}tr`;
+
+  const { isLogin, user } = useSelector((state) => state.auth);
 
   //Filter
   const [keyword, setKeyWord] = useState("");
@@ -43,6 +47,13 @@ export default function CompanyDetail() {
 
   const currentPosts = filteredPosts.slice(indexOfFirstPost, indexOfLastPost);
   const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
+
+  useEffect(() => {
+    if (user?.role === 2) {
+      toast.error("Vui lòng đăng nhập vai trò người tìm việc!");
+      navigate("/");
+    }
+  }, [navigate, user]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -112,60 +123,6 @@ export default function CompanyDetail() {
                   {/* <button className="btn btn-success">Tìm kiếm</button> */}
                 </div>
                 <div className="list-group">
-                  {/* {postsByUser.length > 0 ? (
-                    postsByUser
-                      .filter((post) => {
-                        const matchKeyword = String(post.title || "")
-                          .toUpperCase()
-                          .includes((keyword || "").toUpperCase());
-
-                        const matchLocation =
-                          keyLocation === "" ||
-                          String(post.city_id) === String(keyLocation);
-
-                        return matchKeyword && matchLocation;
-                      })
-                      .map((option) => (
-                        <div
-                          className="list-group-item d-flex justify-content-between align-items-center"
-                          key={option.job_id}
-                        >
-                          <div>
-                            <h6 className="mb-0">
-                              <NavLink to={`/post-detail/${option?.job_id}`}>
-                                {option.title}
-                              </NavLink>
-                            </h6>
-                            <p className="text-muted mb-0">
-                              {option.city_name} |{" "}
-                              {calculateDaysRemaining(option.date_expi) > 0
-                                ? `Còn ${calculateDaysRemaining(
-                                    option.date_expi
-                                  )} ngày để ứng tuyển`
-                                : "Hết hạn"}
-                            </p>
-                          </div>
-                          <div className="text-end">
-                            <span className="badge bg-success">
-                              {option.salary_min === 0 &&
-                              option.salary_max === 0
-                                ? "Thỏa thuận"
-                                : `${formatNumberToTr(
-                                    option.salary_min
-                                  )} - ${formatNumberToTr(
-                                    option.salary_max
-                                  )} đ/tháng`}
-                            </span>
-                            <button className="btn btn-outline-success btn-sm ms-3">
-                              Ứng tuyển
-                            </button>
-                          </div>
-                        </div>
-                      ))
-                  ) : (
-                    <p>Chưa có bài đăng nào</p>
-                  )} */}
-
                   {filteredPosts.length > 0 ? (
                     currentPosts.map((option) => (
                       <div

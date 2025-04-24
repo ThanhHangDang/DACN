@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useParams, NavLink } from "react-router-dom";
+import { useParams, NavLink, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 // import { getPostDetails } from "../../redux/actions/postAction.js";
 import { useGetJobDetailQuery } from "../../../redux_toolkit/guestApi.js";
@@ -7,9 +7,12 @@ import formatDateToDDMMYYYY from "../../../utils/formatDate.js";
 import calculateDaysRemaining from "../../../utils/calculateDaysRemaining.js";
 import CompanyHeader from "../../../component/_component/ui/CompanyHeader.js";
 import TitleComponent from "../../_component/ui/TitleComponent.js";
+import { toast } from "react-toastify";
+import LoginModal from "../../_component/ui/LoginModal.js";
 
 export default function WorkDetail() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   const { id } = useParams();
 
@@ -25,13 +28,29 @@ export default function WorkDetail() {
   });
   console.log(postDetail);
 
-  // useEffect(() => {
-  //   // dispatch(getPostDetails(id));
-  //   refetch();
-  // }, [id]);
+  const handleSaveJob = () => {
+    console.log("Jobseeker: ", user?.id, " lưu Job: ", postDetail?.job_id);
+  };
+
+  const handdleApplyJob = () => {
+    console.log(
+      "Jobseeker: ",
+      user?.id,
+      " handdleApplyJob: ",
+      postDetail?.job_id
+    );
+  };
+
+  useEffect(() => {
+    if (user?.role === 2) {
+      toast.error("Vui lòng đăng nhập vai trò người tìm việc!");
+      navigate("/");
+    }
+  }, [navigate, user]);
 
   return (
     <>
+      <LoginModal />
       <TitleComponent title={"Work Detail"} description={""} />
       <div className="container my-5">
         <nav aria-label="breadcrumb mt-3">
@@ -75,9 +94,39 @@ export default function WorkDetail() {
                   {postDetail?.views} lượt xem •{" "}
                   {postDetail?.work_location_name}
                 </p>
-
-                <button className="btn btn-danger me-2">Ứng tuyển</button>
-                <button className="btn btn-outline-secondary">Lưu</button>
+                {user?.role === 3 ? (
+                  <>
+                    <button
+                      className="btn btn-danger me-2"
+                      onClick={handdleApplyJob}
+                    >
+                      Ứng tuyển
+                    </button>
+                    <button
+                      className="btn btn-outline-secondary"
+                      onClick={handleSaveJob}
+                    >
+                      Lưu
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      className="btn btn-danger me-2"
+                      data-bs-toggle="modal"
+                      data-bs-target="#LoginModal"
+                    >
+                      Ứng tuyển
+                    </button>
+                    <button
+                      className="btn btn-outline-secondary"
+                      data-bs-toggle="modal"
+                      data-bs-target="#LoginModal"
+                    >
+                      Lưu
+                    </button>
+                  </>
+                )}
 
                 <hr />
 
@@ -244,17 +293,17 @@ export default function WorkDetail() {
                 <h5>Việc làm tương tự</h5>
                 <ul className="list-unstyled">
                   <li>
-                    <a href="#" className="text-decoration-none">
+                    <a href="#a" className="text-decoration-none">
                       Junior AI Engineer - Navigos Search
                     </a>
                   </li>
                   <li>
-                    <a href="#" className="text-decoration-none">
+                    <a href="#a" className="text-decoration-none">
                       AI Engineer - Samsung Electronics Vietnam
                     </a>
                   </li>
                   <li>
-                    <a href="#" className="text-decoration-none">
+                    <a href="#a" className="text-decoration-none">
                       Data Engineer - Công ty TNHH FPT Smart Cloud
                     </a>
                   </li>

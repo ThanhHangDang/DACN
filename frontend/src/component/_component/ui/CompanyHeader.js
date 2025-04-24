@@ -1,10 +1,23 @@
+import { useSelector, useDispatch } from "react-redux";
+import LoginModal from "./LoginModal";
 export default function ComPanyHeard({
   companyInformation,
   heightBg = "250px",
   logoSize = "80px",
 }) {
+  const { isLogin, user } = useSelector((state) => state.auth);
+  const handdleSaveCompany = () => {
+    console.log(
+      "Jobseeker: ",
+      user?.id,
+      " lưu Job: ",
+      companyInformation?.company_id
+    );
+  };
+
   return (
     <div className="card">
+      <LoginModal />
       <div className="card-header p-0">
         <div className="position-relative">
           <img
@@ -51,6 +64,26 @@ export default function ComPanyHeard({
                     : "0"}{" "}
                   người theo dõi
                 </p>
+                {user?.role === 3 ? (
+                  <>
+                    <button
+                      className="btn btn-primary me-2"
+                      onClick={handdleSaveCompany}
+                    >
+                      + Theo dõi
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      className="btn btn-primary me-2"
+                      data-bs-toggle="modal"
+                      data-bs-target="#LoginModal"
+                    >
+                      + Theo dõi
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>
