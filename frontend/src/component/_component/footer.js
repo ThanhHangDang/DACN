@@ -54,7 +54,9 @@ export default function Footer() {
                 <a href="#aaa">Thông tin gần đây</a>
               </li>
               <li>
-                <a href="#aaa">Hỗ trợ</a>
+                <NavLink to="/help" className="text-decoration-none">
+                  Hỗ trợ
+                </NavLink>
               </li>
               <li>
                 <NavLink to="/contact" className="text-decoration-none">

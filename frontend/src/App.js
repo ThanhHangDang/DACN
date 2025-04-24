@@ -52,6 +52,7 @@ import ContactPage from "./component/ContactPage/index.js";
 import PolicyPage from "./component/PolicyPage/index.js";
 import AboutPage from "./component/AboutPage/index.js";
 import TermsPage from "./component/TermsPage/index.js";
+import HelpPage from "./component/HelpPage/index.js";
 
 function App() {
   return (
@@ -133,6 +134,7 @@ function App() {
           <Route path="/policy" Component={PolicyPage} />
           <Route path="/about" Component={AboutPage} />
           <Route path="/terms" Component={TermsPage} />
+          <Route path="/help" Component={HelpPage} />
 
           <Route path="*" Component={PageNotFound} />
         </Routes>

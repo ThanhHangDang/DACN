@@ -13,7 +13,7 @@ export default function PolicyPage() {
       <div className="container py-5">
         <div className="row justify-content-center">
           <div className="col-lg-10">
-            <div className="mb-5">
+            <div className="mb-3">
               <h4 className="fw-semibold">1. Thông tin thu thập</h4>
               <ul className="text-muted">
                 <li>
@@ -35,7 +35,7 @@ export default function PolicyPage() {
               </ul>
             </div>
 
-            <div className="mb-5">
+            <div className="mb-3">
               <h4 className="fw-semibold">2. Mục đích sử dụng thông tin</h4>
               <ul className="text-muted">
                 <li>Cung cấp, duy trì và cải thiện dịch vụ.</li>
@@ -43,7 +43,7 @@ export default function PolicyPage() {
               </ul>
             </div>
 
-            <div className="mb-5">
+            <div className="mb-3">
               <h4 className="fw-semibold">3. Bảo vệ thông tin người dùng</h4>
               <ul className="text-muted">
                 <li>Giới hạn quyền truy cập vào thông tin cá nhân.</li>
@@ -53,7 +53,7 @@ export default function PolicyPage() {
               </ul>
             </div>
 
-            <div className="mb-5">
+            <div className="mb-3">
               <h4 className="fw-semibold">4. Chia sẻ thông tin</h4>
               <ul className="text-muted">
                 <li>Khi có sự đồng ý của bạn.</li>
@@ -64,7 +64,7 @@ export default function PolicyPage() {
               </ul>
             </div>
 
-            <div className="mb-5">
+            <div className="mb-3">
               <h4 className="fw-semibold">5. Quyền lợi của người dùng</h4>
               <ul className="text-muted">
                 <li>Truy cập, chỉnh sửa hoặc xóa thông tin cá nhân.</li>
@@ -72,7 +72,7 @@ export default function PolicyPage() {
               </ul>
             </div>
 
-            <div className="mb-5">
+            <div className="mb-3">
               <h4 className="fw-semibold">6. Thay đổi chính sách bảo mật</h4>
               <p className="text-muted">
                 Boost Career có thể cập nhật chính sách này tùy theo tình hình

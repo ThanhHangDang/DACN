@@ -158,9 +158,9 @@ const Header = () => {
                     </NavLink>
                   </li>
                   <li>
-                    <a className="dropdown-item" href="#aaa">
+                    <NavLink className="dropdown-item" to="/help">
                       Hỗ trợ
-                    </a>
+                    </NavLink>
                   </li>
                   <li>
                     <NavLink className="dropdown-item" to="/contact">
@@ -339,7 +339,14 @@ const Header = () => {
                   Giới thiệu công ty
                 </NavLink>
               </li>
-              <li>Hỗ trợ</li>
+              <li>
+                <NavLink
+                  to="/help"
+                  className="text-decoration-none text-secondary"
+                >
+                  Hỗ trợ
+                </NavLink>
+              </li>
               <li>
                 <NavLink
                   to="/contact"
