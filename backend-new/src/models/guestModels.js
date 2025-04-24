@@ -276,7 +276,7 @@ const queryGetListJobBySearch = async (searchData) => {
     }
     if (work_location) {
       conditions.push("j.work_location = ?");
-      values.push(citi_id);
+      values.push(work_location);
     }
     const currentDate = new Date().toISOString().split("T")[0];
     if (status_) {

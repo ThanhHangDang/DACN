@@ -258,7 +258,7 @@ const queryGetJobseekerDetail = async (employer_id, jobseeker_id) => {
       [jobseeker_id]
     );
     const [employerRating] = await db.query(
-      `SELECT * from logs_employer_rate_jobseeker WHERE employer_id= ? and employer_id = ?`,
+      `SELECT * from logs_employer_rate_jobseeker WHERE jobseeker_id= ? and employer_id = ?`,
       [jobseeker_id, employer_id]
     );
     // console.log("employerRating", employerRating);
