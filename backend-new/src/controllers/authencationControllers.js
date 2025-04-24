@@ -3,6 +3,7 @@ const ApiError = require("../utils/ApiError");
 const {
   findUserByUsername,
   loginExecute,
+  registerExecute
 } = require("../models/authencationModels.js");
 
 /**
@@ -101,18 +102,29 @@ const logout = (req, res, next) => {
  */
 const register = async (req, res, next) => {
   try {
-    const { dataRegister } = req.body.params;
-    
+    const data = req.body.params;
+    console.log(data);
     // Kiểm tra dữ liệu đầu vào
-    if (!dataRegister) {
+    const { role, username, name, password, email, phone,...prop } = data.dataRegister;
+    if (!role || !username || !name || !password || !email || !phone) {
       throw new ApiError("Thiếu thông tin đăng ký", 400);
     }
-    
-    console.log(dataRegister);
+
+
     
     // Logic đăng ký sẽ được triển khai sau
     // ...
-    
+    const user_id  = await registerExecute(
+      role,
+      username,
+      name,
+      password,
+      email,
+      phone
+    );
+    if (!user_id) {
+      throw new ApiError("Đăng ký không thành công", 500);
+    }    
     return res.success(
       { registered: true },
       "Đăng ký thành công",
@@ -121,6 +133,7 @@ const register = async (req, res, next) => {
   } catch (error) {
     if (!(error instanceof ApiError)) {
       return next(new ApiError("Có lỗi khi đăng ký.", 500));
+      // return next(new ApiError(error, 500));
     }
     return next(error);
   }

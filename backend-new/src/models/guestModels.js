@@ -87,10 +87,23 @@ const queryGetPublicInformationOfCompany = async (id) => {
     throw error; // Rethrow the error to be handled by the calling function
   }
 };
-
-const queryGetPublicJobDetail = async (workId) => {
+// đã xử lý tăng lượng view job khi truy vấn job detail
+const queryGetPublicJobDetail = async (job_id) => {
+  let connection;
   try {
-    const [work] = await db.query(
+    connection = await db.getConnection();
+    await connection.beginTransaction(); // Start a transaction
+    const [updateResult] = await connection.query(
+      "UPDATE job SET views = views + 1 WHERE job_id = ?",
+      [job_id]
+    );
+
+    if (updateResult.affectedRows === 0) {
+      await connection.rollback();
+      throw new Error(`Job with ID ${job_id} not found`);
+    }
+
+    const [job] = await db.query(
       `
   SELECT 
     j.job_id,
@@ -181,12 +194,16 @@ const queryGetPublicJobDetail = async (workId) => {
   JOIN
       catalog_education edu ON j.require_education = edu.education_id;
     `,
-      [workId]
+      [job_id]
     );
-    return work[0];
+    await connection.commit();
+    return job[0];
   } catch (error) {
+    if (connection) await connection.rollback();
     console.error("Error fetching job details:", error);
     throw error; // Rethrow the error to be handled by the calling function
+  } finally {
+    if (connection) connection.release();
   }
 };
 
@@ -208,6 +225,7 @@ const queryGetListJobBySearch = async (searchData) => {
       date_from = null,
       paging_size = 10,
       page = 1,
+      ...prop
     } = searchData;
 
     const status_ = 1; // Chỉ lấy các công việc đang hoạt động
@@ -586,11 +604,22 @@ const queryGetGeneralInfo = async () => {
       SELECT count(*)  as total_jobseeker from user_jobseeker p where p.status_ = 1;
       `
     );
+    const [JobCountByIndustry] = await db.query(
+      `SELECT 
+            ci.industry_id,
+            ci.industry_name,
+            ci.icon,
+            COUNT(j.job_id) AS job_count
+          FROM catalog_industry ci
+          LEFT JOIN job j ON ci.industry_id = j.industry_id AND j.status_ = 1 AND j.date_expi >= NOW()
+          GROUP BY ci.industry_id, ci.industry_name order by job_count DESC limit 8;`
+        );
     const result = {
       leadingcompany: leadingcompany,
       job_count: job_count[0].total_job,
       company_count: company_count[0].total_company,
       jobseeker_count: jobseeker_count[0].total_jobseeker,
+      JobCountByIndustry: JobCountByIndustry,
     };
     return result;
   } catch (error) {
@@ -599,6 +628,80 @@ const queryGetGeneralInfo = async () => {
   }
 };
 
+// đang lấy đơn giản 5 job liên quan đến job_id
+const queryGetRelatedJobs = async (job_id) => {
+  try {
+    const [job] = await db.query(
+    `SELECT
+        title,
+        industry_id,
+        job_function_id,
+        employer_id,
+        work_location
+    from job j where job_id = ? AND  j.status_ = 1 AND j.date_expi >= NOW();`,
+      [job_id]);
+    if (job.length === 0) {
+      throw new Error("Không tìm thấy job");
+    }
+    const [related_1] = await db.query(
+      `SELECT 
+        j.job_id,
+        j.title,
+        j.salary_min,
+        j.salary_max,        
+        c.company_name,
+        c.logo as company_logo,
+        (select city_name from catalog_city where city_id = j.work_location) as work_location_name
+      FROM job j
+      JOIN company c ON j.employer_id = c.company_id
+      WHERE j.status_ = 1 AND j.date_expi >= NOW()
+      and j.job_function_id = ? and j.work_location = ? and j.job_id != ?
+      ORDER BY j.create_at DESC
+      LIMIT 5;`,[job[0].job_function_id, job[0].work_location,job_id]
+    );
+    const [related_2] = await db.query(
+      `SELECT 
+        j.job_id,
+        j.title,
+        j.salary_min,
+        j.salary_max,
+        c.company_name,
+        c.logo as company_logo,
+        (select city_name from catalog_city where city_id = j.work_location) as work_location_name
+      FROM job j
+      JOIN company c ON j.employer_id = c.company_id
+      WHERE j.status_ = 1 AND j.date_expi >= NOW()
+      and j.employer_id = ?  and j.job_id != ?
+      ORDER BY j.create_at DESC
+      LIMIT 5;`,[job[0].employer_id,job_id]
+    );
+    const [related_3] = await db.query(
+      `SELECT 
+        j.job_id,
+        j.title,
+        j.salary_min,
+        j.salary_max,
+        c.company_name,
+        c.logo as company_logo,
+        (select city_name from catalog_city where city_id = j.work_location) as work_location_name
+      FROM job j
+      JOIN company c ON j.employer_id = c.company_id
+      WHERE j.status_ = 1 AND j.date_expi >= NOW()  
+      and j.title like ? and j.work_location = ?  and j.job_id != ?
+      ORDER BY j.create_at DESC
+      LIMIT 5;`,[`%${job[0].title}%`,job[0].work_location,job_id]
+    );
+    const data =  [...related_1, ...related_2, ...related_3];
+    const result = data.sort(() => 0.5 - Math.random()).slice(0, 5);
+    return result; 
+ 
+  } catch (error) {
+    console.error("Error fetching related jobs:", error);
+    throw error; // Rethrow the error to be handled by the calling function
+  }
+}
+
+
 module.exports = {
   queryGetPublicInformationOfCompany,
   queryGetPublicJobDetail,
@@ -606,5 +709,7 @@ module.exports = {
   queryGetListJobOfCompany,
   queryGetListLeadingCompany,
   queryGetListCompanyBySearch,
-  queryGetGeneralInfo
+  queryGetGeneralInfo,
+  queryGetRelatedJobs,
+  
 };

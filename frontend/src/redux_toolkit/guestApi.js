@@ -79,6 +79,13 @@ export const guestApi = createApi({
       }),
       transformResponse: (response) => { return response.data;},
     }),
+    getRelatedJobs: builder.query({
+      query: (job_id) => ({
+        url: "/guest/related-jobs",
+        params: { job_id },
+      }),
+      transformResponse: (response) => { return response.data;},
+    }),
 })
 });
 
@@ -91,5 +98,6 @@ export const {
  useGetJobSearchQuery,
  useGetJobDetailQuery,
  useGetJobByUserQuery,
- useGetGeneralInfoQuery
+ useGetGeneralInfoQuery,
+ useGetRelatedJobsQuery
 } = guestApi;

@@ -22,7 +22,7 @@ const JobCard = ({ job }) => {
 
   return (
     <div className="card mb-3 shadow-sm job-card">
-      <LoginModal />
+      <LoginModal title="Bạn cần đăng nhập"/>
       <div className="card-body">
         <div className="d-flex justify-content-between">
           <span className="text-success small fw-semibold">

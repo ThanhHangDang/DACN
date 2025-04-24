@@ -34,7 +34,7 @@ export default function BeOurEmployer() {
               <NavLink to="/login" className="btn btn-success">
                 Login
               </NavLink>
-              <NavLink to="/auth" className="btn btn-outline-secondary">
+              <NavLink to="/register" className="btn btn-outline-secondary">
                 Register
               </NavLink>
             </div>

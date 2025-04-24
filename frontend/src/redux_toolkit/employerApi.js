@@ -161,7 +161,7 @@ export const employerApi = createApi({
         console.log("redux receive addCandidate", response);
         return response;
       },
-      invalidatesTags: ["ListCandidate", "Jobseekers","Jobseeker","Overview"],
+      invalidatesTags: ["ListCandidate", "Jobseekers","Jobseeker","Overview","ListCandidate"],
     }),
     deleteCandidate: builder.mutation({
       query: ( { employer_id, jobseeker_id } ) => ({
@@ -173,7 +173,7 @@ export const employerApi = createApi({
         console.log("redux receive deleteCandidate", response);
         return response;
       },
-      invalidatesTags: ["ListCandidate", "Jobseekers","Jobseeker"],
+      invalidatesTags: ["ListCandidate", "Jobseekers","Jobseeker","ListCandidate"],
     }),
     rateCandidate: builder.mutation({
       query: ( {type, application_id, employer_id, rating, content }) => ({
@@ -193,18 +193,18 @@ export const employerApi = createApi({
 
     getJobseekerApplied: builder.query({
       query: ({ employer_id, job_id } ) => ({
-        url: "/employer/job-applied",
+        url: "/employer/job-applications",
         params: { employer_id, job_id } ,
       }),
       transformResponse: (response) => {
         console.log("redux receive getJobseekerApplied", response);
-        return response.data;
+        return response;
       },
       providesTags: ["JobseekerApplied"],
     }),
     deleteJobseekerApplied: builder.mutation({
       query: ( { employer_id,job_id,jobseeker_id} ) => ({
-        url: "/employer/job-applied",
+        url: "/employer/job-application",
         method: "DELETE",
         body: { employer_id,job_id,jobseeker_id} ,
       }),
@@ -212,22 +212,32 @@ export const employerApi = createApi({
         console.log("redux receive deleteJobseekerApplied", response);
         return response;
       },
-      invalidatesTags: ["JobseekerApplied"],
+      invalidatesTags: ["JobseekerApplied",],
     }),
 
 
-
-    inviteCandidateApplyJob: builder.mutation({
-      query: ( { employer_id, job_id, jobseeker_id } ) => ({
-        url: "/employer/invite",
-        method: "post",
-        body: { employer_id, job_id, jobseeker_id } ,
+    getListJobForInvitation: builder.query({
+      query: ( { employer_id, jobseeker_id } ) => ({
+        url: "/employer/list-job-for-invitation",
+        params: { employer_id, jobseeker_id } ,
       }),
       transformResponse: (response) => {
-        console.log("redux receive inviteCandidate", response);
+        // console.log("redux receive getListJobForInvitation", response);
+        return response.data;
+      },
+      providesTags: ["JobForInvitation"],
+    }),
+    inviteCandidateApplyJob: builder.mutation({
+      query: ( { employer_id, jobseeker_id, job_ids } ) => ({
+        url: "/employer/job-invitation",
+        method: "post",
+        body: { employer_id, jobseeker_id,job_ids } ,
+      }),
+      transformResponse: (response) => {
+        // console.log("redux receive inviteCandidate", response);
         return response;
       },
-      invalidatesTags: ["Jobseeker","Jobseekers","Overview"],
+      invalidatesTags: ["Jobseeker","Jobseekers","Overview","JobForInvitation"],
     }),
 })
 });
@@ -251,6 +261,7 @@ export const {
   useGetJobseekerAppliedQuery,
   useDeleteJobseekerAppliedMutation,
   useInviteCandidateApplyJobMutation,
+  useGetListJobForInvitationQuery
   
 
 } = employerApi;
