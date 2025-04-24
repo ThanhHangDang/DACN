@@ -48,6 +48,11 @@ import CompanyDetail from "./component/HomePage/companyManage/companyDetail.js";
 
 import PageNotFound from "./component/PageNotFound/index.js";
 
+import ContactPage from "./component/ContactPage/index.js";
+import PolicyPage from "./component/PolicyPage/index.js";
+import AboutPage from "./component/AboutPage/index.js";
+import TermsPage from "./component/TermsPage/index.js";
+
 function App() {
   return (
     <div className="App">
@@ -123,6 +128,11 @@ function App() {
           {/* Anh Đạt làm 2 cái này */}
           <Route path="/list-company" Component={ListCompany} />
           <Route path="/company-detail/:companyId" Component={CompanyDetail} />
+
+          <Route path="/contact" Component={ContactPage} />
+          <Route path="/policy" Component={PolicyPage} />
+          <Route path="/about" Component={AboutPage} />
+          <Route path="/terms" Component={TermsPage} />
 
           <Route path="*" Component={PageNotFound} />
         </Routes>

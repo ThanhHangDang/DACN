@@ -43,7 +43,9 @@ export default function Footer() {
                 <a href="#aa">Dịch vụ của chúng tôi</a>
               </li>
               <li>
-                <a href="#aaa">Giới thiệu công ty</a>
+                <NavLink to="/about" className="text-decoration-none">
+                  Giới thiệu công ty{" "}
+                </NavLink>
               </li>
               {/* <li>
                 <a href="#aaa">Latest Projects</a>
@@ -55,13 +57,19 @@ export default function Footer() {
                 <a href="#aaa">Hỗ trợ</a>
               </li>
               <li>
-                <a href="#aa">Liên hệ</a>
+                <NavLink to="/contact" className="text-decoration-none">
+                  Liên hệ
+                </NavLink>
               </li>
               <li>
-                <a href="#aaa">Chính sách bảo mật</a>
+                <NavLink to="/policy" className="text-decoration-none">
+                  Chính sách bảo mật
+                </NavLink>
               </li>
               <li>
-                <a href="#aa">Điều khoản dịch vụ</a>
+                <NavLink to="/terms" className="text-decoration-none">
+                  Điều khoản dịch vụ
+                </NavLink>
               </li>
             </ul>
           </div>
@@ -116,7 +124,7 @@ export default function Footer() {
             </div>
             <div className="col-md-6 text-center text-md-end">
               <p>
-                Made with <i className="fas fa-heart text-danger" /> by{" "}
+                Made with <i className="fa fa-heart text-danger" /> by{" "}
                 <NavLink to="/">BoostCareer.</NavLink>
               </p>
             </div>
