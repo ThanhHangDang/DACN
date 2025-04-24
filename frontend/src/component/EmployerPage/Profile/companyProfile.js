@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector  } from "react-redux";
 import {
   useGetIndustriesQuery,
   useGetScalesQuery,
   useGetCitiesQuery,
+  useGetBenefitsQuery
 } from "../../../redux_toolkit/CategoryApi.js";
 import {
   useGetCompanyInforQuery,
@@ -16,46 +16,57 @@ import CompanyBackground from "../../../component/_component/ui/employer/Company
 import { toast } from "react-toastify";
 
 export default function CompanyProfile() {
-  const dispatch = useDispatch();
+
   const { isLogin, user } = useSelector((state) => state.auth);
+  const id = user?.id;
   const { data: industry } = useGetIndustriesQuery();
   const { data: scale } = useGetScalesQuery();
   const { data: cities } = useGetCitiesQuery(84); // 84 for Vietnam
-  const navigate = useNavigate();
+  const {data: benefits} = useGetBenefitsQuery();
 
-  const id = user?.id;
+
   const { data, refetch } = useGetCompanyInforQuery(id);
   const companyInformation = data || {};
 
   // RTK Query mutations
-  const [updateCompanyProfile, { isLoading: isUpdating }] =
-    useUpdateCompanyInforMutation();
-  const [addCompanyLocation, { isLoading: isAddingLocation }] =
+  const [addCompanyInfo, { isLoading: isAdding }] =
     useAddCompanyInforMutation();
-  const [updateCompanyLocation, { isLoading: isUpdatingLocation }] =
+  const [updateCompanyInfo, { isLoading: isUpdating }] =
     useUpdateCompanyInforMutation();
-  const [deleteCompanyLocation, { isLoading: isDeletingLocation }] =
+  const [deleteCompanyInfo, { isLoading: isDeleting }] =
     useDeleteCompanyInforMutation();
 
-  //  const [addCompanyInfor, { isLoading: isAdding }] = useAddCompanyInforMutation();
-  // const [deleteCompanyInfor, { isLoading: isDeleting }] = useDeleteCompanyInforMutation();
-  // Company profile state
-  const [updateCompany, setUpdateCompany] = useState({
-    company_name: "",
-    phone_number: "",
-    scale_id: "",
-    industry_id: "",
-    describle: "",
-  });
+    const [isAddingBenefit, setIsAddingBenefit] = useState(false);
+    const [isUpdatingBenefit, setIsUpdatingBenefit] = useState(false);
+    const [isDeletingBenefit, setIsDeletingBenefit] = useState(false);
+    const [updateCompany, setUpdateCompany] = useState({
+      company_name: "",
+      phone_number: "",
+      scale_id: "",
+      industry_id: "",
+      describle: "",
+      company_location: [],
+      company_benefits: [],
+    });
 
-  // New location state
-  const [newLocation, setNewLocation] = useState({
-    address: "",
-    city_id: "",
-  });
+    // New location state
+    const [newLocation, setNewLocation] = useState({
+      address: "",
+      city_id: "",
+    });
 
   // Edit location state
-  const [editLocation, setEditLocation] = useState(null);
+    const [editLocation, setEditLocation] = useState(null);
+
+  // New benefit state
+    const [newBenefit, setNewBenefit] = useState({
+      benefit_id: "",
+      benefit_value: "",
+    });
+
+  // Edit benefit state
+    const [editBenefit, setEditBenefit] = useState(null);
+
 
   // Update state when company data changes
   useEffect(() => {
@@ -66,12 +77,14 @@ export default function CompanyProfile() {
         scale_id: companyInformation.scale_id || "",
         industry_id: companyInformation.industry_id || "",
         describle: companyInformation.describle || "",
+        company_location: companyInformation.company_location || [],
+        company_benefits: companyInformation.company_benefits || [],
       });
     }
   }, [companyInformation]);
 
   // Handle company profile update
-  const handleUpdateCompanyProfile = async () => {
+  const handleupdateCompanyInfo = async () => {
     try {
       // Validate required fields
       if (
@@ -83,13 +96,13 @@ export default function CompanyProfile() {
         return;
       }
 
-      const result = await updateCompanyProfile({
+      const result = await updateCompanyInfo({
         company_id: id,
         ...updateCompany,
       }).unwrap();
-
+      
       toast.success("Cập nhật thông tin công ty thành công");
-      refetch(); // Refresh company data
+      // refetch(); // Refresh company data
     } catch (error) {
       console.error("Failed to update company profile:", error);
       toast.error("Cập nhật thông tin công ty thất bại");
@@ -104,7 +117,7 @@ export default function CompanyProfile() {
         return;
       }
 
-      const response = await addCompanyLocation({
+      const response = await addCompanyInfo({
         type: "company_location",
         data: {
           company_id: companyInformation.company_id,
@@ -133,9 +146,10 @@ export default function CompanyProfile() {
         return;
       }
 
-      const result = await updateCompanyLocation({
+      const result = await updateCompanyInfo({
         type: "company_location",
         data: {
+          company_id: companyInformation.company_id,
           location_id: editLocation.location_id,
           address: editLocation.address,
           city_id: editLocation.city_id,
@@ -159,10 +173,11 @@ export default function CompanyProfile() {
   const handleDeleteLocation = async (locationId) => {
     try {
       if (window.confirm("Bạn có chắc chắn muốn xóa địa chỉ này không?")) {
-        const response = await deleteCompanyLocation({
-          type: "company_location",
-          data: { location_id: locationId },
-        }).unwrap();
+        const response = await deleteCompanyInfo({          
+             id: locationId,
+            type: "company_location",
+            company_id: companyInformation.company_id }
+        ).unwrap();
         if (response.success) {
           toast.success("Xóa địa chỉ công ty thành công");
           refetch(); // Refresh locations list
@@ -173,6 +188,93 @@ export default function CompanyProfile() {
     } catch (error) {
       console.error("Failed to delete location:", error);
       toast.error("Xóa địa chỉ công ty thất bại");
+    }
+  };
+
+  // Handle adding a new benefit
+  const handleAddBenefit = async () => {
+    try {
+      if (!newBenefit.benefit_id || !newBenefit.benefit_value) {
+        toast.error("Vui lòng chọn loại phúc lợi và nhập mô tả chi tiết");
+        return;
+      }
+      setIsAddingBenefit(true);
+      const response = await addCompanyInfo({
+        type: "company_benefit",
+        data: {
+          company_id: companyInformation.company_id,
+          benefit_id: newBenefit.benefit_id,
+          benefit_value: newBenefit.benefit_value,
+        },
+      }).unwrap();
+      setIsAddingBenefit(false);
+      if (response.success) {
+        setNewBenefit({
+          benefit_id: "",
+          benefit_value: "",
+        });
+        toast.success("Thêm phúc lợi thành công");
+        refetch(); // Refresh benefits list
+      } else {
+        toast.error("Thêm phúc lợi thất bại");
+      }
+    } catch (error) {
+      console.error("Failed to add benefit:", error);
+      toast.error("Thêm phúc lợi thất bại");
+    }
+  };
+
+  // Handle updating a benefit
+  const handleUpdateBenefit = async () => {
+    try {
+      if (!editBenefit || !editBenefit.benefit_value) {
+        toast.error("Vui lòng nhập mô tả chi tiết");
+        return;
+      }
+      setIsUpdatingBenefit(true);
+      const result = await updateCompanyInfo({
+        type: "company_benefit",
+        data: {
+          company_id: companyInformation.company_id,
+          benefit_id: editBenefit.benefit_id,
+          benefit_value: editBenefit.benefit_value,
+        },
+      }).unwrap();
+      setIsUpdatingBenefit(false);
+      if (result.success) {
+        setEditBenefit(null);
+        toast.success("Cập nhật phúc lợi thành công");
+        refetch(); // Refresh benefits list
+      } else {
+        toast.error("Cập nhật phúc lợi thất bại");
+      }
+    } catch (error) {
+      console.error("Failed to update benefit:", error);
+      toast.error("Cập nhật phúc lợi thất bại");
+    }
+  };
+
+  // Handle deleting a benefit
+  const handleDeleteBenefit = async (benefitId) => {
+    try {
+      setIsDeletingBenefit(true);
+      if (window.confirm("Bạn có chắc chắn muốn xóa phúc lợi này không?")) {
+        const response = await deleteCompanyInfo({
+          id: benefitId,
+          type: "company_benefit",
+          company_id: companyInformation.company_id,
+        }).unwrap();
+        setIsDeletingBenefit(false);
+        if (response.success) {
+          toast.success("Xóa phúc lợi thành công");
+          refetch(); // Refresh benefits list
+        } else {
+          toast.error("Xóa phúc lợi thất bại");
+        }
+      }
+    } catch (error) {
+      console.error("Failed to delete benefit:", error);
+      toast.error("Xóa phúc lợi thất bại");
     }
   };
 
@@ -291,7 +393,7 @@ export default function CompanyProfile() {
         <div className="mb-4">
           <button
             className="btn btn-primary"
-            onClick={handleUpdateCompanyProfile}
+            onClick={handleupdateCompanyInfo}
             disabled={isUpdating}
           >
             {isUpdating ? "Đang cập nhật..." : "Cập nhật thông tin công ty"}
@@ -322,7 +424,7 @@ export default function CompanyProfile() {
                       <button
                         className="btn btn-success btn-sm"
                         onClick={handleUpdateLocation}
-                        disabled={isUpdatingLocation}
+                        disabled={isUpdating}
                       >
                         <i className="bi bi-check-lg"></i> Lưu
                       </button>
@@ -350,7 +452,7 @@ export default function CompanyProfile() {
                           console.log("Delete location:", location);
                           handleDeleteLocation(location.location_id);
                         }}
-                        disabled={isDeletingLocation}
+                        disabled={isDeleting}
                       >
                         <i className="bi bi-trash"></i> Xóa
                       </button>
@@ -442,10 +544,157 @@ export default function CompanyProfile() {
             <button
               className="btn btn-primary btn-sm mt-2"
               onClick={handleAddLocation}
-              disabled={isAddingLocation}
+              disabled={isAdding}
             >
               <i className="bi bi-plus-circle"></i>{" "}
-              {isAddingLocation ? "Đang thêm..." : "Thêm địa chỉ"}
+              {isAdding ? "Đang thêm..." : "Thêm địa chỉ"}
+            </button>
+          </div>
+        </div>
+
+        {/* Company Benefits Section */}
+        <h5 className="mt-4 mb-3 border-bottom pb-2">Phúc lợi công ty</h5>
+
+        {/* List existing benefits */}
+        <div className="row mb-3">
+          {Array.isArray(companyInformation.company_benefits) && 
+          companyInformation.company_benefits.length > 0 ? (
+            companyInformation.company_benefits.map((benefit) => (
+              <div className="col-md-4 mb-3" key={benefit.benefit_id}>
+                <div className="card h-100 border">
+                  <div className="card-body d-flex flex-column align-items-center text-center">
+                    <div className="benefit-icon mb-2">
+                      {/* <i className={`bi bi-${benefit.benefit_icon || 'star'} fs-3 text-primary`}></i> */}
+                      <i className={`bi bi-heart fs-3 text-primary`}></i>
+                    </div>
+                    <h6 className="card-title">{benefit.benefit_name}</h6>
+                    <p className="card-text small text-muted">{benefit.benefit_value}</p>
+                    <div className="mt-auto d-flex gap-2">
+                      <button 
+                        className="btn btn-outline-primary btn-sm"
+                        onClick={() => setEditBenefit(benefit)}
+                      >
+                        <i className="bi bi-pencil"></i> Sửa
+                      </button>
+                      <button 
+                        className="btn btn-outline-danger btn-sm"
+                        onClick={() => handleDeleteBenefit(benefit.benefit_id)}
+                      >
+                        <i className="bi bi-trash"></i> Xóa
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="alert alert-info">Chưa có phúc lợi nào được thêm</div>
+          )}
+        </div>
+
+        {/* Edit benefit form */}
+        {editBenefit && (
+          <div className="card p-3 mb-3 bg-light">
+            <h6>Sửa phúc lợi</h6>
+            <div className="row">
+              <div className="col-md-6 mb-2">
+                <label className="form-label">Loại phúc lợi</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={editBenefit.benefit_name || ""}
+                  disabled={true}
+                />
+              </div>
+              <div className="col-md-6 mb-2">
+                <label className="form-label">Mô tả chi tiết</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Mô tả chi tiết"
+                  value={editBenefit.benefit_value || ""}
+                  onChange={(e) =>
+                    setEditBenefit({
+                      ...editBenefit,
+                      benefit_value: e.target.value,
+                    })
+                  }
+                />
+              </div>
+            </div>
+            <div className="d-flex gap-2 mt-2">
+              <button
+                className="btn btn-success btn-sm"
+                onClick={handleUpdateBenefit}
+                disabled={isUpdatingBenefit || !editBenefit.benefit_value}
+              >
+                <i className="bi bi-check-lg"></i> Lưu
+              </button>
+              <button
+                className="btn btn-secondary btn-sm"
+                onClick={() => setEditBenefit(null)}
+              >
+                <i className="bi bi-x-lg"></i> Hủy
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Add new benefit form */}
+        <div className="card p-3 bg-light">
+          <h6>Thêm phúc lợi mới</h6>
+          <div className="row">
+            <div className="col-md-6 mb-2">
+              <label className="form-label">Loại phúc lợi</label>
+              <select
+                className="form-select"
+                value={newBenefit?.benefit_id || ""}
+                onChange={(e) => {
+                  const selectedBenefit = benefits?.find(b => b.benefit_id.toString() === e.target.value);
+                  if (selectedBenefit) {
+                    setNewBenefit({
+                      benefit_id: selectedBenefit.benefit_id
+                    });
+                  }
+                }}
+              >
+                <option value="">Chọn loại phúc lợi</option>
+                {benefits
+                ?.filter(benefit => 
+                  // Lọc các benefit chưa được thêm vào công ty
+                  !companyInformation.company_benefits?.some(
+                    existingBenefit => existingBenefit.benefit_id === benefit.benefit_id
+                  )
+                )
+                .map((benefit) => (
+                  <option key={benefit.benefit_id} value={benefit.benefit_id}>
+                    {benefit.benefit_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="col-md-6 mb-2">
+              <label className="form-label">Mô tả chi tiết</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Ví dụ: Bảo hiểm sức khỏe toàn diện"
+                value={newBenefit?.benefit_value || ""}
+                onChange={(e) =>
+                  setNewBenefit({ ...newBenefit, benefit_value: e.target.value })
+                }
+                disabled={!newBenefit?.benefit_id}
+              />
+            </div>
+          </div>
+          <div>
+            <button
+              className="btn btn-primary btn-sm mt-2"
+              onClick={handleAddBenefit}
+              disabled={isAddingBenefit || !newBenefit?.benefit_id || !newBenefit?.benefit_value}
+            >
+              <i className="bi bi-plus-circle"></i>{" "}
+              {isAddingBenefit ? "Đang thêm..." : "Thêm phúc lợi"}
             </button>
           </div>
         </div>

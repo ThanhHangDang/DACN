@@ -1,5 +1,6 @@
 const express = require("express");
 const {
+  getOverview,
   getItemProfile,
   deleteItemProfile,
   addItemProfile,
@@ -16,7 +17,8 @@ const {
   addCompanyFollowing,
   getListJobSaving,
   addJobSaving,
-  deleteJobSaving
+  deleteJobSaving,
+  getJobsSuggestion
 } = require("../controllers/jobseekerControllers.js");
 
 const { upload } = require("../middlewares/imageUpload.js");
@@ -44,6 +46,9 @@ jobseekerRoutes.post("/company-following", addCompanyFollowing); // theo dõi c�
 jobseekerRoutes.get("/job-saving", getListJobSaving); // lấy danh sách việc làm đã lưu
 jobseekerRoutes.post("/job-saving", addJobSaving); // thêm việc làm vào danh sách đã lưu
 jobseekerRoutes.delete("/job-saving", deleteJobSaving); // xóa việc làm đã lưu
+
+jobseekerRoutes.post("/overview", getOverview); // xóa việc làm đã lưu
+jobseekerRoutes.get("/jobs-suggestion", getJobsSuggestion); // xóa việc làm đã lưu
 
 module.exports = jobseekerRoutes;
 

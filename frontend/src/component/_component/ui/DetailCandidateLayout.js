@@ -1,197 +1,59 @@
-import React from "react";
+import React, { useState,useEffect }from "react";
 import { NavLink } from "react-router-dom";
 import Rating from "./RatingSection.js";
-import { format } from "date-fns";
-
+// import { format } from "date-fns";
+import formatSafeDate from "../../../utils/formatSafeDate.js";
 const CandidateDetail = ({
-  employerID,
   basic,
-  certification1,
-  cv,
-  edu1,
-  exp1,
-  language1,
-  project1,
-  skill1,
+  certification_info,
+  cv_link,
+  education_info,
+  experience_info,
+  language_info,
+  project_info,
+  skill_info,
   ratingData,
 }) => {
-  const exp = exp1 || [
-    {
-      profile_experience_id: 26,
-      profile_id: 30000004,
-      exp_title: "Software Developer hehe aaaaaaaa",
-      exp_from: "2020-07-29T17:00:00.000Z",
-      exp_to: "2022-10-29T17:00:00.000Z",
-      exp_company: "Tech Solutions Vietnam",
-      exp_description:
-        "Developed web applications using React and Node.js. Worked in an Agile team environment. hehe",
-    },
-  ];
-
-  const edu = edu1 || [
-    {
-      profile_education_id: 4,
-      profile_id: 30000004,
-      education_id: 80,
-      major: "Kiến Trúc",
-      school: "Đại học Xây Dựng",
-      from_: "2015-08-31T17:00:00.000Z",
-      to_: "2019-05-30T17:00:00.000Z",
-      education_title: "Đại Học",
-    },
-    {
-      profile_education_id: 15,
-      profile_id: 30000004,
-      education_id: 80,
-      major: "Computer Science",
-      school: "Ho Chi Minh City University of Technology",
-      from_: "2016-08-30T17:00:00.000Z",
-      to_: "2022-05-25T17:00:00.000Z",
-      education_title: "Đại Học",
-    },
-  ];
-
-  const project = project1 || [
-    {
-      profile_project_id: 4,
-      profile_id: 30000004,
-      project_name: "Thiết kế khu dân cư",
-      project_from: "2019-04-26T17:00:00.000Z",
-      project_to: "2024-12-30T17:00:00.000Z",
-      project_description:
-        "Thiết kế các tòa nhà căn hộ thân thiện với môi trường.",
-    },
-    {
-      profile_project_id: 16,
-      profile_id: 30000004,
-      project_name: "E-commerce Platform 123",
-      project_from: "2019-02-27T17:00:00.000Z",
-      project_to: "2019-06-28T17:00:00.000Z",
-      project_description:
-        "Developed an e-commerce platform for a local retail company using MERN stack.",
-    },
-  ];
-
-  const skill = skill1 || [
-    {
-      profile_id: 30000004,
-      skill_id: 12,
-      tags_content: "Tâm Lý Học",
-    },
-    {
-      profile_id: 30000004,
-      skill_id: 15,
-      tags_content: "Phân Tích Kinh Tế",
-    },
-    {
-      profile_id: 30000004,
-      skill_id: 159,
-      tags_content: "Big Data",
-    },
-    {
-      profile_id: 30000004,
-      skill_id: 185,
-      tags_content: "Communication Skills",
-    },
-    {
-      profile_id: 30000004,
-      skill_id: 2030,
-      tags_content: "Lập Trình Python",
-    },
-    {
-      profile_id: 30000004,
-      skill_id: 3329,
-      tags_content: "Java Programming",
-    },
-  ];
-
-  const language = language1 || [
-    {
-      profile_id: 30000004,
-      language_id: 2,
-      language_name: "ENGLISH",
-      language_metrict: "TOEIC",
-      metric_value: 80,
-      metric_display: "TOEIC 700-900",
-    },
-    {
-      profile_id: 30000004,
-      language_id: 4,
-      language_name: "ENGLISH",
-      language_metrict: "TOEIC",
-      metric_value: 40,
-      metric_display: "TOEIC 450-550",
-    },
-    {
-      profile_id: 30000004,
-      language_id: 7,
-      language_name: "JAPANESE",
-      language_metrict: "JLPT",
-      metric_value: 80,
-      metric_display: "N2",
-    },
-    {
-      profile_id: 30000004,
-      language_id: 8,
-      language_name: "JAPANESE",
-      language_metrict: "JLPT",
-      metric_value: 60,
-      metric_display: "N3",
-    },
-  ];
-
-  const certification = certification1 || [
-    {
-      profile_certifications_id: 4,
-      profile_id: 30000004,
-      certifications: "Autodesk Certified Profestional",
-      month_: "2024-11-30T17:00:00.000Z",
-    },
-    {
-      profile_certifications_id: 19,
-      profile_id: 30000004,
-      certifications: "AWS Certified Developer",
-      month_: "2022-01-14T17:00:00.000Z",
-    },
-  ];
-
   const handleFollowCandidate = () => {
-    console.log(
-      "ID công ty: ",
-      employerID,
-      " và ID của Candidate: ",
-      basic?.profile_id
-    );
+    console.log("Follow candidate clicked!");
+    // Add your follow candidate logic here
   };
 
+  console.log("ratingData", ratingData);
   return (
     <div className="container my-4">
       {/* Header */}
       <div className="d-flex flex-column flex-md-row align-items-md-center mb-4">
         <img
-          src={
-            basic?.avatar ||
-            "https://media-cdn-v2.laodong.vn/storage/newsportal/2023/6/30/1210827/339006310_3359181837.jpg"
-          }
+          src={basic?.avatar}
           alt="avatar"
           className="rounded-circle me-md-4 mb-3 mb-md-0"
           style={{ width: "100px", height: "100px", objectFit: "cover" }}
         />
         <div>
-          <h4 className="mb-1">{basic?.username || "Tên mặc định"}</h4>
+          <h4 className="mb-1">{basic?.full_name || "Tên Hidden"}</h4>
           <div className="d-flex align-items-center gap-2">
             <span className="badge bg-warning text-dark">
-              ⭐ {basic?.score || "0"}
+              ⭐ {basic?.score ? parseFloat(basic.score).toFixed(1) : "0"}
             </span>
-            <span className="badge bg-success">
-              {basic?.status_ === 0 ? "UnActive" : "Active"}
+            <span
+              className={`badge ${
+                basic?.is_open_for_job === 0 ? "bg-danger" : "bg-success"
+              }`}
+            >
+              {basic?.is_open_for_job === 0
+                ? "Not Openning"
+                : "Opening for Job"}
             </span>
           </div>
           <div className="text-muted small mt-2">
             {/* <div>Origin: Career Site</div> */}
-            <div>Title: {basic?.title || "Title mặc định"}</div>
-            <div>Level: {basic?.level_name || "Level mặc định"}</div>
-            <div>Applied: {basic?.create_at || "Ngày mặc định"}</div>
+            <div>Chức danh hiện tại: {basic?.title || "Hidden"}</div>
+            <div>Cấp bậc hiện tại: {basic?.level_name || "Hidden"}</div>
+            <div>
+              Ngày tham gia:{" "}
+              {formatSafeDate(basic?.create_at, "dd/MM/yyyy") || "Hidden"}
+            </div>
           </div>
         </div>
         <div className="ms-auto">
@@ -212,22 +74,22 @@ const CandidateDetail = ({
         <div className="col-lg-8">
           <div className="card mb-4">
             <div className="card-body">
-              <h6>Expected Job</h6>
+              <h6>Công việc mong muốn</h6>
               <div className="row small text-muted">
                 <div className="col-md-6">
                   <p>
-                    Career Target:{" "}
-                    <strong>{basic?.career_target || "Mặc định"}</strong>
+                    Mục tiêu sự nghiệp:{" "}
+                    <strong>{basic?.career_target || "Hidden"}</strong>
                   </p>
                   <p>
-                    Expected Salary:{" "}
-                    <strong>{basic?.salary_expect || "Mặc định"}</strong>
+                    Mức lương mong muốn:{" "}
+                    <strong>{basic?.salary_expect || "Hidden"}</strong>
                   </p>
                 </div>
                 <div className="col-md-6">
                   <p>
-                    Work Place:{" "}
-                    <strong>{basic?.city_name || "Mặc định"}</strong>
+                    Địa chỉ làm việc:{" "}
+                    <strong>{basic?.work_expected_place || "Hidden"}</strong>
                   </p>
                 </div>
               </div>
@@ -240,7 +102,7 @@ const CandidateDetail = ({
               <h6>Experience</h6>
 
               <div className="row small text-muted">
-                {exp?.map((item, index) => {
+                {experience_info?.map((item, index) => {
                   return (
                     <div key={index}>
                       <p className="fw-bold mb-1">{item.exp_title}</p>
@@ -256,12 +118,12 @@ const CandidateDetail = ({
                         <p>
                           From:{" "}
                           <strong>
-                            {format(new Date(item.exp_from), "MM/yyyy")}
+                            {formatSafeDate(item.exp_from, "MM/yyyy")}
                           </strong>{" "}
                           To:{" "}
                           <strong>
                             {" "}
-                            {format(new Date(item.exp_to), "MM/yyyy")}
+                            {formatSafeDate(item.exp_to, "MM/yyyy")}
                           </strong>
                         </p>
                       </div>
@@ -281,7 +143,7 @@ const CandidateDetail = ({
               <h6>Education</h6>
 
               <div className="row small text-muted">
-                {edu?.map((item, index) => {
+                {education_info?.map((item, index) => {
                   return (
                     <div key={index}>
                       <p className="mb-1">
@@ -293,12 +155,14 @@ const CandidateDetail = ({
                       <p className="mb-1">
                         From:{" "}
                         <strong>
-                          {format(new Date(item.from_), "MM/yyyy")}
+                          {/* {format(new Date(item.from_), "MM/yyyy")} */}
+                          {formatSafeDate(item.from_, "MM/yyyy")}
                         </strong>{" "}
                         To:{" "}
                         <strong>
                           {" "}
-                          {format(new Date(item.to_), "MM/yyyy")}
+                          {/* {format(new Date(item.to_), "MM/yyyy")} */}
+                          {formatSafeDate(item.to_, "MM/yyyy")}
                         </strong>
                       </p>
                       <p className="mb-5">
@@ -316,7 +180,7 @@ const CandidateDetail = ({
               <h6>Project</h6>
 
               <div className="row small text-muted">
-                {project?.map((item, index) => {
+                {project_info?.map((item, index) => {
                   return (
                     <div key={index}>
                       <p className="fw-bold mb-1">{item.project_name}</p>
@@ -324,11 +188,13 @@ const CandidateDetail = ({
                         <p>
                           From:{" "}
                           <strong>
-                            {format(new Date(item.project_from), "MM/yyyy")}
+                            {/* {format(new Date(item.project_from), "MM/yyyy")} */}
+                            {formatSafeDate(item.project_from, "MM/yyyy")}
                           </strong>{" "}
                           To:{" "}
                           <strong>
-                            {format(new Date(item.project_to), "MM/yyyy")}
+                            {/* {format(new Date(item.project_to), "MM/yyyy")} */}
+                            {formatSafeDate(item.project_to, "MM/yyyy")}
                           </strong>
                         </p>
                       </div>
@@ -348,13 +214,13 @@ const CandidateDetail = ({
               <h6>Skill</h6>
 
               <div className="small text-muted">
-                {skill.map((item) => (
+                {skill_info.map((item) => (
                   <NavLink
                     key={item.skill_id}
                     to={`/post?skill_id=${item.skill_id}`}
                     className="badge bg-secondary me-2 mb-2 text-decoration-none skill-badge"
                   >
-                    {item.tags_content}
+                    {item.skill_name}
                   </NavLink>
                 ))}
               </div>
@@ -366,7 +232,7 @@ const CandidateDetail = ({
               <h6>Language</h6>
 
               <div className="small text-muted">
-                {language.map((item) => (
+                {language_info.map((item) => (
                   <NavLink
                     key={item.language_id}
                     to={`/post?skill_id=${item.language_id}`}
@@ -384,15 +250,16 @@ const CandidateDetail = ({
               <h6>Certification</h6>
 
               <div className="row small text-muted">
-                {certification?.map((item, index) => {
+                {certification_info?.map((item, index) => {
                   return (
                     <div key={index}>
                       <p className="mb-1">
-                        <strong>Certification:</strong> {item.certifications}
+                        <strong>Certification:</strong> {item.certification}
                       </p>
                       <p className="mb-5">
                         <strong>Month:</strong>{" "}
-                        {format(new Date(item.month_), "MM/yyyy")}
+                        {/* {formatSafeDate(item.month_)} */}
+                        {formatSafeDate(item.month, "MM/yyyy")}
                       </p>
                     </div>
                   );
@@ -407,7 +274,7 @@ const CandidateDetail = ({
           {/* Personal Info */}
           <div className="card mb-4">
             <div className="card-body">
-              <h6>Personal Information</h6>
+              <h6>Thông tin cá nhân</h6>
               <p className="mb-1">
                 <strong>Email:</strong>{" "}
                 <a href={basic?.email}>
@@ -415,27 +282,41 @@ const CandidateDetail = ({
                 </a>
               </p>
               <p className="mb-1">
-                <strong>Phone:</strong>{" "}
+                <strong>Số điện thoại liên hệ:</strong>{" "}
                 {basic?.phone_number || "+62 - 921 - 019 - 112"}
               </p>
               <p className="mb-1">
-                <strong>Gender:</strong> {basic?.gender || "Mặc định"}
+                <strong>Giới tính:</strong>{" "}
+                {basic?.gender
+                  ? basic.gender === "female"
+                    ? "Nữ"
+                    : "Nam"
+                  : "Hidden"}
               </p>
               <p className="mb-1">
-                <strong>Marital: </strong> {basic?.marital_status || "Mặc định"}
+                <strong>Tình trạng hôn nhân: </strong>{" "}
+                {basic?.marital_status || "Hidden"}
               </p>
               <p className="mb-1">
-                <strong>Birthdate:</strong> {basic?.birthday || "Mặc định"}
+                <strong>Ngày sinh:</strong>{" "}
+                {formatSafeDate(basic.birthday, "dd/MM/yyyy") || "Hidden"}
               </p>
               <p className="mb-1">
-                <strong>Address:</strong> {basic?.address || "Mặc định"}
+                <strong>Địa chỉ:</strong> {basic?.address || "Hidden"}
               </p>
             </div>
           </div>
 
           {/* Notes */}
+
           <div className="card">
-            <Rating ratingData={ratingData} />
+            {ratingData ? (
+              <Rating ratingData={ratingData} profile_id = {basic?.profile_id} />
+            ) : (
+              <div className="card-body text-center text-muted">
+                Không có dữ liệu đánh giá
+              </div>
+            )}
           </div>
         </div>
       </div>

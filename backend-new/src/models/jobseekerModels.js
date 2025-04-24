@@ -396,12 +396,12 @@ try {
     //   INSERT INTO ${profileTables['profile'][type].tableName} (${fields})
     //   VALUES (${placeholders});`,
     //   values)
-    // const [result] = await db.query(
-    //   `
-    //   INSERT INTO ${profileTables['profile'][type].tableName} (${fields})
-    //   VALUES (${placeholders});`,
-    //     values
-    //   );
+    const [result] = await db.query(
+      `
+      INSERT INTO ${profileTables['profile'][type].tableName} (${fields})
+      VALUES (${placeholders});`,
+        values
+      );
       return result.affectedRows;
     }
   } catch (error) {
@@ -857,6 +857,280 @@ const queryDeleteJobSaving = async (profile_id, job_id) => {
   }
 };
 
+const queryGetOverview = async (profile_id, days) => {
+  try {
+    if (!Array.isArray(days) || days.length !== 5) {
+      throw new Error("Invalid days array. It should contain exactly 5 elements.");
+    }
+    const convertToDate = (dateStr) => {
+      const parts = dateStr.split('/');
+      if (parts.length !== 3) throw new Error(`Invalid date format: ${dateStr}`);
+      // Chuyển từ DD/MM/YYYY sang YYYY-MM-DD
+      return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+    };
+    const dateDays = days.map(day => convertToDate(day));
+    const [d1, d2, d3, d4, d5] = dateDays;
+
+    const step = (d2 - d1) / (1000 * 60 * 60 * 24);
+    const d0 = new Date(d1);
+    d0.setDate(d0.getDate() - step);
+    console.log("action overview");
+    
+    const [result0] = await db.query(
+      `SELECT 
+        JSON_ARRAY(
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END) ,
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END),
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END),
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END),
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END)
+        ) AS employer_invite_apply
+      FROM logs_employer_invite_apply
+      WHERE jobseeker_id = ?`,
+      [d0, d1, d0, d2, d0, d3, d0, d4, d0, d5, profile_id]
+    );
+    const [result1] = await db.query(
+      `
+        SELECT 
+        JSON_ARRAY(
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END) ,
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END),
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END),
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END),
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END)
+          ) AS employer_rate_jobseeker
+        FROM logs_employer_rate_jobseeker
+        WHERE jobseeker_id = ?;
+      `,
+      [d0, d1, d0, d2, d0, d3, d0, d4, d0, d5, profile_id]
+    );
+    const [result2] = await db.query(
+      `
+      SELECT 
+          JSON_ARRAY(
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END) ,
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END),
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END),
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END),
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END)
+          ) AS employer_view_jobseeker
+        FROM logs_employer_view_jobseeker
+        WHERE jobseeker_id = ?;
+      `,
+      [d0, d1, d0, d2, d0, d3, d0, d4, d0, d5, profile_id]
+    );
+    const [result3] = await db.query(
+      `
+        SELECT 
+          JSON_ARRAY(
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END) ,
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END),
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END),
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END),
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END)
+          ) AS jobseeker_apply_job
+        FROM logs_jobseeker_apply_job
+        WHERE jobseeker_id = ?;
+      `,
+      [d0, d1, d0, d2, d0, d3, d0, d4, d0, d5, profile_id]
+    );
+    const [result4] = await db.query(
+      `
+        SELECT 
+          JSON_ARRAY(
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END) ,
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END),
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END),
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END),
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END)
+          ) AS jobseeker_follow_employer
+        FROM logs_jobseeker_follow_employer
+        WHERE jobseeker_id = ?;
+      `,
+       [d0, d1, d0, d2, d0, d3, d0, d4, d0, d5, profile_id]
+    );
+    const [result5] = await db.query(
+      `
+        SELECT 
+          JSON_ARRAY(
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END) ,
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END),
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END),
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END),
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END)
+          ) AS jobseeker_save_job
+        FROM logs_jobseeker_save_job
+        WHERE jobseeker_id = ?;
+      `,
+       [d0, d1, d0, d2, d0, d3, d0, d4, d0, d5, profile_id]
+    );
+    const [result6] = await db.query(
+      `
+        SELECT 
+          JSON_ARRAY(
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END) ,
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END),
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END),
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END),
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END)
+          ) AS jobseeker_view_job
+        FROM logs_jobseeker_view_job
+        WHERE jobseeker_id = ?;
+      `,
+       [d0, d1, d0, d2, d0, d3, d0, d4, d0, d5, profile_id]
+    );
+    const [result7] = await db.query(
+      `
+          SELECT 
+          JSON_ARRAY(
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END) ,
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END),
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END),
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END),
+          COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END)
+          ) AS jobseeker_rate_company
+        FROM logs_review
+        WHERE jobseeker_id = ?;
+      `,
+       [d0, d1, d0, d2, d0, d3, d0, d4, d0, d5, profile_id]
+    );
+    // console.log(result7);
+    const [totalApply] = await db.query(
+      `
+        SELECT 
+          COUNT(*) AS total_apply_job
+        FROM logs_jobseeker_apply_job
+        WHERE jobseeker_id = ?;
+      `,
+      [ profile_id]
+    );
+    const [totalViews] = await db.query(
+      `
+      SELECT 
+          COUNT(*) AS total_view_job
+        FROM logs_employer_view_jobseeker
+        WHERE jobseeker_id = ?;
+      `,
+      [d0, d1, d0, d2, d0, d3, d0, d4, d0, d5, profile_id]
+    );
+    const [totalSaved] = await db.query(
+      `
+      SELECT COUNT(*) AS total_save_job
+      FROM logs_jobseeker_save_job
+      WHERE jobseeker_id = ?;
+      `,[profile_id]);
+    const [percent_complete] = await db.query(
+      `SELECT COALESCE((SELECT percent_complete FROM profile_jobseeker WHERE profile_id = ?),0) as percent_complete;`,
+      [profile_id]);
+    const chart  = 
+      {
+        'employer_invite_apply':result0[0].employer_invite_apply,   
+        'employer_rate_jobseeker': result1[0].employer_rate_jobseeker,
+        'employer_view_jobseeker': result2[0].employer_view_jobseeker,
+        'jobseeker_apply_job': result3[0].jobseeker_apply_job,
+        'jobseeker_follow_employer': result4[0].jobseeker_follow_employer,
+        'jobseeker_save_job': result5[0].jobseeker_save_job,
+        'jobseeker_view_job': result6[0].jobseeker_view_job,
+        'jobseeker_rate_company': result7[0].jobseeker_rate_company
+      }
+    ;
+    // console.log(result);
+    return {chart, totalApply: totalApply[0].total_apply_job, totalViews: totalViews[0].total_view_job, totalSaved: totalSaved[0].total_save_job,percent_complete: percent_complete[0].percent_complete};
+  } catch (error) {
+    console.error("Error in queryGetOverview:", error);
+    throw error;
+  }
+};
+
+const queryGetJobsSuggestion = async (profile_id) => {
+  try {
+    const [userInfor] = await db.query(
+      `SELECT 
+      p.profile_id,
+      p.job_function_id,
+      p.city_id as work_location,
+      p.salary_expect,
+      p.title
+      from profile_jobseeker p
+      where p.profile_id = ?`,
+      [profile_id]);
+
+    const [result1] = await db.query(
+      `SELECT 
+        j.job_id,
+        j.title,
+        j.salary_min,
+        j.salary_max,
+        j.describle,
+        c.company_name,
+        c.logo as company_logo,
+        j.date_post,
+        j.date_expi,
+        j.job_function_id,
+        j.industry_id,
+        j.work_location,
+        (select city_name from catalog_city where city_id = j.work_location) as work_location_name
+      FROM job j
+      JOIN company c ON j.employer_id = c.company_id
+      WHERE j.status_ = 1 AND j.date_expi >= NOW()
+      and j.job_function_id = ?
+      ORDER BY j.create_at DESC
+      LIMIT 5;`,[userInfor[0].job_function_id]
+    );
+    const [result2] = await db.query(
+      `SELECT 
+        j.job_id,
+        j.title,
+        j.salary_min,
+        j.salary_max,
+        j.describle,
+        c.company_name,
+        c.logo as company_logo,
+        j.date_post,
+        j.date_expi,
+        j.job_function_id,
+        j.industry_id,
+        j.work_location,
+        (select city_name from catalog_city where city_id = j.work_location) as work_location_name
+      FROM job j
+      JOIN company c ON j.employer_id = c.company_id
+      WHERE j.status_ = 1 AND j.date_expi >= NOW()
+      and j.job_function_id = ?
+      and j.salary_max >= ?
+      ORDER BY j.create_at DESC
+      LIMIT 5;`,[userInfor[0].job_function_id,userInfor[0].salary_expect]
+    );
+    const [result3] = await db.query(
+      `SELECT 
+        j.job_id,
+        j.title,
+        j.salary_min,
+        j.salary_max,
+        j.describle,
+        c.company_name,
+        c.logo as company_logo,
+        j.date_post,
+        j.date_expi,
+        j.job_function_id,
+        j.industry_id,
+        j.work_location,
+        (select city_name from catalog_city where city_id = j.work_location) as work_location_name
+      FROM job j
+      JOIN company c ON j.employer_id = c.company_id
+      WHERE j.status_ = 1 AND j.date_expi >= NOW()  
+      and j.title like ?
+      ORDER BY j.create_at DESC
+      LIMIT 5;`,[`%${userInfor[0].title}%`]
+    );
+    const data =  [...result1, ...result2, ...result3];
+    const result = data.sort(() => 0.5 - Math.random()).slice(0, 5);
+    return result;
+  } catch (error) {
+    console.error("Error in queryGetJobsSuggestion:", error);
+    throw error;
+  }
+}
+
 module.exports = {
   queryGetItemProfile,
   queryDeleteItemProfile,
@@ -874,5 +1148,7 @@ module.exports = {
   queryAddCompanyFollowing,
   queryGetListJobSaving,
   queryAddJobSaving,
-  queryDeleteJobSaving
+  queryDeleteJobSaving,
+  queryGetOverview,
+  queryGetJobsSuggestion
 };

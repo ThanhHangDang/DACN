@@ -15,8 +15,29 @@ export const jobseekerApi = createApi({
         // },
         credentials: 'include'
     }), 
-    tagTypes: ['Basic', 'Experience', 'Education', 'Project', 'Skill', 'Language', 'Certification'],
+    tagTypes: ['Basic', 'Experience', 'Education', 'Project', 'Skill', 'Language', 'Certification', 'Overview'],
     endpoints: (builder) => ({
+        getOverview: builder.mutation({
+            query: ({profile_id, days}) => ({
+                url: '/jobseeker/overview',
+                method: 'POST',
+                body: { profile_id, days },
+            }),
+            transformResponse: (response) => {
+                return response.data;
+            },
+            providesTags: ['Overview'],
+        }),
+        getJobsSuggestion: builder.query({
+            query: ({profile_id}) => ({
+                url: '/jobseeker/jobs-suggestion',
+                params: { profile_id },
+            }),
+            transformResponse: (response) => {
+                return response.data;
+            },
+            providesTags: ['JobSuggestion'],
+        }),
         getItemProfile: builder.query({
             query: ({type,profile_id}) => ({
                 url:`/jobseeker/profile`,
@@ -213,6 +234,8 @@ export const jobseekerApi = createApi({
 
 // Export hooks for usage in components
 export const {
+    useGetOverviewMutation,
+    useGetJobsSuggestionQuery,
     useGetItemProfileQuery,
     useUpdateProfileImageMutation,
     useUpdateItemProfileMutation,

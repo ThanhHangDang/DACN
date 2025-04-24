@@ -18,7 +18,9 @@ const {
   queryAddCompanyFollowing,
   queryGetListJobSaving,
   queryAddJobSaving,
-  queryDeleteJobSaving
+  queryDeleteJobSaving,
+  queryGetOverview,
+  queryGetJobsSuggestion
 } = require("../models/jobseekerModels.js");
 
 const updateJobseekerProfileImage = async (req, res, next) => {
@@ -87,9 +89,9 @@ const updateItemProfile = async (req, res, next) => {
     
     data.create_at = new Date();
     
-    const affectedRows = await queryUpdateItemProfile(type, data);
+    const result = await queryUpdateItemProfile(type, data);
     
-    if (affectedRows === 0) {
+    if (!result) {
       return next(new ApiError("Cập nhật hồ sơ không thành công", 400));
     }    
     return res.success({}, "Cập nhật hồ sơ thành công");
@@ -438,6 +440,52 @@ const deleteJobSaving = async (req, res, next) => {
   }
 };
 
+
+const getOverview = async (req, res, next) => {
+  try {
+    const {profile_id, days} = req.body;
+    
+    if (!profile_id || !days) {
+      return next(new ApiError("Thiếu thông tin", 400));
+    }
+    
+    const data = await queryGetOverview(profile_id, days);
+    
+    if (!data) {
+      return next(new ApiError("Không tìm thấy thông tin tổng quan", 404));
+    }
+    
+    return res.success(
+       data || [] ,
+      "Lấy thông tin tổng quan thành công"
+    );
+  } catch (err) {
+    return next(new ApiError("Lỗi khi tìm kiếm thông tin tổng quan", 500));
+  }
+};
+
+
+const getJobsSuggestion = async (req, res, next) => {
+  try {
+    const { profile_id } = req.query;
+    
+    if (!profile_id) {
+      return next(new ApiError("Thiếu thông tin ID người dùng", 400));
+    }
+    const data = await queryGetJobsSuggestion(profile_id);
+    if (!data) {
+      return next(new ApiError("Không tìm thấy thông tin công việc gợi ý", 404));
+    }
+    return res.success(
+      { jobs: data || [] },
+      "Lấy danh sách công việc gợi ý thành công"
+    );
+  } catch (err) {
+    return next(new ApiError("Lỗi khi tìm kiếm công việc gợi ý", 500));
+  }
+};
+
+
 module.exports = {
   getItemProfile,
   deleteItemProfile,
@@ -455,5 +503,7 @@ module.exports = {
   addCompanyFollowing,
   getListJobSaving,
   addJobSaving,
-  deleteJobSaving
+  deleteJobSaving,
+  getOverview,
+  getJobsSuggestion
 };

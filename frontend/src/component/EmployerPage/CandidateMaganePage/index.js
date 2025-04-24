@@ -195,7 +195,7 @@ export default function CandidatesMaganePage() {
                         style={{ maxWidth: "200px" }}
                       >
                         <NavLink
-                          to={`/candidate-detail/${candidate.jobseeker_id}`}
+                          to={`/candidate-detail/${candidate.profile_id}`}
                         >
                           {candidate.full_name}
                         </NavLink>
@@ -407,7 +407,7 @@ export default function CandidatesMaganePage() {
                 <h6 className="fw-bold mb-2">Số năm kinh nghiệm</h6>
                 <select
                   className="form-select mb-3"
-                  value={filterValues.id}
+                  value={filterValues.year_exp}
                   onChange={(e) =>
                     setFilterValues({
                       ...filterValues,

@@ -4,26 +4,26 @@ module.exports = {
     key: ['job_id'],
     fields: [
       'job_id', 'employer_id', 'title', 'date_post', 'date_expi', 'status_', 
-      'industry_id', 'job_function_id', 'work_location_id', 'address', 
+      'industry_id', 'job_function_id', 'work_location', 'address', 
       'working_type', 'working_time', 'quantity', 'describle', 'views', 
       'numOfApplications', 'salary_max', 'salary_min', 'level_id', 
       'require_marital_status', 'require_gender', 'require_age_min', 
       'require_age_max', 'require_education', 'require_experience', 
-      'more_requirements', 'lastUpdatedOn'
+      'more_requirements', 'lastUpdateOn'
     ],
     updateItem: [
       'title', 'date_expi', 'status_', 'industry_id', 'job_function_id', 
-      'work_location_id', 'address', 'working_type', 'working_time', 'quantity', 
+      'work_location', 'address', 'working_type', 'working_time', 'quantity', 
       'describle', 'salary_max', 'salary_min', 'level_id', 'require_marital_status', 
       'require_gender', 'require_age_min', 'require_age_max', 'require_education', 
-      'require_experience', 'more_requirements', 'lastUpdatedOn'
+      'require_experience', 'more_requirements', 'lastUpdateOn'
     ],
     addItem: [
       'employer_id', 'title', 'date_post', 'date_expi', 'status_', 'industry_id', 
-      'job_function_id', 'work_location_id', 'address', 'working_type', 'working_time', 
+      'job_function_id', 'work_location', 'address', 'working_type', 'working_time', 
       'quantity', 'describle', 'salary_max', 'salary_min', 'level_id', 
       'require_marital_status', 'require_gender', 'require_age_min', 'require_age_max', 
-      'require_education', 'require_experience', 'more_requirements', 'lastUpdatedOn'
+      'require_education', 'require_experience', 'more_requirements', 'lastUpdateOn'
     ]
   },
   job_require_skill: {

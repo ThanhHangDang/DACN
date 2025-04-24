@@ -51,16 +51,17 @@ const options = {
   },
 };
 
-const LineChartComponent = ({ labelChoice, data1, data2, data3 }) => {
+const LineChartComponent = ({labelTitle, labelChoice, dataValue }) => {
   // Dữ liệu ví dụ
+  const [data1, data2, data3, ...prop] = dataValue||[[], [], [], []];
   const data = {
     labels: labelChoice?.map((dateStr) =>
       format(parse(dateStr, "dd/MM/yyyy", new Date()), "dd/MM")
     ) || ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5"],
     datasets: [
       {
-        label: "Việc làm đã ứng tuyển",
-        data: data1 || [40, 55, 70, 60, 80],
+        label: Array.isArray(labelTitle)? labelTitle[0]: "",
+        data: Array.isArray(data1)? data1:[0, 0, 0, 0, 0],
         fill: false,
         borderColor: "rgb(75, 192, 192)",
         tension: 0.4,
@@ -69,8 +70,8 @@ const LineChartComponent = ({ labelChoice, data1, data2, data3 }) => {
         pointBorderWidth: 2,
       },
       {
-        label: "Lượt xem hồ sơ",
-        data: data2 || [20, 35, 50, 45, 60],
+        label: Array.isArray(labelTitle)? labelTitle[1]: "",
+        data: Array.isArray(data2)? data2:[0, 0, 0, 0, 0],
         fill: false,
         tension: 0.4,
         pointBackgroundColor: "white",
@@ -79,8 +80,8 @@ const LineChartComponent = ({ labelChoice, data1, data2, data3 }) => {
         pointBorderWidth: 2,
       },
       {
-        label: "Lượt lưu hồ sơ",
-        data: data3 || [10, 25, 35, 55, 75],
+        label: Array.isArray(labelTitle)? labelTitle[2]: "",
+        data: Array.isArray(data3)? data3:[0, 0, 0, 0, 0],
         fill: false,
         tension: 0.4,
         pointBackgroundColor: "white",

@@ -22,6 +22,9 @@ const {
   queryInviteJobseekerApply,
   queryGetInvitedJobseeker,
   queryGetListJobApplicationByJob,
+
+
+  queryGetOverview,
 } = require("../models/employerModels.js");
 
 
@@ -51,13 +54,14 @@ const getListJobseekerBySearch = async (req, res, next) => {
 
 const getJobseekerDetail = async (req, res, next) => {
   try {
-    const jobseeker_id = req.query.jobseeker_id;
+    const {employer_id,jobseeker_id} = req.query;
+    // console.log("getJobseekerDetail", req.query);
     
     if (!jobseeker_id) {
       return next(new ApiError("Thiếu ID ứng viên", 400));
     }
  ///////// lưu ý check quyền + login
-    const data = await queryGetJobseekerDetail(jobseeker_id);
+    const data = await queryGetJobseekerDetail(employer_id,jobseeker_id);
 
     if (!data) {
       return next(new ApiError("Không tìm thấy thông tin ứng viên", 404));
@@ -141,9 +145,10 @@ const getJobDetailByUser = async (req, res, next) => {
 
 const addJobByUser = async (req, res, next) => {
   try {
+    // console.log("addJobByUser", req.body);
     const data = req.body;
     
-    if (!data || !data.company_id) {
+    if (!data || !data.employer_id) {
       return next(new ApiError("Thiếu thông tin bài đăng", 400));
     }
     
@@ -166,24 +171,18 @@ const addJobByUser = async (req, res, next) => {
 
 const updateJobByUser = async (req, res, next) => {
   try {
-    const {type,data} = req.body;
+    const data = req.body;
     
-    if (!data || type) {
+    if (!data) {
       return next(new ApiError("Thiếu thông tin bài đăng", 400));
-    }
+    }  
     
-    // Kiểm tra quyền
-    // if (req.session?.userLogin?.id !== parseInt(data.company_id)) {
-    //   return next(new ApiError("Không có quyền cập nhật bài đăng này", 403));
-    // }
-    
-    const result = await queryUpdateJobByUser(type,data);
-    
+    const result = await queryUpdateJobByUser(data);
     if (!result) {
       return next(new ApiError("Cập nhật bài đăng thất bại", 500));
     }
     
-    return res.success({ job_id: data.job_id }, "Cập nhật bài đăng thành công");
+    return res.success({ }, "Cập nhật bài đăng thành công");
   } catch (err) {
     return next(new ApiError("Lỗi khi cập nhật bài đăng", 500));
   }
@@ -191,9 +190,10 @@ const updateJobByUser = async (req, res, next) => {
 
 const deleteJobByUser = async (req, res, next) => {
   try {
-    const { company_id,job_id } = req.body;
     
-    if (!job_id || !company_id) {
+    const { employer_id,job_id } = req.query;
+    // console.log("deleteJobByUser", req.query);
+    if (!job_id || !employer_id) {
       return next(new ApiError("Thiếu thông tin ID bài đăng hoặc nhà tuyển dụng", 400));
     }
     
@@ -202,7 +202,7 @@ const deleteJobByUser = async (req, res, next) => {
     //   return next(new ApiError("Không có quyền xóa bài đăng này", 403));
     // }
     
-    const result = await queryDeleteJobByUser(company_id,job_id);
+    const result = await queryDeleteJobByUser(employer_id,job_id);
     
     if (!result) {
       return next(new ApiError("Xóa bài đăng thất bại", 404));
@@ -236,10 +236,10 @@ const getCompanyInformation = async (req, res, next) => {
 
 const addItemCompanyProfile = async (req, res, next) => {
   try {
-    const data = req.body;
-    const { company_id, profile_type } = data;
+    const {type,data} = req.body;
+    const { company_id } = data;
     
-    if (!company_id || !profile_type) {
+    if (!company_id || !type) {
       return next(new ApiError("Thiếu thông tin công ty hoặc loại hồ sơ", 400));
     }
     
@@ -248,13 +248,13 @@ const addItemCompanyProfile = async (req, res, next) => {
     //   return next(new ApiError("Không có quyền thêm thông tin hồ sơ này", 403));
     // }
     
-    const result = await queryAddItemCompanyProfile(data);
+    const result = await queryAddItemCompanyProfile(type,data);
     
     if (!result) {
       return next(new ApiError("Thêm thông tin hồ sơ thất bại", 500));
     }
     
-    return res.success({ profile_id: result }, "Thêm thông tin hồ sơ thành công");
+    return res.success({}, "Thêm thông tin hồ sơ thành công");
   } catch (err) {
     return next(new ApiError("Lỗi khi thêm thông tin hồ sơ công ty", 500));
   }
@@ -262,10 +262,10 @@ const addItemCompanyProfile = async (req, res, next) => {
 
 const updateItemCompanyProfile = async (req, res, next) => {
   try {
-    const data = req.body;
-    const { company_id, profile_id } = data;
+    const {type,data} = req.body;
+    const { company_id } = data;
     
-    if (!company_id || !profile_id) {
+    if (!company_id|| !type) {
       return next(new ApiError("Thiếu thông tin công ty hoặc ID hồ sơ", 400));
     }
     
@@ -274,13 +274,13 @@ const updateItemCompanyProfile = async (req, res, next) => {
     //   return next(new ApiError("Không có quyền cập nhật hồ sơ này", 403));
     // }
     
-    const result = await queryUpdateItemCompanyProfile(data);
+    const result = await queryUpdateItemCompanyProfile(type,data);
     
     if (!result) {
       return next(new ApiError("Cập nhật hồ sơ thất bại", 500));
     }
     
-    return res.success({ profile_id }, "Cập nhật hồ sơ thành công");
+    return res.success({ }, "Cập nhật hồ sơ thành công");
   } catch (err) {
     return next(new ApiError("Lỗi khi cập nhật hồ sơ công ty", 500));
   }
@@ -288,9 +288,10 @@ const updateItemCompanyProfile = async (req, res, next) => {
 
 const deleteItemCompanyProfile = async (req, res, next) => {
   try {
-    const { profile_id, company_id } = req.body;
+    const {type,company_id,id} = req.query;
+    // console.log("deleteItemCompanyProfile", req.query);
     
-    if (!profile_id || !company_id) {
+    if (!company_id|| !type||!id) {
       return next(new ApiError("Thiếu thông tin ID hồ sơ hoặc công ty", 400));
     }
     
@@ -299,13 +300,13 @@ const deleteItemCompanyProfile = async (req, res, next) => {
     //   return next(new ApiError("Không có quyền xóa hồ sơ này", 403));
     // }
     
-    const result = await queryDeleteItemCompanyProfile(profile_id, company_id);
-    
+    const result = await queryDeleteItemCompanyProfile(type,company_id,id);
+    // console.log("result tai controller", result);
     if (!result) {
       return next(new ApiError("Xóa hồ sơ thất bại", 404));
     }
     
-    return res.success({ profile_id }, "Xóa hồ sơ thành công");
+    return res.success({ }, "Xóa hồ sơ thành công");
   } catch (err) {
     return next(new ApiError("Lỗi khi xóa hồ sơ công ty", 500));
   }
@@ -438,9 +439,9 @@ const saveCandidate = async (req, res, next) => {
 
 const rateCandidate = async (req, res, next) => {
   try {
-    const { application_id, company_id, rating } = req.body;
+    const {type, application_id, employer_id, rating, content } = req.body;
     
-    if (!application_id || !company_id || rating === undefined) {
+    if (!application_id || !employer_id || rating === undefined || !type) {
       return next(new ApiError("Thiếu thông tin đánh giá", 400));
     }
     
@@ -449,7 +450,7 @@ const rateCandidate = async (req, res, next) => {
     //   return next(new ApiError("Không có quyền đánh giá ứng viên này", 403));
     // }
     
-    const result = await queryRateCandidate(application_id, rating);
+    const result = await queryRateCandidate(type, application_id, employer_id, rating, content);
     
     if (!result) {
       return next(new ApiError("Đánh giá ứng viên thất bại", 500));
@@ -562,7 +563,29 @@ const inviteCandidateApply = async (req, res, next) => {
   }
 };
 
-
+const getOverview = async (req, res, next) => {
+  try {
+    const { employer_id,days } = req.body;
+    
+    if (!employer_id || !days) {
+      return next(new ApiError("Thiếu ID công ty/ ngày thống kê", 400));
+    }
+    
+    // Kiểm tra quyền
+    // if (req.session?.userLogin?.company_id !== parseInt(company_id)) {
+    //   return next(new ApiError("Không có quyền truy cập dữ liệu này", 403));
+    // }
+    
+    const data = await queryGetOverview(employer_id, days);
+    
+    return res.success(
+        data || [] ,
+      "Lấy thông tin tổng quan thành công"
+    );
+  } catch (err) {
+    return next(new ApiError("Lỗi khi lấy thông tin tổng quan", 500));
+  }
+};
 
 module.exports = {
   getListJobseekerBySearch,
@@ -585,5 +608,6 @@ module.exports = {
   deleteCandidate,
   getListJobApplication,
   rejectJobApplication,
-  inviteCandidateApply
+  inviteCandidateApply,
+  getOverview
 };

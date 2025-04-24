@@ -9,36 +9,31 @@ import {
   useGetTagsQuery,
   useGetEducationQuery,
 } from "../../../redux_toolkit/CategoryApi.js"; //useGetBenefitsQuery, useGetNationsQuery,useGetLevelsQuery,  useGetScalesQuery,useGetDistrictsQuery,
+import { toast } from "react-toastify";
 
-// import {
-//   // getPostsByUser,
-//   deletePostByUser,
-//   postNewWork,
-//   editPostByUser,
-// } from "../../../redux/actions/postAction";
 import {
   useGetJobByUserQuery,
   useAddJobMutation,
   useUpdateJobMutation,
   useDeleteJobMutation,
 } from "../../../redux_toolkit/employerApi.js";
+import { is } from "date-fns/locale";
 
 export default function EmployerPost() {
   const dispatch = useDispatch();
 
-  const deletePostByUser = useDeleteJobMutation();
-  const postNewWork = useAddJobMutation();
-  const editPostByUser = useUpdateJobMutation();
+  const [deletePostByUser] = useDeleteJobMutation();
+  const [postNewWork] = useAddJobMutation();
+  const [editPostByUser] = useUpdateJobMutation();
   const { isLogin, user } = useSelector((state) => state.auth);
-
+  const employer_id = user?.id;
   const { data: tags } = useGetTagsQuery();
   const { data: jobFunction } = useGetJobFunctionQuery();
   const { data: industry } = useGetIndustriesQuery();
   const { data: city } = useGetCitiesQuery(84);
   const { data: edu } = useGetEducationQuery();
   const { data: lang } = useGetLanguagesQuery();
-  const userId = user?.id;
-  const { data } = useGetJobByUserQuery(userId);
+  const { data } = useGetJobByUserQuery(employer_id);
   console.log("data: ", data);
   const postsByUser = data?.jobs || [];
   const [isAddPost, setIsAddPost] = useState(true);
@@ -50,24 +45,25 @@ export default function EmployerPost() {
     date_post: new Date().toISOString(),
     industry_id: 20,
     job_function_id: 1,
+    status_: 1,
+    level_id: 1,
     quantity: 1,
     salary_min: 500000,
     salary_max: 1000000,
-    describle: "",
-    require_experience: 0,
-    require_skill: [],
-    require_language: [],
-    require_age_min: 18,
-    require_age_max: 18,
-    address: "",
-    work_location: 1,
-    require_gender: "Không yêu cầu",
-    require_martial_status: "Không yêu cầu",
-    require_education: 1,
-    level_id: 1,
     working_type: "full-time",
     working_time: "",
+    work_location: "",
+    address: "",
+    describle: "",
     more_requirement: "",
+    require_experience: 0,
+    require_age_min: 18,
+    require_age_max: 18,
+    require_gender: "Không yêu cầu",
+    require_marital_status: "Không yêu cầu",
+    require_education: 1,
+    require_skill: [],
+    require_language: [],
     require_certification: [],
   });
 
@@ -129,70 +125,185 @@ export default function EmployerPost() {
     }));
   };
 
-  const handleAddPost = () => {
-    console.log("newPost: ", newPost);
-    if (isAddPost) {
-      dispatch(postNewWork(newPost));
-    } else {
-      dispatch(editPostByUser(newPost));
+  const handleAddPost = async () => {
+    try {
+      console.log("newPost: ", newPost);
+      const processedData = {
+        ...newPost,
+        require_skill: newPost.require_skill.map((skill) =>
+          typeof skill === "object" ? skill.tag_id : skill
+        ),
+        require_language: newPost.require_language.map((lang) =>
+          typeof lang === "object" ? lang.language_id : lang
+        ),
+        require_certification: newPost.require_certification || [],
+      };
+
+      console.log("Dữ liệu đã xử lý:", processedData);
+      if (isAddPost) {
+        const response = await postNewWork(processedData);
+        if (response?.data?.success) {
+          toast.success("Thêm bài đăng thành công!");
+          setNewPost({
+            ...newPost,
+            job_id: 0,
+            employer_id: user?.id,
+            title: "",
+            date_post: new Date().toISOString(),
+            industry_id: 20,
+            job_function_id: 1,
+            quantity: 1,
+            salary_min: 500000,
+            salary_max: 1000000,
+            describle: "",
+            require_experience: 0,
+            require_skill: [],
+            require_language: [],
+            require_age_min: 18,
+            require_age_max: 18,
+            address: "",
+            work_location: 1,
+            require_gender: "Không yêu cầu",
+            require_marital_status: "Không yêu cầu",
+            require_education: 1,
+            level_id: 1,
+            working_type: "full-time",
+            working_time: "",
+            more_requirement: "",
+            require_certification: [],
+          });
+        } else {
+          toast.error("Thêm bài đăng thất bại!");
+        }
+      } else {
+        const response = await editPostByUser(processedData);
+        if (response?.data?.success) {
+          toast.success("Cập nhật  bài đăng thành công!");
+          setNewPost({
+            ...newPost,
+            job_id: 0,
+            employer_id: user?.id,
+            title: "",
+            date_post: new Date().toISOString(),
+            industry_id: 20,
+            job_function_id: 1,
+            quantity: 1,
+            salary_min: 500000,
+            salary_max: 1000000,
+            describle: "",
+            require_experience: 0,
+            require_skill: [],
+            require_language: [],
+            require_age_min: 18,
+            require_age_max: 18,
+            address: "",
+            work_location: 1,
+            require_gender: "Không yêu cầu",
+            require_marital_status: "Không yêu cầu",
+            require_education: 1,
+            level_id: 1,
+            working_type: "full-time",
+            working_time: "",
+            more_requirement: "",
+            require_certification: [],
+          });
+        } else {
+          toast.error("Cập nhật bài đăng thất bại!");
+        }
+      }
+    } catch (error) {
+      console.error("Error adding/updating post:", error);
+      if (isAddPost) {
+        toast.error("Thêm bài đăng thất bại!");
+      } else {
+        toast.error("Cập nhật bài đăng thất bại!");
+      }
     }
-    setNewPost({
-      ...newPost,
-      job_id: 0,
-      employer_id: user?.id,
-      title: "",
-      date_post: new Date().toISOString(),
-      industry_id: 20,
-      job_function_id: 1,
-      quantity: 1,
-      salary_min: 500000,
-      salary_max: 1000000,
-      describle: "",
-      require_experience: 0,
-      require_skill: [],
-      require_language: [],
-      require_age_min: 18,
-      require_age_max: 18,
-      address: "",
-      work_location: 1,
-      require_gender: "Không yêu cầu",
-      require_martial_status: "Không yêu cầu",
-      require_education: 1,
-      level_id: 1,
-      working_type: "full-time",
-      working_time: "",
-      more_requirement: "",
-      require_certification: [],
-    });
   };
 
   const [postID, setPostID] = useState(0);
 
-  const handleDeletePost = () => {
-    dispatch(deletePostByUser(user?.id, postID));
+  const handleDeletePost = async () => {
+    try {
+      // Kiểm tra postID hợp lệ
+      if (!postID) {
+        toast.error("Không xác định được bài đăng cần xóa!");
+        return;
+      }
+
+      console.log("Đang xóa bài đăng:", postID);
+
+      // Gửi request xóa với tham số đúng
+      const response = await deletePostByUser({
+        employer_id: employer_id,
+        job_id: postID, // Đảm bảo tên field khớp với API
+      });
+
+      if (response?.data?.success) {
+        toast.success("Xóa bài đăng thành công!");
+
+        // Đặt lại postID sau khi xóa thành công
+        setPostID(0);
+      } else {
+        toast.error(`Xóa bài đăng thất bại! ${response?.data?.message || ""}`);
+      }
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      toast.error(
+        "Xóa bài đăng thất bại: " + (error.message || "Lỗi không xác định")
+      );
+    }
   };
 
-  const handleExtendDays = (postID, days) => {
-    console.log(
-      "Gia hạn: ",
-      user?.id,
-      " và bài post: ",
-      postID,
-      " thêm ",
-      days,
-      " ngày"
-    );
+  const handleExtendDays = async (job_id, date_expi, days) => {
+    try {
+      const exp_date = new Date(date_expi);
+      const newExpDate = new Date(exp_date);
+      newExpDate.setDate(exp_date.getDate() + days);
+      const formattedDate =
+        newExpDate.getFullYear() +
+        "-" +
+        String(newExpDate.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(newExpDate.getDate()).padStart(2, "0") +
+        " " +
+        String(newExpDate.getHours()).padStart(2, "0") +
+        ":" +
+        String(newExpDate.getMinutes()).padStart(2, "0") +
+        ":" +
+        String(newExpDate.getSeconds()).padStart(2, "0");
+      const response = await editPostByUser({
+        employer_id: employer_id,
+        job_id: job_id,
+        date_expi: formattedDate,
+      });
+      if (response?.data?.success) {
+        toast.success("Cập nhật trạng thái bài đăng thành công!");
+      } else {
+        toast.error("Cập nhật trạng thái bài đăng thất bại!");
+      }
+    } catch (error) {
+      console.error("Error updating post status:", error);
+      toast.error("Cập nhật trạng thái bài đăng thất bại!");
+    }
   };
 
-  const handleShowHide = (postID, status) => {
-    console.log(
-      "Employer: ",
-      user?.id,
-      " và bài post: ",
-      postID,
-      " Ản hiện ",
-      status
-    );
+  const handleShowHide = async (job_id, status) => {
+    try {
+      const response = await editPostByUser({
+        employer_id: employer_id,
+        job_id: job_id,
+        status_: status,
+      });
+      if (response?.data?.success) {
+        toast.success("Cập nhật trạng thái bài đăng thành công!");
+      } else {
+        toast.error("Cập nhật trạng thái bài đăng thất bại!");
+      }
+    } catch (error) {
+      console.error("Error updating post status:", error);
+      toast.error("Cập nhật trạng thái bài đăng thất bại!");
+    }
   };
 
   useEffect(() => {
@@ -350,7 +461,7 @@ export default function EmployerPost() {
                     onChange={(e) =>
                       setNewPost({
                         ...newPost,
-                        describle: e.target.value.replace(/\n/g, "00pizon00"),
+                        describle: e.target.value.replace(/\n/g, "%00endl"),
                       })
                     }
                     onKeyDown={(e) => {
@@ -358,7 +469,7 @@ export default function EmployerPost() {
                         e.preventDefault(); // Ngăn không cho xuống dòng (đối với textarea) hoặc submit form
                         setNewPost((prev) => ({
                           ...prev,
-                          describle: prev.describle + "00pizon00",
+                          describle: prev.describle + "%00endl",
                         }));
                       }
                     }}
@@ -544,7 +655,7 @@ export default function EmployerPost() {
                         className="form-control me-2"
                         placeholder="Từ"
                         min={18}
-                        value={newPost.require_age_min}
+                        value={newPost?.require_age_min}
                         onChange={(e) =>
                           setNewPost({
                             ...newPost,
@@ -557,7 +668,7 @@ export default function EmployerPost() {
                         className="form-control"
                         placeholder="Đến"
                         min={18}
-                        value={newPost.require_age_max}
+                        value={newPost?.require_age_max}
                         onChange={(e) =>
                           setNewPost({
                             ...newPost,
@@ -574,7 +685,7 @@ export default function EmployerPost() {
                     <select
                       className="form-select"
                       id="field"
-                      selected={newPost.require_gender}
+                      selected={newPost?.require_gender}
                       onChange={(e) =>
                         setNewPost({
                           ...newPost,
@@ -599,11 +710,11 @@ export default function EmployerPost() {
                     <select
                       className="form-select"
                       id="field"
-                      selected={newPost.require_martial_status}
+                      selected={newPost?.require_marital_status}
                       onChange={(e) =>
                         setNewPost({
                           ...newPost,
-                          require_martial_status: e.target.value,
+                          require_marital_status: e.target.value,
                         })
                       }
                     >
@@ -621,7 +732,7 @@ export default function EmployerPost() {
                     <select
                       className="form-select"
                       id="field"
-                      selected={newPost.working_type}
+                      selected={newPost?.working_type}
                       onChange={(e) =>
                         setNewPost({ ...newPost, working_type: e.target.value })
                       }
@@ -645,7 +756,7 @@ export default function EmployerPost() {
                       className="form-control"
                       id="postTitle"
                       placeholder="Nhập thời gian làm việc"
-                      value={newPost.working_time}
+                      value={newPost?.working_time}
                       onChange={(e) =>
                         setNewPost({ ...newPost, working_time: e.target.value })
                       }
@@ -659,12 +770,17 @@ export default function EmployerPost() {
                   </label>
                   <select
                     className="form-select"
-                    id="field"
-                    selected={newPost.work_location}
+                    id="field_worklocation"
+                    value={newPost.work_location || ""}
+                    // selected={newPost?.work_location}
                     onChange={(e) =>
                       setNewPost({ ...newPost, work_location: e.target.value })
                     }
+                    required
                   >
+                    <option value="" disabled>
+                      Chọn địa điểm
+                    </option>
                     {city?.map((option) => (
                       <option value={option.city_id} key={option.city_id}>
                         {option.city_name}
@@ -746,7 +862,7 @@ export default function EmployerPost() {
                 aria-label="Close"
                 onClick={handleAddPost}
               >
-                Đăng bài
+                {isAddPost === true ? "Đăng bài" : "Cập nhật bài đăng"}
               </button>
             </div>
           </div>
@@ -887,7 +1003,9 @@ export default function EmployerPost() {
                         <li>
                           <p
                             className="dropdown-item"
-                            onClick={() => handleExtendDays(post.job_id, 7)}
+                            onClick={() =>
+                              handleExtendDays(post.job_id, post.date_expi, 7)
+                            }
                           >
                             7 ngày
                           </p>
@@ -895,7 +1013,9 @@ export default function EmployerPost() {
                         <li>
                           <p
                             className="dropdown-item"
-                            onClick={() => handleExtendDays(post.job_id, 14)}
+                            onClick={() =>
+                              handleExtendDays(post.job_id, post.date_expi, 14)
+                            }
                           >
                             14 ngày
                           </p>
@@ -903,7 +1023,9 @@ export default function EmployerPost() {
                         <li>
                           <p
                             className="dropdown-item"
-                            onClick={() => handleExtendDays(post.job_id, 30)}
+                            onClick={() =>
+                              handleExtendDays(post.job_id, post.date_expi, 30)
+                            }
                           >
                             30 ngày
                           </p>
@@ -913,7 +1035,7 @@ export default function EmployerPost() {
                   </td>
                   <td>
                     <p className="text-secondary custom-hover-3">
-                      {post.isHide ? (
+                      {post?.status_ === 1 ? (
                         <span
                           onClick={() => handleShowHide(post.job_id, false)}
                         >
@@ -932,6 +1054,7 @@ export default function EmployerPost() {
                       data-bs-toggle="modal"
                       data-bs-target="#confirmDeletePostModal"
                       onClick={() => {
+                        // console.log("postID", post.job_id);
                         setPostID(post.job_id);
                       }}
                     >
