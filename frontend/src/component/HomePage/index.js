@@ -21,9 +21,11 @@ export default function HomePage() {
   const {data: generalInfo} = useGetGeneralInfoQuery();
   const [currentPage, setCurrentPage] = useState(1);
   const { data: latestWorkResponse, isLoading, isError, error } = useGetLatestWorkQuery({paging_size:8});
+  const JobCountByIndustry = generalInfo?.JobCountByIndustry || [] ;
 
   // const leadingCompany = generalInfo?.leadingcompany || [];
   const latestWork = latestWorkResponse?.jobs || [];
+
   console.log("latestWork", latestWork);  
   const { currentDate } = useGetTimeQuery();
 
@@ -159,7 +161,7 @@ export default function HomePage() {
     <>
       <HeroSection generalInfo={generalInfo} />
       <RecentJobSection job={latestWork} />
-      <MainCategorySection />
+      <MainCategorySection JobCountByIndustry= {JobCountByIndustry} />
       <BeOurEmployer />
       <FounderSection />
     </>

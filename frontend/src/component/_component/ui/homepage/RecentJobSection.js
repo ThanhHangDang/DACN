@@ -7,9 +7,10 @@ const RecentJobSection = ({ job }) => {
     <div className="container my-5">
       <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
         <div>
-          <h3 className="fw-bold mb-2">Recent Jobs Available</h3>
+          <h3 className="fw-bold mb-2">Việc làm tốt nhất vừa cập nhật</h3>
           <p className="text-muted mb-0">
-            At eu lobortis pretium tincidunt amet lacus ut aenean aliquet...
+            {/* At eu lobortis pretium tincidunt amet lacus ut aenean aliquet... */}
+            Bấm vào xem thêm để khám phá tất cả tin tuyển dụng 
           </p>
         </div>
         <div className="mt-3 mt-md-0">
@@ -17,7 +18,7 @@ const RecentJobSection = ({ job }) => {
             to="/post"
             className="text-success text-decoration-underline fw-semibold"
           >
-            View all
+            Xem thêm
           </NavLink>
         </div>
       </div>

@@ -7,7 +7,8 @@ const {
   queryGetListJobOfCompany,
   queryGetListLeadingCompany,
   queryGetListCompanyBySearch,
-  queryGetGeneralInfo
+  queryGetGeneralInfo,
+  queryGetRelatedJobs
 } = require("../models/guestModels.js");
 
 const getPublicJobDetail = async (req, res, next) => {
@@ -141,6 +142,22 @@ const getGeneralInfo = async (req, res, next) => {
     return next(new ApiError("Có lỗi khi lấy thông tin công ty", 500));
   }
 };
+const getRelatedJobs = async (req, res, next) => {
+try {
+  const job_id = req.query.job_id;
+  if (!job_id) {
+    return next(new ApiError("Thiếu ID bài đăng", 400));
+  }
+  const data = await queryGetRelatedJobs(job_id);
+  // if (!data || data.length === 0) {
+  //   return next(new ApiError("Không tìm thấy bài đăng", 404));
+  // }
+  return res.success(data||[], "Lấy chi tiết bài đăng thành công");
+}
+catch (err) {
+  return next(new ApiError("Lỗi khi lấy chi tiết bài đăng", 500));
+}
+};
 
 module.exports = {
   getPublicInformationOfCompany,
@@ -149,5 +166,6 @@ module.exports = {
   getListJobOfCompany,
   getListLeadingCompany,
   getListCompanyBySearch,
-  getGeneralInfo
+  getGeneralInfo,
+  getRelatedJobs
 };

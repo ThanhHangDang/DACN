@@ -2,6 +2,7 @@ const db = require("../config/databaseConfig.js");
 const JobTables = require("../config/table_for_job.js");
 const EmployerTables = require("../config/table_for_employer.js");
 const table_for_job = require("../config/table_for_job.js");
+const e = require("express");
 
 ///////////////////////////////////////////////////////////////////////////
 // Jobseeker Queries
@@ -143,8 +144,13 @@ JOIN
   return result;
 };
 
+// đã xử lý thêm logs khi truy vấn
 const queryGetJobseekerDetail = async (employer_id, jobseeker_id) => {
+  let connection;
   try {
+    connection = await db.getConnection(); // Lấy kết nối từ pool
+    await connection.beginTransaction(); // Bắt đầu giao dịch
+    const create_at = new Date();
     const [jobseeker_detail] = await db.query(
       `
       select
@@ -285,10 +291,59 @@ const queryGetJobseekerDetail = async (employer_id, jobseeker_id) => {
       employer_score: employerRating[0] ? employerRating[0].score : null,
     };
     //{ kết thúc cụm lấy data rating}
-    return { ...jobseeker_detail[0], ratingData,score:ratingData.averageScore };
+
+    // thêm vào logs, kiểm tra xem đã có chưa: nếu có rồi thì chỉ update ngày xem
+    const [checkLogsView] = await db.query(
+      `SELECT * FROM logs_employer_view_jobseeker WHERE employer_id = ? and jobseeker_id = ?`,
+      [employer_id, jobseeker_id]
+    );
+    const [checkLogsSave] = await db.query(
+      `SELECT * FROM logs_employer_save_jobseeker WHERE employer_id = ? and jobseeker_id = ?`,
+      [employer_id, jobseeker_id]
+    );
+    const isSaved = checkLogsSave.length > 0 ? true : false;
+
+    if (checkLogsView.length > 0) {
+      const [logs] = await db.query(
+        `
+                  UPDATE logs_employer_view_jobseeker set create_at =? WHERE employer_id=? AND jobseeker_id=? ;
+                  `,
+        [create_at, employer_id, jobseeker_id]
+      );
+
+      if (logs.affectedRows === 0) {
+        throw new Error("Failed to insert logs into database");
+      }
+    } else {
+      const [logs] = await db.query(
+        `
+      INSERT INTO logs_employer_view_jobseeker (employer_id, jobseeker_id, create_at) VALUES (?, ?, ?)
+      `,
+        [employer_id, jobseeker_id, create_at]
+      );
+      if (logs.affectedRows === 0) {
+        throw new Error("Failed to insert logs into database");
+      }
+    }
+    await connection.commit(); // Cam kết giao dịch
+    return {
+      ...jobseeker_detail[0],
+      ratingData,
+      score: ratingData.averageScore,
+      isSaved: isSaved,
+    };
   } catch (error) {
+    // Chỉ rollback khi connection đã được khởi tạo
+    if (connection) {
+      await connection.rollback();
+    }
     console.error("Error getting jobseeker detail:", error);
-    throw error; // Ném lại lỗi để xử lý ở nơi gọi hàm
+    throw error;
+  } finally {
+    // Chỉ release khi connection đã được khởi tạo
+    if (connection) {
+      connection.release();
+    }
   }
 };
 
@@ -383,6 +438,35 @@ const queryGetListJobByUser = async (employer_id) => {
   }
 };
 
+const queryGetListJobForInvite = async (employer_id, jobseeker_id) => {
+  try {
+    const [listJob] = await db.query(
+      ` SELECT COALESCE(
+  JSON_ARRAYAGG(
+    JSON_OBJECT(
+      'job_id', j.job_id,
+      'title', j.title,  
+      'date_post', j.date_post,
+      'date_expi', j.date_expi,  
+      'work_location_name', loc.city_name,
+      'isInvited', CASE WHEN lei.job_id IS NOT NULL THEN TRUE ELSE FALSE END
+    )
+  ), JSON_ARRAY()) AS list_job
+        
+FROM
+  (SELECT * FROM job WHERE employer_id = ? AND status_ = 1 AND date_expi > NOW()) AS j    
+  JOIN catalog_city loc ON j.work_location = loc.city_id
+  LEFT JOIN logs_employer_invitation lei ON j.job_id = lei.job_id AND lei.jobseeker_id = ?;
+      `,
+      [employer_id, jobseeker_id]
+    );
+    return listJob[0].list_job;
+  } catch (error) {
+    console.error("Error getting list job by user:", error);
+    throw error; // Ném lại lỗi để xử lý ở nơi gọi hàm
+  }
+};
+
 const queryGetJobDetailByUser = async (job_id, employer_id) => {
   try {
     const [work] = await db.query(
@@ -471,13 +555,12 @@ const queryAddJobByUser = async (data) => {
   if (
     typeof data !== "object" ||
     !data.employer_id ||
-    !data.title||
+    !data.title ||
     !data.industry_id ||
     !data.job_function_id ||
-    !data.describle||
+    !data.describle ||
     !data.quantity
   ) {
-
     throw new Error("Missing required job information");
   }
   // Xử lý ngày tháng
@@ -580,7 +663,7 @@ const queryUpdateJobByUser = async (data) => {
   const { job_id, employer_id } = data;
   if (!job_id || !employer_id) {
     throw new Error("Missing job_id or employer_id");
-  } 
+  }
   try {
     const lastUpdateOn = new Date();
     data = { ...data, lastUpdateOn: lastUpdateOn };
@@ -907,14 +990,20 @@ const querySaveCandidate = async (employer_id, jobseeker_id) => {
       `INSERT INTO logs_employer_save_jobseeker (employer_id, jobseeker_id,create_at) VALUES (?, ?,?);`,
       [employer_id, jobseeker_id, create_at]
     );
-    return result.insertId > 0;
+    return result.affectedRows > 0;
   } catch (error) {
     console.error("Error saving candidate:", error);
     throw error; // Ném lại lỗi để xử lý ở nơi gọi hàm
   }
 };
 
-const queryRateCandidate = async (type, application_id, employer_id, rating, content) => {
+const queryRateCandidate = async (
+  type,
+  application_id,
+  employer_id,
+  rating,
+  content
+) => {
   try {
     const create_at = new Date();
     if (type === "update") {
@@ -923,16 +1012,15 @@ const queryRateCandidate = async (type, application_id, employer_id, rating, con
         [rating, content, create_at, employer_id, application_id]
       );
       return result.affectedRows > 0;
+    } else if (type === "insert") {
+      const [result] = await db.query(
+        `INSERT INTO logs_employer_rate_jobseeker (employer_id, jobseeker_id, score, content,create_at) VALUES (?, ?,?,?,?);`,
+        [employer_id, application_id, rating, content, create_at]
+      );
+      // console.log("result", result);
+      return result.affectedRows > 0;
     }
-    else if (type === "insert") {
-    const [result] = await db.query(
-      `INSERT INTO logs_employer_rate_jobseeker (employer_id, jobseeker_id, score, content,create_at) VALUES (?, ?,?,?,?);`,
-      [employer_id, application_id, rating,content, create_at]
-    );
-    // console.log("result", result);
-    return result.affectedRows > 0;
-  }
-  return false;
+    return false;
   } catch (error) {
     console.error("Error saving candidate:", error);
     throw error; // Ném lại lỗi để xử lý ở nơi gọi hàm
@@ -954,8 +1042,20 @@ const queryDeleteCandidate = async (employer_id, jobseeker_id) => {
   }
 };
 
-const queryInviteJobseekerApply = async (employer_id, job_id, jobseeker_id) => {
+const queryInviteJobseekerApply = async (employer_id, jobseeker_id, job_ids) => {
   try {
+    const create_at = new Date();
+    for (const job_id of job_ids) {
+      const [result] = await db.query(
+        `INSERT INTO logs_employer_invitation (employer_id, jobseeker_id, job_id, create_at) VALUES (?, ?, ?, ?);`,
+        [employer_id, jobseeker_id, job_id, create_at]
+      );
+      // console.log("result", result);
+      if (result.affectedRows === 0) {
+        throw new Error("Failed to insert invite into database");
+      }
+    }
+    return true; // Trả về true nếu có hàng bị xóa
   } catch (error) {
     console.error("Error saving candidate:", error);
     throw error; // Ném lại lỗi để xử lý ở nơi gọi hàm
@@ -964,6 +1064,7 @@ const queryInviteJobseekerApply = async (employer_id, job_id, jobseeker_id) => {
 
 const queryGetInvitedJobseeker = async (employer_id) => {
   try {
+    
   } catch (error) {
     console.error("Error saving candidate:", error);
     throw error; // Ném lại lỗi để xử lý ở nơi gọi hàm
@@ -972,6 +1073,11 @@ const queryGetInvitedJobseeker = async (employer_id) => {
 // Application Queries
 const queryGetListJobApplication = async (employer_id) => {
   try {
+
+
+
+
+
   } catch (error) {
     console.error("Error saving candidate:", error);
     throw error; // Ném lại lỗi để xử lý ở nơi gọi hàm
@@ -987,6 +1093,10 @@ const queryGetListJobApplicationByJob = async (employer_id, job_id) => {
 
 const queryRejectJobApplication = async (employer_id, job_id, jobseeker_id) => {
   try {
+
+
+
+
   } catch (error) {
     console.error("Error saving candidate:", error);
     throw error; // Ném lại lỗi để xử lý ở nơi gọi hàm
@@ -995,32 +1105,37 @@ const queryRejectJobApplication = async (employer_id, job_id, jobseeker_id) => {
 
 const queryAddNotification = async (employer_id, jobseeker_id, job_id) => {
   try {
+
+
+
+    
   } catch (error) {
     console.error("Error saving candidate:", error);
     throw error; // Ném lại lỗi để xử lý ở nơi gọi hàm
   }
 };
 
-
-
 const queryGetOverview = async (employer_id, days) => {
   try {
     if (!Array.isArray(days) || days.length !== 5) {
-      throw new Error("Invalid days array. It should contain exactly 5 elements.");
+      throw new Error(
+        "Invalid days array. It should contain exactly 5 elements."
+      );
     }
     const convertToDate = (dateStr) => {
-      const parts = dateStr.split('/');
-      if (parts.length !== 3) throw new Error(`Invalid date format: ${dateStr}`);
+      const parts = dateStr.split("/");
+      if (parts.length !== 3)
+        throw new Error(`Invalid date format: ${dateStr}`);
       // Chuyển từ DD/MM/YYYY sang YYYY-MM-DD
       return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
     };
-    const dateDays = days.map(day => convertToDate(day));
+    const dateDays = days.map((day) => convertToDate(day));
     const [d1, d2, d3, d4, d5] = dateDays;
 
     const step = (d2 - d1) / (1000 * 60 * 60 * 24);
     const d0 = new Date(d1);
     d0.setDate(d0.getDate() - step);
-    
+
     const [result0] = await db.query(
       `SELECT 
         JSON_ARRAY(
@@ -1030,7 +1145,7 @@ const queryGetOverview = async (employer_id, days) => {
           COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END),
           COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END)
         ) AS employer_invite_apply
-      FROM logs_employer_invite_apply
+      FROM logs_employer_invitation
       WHERE employer_id= ?`,
       [d0, d1, d0, d2, d0, d3, d0, d4, d0, d5, employer_id]
     );
@@ -1093,7 +1208,7 @@ const queryGetOverview = async (employer_id, days) => {
         FROM logs_jobseeker_follow_employer
         WHERE employer_id= ?;
       `,
-       [d0, d1, d0, d2, d0, d3, d0, d4, d0, d5, employer_id]
+      [d0, d1, d0, d2, d0, d3, d0, d4, d0, d5, employer_id]
     );
     const [result5] = await db.query(
       `
@@ -1109,7 +1224,7 @@ const queryGetOverview = async (employer_id, days) => {
         join job j on j.job_id = ljsj.job_id
         WHERE employer_id= ?;
       `,
-       [d0, d1, d0, d2, d0, d3, d0, d4, d0, d5, employer_id]
+      [d0, d1, d0, d2, d0, d3, d0, d4, d0, d5, employer_id]
     );
     const [result6] = await db.query(
       `
@@ -1125,7 +1240,7 @@ const queryGetOverview = async (employer_id, days) => {
         join job j on j.job_id = ljvj.job_id
         WHERE employer_id= ?;
       `,
-       [d0, d1, d0, d2, d0, d3, d0, d4, d0, d5, employer_id]
+      [d0, d1, d0, d2, d0, d3, d0, d4, d0, d5, employer_id]
     );
     const [result7] = await db.query(
       `
@@ -1140,9 +1255,9 @@ const queryGetOverview = async (employer_id, days) => {
         FROM logs_review
         WHERE company_id= ?;
       `,
-       [d0, d1, d0, d2, d0, d3, d0, d4, d0, d5, employer_id]
+      [d0, d1, d0, d2, d0, d3, d0, d4, d0, d5, employer_id]
     );
-      const [TotalApply] = await db.query(
+    const [TotalApply] = await db.query(
       `
         SELECT 
           COUNT(*) as TotalApply
@@ -1150,7 +1265,7 @@ const queryGetOverview = async (employer_id, days) => {
         join logs_jobseeker_apply_job lja on lja.job_id = j.job_id
         WHERE employer_id= ?;
       `,
-      [ employer_id]
+      [employer_id]
     );
     const [NearlyExp] = await db.query(
       `
@@ -1166,26 +1281,34 @@ const queryGetOverview = async (employer_id, days) => {
       SELECT COUNT(*) AS TotalJob
       FROM job
       WHERE employer_id= ?;
-      `,[employer_id]);
-      const [VisibleJob] = await db.query(
-        `
+      `,
+      [employer_id]
+    );
+    const [VisibleJob] = await db.query(
+      `
         SELECT COUNT(*) AS VisibleJob
         FROM job
         WHERE employer_id= ? and status_ = 1 and date_expi >= NOW();
-        `,[employer_id]);
-    const chart  = 
-      {
-        'employer_invite_apply':result0[0].employer_invite_apply,   
-        'employer_rate_jobseeker': result1[0].employer_rate_jobseeker,
-        'employer_view_jobseeker': result2[0].employer_view_jobseeker,
-        'jobseeker_apply_job': result3[0].jobseeker_apply_job,
-        'jobseeker_follow_employer': result4[0].jobseeker_follow_employer,
-        'jobseeker_save_job': result5[0].jobseeker_save_job,
-        'jobseeker_view_job': result6[0].jobseeker_view_job,
-        'jobseeker_rate_company': result7[0].jobseeker_rate_company
-      }
-    ;
-    return {chart, TotalApply: TotalApply[0].TotalApply, NearlyExp: NearlyExp[0].NearlyExp, TotalJob: TotalJob[0].TotalJob, VisibleJob: VisibleJob[0].VisibleJob};
+        `,
+      [employer_id]
+    );
+    const chart = {
+      employer_invite_apply: result0[0].employer_invite_apply,
+      employer_rate_jobseeker: result1[0].employer_rate_jobseeker,
+      employer_view_jobseeker: result2[0].employer_view_jobseeker,
+      jobseeker_apply_job: result3[0].jobseeker_apply_job,
+      jobseeker_follow_employer: result4[0].jobseeker_follow_employer,
+      jobseeker_save_job: result5[0].jobseeker_save_job,
+      jobseeker_view_job: result6[0].jobseeker_view_job,
+      jobseeker_rate_company: result7[0].jobseeker_rate_company,
+    };
+    return {
+      chart,
+      TotalApply: TotalApply[0].TotalApply,
+      NearlyExp: NearlyExp[0].NearlyExp,
+      TotalJob: TotalJob[0].TotalJob,
+      VisibleJob: VisibleJob[0].VisibleJob,
+    };
   } catch (error) {
     console.error("Error in queryGetOverview:", error);
     throw error;
@@ -1213,6 +1336,7 @@ module.exports = {
   queryRejectJobApplication,
   queryAddNotification,
 
+  queryGetListJobForInvite,
   queryInviteJobseekerApply,
   queryGetInvitedJobseeker,
   queryGetListJobApplicationByJob,

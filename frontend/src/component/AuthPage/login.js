@@ -141,7 +141,7 @@ export default function Login() {
               </div>
               <p className="text-center text-muted mt-4">
                 Bạn chưa có tài khoản?
-                <NavLink to="/auth" className="text-decoration-none">
+                <NavLink to="/register" className="text-decoration-none">
                   Đăng ký
                 </NavLink>
                 .

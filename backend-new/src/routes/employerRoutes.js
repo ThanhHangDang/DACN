@@ -21,7 +21,8 @@ const {
   getListJobApplication,
   rejectJobApplication,
   inviteCandidateApply,
-  getOverview
+  getOverview,
+  getListJobForInvite
 } = require("../controllers/employerControllers.js");
 
 const { upload } = require("../middlewares/imageUpload.js");
@@ -50,9 +51,10 @@ employerRoutes.put("/candidate", rateCandidate);   // cập nhật rating cho �
 employerRoutes.delete("/candidate", deleteCandidate); // xóa ứng viên khỏi danh sách ứng viên đã lưu
 
 employerRoutes.get("/job-applications", getListJobApplication );  // lấy danh sách ứng viên đã ứng tuyển
-employerRoutes.delete("/job-applications", rejectJobApplication); // dùng để reject ứng viên
+employerRoutes.delete("/job-application", rejectJobApplication); // dùng để reject ứng viên
 
-employerRoutes.post("/job-invitations", inviteCandidateApply); 
+employerRoutes.get("/list-job-for-invitation", getListJobForInvite); 
+employerRoutes.post("/job-invitation", inviteCandidateApply); 
 
 employerRoutes.post("/overview", getOverview); // lấy thông tin tổng quan của công ty); 
 module.exports = employerRoutes ;

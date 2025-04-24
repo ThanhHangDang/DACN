@@ -1,8 +1,12 @@
 import React, { useEffect } from "react";
+import { Card, ListGroup } from 'react-bootstrap';
 import { useParams, NavLink, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 // import { getPostDetails } from "../../redux/actions/postAction.js";
-import { useGetJobDetailQuery } from "../../../redux_toolkit/guestApi.js";
+import {
+  useGetJobDetailQuery,
+  useGetRelatedJobsQuery,
+} from "../../../redux_toolkit/guestApi.js";
 import formatDateToDDMMYYYY from "../../../utils/formatDate.js";
 import calculateDaysRemaining from "../../../utils/calculateDaysRemaining.js";
 import CompanyHeader from "../../../component/_component/ui/CompanyHeader.js";
@@ -19,7 +23,6 @@ export default function WorkDetail() {
 
   const formatNumberToTr = (number) => `${(number / 1e6).toFixed(0)}tr`;
 
-  // const postDetail = useSelector((state) => state.post.postDetail);
   const {
     data: postDetail,
     isLoading,
@@ -27,7 +30,10 @@ export default function WorkDetail() {
   } = useGetJobDetailQuery(id, {
     refetchOnMountOrArgChange: true,
   });
-  console.log(postDetail);
+
+  const { data: relatedJobs, isLoading: isLoadingRelatedJobs } = useGetRelatedJobsQuery(id);
+  console.log("postDetail",postDetail);
+  console.log("relatedJobs",relatedJobs);
 
   const handleSaveJob = () => {
     console.log("Jobseeker: ", user?.id, " lưu Job: ", postDetail?.job_id);
@@ -414,7 +420,8 @@ export default function WorkDetail() {
               </div>
             </div>
 
-            <div className="card">
+            {/* cụm Related job*/}
+            {/* <div className="card">
               <div className="card-body">
                 <h5>Việc làm tương tự</h5>
                 <ul className="list-unstyled">
@@ -435,7 +442,50 @@ export default function WorkDetail() {
                   </li>
                 </ul>
               </div>
-            </div>
+            </div> */}
+            {isLoadingRelatedJobs || relatedJobs?.length === 0 ? (
+              <div>
+                {" "}
+                Rất tiếc, hiện chúng tôi không tìm thấy công việc tương tự.
+              </div>
+            ) : (
+              <Card>
+                <Card.Body>
+                  <Card.Title className="mb-3">
+                    CÁC CÔNG VIỆC TƯƠNG TỰ
+                  </Card.Title>
+                  <ListGroup variant="flush">
+                    {relatedJobs?.map((job, index) => (
+                      <ListGroup.Item
+                        key={index}
+                        className="d-flex align-items-start"
+                      >
+                        <img
+                          src={job.company_logo}
+                          alt={job.company_name}
+                          width="100"
+                          height="100"
+                          className="me-3"
+                        />
+                        <div>
+                          <h6 className="mb-1">{job.title}</h6>
+                          <div>{job.company_name}</div>
+                          <div>
+                            <strong>Lương:</strong> {(job.salary_max === 0 && job.salary_min === 0) ? 
+                            "Thỏa thuận" : `${formatNumberToTr(job.salary_min)} - ${formatNumberToTr(job.salary_max)} đ/tháng`}                    
+                          </div>
+                          <div>
+                            <i className="bi bi-geo-alt"></i> {job.work_location_name}
+                          </div>
+                        </div>
+                      </ListGroup.Item>
+                    ))}
+                  </ListGroup>
+                </Card.Body>
+              </Card>
+            )}
+
+            {/* kết thúc cụm Related job*/}
           </div>
         </div>
       </div>

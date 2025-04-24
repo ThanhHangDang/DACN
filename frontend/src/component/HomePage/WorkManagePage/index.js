@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-// import { useDispatch, useSelector } from "react-redux";
 import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
 import { useGetJobSearchQuery } from "../../../redux_toolkit/guestApi";
 import { useSelector } from "react-redux";
 import {
@@ -18,8 +17,11 @@ import { toast } from "react-toastify";
 
 const JobListing = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const titleFromUrl = searchParams.get("title");
+
   const [filter, setFilter] = useState({
-    title: "",
+    title: titleFromUrl || "",
     industry_id: "",
     job_function_id: "",
     work_location: "",
@@ -33,17 +35,18 @@ const JobListing = () => {
     require_experience: 0,
     is_active: 1,
     date_post: "",
-    active_page: 1, // Thêm active_page vào filter
-    paging_size: 10, // Thêm kích thước trang
+    active_page: 1,
+    paging_size: 10,
   });
-  const { data: cata_city } = useGetCitiesQuery(84); // 84 là mã quốc gia Việt Nam
+
+  const { data: cata_city } = useGetCitiesQuery(84);
   const { data: cata_industry } = useGetIndustriesQuery();
   const { data: cata_jobFunction } = useGetJobFunctionQuery();
   const cata_jobtype = [
     { id: 1, name: "Full time" },
     { id: 2, name: "Part time" },
   ];
-const sort_by = ["Tin mới cập nhật", "Tin được quan tâm nhất", "Mức lương cao nhất"];
+  const sort_by = ["Tin mới cập nhật", "Tin được quan tâm nhất", "Mức lương cao nhất"];
   const year_exp_arr = [
     { id: 1, name: "Dưới 1 năm", value: 0 },
     { id: 2, name: "Từ 1 đến 3 năm", value: 1 },
@@ -52,15 +55,11 @@ const sort_by = ["Tin mới cập nhật", "Tin được quan tâm nhất", "M�
     { id: 5, name: "Trên 10 năm", value: 4 },
   ];
 
-  // const [active_page, setActive_Page] = useState(1);
-  // const [totalPages, setTotalPages] = useState(1);
   const { data, isLoading, error, refetch } = useGetJobSearchQuery(filter);
-  console.log("data", data);
   const { jobs, totalWorksPages } = data || {
     jobs: [],
     totalWorksPages: 1,
   };
-  console.log("city", jobs);
   const { isLogin, user } = useSelector((state) => state.auth);
 
   useEffect(() => {
@@ -70,10 +69,23 @@ const sort_by = ["Tin mới cập nhật", "Tin được quan tâm nhất", "M�
     }
   }, [navigate, user]);
 
+  useEffect(() => {
+    if (titleFromUrl) {
+      setFilter((prevFilter) => ({
+        ...prevFilter,
+        title: titleFromUrl,
+        active_page: 1,
+      }));
+    }
+  }, [titleFromUrl]);
 
-  // useEffect(() => {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      refetch();
+    }, 500);
 
-  // }, [filter]);
+    return () => clearTimeout(timer);
+  }, [filter, refetch]);
 
   return (
     <>
@@ -86,10 +98,30 @@ const sort_by = ["Tin mới cập nhật", "Tin được quan tâm nhất", "M�
           <div className="col-lg-3 mb-4 ">
             <div className="p-3 border rounded shadow-sm bg-light">
               <h6 className="fw-bold mb-3">Tìm kiếm theo chức danh</h6>
-              <input
-                className="form-control mb-3"
-                placeholder="Tên công việc bạn muốn tìm kiếm"
-              />
+              <div className="input-group mb-3">
+                <input
+                  className="form-control"
+                  placeholder="Tên công việc bạn muốn tìm kiếm"
+                  value={filter.title}
+                  onChange={(e) =>
+                    setFilter({
+                      ...filter,
+                      title: e.target.value,
+                      active_page: 1,
+                    })
+                  }
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") refetch();
+                  }}
+                />
+                <button
+                  className="btn btn-outline-success"
+                  type="button"
+                  onClick={() => refetch()}
+                >
+                  <i className="bi bi-search"></i>
+                </button>
+              </div>
               <h6 className="fw-bold mb-2">Tìm kiếm theo địa điểm làm việc</h6>
               <select
                 className="form-select mb-3"
@@ -187,10 +219,8 @@ const sort_by = ["Tin mới cập nhật", "Tin được quan tâm nhất", "M�
               ))}
 
               <h6 className="fw-bold mt-3">Experience Level</h6>
-              {/* Add experience checkboxes */}
 
               <h6 className="fw-bold mt-3">Date Posted</h6>
-              {/* Add date checkboxes */}
 
               <h6 className="fw-bold mt-3">Mức lương mong muốn</h6>
               <input type="range" className="form-range mb-2" />
@@ -226,18 +256,19 @@ const sort_by = ["Tin mới cập nhật", "Tin được quan tâm nhất", "M�
           <div className="col-lg-9">
             <div className="d-flex justify-content-between align-items-center mb-3">
               <div className="text-muted small">Showing 6-6 of 10 results</div>
-              <select className="form-select form-select-sm w-auto"
-              onChange={(e) =>
-                setFilter({
-                  ...filter,
-                  job_function_id: e.target.value,
-                })
-              }
-              value={filter.job_function_id}>
+              <select
+                className="form-select form-select-sm w-auto"
+                onChange={(e) =>
+                  setFilter({
+                    ...filter,
+                    job_function_id: e.target.value,
+                  })
+                }
+                value={filter.job_function_id}
+              >
                 {sort_by.map((sort, index) => (
-                <option>{sort}</option>
-              ))}
-              
+                  <option key={index}>{sort}</option>
+                ))}
               </select>
             </div>
             {jobs.map((job, index) => (

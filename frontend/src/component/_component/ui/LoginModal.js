@@ -6,7 +6,7 @@ import {
   checkLoginStatus,
 } from "../../../redux_toolkit/AuthSlice.js";
 
-const LoginModal = () => {
+const LoginModal = ({title}) => {
   const dispatch = useDispatch();
 
   const { isLogin, loading } = useSelector((state) => state.auth);
@@ -33,7 +33,7 @@ const LoginModal = () => {
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title card-title h3" id="modalTitle">
-              Đổi mật khẩu
+           {title?  title: "Đổi mật khẩu"}
             </h5>
             <button
               type="button"
@@ -86,7 +86,7 @@ const LoginModal = () => {
               </div>
               <p className="text-center text-muted mt-4">
                 Bạn chưa có tài khoản?
-                <NavLink to="/auth" className="text-decoration-none">
+                <NavLink to="/register" className="text-decoration-none">
                   Đăng ký
                 </NavLink>
                 .

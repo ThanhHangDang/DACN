@@ -2,8 +2,11 @@ import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { useDispatch } from "react-redux";
  import { registerUser } from "../../redux_toolkit/AuthSlice.js";
-export default function Auth() {
+ import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+export default function Register() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   //Data để tạo tài khoản
   const [dataRegister, setDataRegister] = useState({
@@ -88,9 +91,27 @@ export default function Auth() {
   };
 
   //Hàm xử lý yêu cầu tạo tài khoản
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(registerUser(dataRegister));
+    const response = await dispatch(registerUser(dataRegister));
+    console.log("response register",response.payload);
+    if (response.payload.success)
+    {
+      toast.success("Đăng ký tài khoản thành công! Vui lòng đăng nhập để sử dụng các tính năng dành riêng cho bạn");
+      setDataRegister({
+        username: "",
+        name: "",
+        phone: "",
+        email: "",
+        password: "",
+        role: "3",
+      });
+      navigate("/login");
+    }
+    else
+    {
+      toast.error("Đăng ký tài khoản thất bại! Vui lòng kiểm tra lại thông tin đăng ký");
+    }
   };
 
   useEffect(() => {
