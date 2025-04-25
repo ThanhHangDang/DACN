@@ -4,6 +4,8 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout, checkLoginStatus } from "../../redux_toolkit/AuthSlice.js";
 
+import NotificationHeader from "./ui/NotificationHeader.js";
+
 const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -58,6 +60,36 @@ const Header = () => {
       </>
     );
   };
+
+  const notifications = [
+    {
+      id: 1,
+      name: "Đoàn Phương Quang Lưu",
+      content: "đã nhắc đến bạn và những người khác ở một bình luận trong",
+      group: "Kèo banh Cầu Xéo",
+      time: "1 giờ",
+      avatar: "https://via.placeholder.com/40",
+      unread: true,
+    },
+    {
+      id: 2,
+      name: "Trần Thế Anh",
+      content: "đã nhắc đến bạn và những người khác ở một bình luận trong",
+      group: "Kèo banh Cầu Xéo",
+      time: "3 ngày",
+      avatar: "https://via.placeholder.com/40",
+      unread: true,
+    },
+    {
+      id: 3,
+      name: "Hệ thống",
+      content: "đã từ chối đăng nhập nhưng bị chặn vì thông tin ngắn lại.",
+      group: "",
+      time: "1 tuần",
+      avatar: "https://via.placeholder.com/40",
+      unread: false,
+    },
+  ];
 
   useEffect(() => {
     dispatch(checkLoginStatus());
@@ -200,6 +232,63 @@ const Header = () => {
                 aria-label="Search"
                 style={{ width: "200px" }}
               /> */}
+              <div className="navbar-nav mb-2 mb-lg-0">
+                <div className="dropdown">
+                  <button
+                    type="button"
+                    class="btn btn-primary "
+                    id="dropdownMenuButton1"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <i class="fa fa-bell" aria-hidden="true"></i>{" "}
+                    <span class="badge bg-secondary">4</span>
+                  </button>
+                  <ul
+                    class="dropdown-menu"
+                    aria-labelledby="dropdownMenuButton1"
+                    style={{ minWidth: 320 }}
+                  >
+                    <li>
+                      <h6 class="dropdown-header">Thông báo</h6>
+                    </li>
+
+                    <li className="">
+                      <a className="dropdown-item align-self-end " href="#">
+                        Tất cả
+                      </a>
+                    </li>
+
+                    {notifications.map((noti) => (
+                      <li
+                        key={noti.id}
+                        className="list-group-item d-flex align-items-start"
+                      >
+                        <img
+                          src={noti.avatar}
+                          alt="Avatar"
+                          className="rounded-circle me-3"
+                          width="40"
+                          height="40"
+                        />
+                        <div className="flex-grow-1">
+                          <div>
+                            <strong>{noti.name}</strong> {noti.content}{" "}
+                            {noti.group && <strong>{noti.group}</strong>}
+                          </div>
+                          <small className="text-muted">{noti.time}</small>
+                        </div>
+                        {noti.unread && (
+                          <span className="badge bg-primary rounded-pill ms-2">
+                            ●
+                          </span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
               <div className="navbar-nav mb-2 mb-lg-0">
                 {isLogin ? (
                   <>
