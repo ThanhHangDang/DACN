@@ -1,5 +1,6 @@
 const express = require("express");
 const {
+  jobseekerGetJobDetail,
   getOverview,
   getItemProfile,
   deleteItemProfile,
@@ -35,6 +36,7 @@ jobseekerRoutes.post("/profile-cv", upload.single("resume"), addResume);
 jobseekerRoutes.get("/profile-cv", getResume);
 jobseekerRoutes.delete("/profile-cv", deleteResume);
 
+jobseekerRoutes.post("/job", jobseekerGetJobDetail);
 jobseekerRoutes.get("/job-applications", getListJobApplication); // lấy
 jobseekerRoutes.post("/job-application", applyToJob);
 

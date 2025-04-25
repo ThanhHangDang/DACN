@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import {useGetJobseekerAppliedQuery} from "../../../redux_toolkit/employerApi.js";
+import { differenceInYears,format, parseISO } from 'date-fns';
+import { vi } from 'date-fns/locale';
 import "./style.css";
 
 export default function EmployeeProfileManage() {
   const { isLogin, user } = useSelector((state) => state.auth);
-
+// const {data} = useGetJobseekerAppliedQuery(user?.id)||[];
   const navigate = useNavigate();
 
   const data = [
     {
       id: 1,
       avatar: "https://randomuser.me/api/portraits/women/21.jpg",
-      name: "Nguyễn Thị Hồng",
-      job: "Nhân viên Marketing",
+      fullname: "Nguyễn Thị Hồng",
+      title: "Nhân viên Marketing",
       age: 26,
       dateApplied: "2025-04-10",
       rating: 3,
@@ -57,7 +60,7 @@ export default function EmployeeProfileManage() {
   ];
 
   const [ratings, setRatings] = useState(() =>
-    data.reduce((acc, item) => ({ ...acc, [item.id]: item.rating }), {})
+    data.reduce((acc, item) => ({ ...acc, [item.profile_id]: item.score }), {})
   );
 
   const handleRatingChange = (id, value) => {
@@ -84,7 +87,7 @@ export default function EmployeeProfileManage() {
           <select className="form-select form-select-sm w-auto">
             <option>Filter by JobName</option>
             {data?.map((item, index) => {
-              return <option value={item.job}>{item.job}</option>;
+              return <option value={item.job_id}>{item.title}</option>;
             })}
           </select>
         </div>
@@ -94,9 +97,9 @@ export default function EmployeeProfileManage() {
         <table className="table table-hover text-center">
           <thead>
             <tr>
-              <th scope="col">Avatar</th>
-              <th scope="col">Ứng viên</th>
-              <th scope="col">Công việc</th>
+              <th scope="col">Ảnh đại diện</th>
+              <th scope="col">Tên ứng viên</th>
+              <th scope="col">Vị trí ứng tuyển</th>
               <th scope="col">Tuổi</th>
               {/* <th scope="col">Địa chỉ</th>
               <th scope="col">Email</th> */}
@@ -108,7 +111,7 @@ export default function EmployeeProfileManage() {
           </thead>
           <tbody className="align-items-center align-middle">
             {data?.map((item) => (
-              <tr key={item.id} className="align-items-center">
+              <tr key={item.job_id + item.profile_id} className="align-items-center">
                 <td>
                   <img
                     src={item.avatar}
@@ -120,28 +123,28 @@ export default function EmployeeProfileManage() {
                     }}
                   />
                 </td>
-                <td className="text-start">{item.name}</td>
-                <td className="text-start">{item.job}</td>
-                <td>{item.age}</td>
-                <td>{item.dateApplied}</td>
+                <td className="text-start">{item.full_name}</td>
+                <td className="text-start">{item.title}</td>
+                <td> {differenceInYears(new Date(), new Date(item.birthday))}</td>
+                <td>{format(parseISO(item.create_at), 'dd/MM/yyyy', { locale: vi })}</td>
                 <td>
                   <div className="star-rating animated-stars">
                     {[5, 4, 3, 2, 1].map((star) => (
                       <React.Fragment key={star}>
                         <input
                           type="radio"
-                          id={`star${star}-user${item.id}`}
-                          name={`rating-user${item.id}`}
+                          id={`star${star}-user${item.profile_id}`}
+                          name={`rating-user${item.profile_id}`}
                           value={star}
-                          checked={ratings[item.id] === star}
-                          onChange={() => handleRatingChange(item.id, star)}
+                          checked={ratings[item.profile_id] === star}
+                          onChange={() => handleRatingChange(item.profile_id, star)}
                         />
                         <label
-                          htmlFor={`star${star}-user${item.id}`}
+                          htmlFor={`star${star}-user${item.profile_id}`}
                           className={`bi bi-star-fill ${
                             ratings[item.id] >= star ? "active" : ""
                           }`}
-                          onClick={() => handleRatingChange(item.id, star)}
+                          onClick={() => handleRatingChange(item.profile_id, star)}
                         ></label>
                       </React.Fragment>
                     ))}

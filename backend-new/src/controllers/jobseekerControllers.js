@@ -2,6 +2,7 @@ const { uploadToS3, uploadToS3CV, deleteFileFromS3 } = require("../middlewares/i
 
 const ApiError = require('../utils/ApiError');
 const {
+  queryJobseekerGetJobDetail,
   queryGetItemProfile,
   queryDeleteItemProfile,
   queryAddItemProfile,
@@ -22,6 +23,29 @@ const {
   queryGetOverview,
   queryGetJobsSuggestion
 } = require("../models/jobseekerModels.js");
+
+const jobseekerGetJobDetail = async (req, res, next) => {
+  try {
+    const { profile_id, job_id } = req.query;
+    
+    if (!job_id || !profile_id) {
+      return next(new ApiError("Thiếu thông tin công việc hoặc ID hồ sơ", 400));
+    }
+    
+    const jobdetail = await queryJobseekerGetJobDetail(profile_id, job_id);
+    if (!jobdetail) {
+      return next(new ApiError("Không tìm thấy công việc", 404));
+    }
+    return res.success(
+      jobdetail, 
+      `Lấy thông tin công việc ${job_id} thành công`
+    );
+  } catch (err) {
+    return next(new ApiError(`Có lỗi khi lấy thông tin công việc: ${err.message}`, 500));
+  }
+};
+
+
 
 const updateJobseekerProfileImage = async (req, res, next) => {
   try {
@@ -487,6 +511,7 @@ const getJobsSuggestion = async (req, res, next) => {
 
 
 module.exports = {
+  jobseekerGetJobDetail,
   getItemProfile,
   deleteItemProfile,
   addItemProfile,

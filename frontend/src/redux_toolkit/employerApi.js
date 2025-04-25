@@ -192,9 +192,9 @@ export const employerApi = createApi({
 
 
     getJobseekerApplied: builder.query({
-      query: ({ employer_id, job_id } ) => ({
+      query: ({ employer_id } ) => ({
         url: "/employer/job-applications",
-        params: { employer_id, job_id } ,
+        params: { employer_id } ,
       }),
       transformResponse: (response) => {
         console.log("redux receive getJobseekerApplied", response);
