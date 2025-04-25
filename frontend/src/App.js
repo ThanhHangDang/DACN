@@ -20,7 +20,6 @@ import JobseekerAccountSetting from "./component/JobSeekersPage/AccountSetting/i
 import yourCV from "./component/JobSeekersPage/Profile/yourCV.js";
 import yourCVwithUs from "./component/JobSeekersPage/Profile/yourCVwithUs.js";
 
-import CompanySeeYou from "./component/JobSeekersPage/MyCompany/companySeeYou.js";
 import CompanyYouFollow from "./component/JobSeekersPage/MyCompany/companyYouFollow.js";
 
 import YourApply from "./component/JobSeekersPage/MyWork/yourApply.js";
@@ -88,6 +87,7 @@ function App() {
               path="/jobseeker-notification"
               Component={JobSeekerNotification}
             />
+
             <Route
               path="/jobseeker-account"
               Component={JobseekerAccountSetting}
@@ -112,6 +112,7 @@ function App() {
               path="/employer-notification"
               Component={EmployerNotification}
             />
+
             <Route
               path="/employer-account"
               Component={EmployerAccountSetting}
