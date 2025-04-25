@@ -958,7 +958,7 @@ const queryUpdateLogoImage = async (company_id, imageData) => {};
 const queryUpdateBackgroundImage = async (company_id, imageData) => {};
 
 // Candidate Queries
-const queryGetListCandidate = async (employer_id) => {
+const queryGetListCandidateSaving = async (employer_id) => {
   try {
     const [listCandidate] = await db.query(
       `select 
@@ -968,12 +968,16 @@ const queryGetListCandidate = async (employer_id) => {
         pj.year_exp,
         pj.title,
         pj.birthday,
+        u.email,
+        pj.phone_number,
         COALESCE((select  lr.score
         from logs_employer_rate_jobseeker lr 
         where lr.employer_id = log.employer_id and lr.jobseeker_id = pj.profile_id), '0') as rating    
        from  
-       (SELECT * from logs_employer_save_jobseeker where employer_id = ?) log
-      JOIN profile_jobseeker pj on log.jobseeker_id = pj.profile_id;`,
+       (SELECT * from logs_employer_save_jobseeker where employer_id = 1321) log
+      JOIN profile_jobseeker pj on log.jobseeker_id = pj.profile_id;
+      JOIN user_ u on u.user_id = pj.profile_id
+      `,
       [employer_id]
     );
     return listCandidate;
@@ -1046,6 +1050,11 @@ const queryInviteJobseekerApply = async (employer_id, jobseeker_id, job_ids) => 
   try {
     const create_at = new Date();
     for (const job_id of job_ids) {
+      // xóa các reject ứng viên nếu có trước đó
+      await db.query(
+        `Update logs_jobseeker_apply_job set isreject=0 WHERE employer_id = ? AND jobseeker_id = ? AND job_id = ?;`,
+        [employer_id, jobseeker_id, job_id]
+      );
       const [result] = await db.query(
         `INSERT INTO logs_employer_invitation (employer_id, jobseeker_id, job_id, create_at) VALUES (?, ?, ?, ?);`,
         [employer_id, jobseeker_id, job_id, create_at]
@@ -1062,41 +1071,69 @@ const queryInviteJobseekerApply = async (employer_id, jobseeker_id, job_ids) => 
   }
 };
 
-const queryGetInvitedJobseeker = async (employer_id) => {
+const queryGetListInvitaion = async (employer_id) => {
   try {
     
   } catch (error) {
-    console.error("Error saving candidate:", error);
+    console.error("Error Get Invitation candidate:", error);
     throw error; // Ném lại lỗi để xử lý ở nơi gọi hàm
   }
 };
 // Application Queries
 const queryGetListJobApplication = async (employer_id) => {
   try {
-
-
-
-
+    const [result] =  await db.query(
+    ` SELECT 
+        ljaj.job_id,
+        p.profile_id,
+        p.full_name,
+        p.birthday,
+        j.title,
+        p.year_exp,
+        u.email,
+        e.avatar,
+        ljaj.create_at,
+        ljaj.isreject,
+        e.is_open_for_job,
+        COALESCE((Select avg(lrj.score) from logs_employer_rate_jobseeker lrj where lrj.jobseeker_id = p.profile_id),0) as score,
+        COUNT(*) OVER() AS total_count
+      FROM 
+          (select * from job where employer_id = ?) AS j
+      JOIN
+          logs_jobseeker_apply_job ljaj on ljaj.job_id = j.job_id
+      JOIN
+        user_ u on u.user_id = ljaj.jobseeker_id 
+      JOIN 
+          user_jobseeker AS e ON e.jobseeker_id = ljaj.jobseeker_id 
+      JOIN
+          profile_jobseeker AS p ON ljaj.jobseeker_id = p.profile_id`,[employer_id]);
+      return result;
 
   } catch (error) {
-    console.error("Error saving candidate:", error);
+    console.error("Error get candidate applied:", error);
     throw error; // Ném lại lỗi để xử lý ở nơi gọi hàm
   }
 };
-const queryGetListJobApplicationByJob = async (employer_id, job_id) => {
-  try {
-  } catch (error) {
-    console.error("Error saving candidate:", error);
-    throw error; // Ném lại lỗi để xử lý ở nơi gọi hàm
-  }
-};
+// const queryGetListJobApplicationByJob = async (employer_id, job_id) => {
+//   try {
+
+    
+//   } catch (error) {
+//     console.error("Error saving candidate:", error);
+//     throw error; // Ném lại lỗi để xử lý ở nơi gọi hàm
+//   }
+// };
 
 const queryRejectJobApplication = async (employer_id, job_id, jobseeker_id) => {
   try {
-
-
-
-
+const [result] = await db.query(
+    `UPDATE logs_jobseeker_apply_job SET isreject = 1 WHERE employer_id = ? AND job_id = ? AND jobseeker_id = ?;`,
+    [employer_id, job_id, jobseeker_id]
+  );
+  if (result.affectedRows === 0) {
+    throw new Error("Failed to update application status in database");
+  }
+  return true; // Trả về true nếu cập nhật thành công
   } catch (error) {
     console.error("Error saving candidate:", error);
     throw error; // Ném lại lỗi để xử lý ở nơi gọi hàm
@@ -1328,7 +1365,7 @@ module.exports = {
   queryDeleteItemCompanyProfile,
   queryUpdateLogoImage,
   queryUpdateBackgroundImage,
-  queryGetListCandidate,
+  queryGetListCandidateSaving,
   querySaveCandidate,
   queryRateCandidate,
   queryDeleteCandidate,
@@ -1338,8 +1375,8 @@ module.exports = {
 
   queryGetListJobForInvite,
   queryInviteJobseekerApply,
-  queryGetInvitedJobseeker,
-  queryGetListJobApplicationByJob,
+  queryGetListInvitaion,
+  // queryGetListJobApplicationByJob,
 
   queryGetOverview,
 };

@@ -13,18 +13,15 @@ const {
   queryDeleteItemCompanyProfile,
   queryUpdateLogoImage,
   queryUpdateBackgroundImage,
-  queryGetListCandidate,
+  queryGetListCandidateSaving,
   querySaveCandidate,
   queryRateCandidate,
   queryDeleteCandidate,
   queryGetListJobApplication,
   queryRejectJobApplication,
-  queryInviteJobseekerApply,
+  queryInviteJobseekerApply,  
+  queryGetListInvitaion,
   queryGetListJobForInvite,
-  queryGetInvitedJobseeker,
-  queryGetListJobApplicationByJob,
-
-
   queryGetOverview,
 } = require("../models/employerModels.js");
 
@@ -402,14 +399,14 @@ const getListCandidate = async (req, res, next) => {
     //   return next(new ApiError("Không có quyền truy cập dữ liệu này", 403));
     // }
     
-    const data = await queryGetListCandidate(company_id, job_id);
+    const data = await queryGetListCandidateSaving(company_id, job_id);
     
     return res.success(
-      { candidates: data || [] },
-      "Lấy danh sách ứng viên thành công"
+   data || [] ,
+      "Lấy danh sách lưu ứng viên thành công"
     );
   } catch (err) {
-    return next(new ApiError("Lỗi khi lấy danh sách ứng viên", 500));
+    return next(new ApiError("Lỗi khi lấy danh sách lưu ứng viên", 500));
   }
 };
 
@@ -490,9 +487,9 @@ const deleteCandidate = async (req, res, next) => {
 
 const getListJobApplication = async (req, res, next) => {
   try {
-    const { company_id, job_id=null } = req.query;
+    const { employer_id } = req.query;
     
-    if (!company_id) {
+    if (!employer_id) {
       return next(new ApiError("Thiếu ID công ty", 400));
     }
     
@@ -501,10 +498,10 @@ const getListJobApplication = async (req, res, next) => {
     //   return next(new ApiError("Không có quyền truy cập dữ liệu này", 403));
     // }
     
-    const data = await queryGetListJobApplication(company_id, job_id);
+    const data = await queryGetListJobApplication(employer_id);
     
     return res.success(
-      { applications: data || [] },
+       data || [],
       "Lấy danh sách đơn ứng tuyển thành công"
     );
   } catch (err) {
