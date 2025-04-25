@@ -1,9 +1,11 @@
 import { useSelector, useDispatch } from "react-redux";
 import LoginModal from "./LoginModal";
+import { NavLink } from "react-router-dom";
 export default function ComPanyHeard({
   companyInformation,
   heightBg = "250px",
   logoSize = "80px",
+  showFollowButton = true,
 }) {
   const { isLogin, user } = useSelector((state) => state.auth);
   const handdleSaveCompany = () => {
@@ -43,7 +45,14 @@ export default function ComPanyHeard({
               />
               <div className="ms-3">
                 <h5 className="text-white fw-bold">
-                  {companyInformation?.company_name}
+                  <NavLink
+                    to={`/company-detail/${
+                      companyInformation?.company_id ||
+                      companyInformation?.employer_id
+                    }`}
+                  >
+                    {companyInformation?.company_name}
+                  </NavLink>
                 </h5>
                 {/* <p className="text-white mb-0">
                     https://hapas.vn | 25-99 nhân viên | 87 người theo dõi
@@ -64,17 +73,15 @@ export default function ComPanyHeard({
                     : "0"}{" "}
                   người theo dõi
                 </p>
-                {user?.role === 3 ? (
-                  <>
+                {showFollowButton &&
+                  (user?.role === 3 ? (
                     <button
                       className="btn btn-primary me-2"
                       onClick={handdleSaveCompany}
                     >
                       + Theo dõi
                     </button>
-                  </>
-                ) : (
-                  <>
+                  ) : (
                     <button
                       className="btn btn-primary me-2"
                       data-bs-toggle="modal"
@@ -82,8 +89,7 @@ export default function ComPanyHeard({
                     >
                       + Theo dõi
                     </button>
-                  </>
-                )}
+                  ))}
               </div>
             </div>
           </div>

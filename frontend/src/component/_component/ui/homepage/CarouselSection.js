@@ -1,12 +1,20 @@
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-// import "bootstrap/dist/css/bootstrap.min.css";
-// import "bootstrap-icons/font/bootstrap-icons.css";
-// import { NavLink } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
 
-const HeroSection = ( {generalInfo} ) => {
+const HeroSection = ({ generalInfo }) => {
   const navigate = useNavigate();
-  const {leadingcompany,job_count,company_count,jobseeker_count} = generalInfo || {leadingcompany:[],job_count:0,company_count:0,jobseeker_count:0}
+  const { leadingcompany, job_count, company_count, jobseeker_count } =
+    generalInfo || {
+      leadingcompany: [],
+      job_count: 0,
+      company_count: 0,
+      jobseeker_count: 0,
+    };
+
+  const { user } = useSelector((state) => state.auth);
+
   const [searchInput, setSearchInput] = useState("");
   const [inputError, setInputError] = useState("");
   // Hàm xử lý khi thay đổi input
@@ -17,21 +25,21 @@ const HeroSection = ( {generalInfo} ) => {
       setInputError("");
     }
   };
-  
+
   // Hàm xử lý khi click nút tìm kiếm
   const handleSearch = () => {
     // Kiểm tra nếu input rỗng
     if (searchInput.trim() === "") {
       setInputError("Vui lòng nhập từ khóa tìm kiếm");
       return;
-    }    
+    }
     // Chuyển hướng đến trang /post với param title
     navigate(`/post?title=${encodeURIComponent(searchInput.trim())}`);
   };
-  
+
   // Hàm xử lý khi nhấn Enter trong input
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleSearch();
     }
   };
@@ -69,19 +77,23 @@ const HeroSection = ( {generalInfo} ) => {
             {/*      Input với validation  - VANNHAN_04_24 */}
             <input
               type="text"
-              className='form-control border-0 rounded-0 rounded-start'
-              placeholder={inputError?  inputError:"Tìm kiếm công việc cho sự nghiệp của bạn" }
+              className="form-control border-0 rounded-0 rounded-start"
+              placeholder={
+                inputError
+                  ? inputError
+                  : "Tìm kiếm công việc cho sự nghiệp của bạn"
+              }
               style={{ maxWidth: "80%", flexShrink: 1, minWidth: 0 }}
               value={searchInput}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
             />
-                {inputError && (
-                <div className="invalid-feedback text-start position-absolute">
-                  {inputError}
-                </div>
-              )}  
-              
+            {inputError && (
+              <div className="invalid-feedback text-start position-absolute">
+                {inputError}
+              </div>
+            )}
+
             {/* Location */}
             {/* tạm thời tắt search location - VANNHAN_04_24 */}
             {/* <select
@@ -101,53 +113,82 @@ const HeroSection = ( {generalInfo} ) => {
             </select> */}
 
             {/* Button lớn */}
-            <button className="btn btn-success rounded-0 rounded-end px-4 d-none d-md-flex align-items-center"
-                  onClick={handleSearch}>
+            <button
+              className="btn btn-success rounded-0 rounded-end px-4 d-none d-md-flex align-items-center"
+              onClick={handleSearch}
+            >
               <i className="bi bi-search me-2"></i> Search Job
             </button>
 
             {/* Button nhỏ */}
-            <button className="btn btn-success d-flex d-md-none align-items-center px-3"
-                  onClick={handleSearch}>
+            <button
+              className="btn btn-success d-flex d-md-none align-items-center px-3"
+              onClick={handleSearch}
+            >
               <i className="bi bi-search"></i>
             </button>
           </div>
         </div>
 
         {/* Stats Section */}
-        <div className="row justify-content-center text-white-50">          
+        <div className="row justify-content-center text-white-50">
           <div className="col-6 col-md-3 mb-4">
-          <NavLink to="/post" className="text-decoration-none text-white-50">
             <div className="d-flex flex-column align-items-center">
-              <div className="bg-success rounded p-3 mb-2">
-                <i className="bi bi-briefcase-fill fs-4 text-white"></i>
-              </div>
-              <h5 className="text-white mb-0">{job_count}</h5>
-              <small>Công việc</small>
+              <NavLink
+                to="/post"
+                className="text-decoration-none text-white-50"
+              >
+                <div className="bg-success rounded p-3 mb-2">
+                  <i className="bi bi-briefcase-fill fs-4 text-white"></i>
+                </div>
+                <h5 className="text-white mb-0">{job_count}</h5>
+                <small>Công việc</small>
+              </NavLink>
             </div>
-          </NavLink>
           </div>
           <div className="col-6 col-md-3 mb-4">
-          <NavLink to="/candidates" className="text-decoration-none text-white-50">
-            <div className="d-flex flex-column align-items-center">
-              <div className="bg-success rounded p-3 mb-2">
-                <i className="bi bi-people-fill fs-4 text-white"></i>
+            {user?.role !== 2 ? (
+              <div className="d-flex flex-column align-items-center">
+                <div
+                  onClick={() => {
+                    toast.error("Bạn cần đăng nhập Nhà tuyển dụng!");
+                  }}
+                >
+                  <div className="bg-success rounded p-3 mb-2">
+                    <i className="bi bi-people-fill fs-4 text-white"></i>
+                  </div>
+                  <h5 className="text-white mb-0">{jobseeker_count}</h5>
+                  <small>Ứng viên</small>
+                </div>
               </div>
-              <h5 className="text-white mb-0">{jobseeker_count}</h5>
-              <small>Ứng viên</small>
-            </div>
-            </NavLink>
+            ) : (
+              <div className="d-flex flex-column align-items-center">
+                <NavLink
+                  to="/candidates"
+                  className="text-decoration-none text-white-50"
+                >
+                  <div className="bg-success rounded p-3 mb-2">
+                    <i className="bi bi-people-fill fs-4 text-white"></i>
+                  </div>
+                  <h5 className="text-white mb-0">{jobseeker_count}</h5>
+                  <small>Ứng viên</small>
+                </NavLink>
+              </div>
+            )}
           </div>
           <div className="col-6 col-md-3 mb-4">
-          <NavLink to="/list-company" className="text-decoration-none text-white-50">
             <div className="d-flex flex-column align-items-center">
-              <div className="bg-success rounded p-3 mb-2">
-                <i className="bi bi-buildings-fill fs-4 text-white"></i>
-              </div>
-              <h5 className="text-white mb-0">{company_count}</h5>
-              <small>Công ty</small>
+              <NavLink
+                to="/list-company"
+                className="text-decoration-none text-white-50"
+              >
+                <div className="bg-success rounded p-3 mb-2">
+                  <i className="bi bi-buildings-fill fs-4 text-white"></i>
+                </div>
+                <h5 className="text-white mb-0">{company_count}</h5>
+                <small>Công ty</small>
+              </NavLink>
             </div>
-            </NavLink>
           </div>
         </div>
 

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Card, ListGroup } from 'react-bootstrap';
+import { Card, ListGroup } from "react-bootstrap";
 import { useParams, NavLink, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 // import { getPostDetails } from "../../redux/actions/postAction.js";
@@ -31,9 +31,10 @@ export default function WorkDetail() {
     refetchOnMountOrArgChange: true,
   });
 
-  const { data: relatedJobs, isLoading: isLoadingRelatedJobs } = useGetRelatedJobsQuery(id);
-  console.log("postDetail",postDetail);
-  console.log("relatedJobs",relatedJobs);
+  const { data: relatedJobs, isLoading: isLoadingRelatedJobs } =
+    useGetRelatedJobsQuery(id);
+  console.log("postDetail", postDetail);
+  console.log("relatedJobs", relatedJobs);
 
   const handleSaveJob = () => {
     console.log("Jobseeker: ", user?.id, " lưu Job: ", postDetail?.job_id);
@@ -145,166 +146,174 @@ export default function WorkDetail() {
                 </ul>
 
                 <h5 className="mt-3">Thông tin việc làm</h5>
-                <div className="row row-cols-1 row-cols-md-2 g-3">
-                  {postDetail?.date_post && (
-                    <div className="d-flex align-items-center mb-3">
-                      <i
-                        className={`fa fa-calendar fa-lg text-primary me-3 mt-1 ms-2`}
-                      ></i>
-                      <div>
-                        <p className="mb-1 fw-bold">Ngày đăng</p>
-                        <p className="mb-0 text-muted">
-                          {format(postDetail?.date_post, "dd/MM/yyyy")}
-                        </p>
-                      </div>
+                <div className="row row-cols-1 row-cols-md-3 g-3">
+                  <div className="d-flex align-items-center mb-2">
+                    <i
+                      className={`fa fa-calendar fa-lg text-primary me-3 mt-1 ms-2`}
+                      style={{ width: 21.33 }}
+                    ></i>
+                    <div>
+                      <p className="mb-1 fw-bold">Ngày đăng</p>
+                      <p className="mb-0 text-muted">
+                        {postDetail?.date_post
+                          ? format(postDetail?.date_post, "dd/MM/yyyy")
+                          : "Chưa có thông tin"}
+                      </p>
                     </div>
-                  )}
+                  </div>
 
-                  {postDetail?.job_function_name && (
-                    <div className="d-flex align-items-center mb-3">
-                      <i
-                        className={`fa fa-sitemap fa-lg text-primary me-3 mt-1 ms-2`}
-                      ></i>
-                      <div>
-                        <p className="mb-1 fw-bold">Ngành nghề</p>
-                        <p className="mb-0 text-muted">
-                          {postDetail?.job_function_name}
-                        </p>
-                      </div>
+                  <div className="d-flex align-items-center mb-2">
+                    <i
+                      className={`fa fa-sitemap fa-lg text-primary me-3 mt-1 ms-2`}
+                      style={{ width: 21.33 }}
+                    ></i>
+                    <div>
+                      <p className="mb-1 fw-bold">Ngành nghề</p>
+                      <p className="mb-0 text-muted">
+                        {postDetail?.job_function_name || "Chưa có thông tin"}
+                      </p>
                     </div>
-                  )}
+                  </div>
 
-                  {postDetail?.industry_name && (
-                    <div className="d-flex align-items-center mb-3">
-                      <i
-                        className={`fa fa-briefcase fa-lg text-primary me-3 mt-1 ms-2`}
-                      ></i>
-                      <div>
-                        <p className="mb-1 fw-bold">Lĩnh vực</p>
-                        <p className="mb-0 text-muted">
-                          {postDetail?.industry_name}
-                        </p>
-                      </div>
+                  <div className="d-flex align-items-center mb-2">
+                    <i
+                      className={`fa fa-briefcase fa-lg text-primary me-3 mt-1 ms-2`}
+                      style={{ width: 21.33 }}
+                    ></i>
+                    <div>
+                      <p className="mb-1 fw-bold">Lĩnh vực</p>
+                      <p className="mb-0 text-muted">
+                        {postDetail?.industry_name || "Chưa có thông tin"}
+                      </p>
                     </div>
-                  )}
+                  </div>
 
-                  {postDetail?.require_experience !== undefined && (
-                    <div className="d-flex align-items-center mb-3">
-                      <i
-                        className={`fa fa-handshake-o fa-lg text-primary me-3 mt-1 ms-2`}
-                      ></i>
-                      <div>
-                        <p className="mb-1 fw-bold">Kinh nghiệm</p>
-                        <p className="mb-0 text-muted">
-                          {postDetail?.require_experience > 0
-                            ? postDetail?.require_experience
-                            : "Không yêu cầu"}
-                        </p>
-                      </div>
+                  <div className="d-flex align-items-center mb-2">
+                    <i
+                      className={`fa fa-users fa-lg text-primary me-3 mt-1 ms-2`}
+                      style={{ width: 21.33 }}
+                    ></i>
+                    <div>
+                      <p className="mb-1 fw-bold">Số lượng</p>
+                      <p className="mb-0 text-muted">
+                        {postDetail?.quantity > 0
+                          ? postDetail?.quantity
+                          : "Chưa có thông tin"}
+                      </p>
                     </div>
-                  )}
+                  </div>
 
-                  {postDetail?.education_title && (
-                    <div className="d-flex align-items-center mb-3">
-                      <i
-                        className={`fa fa-graduation-cap fa-lg text-primary me-3 mt-1 ms-2`}
-                      ></i>
-                      <div>
-                        <p className="mb-1 fw-bold">Trình độ học vấn</p>
-                        <p className="mb-0 text-muted">
-                          {postDetail?.education_title}
-                        </p>
-                      </div>
+                  <div className="d-flex align-items-center mb-2">
+                    <i
+                      className={`fa fa-handshake-o fa-lg text-primary me-3 mt-1 ms-2`}
+                      style={{ width: 21.33 }}
+                    ></i>
+                    <div>
+                      <p className="mb-1 fw-bold">Kinh nghiệm</p>
+                      <p className="mb-0 text-muted">
+                        {postDetail?.require_experience > 0
+                          ? postDetail?.require_experience
+                          : "Không yêu cầu"}
+                      </p>
                     </div>
-                  )}
+                  </div>
 
-                  {postDetail?.working_time && (
-                    <div className="d-flex align-items-center mb-3">
-                      <i
-                        className={`fa fa-hourglass fa-lg text-primary me-3 mt-1 ms-2`}
-                      ></i>
-                      <div>
-                        <p className="mb-1 fw-bold">Giờ làm việc</p>
-                        <p className="mb-0 text-muted">
-                          {postDetail?.working_time}
-                        </p>
-                      </div>
+                  <div className="d-flex align-items-center mb-2">
+                    <i
+                      className={`fa fa-graduation-cap fa-lg text-primary me-3 mt-1 ms-2`}
+                      style={{ width: 21.33 }}
+                    ></i>
+                    <div>
+                      <p className="mb-1 fw-bold">Trình độ học vấn</p>
+                      <p className="mb-0 text-muted">
+                        {postDetail?.education_title || "Không yêu cầu"}
+                      </p>
                     </div>
-                  )}
+                  </div>
 
-                  {postDetail?.job_level_name && (
-                    <div className="d-flex align-items-center mb-3">
-                      <i
-                        className={`fa fa-user fa-lg text-primary me-3 mt-1 ms-2`}
-                      ></i>
-                      <div>
-                        <p className="mb-1 fw-bold">Cấp bậc</p>
-                        <p className="mb-0 text-muted">
-                          {postDetail?.job_level_name}
-                        </p>
-                      </div>
+                  <div className="d-flex align-items-center mb-2">
+                    <i
+                      className={`fa fa-hourglass fa-lg text-primary me-3 mt-1 ms-2`}
+                      style={{ width: 21.33 }}
+                    ></i>
+                    <div>
+                      <p className="mb-1 fw-bold">Giờ làm việc</p>
+                      <p className="mb-0 text-muted">
+                        {postDetail?.working_time || "Chưa có thông tin"}
+                      </p>
                     </div>
-                  )}
+                  </div>
 
-                  {postDetail?.languages.length > 0 && (
-                    <div className="d-flex align-items-center mb-3">
-                      <i
-                        className={`fa fa-language fa-lg text-primary me-3 mt-1 ms-2`}
-                      ></i>
-                      <div>
-                        <p className="mb-1 fw-bold">Cấp bậc</p>
-                        <p className="mb-0 text-muted">
-                          {postDetail?.languages.map((item) => (
-                            <span key={item.language_id}>
-                              {item.language_name}{" "}
-                            </span>
-                          ))}
-                        </p>
-                      </div>
+                  <div className="d-flex align-items-center mb-2">
+                    <i
+                      className={`fa fa-user fa-lg text-primary me-3 mt-1 ms-2`}
+                      style={{ width: 21.33 }}
+                    ></i>
+                    <div>
+                      <p className="mb-1 fw-bold">Cấp bậc</p>
+                      <p className="mb-0 text-muted">
+                        {postDetail?.job_level_name || "Không yêu cầu"}
+                      </p>
                     </div>
-                  )}
+                  </div>
 
-                  {postDetail?.require_gender && (
-                    <div className="d-flex align-items-center mb-3">
-                      <i
-                        className={`fa fa-venus-mars fa-lg text-primary me-3 mt-1 ms-2`}
-                      ></i>
-                      <div>
-                        <p className="mb-1 fw-bold">Giới tính</p>
-                        <p className="mb-0 text-muted">
-                          {postDetail?.require_gender}
-                        </p>
-                      </div>
+                  <div className="d-flex align-items-center mb-2">
+                    <i
+                      className={`fa fa-language fa-lg text-primary me-3 mt-1 ms-2`}
+                      style={{ width: 21.33 }}
+                    ></i>
+                    <div>
+                      <p className="mb-1 fw-bold">Ngôn ngữ</p>
+                      <p className="mb-0 text-muted">
+                        {postDetail?.languages.length > 0
+                          ? postDetail?.languages.map((item) => (
+                              <span key={item.language_id}>
+                                {item.language_name}{" "}
+                              </span>
+                            ))
+                          : "Không yêu cầu"}
+                      </p>
                     </div>
-                  )}
+                  </div>
 
-                  {postDetail?.require_marital_status && (
-                    <div className="d-flex align-items-center mb-3">
-                      <i
-                        className={`fa fa-heart fa-lg text-primary me-3 mt-1 ms-2`}
-                      ></i>
-                      <div>
-                        <p className="mb-1 fw-bold">Tình trạng hôn nhân</p>
-                        <p className="mb-0 text-muted">
-                          {postDetail?.require_marital_status}
-                        </p>
-                      </div>
+                  <div className="d-flex align-items-center mb-2">
+                    <i
+                      className={`fa fa-venus-mars fa-lg text-primary me-3 mt-1 ms-2`}
+                      style={{ width: 21.33 }}
+                    ></i>
+                    <div>
+                      <p className="mb-1 fw-bold">Giới tính</p>
+                      <p className="mb-0 text-muted">
+                        {postDetail?.require_gender || "Không yêu cầu"}
+                      </p>
                     </div>
-                  )}
+                  </div>
 
-                  {postDetail?.working_type && (
-                    <div className="d-flex align-items-center mb-3">
-                      <i
-                        className={`fa fa-clock-o fa-lg text-primary me-3 mt-1 ms-2`}
-                      ></i>
-                      <div>
-                        <p className="mb-1 fw-bold">Loại hình làm việc</p>
-                        <p className="mb-0 text-muted">
-                          {postDetail?.working_type}
-                        </p>
-                      </div>
+                  <div className="d-flex align-items-center mb-2">
+                    <i
+                      className={`fa fa-heart fa-lg text-primary me-3 mt-1 ms-2`}
+                      style={{ width: 21.33 }}
+                    ></i>
+                    <div>
+                      <p className="mb-1 fw-bold">Tình trạng hôn nhân</p>
+                      <p className="mb-0 text-muted">
+                        {postDetail?.require_marital_status || "Không yêu cầu"}
+                      </p>
                     </div>
-                  )}
+                  </div>
+
+                  <div className="d-flex align-items-center mb-2">
+                    <i
+                      className={`fa fa-clock-o fa-lg text-primary me-3 mt-1 ms-2`}
+                      style={{ width: 21.33 }}
+                    ></i>
+                    <div>
+                      <p className="mb-1 fw-bold">Loại hình làm việc</p>
+                      <p className="mb-0 text-muted">
+                        {postDetail?.working_type || "Chưa có thông tin"}
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
                 {postDetail?.more_requirements && (
@@ -350,6 +359,31 @@ export default function WorkDetail() {
                   {postDetail?.address}
                 </p>
 
+                <h5 className="mt-3">Chứng chỉ: </h5>
+                <div className="d-flex flex-column gap-3">
+                  {postDetail?.certification.length > 0
+                    ? postDetail.certification
+                        ?.slice() // Create a copy of the array to avoid mutating the original
+                        .sort(
+                          (a, b) =>
+                            a.certification.length - b.certification.length
+                        ) // Sort by name length (shortest first)
+                        .map((item, index) => (
+                          <div
+                            key={index}
+                            className="card p-3 d-flex flex-row align-items-center gap-3"
+                          >
+                            {" "}
+                            <i
+                              className={`fa fa-book fa-lg text-primary me-3 mt-1`}
+                              style={{ minWidth: "24px" }}
+                            ></i>
+                            <p className=" mb-1">{item.certification}</p>
+                          </div>
+                        ))
+                    : "Chưa có thông tin"}
+                </div>
+
                 <h5 className="mt-3">Từ khóa:</h5>
                 <div>
                   {postDetail?.job_skills.length > 0
@@ -381,17 +415,21 @@ export default function WorkDetail() {
                   companyInformation={postDetail}
                   heightBg={"150px"}
                   logoSize={"30px"}
+                  showFollowButton={false}
                 />
-                <h5>Thông tin việc làm</h5>
+                <h5>Thông tin công ty</h5>
                 <ul className="list-unstyled">
                   <li>
                     <strong>Ngày đăng:</strong>{" "}
                     {formatDateToDDMMYYYY(postDetail?.date_post)}
                   </li>
                   <li>
-                    <strong>Ngành nghề:</strong> {postDetail?.industry_name}
+                    <strong>Lĩnh vực:</strong> {postDetail?.industry_name}
                   </li>
                   <li>
+                    <strong>Ngành nghề:</strong> {postDetail?.job_function_name}
+                  </li>
+                  {/* <li>
                     <strong>Kỹ năng:</strong>{" "}
                     {postDetail?.job_skills
                       ? postDetail.job_skills
@@ -409,12 +447,16 @@ export default function WorkDetail() {
                             </NavLink>
                           ))
                       : "Chưa có thông tin"}
-                  </li>
+                  </li> */}
                   <li>
                     <strong>Giờ làm việc:</strong>{" "}
                     {postDetail?.working_time
                       ? postDetail?.working_time
                       : "Chưa có thông tin"}
+                  </li>
+
+                  <li>
+                    <strong>Địa chỉ:</strong> {postDetail?.address}
                   </li>
                 </ul>
               </div>
@@ -471,11 +513,18 @@ export default function WorkDetail() {
                           <h6 className="mb-1">{job.title}</h6>
                           <div>{job.company_name}</div>
                           <div>
-                            <strong>Lương:</strong> {(job.salary_max === 0 && job.salary_min === 0) ? 
-                            "Thỏa thuận" : `${formatNumberToTr(job.salary_min)} - ${formatNumberToTr(job.salary_max)} đ/tháng`}                    
+                            <strong>Lương:</strong>{" "}
+                            {job.salary_max === 0 && job.salary_min === 0
+                              ? "Thỏa thuận"
+                              : `${formatNumberToTr(
+                                  job.salary_min
+                                )} - ${formatNumberToTr(
+                                  job.salary_max
+                                )} đ/tháng`}
                           </div>
                           <div>
-                            <i className="bi bi-geo-alt"></i> {job.work_location_name}
+                            <i className="bi bi-geo-alt"></i>{" "}
+                            {job.work_location_name}
                           </div>
                         </div>
                       </ListGroup.Item>
