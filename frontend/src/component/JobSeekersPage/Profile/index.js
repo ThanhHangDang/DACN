@@ -775,7 +775,9 @@ export default function JobSeekerProfile() {
           <div className="row g-0">
             <div className="col-md-2 p-3 text-center">
               <img
-                src={userInformation?.avatar || "/default-avatar.png"}
+                src={
+                  userInformation?.avatar || "/img/default-user/user-avatar.png"
+                }
                 style={{ height: 120, width: 120 }}
                 className="rounded-circle img-thumbnail"
                 alt="ProfilePicture"
@@ -842,7 +844,7 @@ export default function JobSeekerProfile() {
                 <div className="row">
                   <span className="col-md-6 col-sm-0">
                     <i className="bi bi-envelope-fill me-2"></i>
-                    {userInformation?.email}
+                    {userInformation?.email || "Chưa cập nhật"}
                   </span>
                   <span className="col-md-5 col-sm-0">
                     <i className="bi bi-telephone-fill me-2"></i>
