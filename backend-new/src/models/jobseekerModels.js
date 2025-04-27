@@ -1019,7 +1019,7 @@ const queryGetOverview = async (profile_id, days) => {
           COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END),
           COUNT(CASE WHEN create_at >= ? AND create_at < ? THEN 1 END)
         ) AS employer_invite_apply
-      FROM logs_employer_invite_apply
+      FROM logs_employer_invitation
       WHERE jobseeker_id = ?`,
       [d0, d1, d0, d2, d0, d3, d0, d4, d0, d5, profile_id]
     );

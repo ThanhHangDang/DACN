@@ -1152,7 +1152,7 @@ const queryAddNotification = async (employer_id, jobseeker_id, job_id) => {
   }
 };
 
-const queryGetOverview = async (employer_id, days) => {
+constqueryGetOverview = async (employer_id, days) => {
   try {
     if (!Array.isArray(days) || days.length !== 5) {
       throw new Error(
