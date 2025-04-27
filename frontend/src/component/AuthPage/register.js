@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { registerUser } from "../../redux_toolkit/AuthSlice";
 import { toast } from "react-toastify";
+import { validateField } from "../../utils/validateField";
 
 export default function Register() {
   const dispatch = useDispatch();
@@ -27,48 +28,6 @@ export default function Register() {
 
   const [formValid, setFormValid] = useState(false);
 
-  const validateField = (name, value) => {
-    let error = "";
-
-    if (value.trim() === "") {
-      error = `${name} không được để trống`;
-    } else {
-      switch (name) {
-        case "username":
-          if (value.length < 5 || value.length > 30) {
-            error = "Tên đăng nhập phải từ 5-30 ký tự";
-          }
-          break;
-        case "name":
-          if (value.length < 5 || value.length > 30) {
-            error = "Họ và tên phải từ 5-30 ký tự";
-          }
-          break;
-        case "phone":
-          if (!/^[0-9]{7,14}$/.test(value)) {
-            error = "Số điện thoại phải từ 7-14 chữ số";
-          }
-          break;
-        case "email":
-          if (
-            !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(value)
-          ) {
-            error = "Email không đúng định dạng";
-          }
-          break;
-        case "password":
-          if (value.length < 8) {
-            error = "Mật khẩu phải có ít nhất 8 ký tự";
-          }
-          break;
-        default:
-          break;
-      }
-    }
-
-    setErrors((prev) => ({ ...prev, [name]: error }));
-  };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setDataRegister((prev) => ({ ...prev, [name]: value }));
@@ -76,24 +35,30 @@ export default function Register() {
 
   const handleBlur = (e) => {
     const { name, value } = e.target;
-    validateField(name, value);
+    const error = validateField(name, value); // Validate field
+    setErrors((prev) => ({ ...prev, [name]: error })); // Update errors
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate tất cả field trước khi gửi
+    let newErrors = {};
     let hasError = false;
+
+    // Validate all fields
     Object.keys(dataRegister).forEach((key) => {
       if (key !== "role") {
-        validateField(key, dataRegister[key]);
-        if (dataRegister[key].trim() === "") {
+        const error = validateField(key, dataRegister[key]);
+        if (error) {
           hasError = true;
         }
+        newErrors[key] = error;
       }
     });
 
-    if (Object.values(errors).some((msg) => msg !== "") || hasError) {
+    setErrors(newErrors);
+
+    if (hasError) {
       toast.error("Vui lòng kiểm tra lại thông tin đăng ký!");
       return;
     }

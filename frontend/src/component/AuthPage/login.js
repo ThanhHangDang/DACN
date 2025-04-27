@@ -1,22 +1,59 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
-
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser, checkLoginStatus } from "../../redux_toolkit/AuthSlice.js";
+import { validateField } from "../../utils/validateField";
 
 export default function Login() {
-  const [username, setUsername] = useState(null);
-  const [password, setPassword] = useState(null);
+  const [dataLogin, setDataLogin] = useState({
+    username: "",
+    password: "",
+  });
 
-  // const [isLogin, setIsLogin] = useState(false);
+  const [errors, setErrors] = useState({
+    username: "",
+    password: "",
+  });
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const { isLogin, loading } = useSelector((state) => state.auth);
+
+  const [formValid, setFormValid] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setDataLogin((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    const error = validateField(name, value); // Validate each field
+    setErrors((prev) => ({ ...prev, [name]: error })); // Update error state
+  };
 
   const submitLogin = (e) => {
     e.preventDefault();
-    dispatch(loginUser({ username, password }));
+
+    let newErrors = {};
+    let hasError = false;
+
+    // Validate both username and password
+    Object.keys(dataLogin).forEach((key) => {
+      const error = validateField(key, dataLogin[key]);
+      if (error) {
+        hasError = true;
+      }
+      newErrors[key] = error;
+    });
+
+    setErrors(newErrors);
+
+    if (hasError) {
+      return; // Prevent submission if there are validation errors
+    }
+
+    dispatch(loginUser(dataLogin)); // Proceed with login if no errors
   };
 
   useEffect(() => {
@@ -25,68 +62,19 @@ export default function Login() {
     } else {
       dispatch(checkLoginStatus());
     }
-  }, [isLogin]);
+  }, [isLogin, navigate, dispatch]);
+
+  useEffect(() => {
+    // Enable submit button if no errors and fields are filled
+    const allFieldsFilled = Object.values(dataLogin).every(
+      (val) => val.trim() !== ""
+    );
+    const noErrors = Object.values(errors).every((err) => err === "");
+    setFormValid(allFieldsFilled && noErrors);
+  }, [dataLogin, errors]);
 
   return (
-    <div className=" d-flex align-items-center justify-content-center p-5">
-      {/* <div className="container bg-light mt-5 mb-5 col-10 col-sm-5 rounded-3">
-        <div className="row">
-          <h2 className="fw-bold text-center mt-2">ĐĂNG NHẬP</h2>
-          <p>
-            Nếu bạn chưa có tài khoản, xin vui lòng bấm "Đăng ký" chuyển qua
-            trang đăng ký.
-            
-          </p>
-        </div>
-        <form onSubmit={submitLogin}>
-          <p>Tên đăng nhập*</p>
-          <input
-            type="text"
-            className="form-control mb-3"
-            name="email"
-            placeholder="Tên đăng nhập"
-            onChange={(e) => {
-              setUsername(e.target.value);
-            }}
-          />
-          <p>Mật khẩu*</p>
-          <input
-            type="password"
-            className="form-control mb-3"
-            name="password"
-            placeholder="Mật khẩu"
-            onChange={(e) => {
-              setPassword(e.target.value);
-            }}
-          />
-          <div className="row">
-            <div className="col">
-              <button
-                type="submit"
-                className="form-control btn btn-outline-danger mt-3 mb-3"
-                disabled={loading}
-              >
-                {loading ? "Đang xử lý..." : "Đăng nhập"}
-              </button>
-            </div>
-          </div>
-
-          <div className="row d-flex justify-content-end">
-            <div className="col-8 d-flex justify-content-end mb-2">
-              <NavLink to="/reset-password" className="text-primary">
-                Quên mật khẩu?
-              </NavLink>
-            </div>
-            <div className="col-8 d-flex justify-content-end">
-              <p className="me-2">Bạn chưa có tài khoản?</p>
-              <NavLink to="/auth" className="text-primary">
-                Đăng ký
-              </NavLink>
-            </div>
-          </div>
-        </form>
-      </div> */}
-
+    <div className="d-flex align-items-center justify-content-center p-5">
       <div className="card shadow-lg w-100" style={{ maxWidth: 480 }}>
         <div className="card-body">
           <div className="text-center">
@@ -101,19 +89,25 @@ export default function Login() {
           <div className="mt-4">
             <form onSubmit={submitLogin}>
               <div className="mb-4">
-                <label htmlFor="email" className="form-label text-muted">
+                <label htmlFor="username" className="form-label text-muted">
                   Tên đăng nhập
                 </label>
                 <input
                   type="text"
                   className="form-control"
-                  id="email"
+                  id="username"
+                  name="username"
                   placeholder="Tên đăng nhập"
+                  value={dataLogin.username}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
                   required
-                  onChange={(e) => {
-                    setUsername(e.target.value);
-                  }}
                 />
+                {errors.username && (
+                  <div className="alert alert-danger mt-2">
+                    {errors.username}
+                  </div>
+                )}
               </div>
               <div className="mb-4">
                 <label htmlFor="password" className="form-label text-muted">
@@ -123,24 +117,30 @@ export default function Login() {
                   type="password"
                   className="form-control"
                   id="password"
+                  name="password"
                   placeholder="Mật khẩu"
+                  value={dataLogin.password}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
                   required
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                  }}
                 />
+                {errors.password && (
+                  <div className="alert alert-danger mt-2">
+                    {errors.password}
+                  </div>
+                )}
               </div>
               <div className="d-grid">
                 <button
                   type="submit"
                   className="btn btn-dark btn-lg"
-                  disabled={loading}
+                  disabled={loading || !formValid}
                 >
                   {loading ? "Đang xử lý..." : "Đăng nhập"}
                 </button>
               </div>
               <p className="text-center text-muted mt-4">
-                Bạn chưa có tài khoản?
+                Bạn chưa có tài khoản?{" "}
                 <NavLink to="/register" className="text-decoration-none">
                   Đăng ký
                 </NavLink>

@@ -5,18 +5,68 @@ import {
   loginUser,
   checkLoginStatus,
 } from "../../../redux_toolkit/AuthSlice.js";
+import { validateField } from "../../../utils/validateField";
 
-const LoginModal = ({title}) => {
+const LoginModal = ({ title }) => {
   const dispatch = useDispatch();
 
   const { isLogin, loading } = useSelector((state) => state.auth);
 
-  const [username, setUsername] = useState(null);
-  const [password, setPassword] = useState(null);
+  const [dataLogin, setDataLogin] = useState({
+    username: "",
+    password: "",
+  });
+
+  const [errors, setErrors] = useState({
+    username: "",
+    password: "",
+  });
+
+  const [formValid, setFormValid] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setDataLogin((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    const error = validateField(name, value); // Validate each field
+    setErrors((prev) => ({ ...prev, [name]: error })); // Update error state
+  };
+
   const submitLogin = (e) => {
     e.preventDefault();
-    dispatch(loginUser({ username, password }));
+
+    let newErrors = {};
+    let hasError = false;
+
+    // Validate both username and password
+    Object.keys(dataLogin).forEach((key) => {
+      const error = validateField(key, dataLogin[key]);
+      if (error) {
+        hasError = true;
+      }
+      newErrors[key] = error;
+    });
+
+    setErrors(newErrors);
+
+    if (hasError) {
+      return; // Prevent submission if there are validation errors
+    }
+
+    dispatch(loginUser(dataLogin)); // Proceed with login if no errors
   };
+
+  useEffect(() => {
+    // Enable submit button if no errors and fields are filled
+    const allFieldsFilled = Object.values(dataLogin).every(
+      (val) => val.trim() !== ""
+    );
+    const noErrors = Object.values(errors).every((err) => err === "");
+    setFormValid(allFieldsFilled && noErrors);
+  }, [dataLogin, errors]);
 
   return (
     <div
@@ -33,7 +83,7 @@ const LoginModal = ({title}) => {
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title card-title h3" id="modalTitle">
-           {title?  title: "Đổi mật khẩu"}
+              {title ? title : "Đổi mật khẩu"}
             </h5>
             <button
               type="button"
@@ -51,13 +101,19 @@ const LoginModal = ({title}) => {
                 <input
                   type="text"
                   className="form-control"
-                  id="email"
+                  id="username"
+                  name="username"
                   placeholder="Tên đăng nhập"
+                  value={dataLogin.username}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
                   required
-                  onChange={(e) => {
-                    setUsername(e.target.value);
-                  }}
                 />
+                {errors.username && (
+                  <div className="alert alert-danger mt-2">
+                    {errors.username}
+                  </div>
+                )}
               </div>
               <div className="mb-4">
                 <label htmlFor="password" className="form-label text-muted">
@@ -67,19 +123,25 @@ const LoginModal = ({title}) => {
                   type="password"
                   className="form-control"
                   id="password"
+                  name="password"
                   placeholder="Mật khẩu"
+                  value={dataLogin.password}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
                   required
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                  }}
                 />
+                {errors.password && (
+                  <div className="alert alert-danger mt-2">
+                    {errors.password}
+                  </div>
+                )}
               </div>
               <div className="d-grid">
                 <button
                   data-bs-dismiss="modal"
                   type="submit"
                   className="btn btn-dark btn-lg"
-                  disabled={loading}
+                  disabled={loading || !formValid}
                 >
                   {loading ? "Đang xử lý..." : "Đăng nhập"}
                 </button>
