@@ -13,17 +13,27 @@ import { useSelector } from "react-redux";
 export default function ListCompany() {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
-  const [isPageChanging, setIsPageChanging] = useState(false); // Add this near the top of your component
+  const [isPageChanging, setIsPageChanging] = useState(false);
   const { isLogin, user } = useSelector((state) => state.auth);
-
+  const [searchTitle, setSearchTitle] = useState(""); // Lưu giá trị tìm kiếm tạm thời
+  const [selectedIndustry, setSelectedIndustry] = useState(""); // Lưu ngành nghề tạm thời
+  const [selectedCity, setSelectedCity] = useState(""); // Lưu thành phố tạm thời
+  
+  const [search, setSearch] = useState({
+    paging_size: 12, 
+    active_page: page,
+    industry_id: "", 
+    city_id: "", 
+    title: "", 
+  });
+  
   // Add more detailed query information
   const {
     data,
     isLoading: companiesLoading,
     isError,
-    error,
-    refetch,
-  } = useGetCompanyBySearchQuery({ paging_size: 12, active_page: page });
+    error,refetch
+  } = useGetCompanyBySearchQuery(search);
   const { data: industries } = useGetIndustriesQuery();
   const { data: cities } = useGetCitiesQuery(84); // 84 là mã quốc gia Việt Nam
 
@@ -31,7 +41,36 @@ export default function ListCompany() {
     companies: [],
     totalPages: 1,
   };
-  // Lấy dữ liệu trực tiếp từ kết quả query
+  
+  // Xử lý sự kiện tìm kiếm
+  const handleSearch = (e) => {
+    e.preventDefault();
+    // Reset về trang đầu tiên khi tìm kiếm mới
+    setPage(1);
+    
+    // Tạo object mới chỉ chứa các giá trị không rỗng
+    const newSearchParams = {
+      paging_size: 12,
+      active_page: 1
+    };
+    
+    // Chỉ thêm các params có giá trị
+    if (searchTitle) newSearchParams.title = searchTitle;
+    if (selectedIndustry) newSearchParams.industry_id = selectedIndustry;
+    if (selectedCity) newSearchParams.city_id = selectedCity;
+    
+    // Cập nhật state search với các giá trị mới
+    setSearch(newSearchParams);
+  };
+  
+  // Cập nhật search state khi page thay đổi
+  useEffect(() => {
+    // Giữ nguyên các tham số tìm kiếm hiện tại, chỉ cập nhật số trang
+    setSearch(prevSearch => ({
+      ...prevSearch,
+      active_page: page
+    }));
+  }, [page]);
 
   const getVisiblePages = (currentPage, totalPages) => {
     const delta = 2; // Number of pages to show on each side
@@ -74,100 +113,10 @@ export default function ListCompany() {
   }, [navigate, user]);
 
   useEffect(() => {
-    console.log("Current page:", page);
-    console.log("API data received:", data);
-    console.log("Companies:", listCompany);
-    console.log("Total pages:", totalPages);
-
     if (data) {
       setIsPageChanging(false);
     }
   }, [data, page]); // Reset the indicator when data changes
-
-  const PaginationComponent = () => {
-    // Don't render pagination if there are no companies or only one page
-    if (!listCompany?.length || totalPages <= 1) return null;
-
-    // Calculate visible pages
-    const visiblePages = getVisiblePages(page, totalPages);
-    const showStartEllipsis = visiblePages[0] > 1;
-    const showEndEllipsis = visiblePages[visiblePages.length - 1] < totalPages;
-
-    return (
-      <nav
-        className="d-flex justify-content-center mt-4"
-        aria-label="Page navigation"
-      >
-        <ul className="pagination">
-          {/* Previous button */}
-          <li className={`page-item ${page === 1 ? "disabled" : ""}`}>
-            <button
-              className="page-link"
-              onClick={() => page > 1 && changePage(page - 1)}
-              disabled={page === 1}
-            >
-              &laquo;
-            </button>
-          </li>
-
-          {/* First page button */}
-          {showStartEllipsis && (
-            <li className="page-item">
-              <button className="page-link" onClick={() => changePage(1)}>
-                1
-              </button>
-            </li>
-          )}
-
-          {/* Start ellipsis */}
-          {showStartEllipsis && (
-            <li className="page-item disabled">
-              <span className="page-link">...</span>
-            </li>
-          )}
-
-          {/* Page numbers */}
-          {visiblePages.map((p) => (
-            <li key={p} className={`page-item ${p === page ? "active" : ""}`}>
-              <button className="page-link" onClick={() => changePage(p)}>
-                {p}
-              </button>
-            </li>
-          ))}
-
-          {/* End ellipsis */}
-          {showEndEllipsis && (
-            <li className="page-item disabled">
-              <span className="page-link">...</span>
-            </li>
-          )}
-
-          {/* Last page button */}
-          {showEndEllipsis && (
-            <li className="page-item">
-              <button
-                className="page-link"
-                onClick={() => changePage(totalPages)}
-              >
-                {totalPages}
-              </button>
-            </li>
-          )}
-
-          {/* Next button */}
-          <li className={`page-item ${page === totalPages ? "disabled" : ""}`}>
-            <button
-              className="page-link"
-              onClick={() => page < totalPages && changePage(page + 1)}
-              disabled={page === totalPages}
-            >
-              &raquo;
-            </button>
-          </li>
-        </ul>
-      </nav>
-    );
-  };
 
   return (
     <>
@@ -190,14 +139,55 @@ export default function ListCompany() {
         </nav>
 
         <h2 className="fw-bold mb-3">Khám Phá Văn Hoá Công Ty</h2>
-        <div className="input-group mb-4">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Nhập tên công ty"
-          />
-          <button className="btn btn-primary">Tìm</button>
-        </div>
+        
+        <form onSubmit={handleSearch} className="mb-4">
+          <div className="row g-3 mb-3">
+            <div className="col-md-6">
+              <div className="input-group">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Nhập tên công ty"
+                  value={searchTitle}
+                  onChange={(e) => setSearchTitle(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="col-md-3">
+              <select 
+                className="form-select"
+                value={selectedIndustry}
+                onChange={(e) => setSelectedIndustry(e.target.value)}
+              >
+                <option value="">Tất cả lĩnh vực</option>
+                {industries?.map((industry) => (
+                  <option value={industry.industry_id} key={industry.industry_id}>
+                    {industry.industry_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="col-md-3">
+              <select 
+                className="form-select"
+                value={selectedCity}
+                onChange={(e) => setSelectedCity(e.target.value)}
+              >
+                <option value="">Tất cả địa điểm</option>
+                {cities?.map((city) => (
+                  <option value={city.city_id} key={city.city_id}>
+                    {city.city_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div className="d-grid col-md-3 mx-auto">
+            <button type="submit" className="btn btn-primary">
+              <i className="bi bi-search me-2"></i>Tìm kiếm
+            </button>
+          </div>
+        </form>
 
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h5 className="mb-0">
@@ -205,24 +195,6 @@ export default function ListCompany() {
               ? "Đang tải dữ liệu..."
               : `Công ty nổi bật (${listCompany.length})`}
           </h5>
-          <div>
-            <select className="form-select form-select-sm d-inline-block w-auto me-2">
-              <option>Tất cả lĩnh vực</option>
-              {industries?.map((industry) => (
-                <option value={industry.industry_id} key={industry.industry_id}>
-                  {industry.industry_name}
-                </option>
-              ))}
-            </select>
-            <select className="form-select form-select-sm d-inline-block w-auto">
-              <option>Địa điểm</option>
-              {cities?.map((city) => (
-                <option value={city.city_id} key={city.city_id}>
-                  {city.city_name}
-                </option>
-              ))}
-            </select>
-          </div>
         </div>
 
         {companiesLoading ? (

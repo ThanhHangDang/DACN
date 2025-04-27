@@ -469,9 +469,8 @@ const queryGetListCompanyBySearch = async (searchData) => {
   try {
     const {
       title = "",
-      industry = "",
-      work_location = "",
-      scale_id = "",
+      industry_id = "",
+      city_id = "",
       paging_size = 10,
       active_page = 1,
     } = searchData;
@@ -513,30 +512,24 @@ SELECT
 
     const conditions = [];
     const values = [];
-    if (work_location) {
+    if (city_id) {
       query += ` JOIN 
     (SELECT * FROM company_location cl WHERE cl.city_id = ?) AS cl1 ON c.company_id = cl1.company_id`;
-      values.push(work_location);
+      values.push(city_id);
     }
 
     if (title) {
       conditions.push("c.company_name LIKE ? ");
       values.push(`%${title}%`);
     }
-    if (industry) {
-      conditions.push(`i.industry_name = ? `);
-      values.push(industry);
+    if (industry_id) {
+      conditions.push(`ci.industry_id= ? `);
+      values.push(industry_id);
     }
-
-    if (scale_id) {
-      conditions.push(`c.scale = ? `);
-      values.push(scale_id);
-    }
-
     if (conditions.length > 0) {
       query += ` WHERE ${conditions.join(" AND ")}`;
     }
-    query += `ORDER BY count_job_posted DESC, count_follower DESC, average_score DESC
+    query += `  ORDER BY count_job_posted DESC, count_follower DESC, average_score DESC
          LIMIT ? OFFSET ?;`;
     values.push(Number(paging_size));
     values.push((Number(active_page) - 1) * Number(paging_size));

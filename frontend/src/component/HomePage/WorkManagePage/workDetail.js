@@ -419,10 +419,10 @@ export default function WorkDetail() {
                 />
                 <h5>Thông tin công ty</h5>
                 <ul className="list-unstyled">
-                  <li>
+                  {/* <li>
                     <strong>Ngày đăng:</strong>{" "}
                     {formatDateToDDMMYYYY(postDetail?.date_post)}
-                  </li>
+                  </li> */}
                   <li>
                     <strong>Lĩnh vực:</strong> {postDetail?.industry_name}
                   </li>
@@ -448,12 +448,12 @@ export default function WorkDetail() {
                           ))
                       : "Chưa có thông tin"}
                   </li> */}
-                  <li>
+                  {/* <li>
                     <strong>Giờ làm việc:</strong>{" "}
                     {postDetail?.working_time
                       ? postDetail?.working_time
                       : "Chưa có thông tin"}
-                  </li>
+                  </li> */}
 
                   <li>
                     <strong>Địa chỉ:</strong> {postDetail?.address}
