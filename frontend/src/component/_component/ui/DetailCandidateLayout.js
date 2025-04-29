@@ -22,7 +22,7 @@ const CandidateDetail = ({
   project_info,
   skill_info,
   ratingData,
-  isSaved
+  isSaved,
 }) => {
   const { isLogin, user } = useSelector((state) => state.auth);
   console.log("basic", isSaved);
@@ -60,7 +60,7 @@ const CandidateDetail = ({
         // Lưu danh sách job đã gửi thư mời
         setInvitedJobs(selectedJobIds);
         if (response.success) {
-          // Hiển thị thông báo thành công          
+          // Hiển thị thông báo thành công
           toast.success(
             `Đã gửi ${selectedJobIds.length} thư mời đến ứng viên!`
           );
@@ -117,15 +117,15 @@ const CandidateDetail = ({
       );
     }
   };
+  console.log("skilliform", education_info);
+
   useEffect(() => {
-    if(isSaved){
+    if (isSaved) {
       setSaveStatus(true);
-    }
-    else{
+    } else {
       setSaveStatus(false);
     }
-  }
-  , [isSaved]);
+  }, [isSaved]);
   return (
     <div className="container my-4">
       {/* Header */}
@@ -172,19 +172,21 @@ const CandidateDetail = ({
             ) : null}
             Gửi thư mời
           </button>
-          {saveStatus?
-          (<button
-            className="btn btn-outline-danger me-2"
-            onClick={saveStatus? handleUnSaveCandidate:handleSaveCandidate}
-          >
-             Bỏ lưu hồ sơ
-          </button>):(<button
-            className="btn btn-outline-primary me-2"
-            onClick={saveStatus? handleUnSaveCandidate:handleSaveCandidate}
-          >
-             Lưu hồ sơ
-          </button>)
-          }
+          {saveStatus ? (
+            <button
+              className="btn btn-outline-danger me-2"
+              onClick={saveStatus ? handleUnSaveCandidate : handleSaveCandidate}
+            >
+              Bỏ lưu hồ sơ
+            </button>
+          ) : (
+            <button
+              className="btn btn-outline-primary me-2"
+              onClick={saveStatus ? handleUnSaveCandidate : handleSaveCandidate}
+            >
+              Lưu hồ sơ
+            </button>
+          )}
         </div>
       </div>
 
@@ -195,11 +197,23 @@ const CandidateDetail = ({
             <div className="card-body">
               <h6>Công việc mong muốn</h6>
               <div className="row small text-muted">
-                <div className="col-md-6">
+                <div>
                   <p>
                     Mục tiêu sự nghiệp:{" "}
-                    <strong>{basic?.career_target || "Hidden"}</strong>
+                    {/* <strong>{basic?.career_target || "Hidden"}</strong> */}
+                    <ul>
+                      {basic?.career_target?.split("%00endl").map(
+                        (item, index) =>
+                          item && (
+                            <li key={index}>
+                              <strong>{item}</strong>
+                            </li>
+                          )
+                      )}
+                    </ul>
                   </p>
+                </div>
+                <div className="col-md-6">
                   <p>
                     Mức lương mong muốn:{" "}
                     <strong>{basic?.salary_expect || "Hidden"}</strong>
@@ -223,30 +237,26 @@ const CandidateDetail = ({
               <div className="row small text-muted">
                 {experience_info?.map((item, index) => {
                   return (
-                    <div key={index}>
+                    <div key={index} className="m-2">
                       <p className="fw-bold mb-1">{item.exp_title}</p>
-                      <div className="col-md-6">
-                        <p>
-                          Comapany: <strong>{item.exp_company}</strong>
-                        </p>
-                      </div>
-                      <div className="col-md-6">
-                        <p>
-                          From:{" "}
-                          <strong>
-                            {formatSafeDate(item.exp_from, "MM/yyyy")}
-                          </strong>{" "}
-                          To:{" "}
-                          <strong>
-                            {" "}
-                            {formatSafeDate(item.exp_to, "MM/yyyy")}
-                          </strong>
-                        </p>
-                      </div>
-                      <div className="mb-5">
-                        <p className="fw-bold mb-1">Description</p>
-                        <p>{item.exp_description}</p>
-                      </div>
+
+                      <p className="mb-1">
+                        Comapany: <strong>{item.exp_company}</strong>
+                      </p>
+                      <p className="mb-1">
+                        Mô tả: <strong>{item.exp_description}</strong>
+                      </p>
+                      <p>
+                        From:{" "}
+                        <strong>
+                          {formatSafeDate(item.exp_from, "MM/yyyy")}
+                        </strong>{" "}
+                        To:{" "}
+                        <strong>
+                          {" "}
+                          {formatSafeDate(item.exp_to, "MM/yyyy")}
+                        </strong>
+                      </p>
                     </div>
                   );
                 })}
@@ -261,7 +271,7 @@ const CandidateDetail = ({
               <div className="row small text-muted">
                 {education_info?.map((item, index) => {
                   return (
-                    <div key={index}>
+                    <div key={index} className="m-2">
                       <p className="mb-1">
                         <strong>University:</strong> {item.school}
                       </p>
@@ -273,9 +283,6 @@ const CandidateDetail = ({
                         <strong>{formatSafeDate(item.from_, "MM/yyyy")}</strong>{" "}
                         To:{" "}
                         <strong> {formatSafeDate(item.to_, "MM/yyyy")}</strong>
-                      </p>
-                      <p className="mb-5">
-                        <strong>Level:</strong> {item.education_title}
                       </p>
                     </div>
                   );
@@ -291,9 +298,12 @@ const CandidateDetail = ({
               <div className="row small text-muted">
                 {project_info?.map((item, index) => {
                   return (
-                    <div key={index}>
+                    <div key={index} className="m-2">
                       <p className="fw-bold mb-1">{item.project_name}</p>
-                      <div className="col-md-6">
+                      <div className="">
+                        <p className=" mb-1">
+                          Mô tả: <strong>{item.project_description}</strong>
+                        </p>
                         <p>
                           From:{" "}
                           <strong>
@@ -304,10 +314,6 @@ const CandidateDetail = ({
                             {formatSafeDate(item.project_to, "MM/yyyy")}
                           </strong>
                         </p>
-                      </div>
-                      <div className="mb-5">
-                        <p className="fw-bold mb-1">Description</p>
-                        <p>{item.project_description}</p>
                       </div>
                     </div>
                   );
@@ -359,11 +365,11 @@ const CandidateDetail = ({
               <div className="row small text-muted">
                 {certification_info?.map((item, index) => {
                   return (
-                    <div key={index}>
+                    <div key={index} className="m-2">
                       <p className="mb-1">
                         <strong>Certification:</strong> {item.certification}
                       </p>
-                      <p className="mb-5">
+                      <p className="mb-1">
                         <strong>Month:</strong>{" "}
                         {formatSafeDate(item.month, "MM/yyyy")}
                       </p>
@@ -383,9 +389,7 @@ const CandidateDetail = ({
               <h6>Thông tin cá nhân</h6>
               <p className="mb-1">
                 <strong>Email:</strong>{" "}
-                <a href={basic?.email}>
-                  {basic?.email || "kristisipes@gmail.com"}
-                </a>
+                <a>{basic?.email || "kristisipes@gmail.com"}</a>
               </p>
               <p className="mb-1">
                 <strong>Số điện thoại liên hệ:</strong>{" "}
