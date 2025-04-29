@@ -41,6 +41,7 @@ const login = async (req, res, next) => {
     };
     // console.log("username", username);
     // Trả về thành công sử dụng res.success
+    // console.log("userLogin", req.session.userLogin);
     return res.success(
       {
         user: req.session.userLogin, 
@@ -86,6 +87,8 @@ const isLogin = (req, res, next) => {
  * Xử lý đăng xuất
  */
 const logout = (req, res, next) => {
+  try {
+    console.log("logout", req.session);
   req.session.destroy((err) => {
     if (err) {
       console.log(err);
@@ -95,6 +98,10 @@ const logout = (req, res, next) => {
     res.clearCookie("connect.sid");
     return res.success(null, "Đăng xuất thành công", 200);
   });
+}
+  catch (error) {
+    return next(new ApiError("Có lỗi khi đăng xuất.", 500));
+  }
 };
 
 /**
@@ -105,7 +112,7 @@ const register = async (req, res, next) => {
     const data = req.body.params;
     console.log(data);
     // Kiểm tra dữ liệu đầu vào
-    const { role, username, name, password, email, phone,...prop } = data.dataRegister;
+    const { role, username, name, password, email, phone,...prop } = data;
     if (!role || !username || !name || !password || !email || !phone) {
       throw new ApiError("Thiếu thông tin đăng ký", 400);
     }

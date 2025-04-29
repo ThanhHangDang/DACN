@@ -322,6 +322,7 @@ const getListJobApplication = async (req, res, next) => {
 const applyToJob = async (req, res, next) => {
   try {
   const {profile_id,job_id} = req.body;
+  console.log("Apply job", profile_id, job_id);
   if (!job_id || !profile_id) {
     return next(new ApiError("Thiếu thông tin ID bài đăng hoặc ID người dùng", 400));
   }
@@ -520,15 +521,21 @@ module.exports = {
   addResume,
   getResume,
   deleteResume,
+
   getListJobApplication,
   applyToJob,
+
   addCompanyReview,
+  
+
   getListCompanyFollowing,
   deleteCompanyFollowing,
   addCompanyFollowing,
+
   getListJobSaving,
   addJobSaving,
   deleteJobSaving,
+
   getOverview,
   getJobsSuggestion
 };
