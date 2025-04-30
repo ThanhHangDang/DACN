@@ -15,8 +15,7 @@ export default function YourApply() {
   const formatNumberToTr = (number) => `${(number / 1e6).toFixed(0)}tr`;
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const { data } = useGetJobApplyQuery(user?.id);
-  const listJobApply = data?.jobs || [];
+  const { data: listJobApply } = useGetJobApplyQuery(user?.id);
   console.log("List job apply:", listJobApply);
   return (
     <>
@@ -24,7 +23,7 @@ export default function YourApply() {
         <div className="col-lg-11 mt-4">
           {listJobApply.map((job, index) => (
             <>    
-              <JobCard job={job} key={index} />
+              <JobCard job={job} key={index} is_hide_icon = {1}/>
             </>
           ))}
         </div>

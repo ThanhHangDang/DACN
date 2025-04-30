@@ -9,6 +9,7 @@ import {
   useGetIndustriesQuery,
   useGetJobFunctionQuery,
 } from "../../../redux_toolkit/CategoryApi";
+import {useGetJobsavingQuery, useAddJobSavingMutation,useDeleteJobSavingMutation } from "../../../redux_toolkit/jobseekerApi.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import JobCard from "../../../component/_component/ui/JobCard.js";
@@ -17,7 +18,14 @@ import { toast } from "react-toastify";
 
 const JobListing = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [addJobSaving] = useAddJobSavingMutation();
+  const [deleteJobSaving] = useDeleteJobSavingMutation();
+
+  const { isLogin, user } = useSelector((state) => state.auth);
+  const {data: listsaving} = useGetJobsavingQuery( user?.id,{skip:!user  }); 
+
+
+  const [searchParams,setSearchParams] = useSearchParams();
   const titleFromUrl = searchParams.get("title");
 
   const [filter, setFilter] = useState({
@@ -60,7 +68,45 @@ const JobListing = () => {
     jobs: [],
     totalWorksPages: 1,
   };
-  const { isLogin, user } = useSelector((state) => state.auth);
+  const [processedJobs, setProcessedJobs] = useState([]);
+  useEffect(() => {
+    if (jobs && jobs.length > 0) {
+      const listsavingids = listsaving?.map((item) => item.job_id) || [];
+      
+      // Tạo mảng mới với thuộc tính is_saved
+      const updatedJobs = jobs.map((item) => ({
+        ...item,  // Sao chép tất cả thuộc tính hiện có
+        is_saved: listsavingids.includes(item.job_id)
+      }));
+      
+      setProcessedJobs(updatedJobs);
+    }
+  }, [listsaving, jobs]);
+
+  const handleSaveJob = async (jobId) => {
+    try {
+      const response = await addJobSaving({profile_id: user?.id, job_id: jobId });
+      if (response?.data?.success) {
+        toast.success("Lưu việc làm thành công!");
+      } else {
+        console.error("Lưu việc làm thất bại!");
+      }
+    } catch (error) {
+      console.error("Error saving job:", error);
+    }
+  }
+  const handleRemoveSaveJob = async (jobId) => {
+    try {
+      const response = await deleteJobSaving({profile_id: user?.id, job_id: jobId });
+      if (response?.data?.success) {
+        toast.success("Xóa việc làm khỏi danh sách lưu thành công!");        
+      } else {
+        console.error("Xóa việc làm khỏi danh sách lưu thất bại!");
+      }
+    } catch (error) {
+      console.error("Error removing saved job:", error);
+    }
+  }
 
   useEffect(() => {
     if (user?.role === 2) {
@@ -271,8 +317,8 @@ const JobListing = () => {
                 ))}
               </select>
             </div>
-            {jobs.map((job, index) => (
-              <JobCard job={job} key={index} />
+            {processedJobs.map((job, index) => (
+              <JobCard job={job} key={index} handleSaveJob = {handleSaveJob} handleRemoveSaveJob = {handleRemoveSaveJob}/>
             ))}
 
             <nav className="d-flex justify-content-center mt-4">

@@ -28,6 +28,7 @@ export const jobseekerApi = createApi({
             },
             providesTags: ['Overview'],
         }),
+
         getJobsSuggestion: builder.query({
             query: ({profile_id}) => ({
                 url: '/jobseeker/jobs-suggestion',
@@ -106,7 +107,8 @@ export const jobseekerApi = createApi({
                 params: { profile_id },
             }),
             transformResponse: (response) => {
-                return response.data;
+                console.log("getJobsaving APIIIIIIIIIII", response);
+                return response.data?.jobs || [];
             },
             providesTags: ['JobSaving'],
         }),
@@ -138,11 +140,14 @@ export const jobseekerApi = createApi({
             providesTags: ['FollowingCompany'],
         }),
         addFollowingCompany: builder.mutation({
-            query: (data) => ({
+            query: ({company_id, profile_id}) => ({
                 url: '/jobseeker/company-following',
                 method: 'POST',
-                body: data,
+                body: {company_id, profile_id},
             }),
+            transformResponse: (response) => {
+                return response;
+            },
             invalidatesTags: ['FollowingCompany'],
         }),
         deleteFollowingCompany: builder.mutation({
@@ -151,6 +156,9 @@ export const jobseekerApi = createApi({
                 method: 'DELETE',
                 body: data,
             }),
+            transformResponse: (response) => {
+                return response;
+            },
             invalidatesTags: ['FollowingCompany'],
         }),
         addCompanyReview: builder.mutation({
@@ -185,7 +193,7 @@ export const jobseekerApi = createApi({
                 params: { profile_id },
             }),
             transformResponse: (response) => {
-                return response.data;
+                return response.data?.jobs || [];
             },
             providesTags: ['JobApply'],
         }),
@@ -233,7 +241,7 @@ export const jobseekerApi = createApi({
 });
 
 // Export hooks for usage in components
-export const {
+export const {    
     useGetOverviewMutation,
     useGetJobsSuggestionQuery,
     useGetItemProfileQuery,
@@ -241,16 +249,22 @@ export const {
     useUpdateItemProfileMutation,
     useAddItemProfileMutation,
     useDeleteItemProfileMutation,
+
     useGetJobsavingQuery,
+    useAddJobSavingMutation,
     useDeleteJobSavingMutation,
+
     useGetFollowingCompanyQuery,
     useAddFollowingCompanyMutation,
     useDeleteFollowingCompanyMutation,
+
     useAddCompanyReviewMutation,
     useDeleteCompanyReviewMutation,
     useGetCompanyReviewQuery,
+
     useGetJobApplyQuery,
     useAddJobApplyMutation,
+
     useGetProfileCVQuery,
     useAddProfileCVMutation,
     useDeleteProfileCVMutation        

@@ -63,7 +63,7 @@ export const logout = createAsyncThunk(
       try {
         const response = await axios.post(
           `${domain}/auth/register`,
-          { params: { dataRegister } },
+          { params:  dataRegister  },
           { withCredentials: true }
         );        
         return response.data;

@@ -24,7 +24,7 @@ export default function EmployerProfile() {
         </li>
         <li className="nav-item">
           <NavLink
-            to="/employer-manage-employee"
+            to="/employer-manage-application"
             className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
           >
             Hồ sơ ứng tuyển
@@ -32,10 +32,18 @@ export default function EmployerProfile() {
         </li>
         <li className="nav-item">
           <NavLink
-            to="/save-employee-profile"
+            to="/employer-manage-saving-candidate"
             className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
           >
             Hồ sơ đã lưu
+          </NavLink>
+        </li>
+        <li className="nav-item">
+          <NavLink
+            to="/employer-manage-invitation"
+            className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+          >
+            Thư mời đã gửi
           </NavLink>
         </li>
       </ul>

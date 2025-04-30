@@ -25,9 +25,10 @@ export default function CompanyProfile() {
   const {data: benefits} = useGetBenefitsQuery();
 
 
-  const { data, refetch } = useGetCompanyInforQuery(id);
-  const companyInformation = data || {};
-
+  const { data, isLoading, refetch } = useGetCompanyInforQuery(id, {
+    skip: !id // Skip query if id is undefined
+  })|| {};
+  
   // RTK Query mutations
   const [addCompanyInfo, { isLoading: isAdding }] =
     useAddCompanyInforMutation();
@@ -70,18 +71,18 @@ export default function CompanyProfile() {
 
   // Update state when company data changes
   useEffect(() => {
-    if (companyInformation) {
+    if (data) {
+      console.log("Company data:", data);
       setUpdateCompany({
-        company_name: companyInformation.company_name || "",
-        phone_number: companyInformation.phone_number || "",
-        scale_id: companyInformation.scale_id || "",
-        industry_id: companyInformation.industry_id || "",
-        describle: companyInformation.describle || "",
-        company_location: companyInformation.company_location || [],
-        company_benefits: companyInformation.company_benefits || [],
+        company_name: data.company_name || "",
+        scale_id: data.scale_id || "",
+        industry_id: data.industry_id || "",
+        describle: data.describle || "",
+        company_location: data.company_location || [],
+        company_benefits: data.company_benefits || [],
       });
     }
-  }, [companyInformation]);
+  }, [data]);
 
   // Handle company profile update
   const handleupdateCompanyInfo = async () => {
@@ -89,20 +90,34 @@ export default function CompanyProfile() {
       // Validate required fields
       if (
         !updateCompany.company_name ||
-        !updateCompany.phone_number ||
         !updateCompany.industry_id
       ) {
         toast.error("Vui lòng điền đầy đủ thông tin bắt buộc");
         return;
       }
 
+      if (!data?.company_id) {
+        toast.error("Không tìm thấy thông tin công ty");
+        return;
+      }
+
       const result = await updateCompanyInfo({
-        company_id: id,
-        ...updateCompany,
+        type: "Basic",
+        data: {
+          company_id: data.company_id,
+          company_name: updateCompany.company_name,
+          scale_id: updateCompany.scale_id,
+          industry_id: updateCompany.industry_id,
+          describle: updateCompany.describle
+        }
       }).unwrap();
       
-      toast.success("Cập nhật thông tin công ty thành công");
-      // refetch(); // Refresh company data
+      if (result?.success) {
+        toast.success("Cập nhật thông tin công ty thành công");
+        refetch(); // Refresh company data
+      } else {
+        toast.error("Cập nhật thông tin công ty thất bại");
+      }
     } catch (error) {
       console.error("Failed to update company profile:", error);
       toast.error("Cập nhật thông tin công ty thất bại");
@@ -117,10 +132,15 @@ export default function CompanyProfile() {
         return;
       }
 
+      if (!data?.company_id) {
+        toast.error("Không tìm thấy thông tin công ty");
+        return;
+      }
+
       const response = await addCompanyInfo({
         type: "company_location",
         data: {
-          company_id: companyInformation.company_id,
+          company_id: data.company_id,
           address: newLocation.address,
           city_id: newLocation.city_id,
         },
@@ -146,10 +166,15 @@ export default function CompanyProfile() {
         return;
       }
 
+      if (!data?.company_id) {
+        toast.error("Không tìm thấy thông tin công ty");
+        return;
+      }
+
       const result = await updateCompanyInfo({
         type: "company_location",
         data: {
-          company_id: companyInformation.company_id,
+          company_id: data.company_id,
           location_id: editLocation.location_id,
           address: editLocation.address,
           city_id: editLocation.city_id,
@@ -172,12 +197,17 @@ export default function CompanyProfile() {
   // Handle deleting a location
   const handleDeleteLocation = async (locationId) => {
     try {
+      if (!data?.company_id) {
+        toast.error("Không tìm thấy thông tin công ty");
+        return;
+      }
+
       if (window.confirm("Bạn có chắc chắn muốn xóa địa chỉ này không?")) {
         const response = await deleteCompanyInfo({          
              id: locationId,
             type: "company_location",
-            company_id: companyInformation.company_id }
-        ).unwrap();
+            company_id: data.company_id 
+        }).unwrap();
         if (response.success) {
           toast.success("Xóa địa chỉ công ty thành công");
           refetch(); // Refresh locations list
@@ -198,11 +228,17 @@ export default function CompanyProfile() {
         toast.error("Vui lòng chọn loại phúc lợi và nhập mô tả chi tiết");
         return;
       }
+
+      if (!data?.company_id) {
+        toast.error("Không tìm thấy thông tin công ty");
+        return;
+      }
+
       setIsAddingBenefit(true);
       const response = await addCompanyInfo({
         type: "company_benefit",
         data: {
-          company_id: companyInformation.company_id,
+          company_id: data.company_id,
           benefit_id: newBenefit.benefit_id,
           benefit_value: newBenefit.benefit_value,
         },
@@ -231,11 +267,17 @@ export default function CompanyProfile() {
         toast.error("Vui lòng nhập mô tả chi tiết");
         return;
       }
+
+      if (!data?.company_id) {
+        toast.error("Không tìm thấy thông tin công ty");
+        return;
+      }
+
       setIsUpdatingBenefit(true);
       const result = await updateCompanyInfo({
         type: "company_benefit",
         data: {
-          company_id: companyInformation.company_id,
+          company_id: data.company_id,
           benefit_id: editBenefit.benefit_id,
           benefit_value: editBenefit.benefit_value,
         },
@@ -257,12 +299,17 @@ export default function CompanyProfile() {
   // Handle deleting a benefit
   const handleDeleteBenefit = async (benefitId) => {
     try {
+      if (!data?.company_id) {
+        toast.error("Không tìm thấy thông tin công ty");
+        return;
+      }
+
       setIsDeletingBenefit(true);
       if (window.confirm("Bạn có chắc chắn muốn xóa phúc lợi này không?")) {
         const response = await deleteCompanyInfo({
           id: benefitId,
           type: "company_benefit",
-          company_id: companyInformation.company_id,
+          company_id: data.company_id,
         }).unwrap();
         setIsDeletingBenefit(false);
         if (response.success) {
@@ -278,10 +325,22 @@ export default function CompanyProfile() {
     }
   };
 
+  // Hiển thị trạng thái loading khi đang tải dữ liệu
+  if (isLoading) {
+    return (
+      <div className="card shadow-sm p-4 text-center">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Đang tải...</span>
+        </div>
+        <p className="mt-2">Đang tải thông tin công ty...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="card shadow-sm">
       <div className="rounded-2 me-2 my-2 p-2">
-        <CompanyBackground company={companyInformation} />
+        <CompanyBackground company={data} />
       </div>
 
       <div className="rounded-2 me-2 my-2 p-2">
@@ -317,12 +376,13 @@ export default function CompanyProfile() {
               className="form-control"
               placeholder="Ví dụ: 0981868099"
               value={updateCompany.phone_number}
-              onChange={(e) =>
-                setUpdateCompany({
-                  ...updateCompany,
-                  phone_number: e.target.value,
-                })
-              }
+              disabled={true}
+              // onChange={(e) =>
+              //   setUpdateCompany({
+              //     ...updateCompany,
+              //     phone_number: e.target.value,
+              //   })
+              // }
             />
           </div>
         </div>
@@ -404,10 +464,10 @@ export default function CompanyProfile() {
         <h5 className="mt-4 mb-3 border-bottom pb-2">Địa chỉ công ty</h5>
 
         {/* List existing locations */}
-        {Array.isArray(companyInformation.company_location) &&
-        companyInformation.company_location.length > 0 ? (
+        {Array.isArray(data?.company_location) &&
+        data?.company_location.length > 0 ? (
           <div className="list-group mb-3">
-            {companyInformation.company_location.map((location) => (
+            {data.company_location.map((location) => (
               <div
                 key={location.location_id}
                 className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
@@ -440,7 +500,6 @@ export default function CompanyProfile() {
                       <button
                         className="btn btn-outline-primary btn-sm"
                         onClick={() => {
-                          console.log("Edit location:", location);
                           setEditLocation(location);
                         }}
                       >
@@ -449,7 +508,6 @@ export default function CompanyProfile() {
                       <button
                         className="btn btn-outline-danger btn-sm"
                         onClick={() => {
-                          console.log("Delete location:", location);
                           handleDeleteLocation(location.location_id);
                         }}
                         disabled={isDeleting}
@@ -557,15 +615,15 @@ export default function CompanyProfile() {
 
         {/* List existing benefits */}
         <div className="row mb-3">
-          {Array.isArray(companyInformation.company_benefits) && 
-          companyInformation.company_benefits.length > 0 ? (
-            companyInformation.company_benefits.map((benefit) => (
+          {Array.isArray(data?.company_benefits) && 
+          data?.company_benefits.length > 0 ? (
+            data.company_benefits.map((benefit) => (
               <div className="col-md-4 mb-3" key={benefit.benefit_id}>
                 <div className="card h-100 border">
                   <div className="card-body d-flex flex-column align-items-center text-center">
                     <div className="benefit-icon mb-2">
-                      {/* <i className={`bi bi-${benefit.benefit_icon || 'star'} fs-3 text-primary`}></i> */}
-                      <i className={`bi bi-heart fs-3 text-primary`}></i>
+                      <i className={`fa ${benefit.benefit_icon} fa-lg text-primary me-3 mt-1`}
+                            style={{ minWidth: "24px" }} ></i>
                     </div>
                     <h6 className="card-title">{benefit.benefit_name}</h6>
                     <p className="card-text small text-muted">{benefit.benefit_value}</p>
@@ -579,6 +637,7 @@ export default function CompanyProfile() {
                       <button 
                         className="btn btn-outline-danger btn-sm"
                         onClick={() => handleDeleteBenefit(benefit.benefit_id)}
+                        disabled={isDeletingBenefit}
                       >
                         <i className="bi bi-trash"></i> Xóa
                       </button>
@@ -662,7 +721,7 @@ export default function CompanyProfile() {
                 {benefits
                 ?.filter(benefit => 
                   // Lọc các benefit chưa được thêm vào công ty
-                  !companyInformation.company_benefits?.some(
+                  !data?.company_benefits?.some(
                     existingBenefit => existingBenefit.benefit_id === benefit.benefit_id
                   )
                 )

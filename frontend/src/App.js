@@ -24,13 +24,16 @@ import CompanyYouFollow from "./component/JobSeekersPage/MyCompany/companyYouFol
 
 import YourApply from "./component/JobSeekersPage/MyWork/yourApply.js";
 import SavedWork from "./component/JobSeekersPage/MyWork/savedWork.js";
-import Invitation from "./component/JobSeekersPage/MyWork/invitation.js";
+// import Invitation from "./component/JobSeekersPage/MyWork/invitation.js";
+
 
 import EmployerPage from "./component/EmployerPage/index.js";
 import EmployerOverview from "./component/EmployerPage/Overview/index.js";
 import EmployerProfile from "./component/EmployerPage/Profile/index.js";
-import CandidateProfileManage from "./component/EmployerPage/Profile/myCandidateProfile.js";
-import SaveCandidateProfile from "./component/EmployerPage/Profile/saveCandidateProfile.js";
+import EmployerManageApplication from "./component/EmployerPage/Profile/ManageApplication.js";
+import EmployerManageCandidate from "./component/EmployerPage/Profile/ManageCandidate.js";
+import EmployerManageInvitation from "./component/EmployerPage/Profile/ManageInvitations.js";
+
 import CompanyProfile from "./component/EmployerPage/Profile/companyProfile.js";
 import EmployerPost from "./component/EmployerPage/MyPost/index.js";
 import EmployerNotification from "./component/EmployerPage/MyNotification/index.js";
@@ -81,7 +84,7 @@ function App() {
             <Route Component={JobSeekerWork}>
               <Route path="/jobseeker-mywork" Component={YourApply} />
               <Route path="/jobseeker-savedwork" Component={SavedWork} />
-              <Route path="/jobseeker-invitation" Component={Invitation} />
+              {/* <Route path="/jobseeker-invitation" Component={Invitation} /> */}
             </Route>
             <Route
               path="/jobseeker-notification"
@@ -99,12 +102,16 @@ function App() {
             <Route Component={EmployerProfile}>
               <Route path="/employer-profile" Component={CompanyProfile} />
               <Route
-                path="/employer-manage-employee"
-                Component={CandidateProfileManage}
+                path="/employer-manage-application"
+                Component={EmployerManageApplication}
               />
               <Route
-                path="/save-employee-profile"
-                Component={SaveCandidateProfile}
+                path="/employer-manage-saving-candidate"
+                Component={EmployerManageCandidate}
+              />
+              <Route 
+              path="/employer-manage-invitation"
+              Component={EmployerManageInvitation}
               />
             </Route>
             <Route path="/employer-post" Component={EmployerPost} />

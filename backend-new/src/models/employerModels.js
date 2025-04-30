@@ -297,6 +297,7 @@ const queryGetJobseekerDetail = async (employer_id, jobseeker_id) => {
       `SELECT * FROM logs_employer_view_jobseeker WHERE employer_id = ? and jobseeker_id = ?`,
       [employer_id, jobseeker_id]
     );
+    console.log("checkLogsView", checkLogsView);
     const [checkLogsSave] = await db.query(
       `SELECT * FROM logs_employer_save_jobseeker WHERE employer_id = ? and jobseeker_id = ?`,
       [employer_id, jobseeker_id]
@@ -304,6 +305,7 @@ const queryGetJobseekerDetail = async (employer_id, jobseeker_id) => {
     const isSaved = checkLogsSave.length > 0 ? true : false;
 
     if (checkLogsView.length > 0) {
+      console.log("update view");
       const [logs] = await db.query(
         `
                   UPDATE logs_employer_view_jobseeker set create_at =? WHERE employer_id=? AND jobseeker_id=? ;
@@ -786,8 +788,10 @@ const queryGetCompanyInformation = async (company_id) => {
       c.company_id,
       c.company_name,
       c.logo,
+      u.email,
+      u.phone_number,
       c.background,
-      u.status_,
+      ue.status_,
       c.describle,
       c.count_follower,
       cs.scale_id,
@@ -817,45 +821,16 @@ const queryGetCompanyInformation = async (company_id) => {
           , JSON_ARRAY())
         FROM
           (select * FROM company_location where company_location.company_id = c.company_id) as cl
-          JOIN catalog_city ct ON ct.city_id = cl.city_id) as company_location,
-      (SELECT count(*) from logs_jobseeker_follow_employer ljfe where ljfe.employer_id = c.company_id) as count_follower,
-      (SELECT count(*) from job j where j.employer_id = c.company_id and j.status_=1 and j.date_expi >= NOW()) as count_job_posted,
-      (SELECT AVG(lr.score) FROM logs_review lr WHERE lr.company_id = c.company_id) AS average_score,
-      (SELECT COALESCE(
-        JSON_ARRAYAGG(
-          JSON_OBJECT(
-            'review_name', pfj.full_name,
-            'review_content', lr.content,
-            'score', lr.score,
-            'date', lr.create_at
-  )),JSON_ARRAY())
-        FROM 
-        (select * from logs_review lr2 WHERE lr2.company_id = c.company_id) lr
-        JOIN profile_jobseeker pfj ON lr.jobseeker_id = pfj.profile_id      
-        ) AS review_details,
-      (SELECT COALESCE(
-        JSON_ARRAYAGG(
-          JSON_OBJECT(
-            'score', score_counts.score,
-            'count', score_counts.count)), JSON_ARRAY())
-      FROM (  SELECT  score,  COUNT(*) AS count
-        FROM 
-          logs_review
-        WHERE 
-          company_id = c.company_id
-        GROUP BY 
-          score
-        ORDER BY
-          score DESC
-        ) AS score_counts
-      ) AS score_distribution
+          JOIN catalog_city ct ON ct.city_id = cl.city_id) as company_location
         FROM 
           (select * from company WHERE company_id = ?) as c
         join 
-        (select * from user_employer where employer_id = ?) as u
+        (select * from user_employer where employer_id = ?) as ue
+        JOIN 
+        (select * from user_ where user_.user_id = ?) as u ON u.user_id = ue.employer_id
         JOIN catalog_industry ci ON ci.industry_id = c.industry_id
         JOIN catalog_scale cs ON cs.scale_id = c.scale_id;  `,
-      [company_id, company_id]
+      [company_id, company_id,company_id]
     );
     return companyInfo[0];
   } catch (error) {
@@ -969,14 +944,14 @@ const queryGetListCandidateSaving = async (employer_id) => {
         pj.title,
         pj.birthday,
         u.email,
-        pj.phone_number,
-        COALESCE((select  lr.score
-        from logs_employer_rate_jobseeker lr 
-        where lr.employer_id = log.employer_id and lr.jobseeker_id = pj.profile_id), '0') as rating    
+        u.phone_number,
+        log.create_at,
+        COALESCE((Select lrj.score from logs_employer_rate_jobseeker lrj where lrj.jobseeker_id = pj.profile_id and lrj.employer_id = log.employer_id),0) as score,
+        COALESCE((Select lrj.content from logs_employer_rate_jobseeker lrj where lrj.jobseeker_id = pj.profile_id and lrj.employer_id = log.employer_id),'') as content
        from  
-       (SELECT * from logs_employer_save_jobseeker where employer_id = 1321) log
-      JOIN profile_jobseeker pj on log.jobseeker_id = pj.profile_id;
-      JOIN user_ u on u.user_id = pj.profile_id
+       (SELECT * from logs_employer_save_jobseeker where employer_id = ?) log
+      JOIN profile_jobseeker pj on log.jobseeker_id = pj.profile_id
+      JOIN user_ u on u.user_id = pj.profile_id;
       `,
       [employer_id]
     );
@@ -1052,8 +1027,8 @@ const queryInviteJobseekerApply = async (employer_id, jobseeker_id, job_ids) => 
     for (const job_id of job_ids) {
       // xóa các reject ứng viên nếu có trước đó
       await db.query(
-        `Update logs_jobseeker_apply_job set isreject=0 WHERE employer_id = ? AND jobseeker_id = ? AND job_id = ?;`,
-        [employer_id, jobseeker_id, job_id]
+        `Update logs_jobseeker_apply_job set isreject=0 WHERE jobseeker_id = ? AND job_id = ?;`,
+        [jobseeker_id, job_id]
       );
       const [result] = await db.query(
         `INSERT INTO logs_employer_invitation (employer_id, jobseeker_id, job_id, create_at) VALUES (?, ?, ?, ?);`,
@@ -1070,10 +1045,43 @@ const queryInviteJobseekerApply = async (employer_id, jobseeker_id, job_ids) => 
     throw error; // Ném lại lỗi để xử lý ở nơi gọi hàm
   }
 };
-
+const queryDeleteInvitation = async (employer_id, jobseeker_id, job_id) => {
+  try {
+    const [result] = await db.query(
+      `
+        DELETE FROM logs_employer_invitation WHERE employer_id = ? AND jobseeker_id = ? AND job_id = ?;
+      `,
+      [employer_id, jobseeker_id, job_id]
+    );
+    return result.affectedRows > 0; // Trả về true nếu có hàng bị xóa
+  } catch (error) {
+    console.error("Error deleting candidate:", error);
+    throw error; // Ném lại lỗi để xử lý ở nơi gọi hàm
+  }
+};
 const queryGetListInvitaion = async (employer_id) => {
   try {
-    
+    const [result] = await db.query(
+      `Select 
+          uj.avatar,
+          p.profile_id,
+          p.full_name,
+          j.job_id,
+          j.title,
+          j.date_expi,
+          j.date_post,
+          p.birthday,
+          COALESCE((Select lrj.score from logs_employer_rate_jobseeker lrj where lrj.jobseeker_id = p.profile_id and lrj.employer_id = lei.employer_id),0) as score,
+          COALESCE((Select lrj.content from logs_employer_rate_jobseeker lrj where lrj.jobseeker_id = p.profile_id and lrj.employer_id = lei.employer_id),'') as content,
+          lei.create_at 
+        from logs_employer_invitation lei 
+              JOIN job j on lei.job_id = j.job_id
+              JOIN user_ u on lei.jobseeker_id = u.user_id
+              JOIN user_jobseeker uj on uj.jobseeker_id = u.user_id
+              JOIN profile_jobseeker p on lei.jobseeker_id = p.profile_id
+              where lei.employer_id = ?;`, [employer_id]
+    );
+    return result;
   } catch (error) {
     console.error("Error Get Invitation candidate:", error);
     throw error; // Ném lại lỗi để xử lý ở nơi gọi hàm
@@ -1095,7 +1103,8 @@ const queryGetListJobApplication = async (employer_id) => {
         ljaj.create_at,
         ljaj.isreject,
         e.is_open_for_job,
-        COALESCE((Select avg(lrj.score) from logs_employer_rate_jobseeker lrj where lrj.jobseeker_id = p.profile_id),0) as score,
+        COALESCE((Select lrj.score from logs_employer_rate_jobseeker lrj where lrj.jobseeker_id = p.profile_id and lrj.employer_id = j.employer_id),0) as score,
+        COALESCE((Select lrj.content from logs_employer_rate_jobseeker lrj where lrj.jobseeker_id = p.profile_id and lrj.employer_id = j.employer_id),'') as content,
         COUNT(*) OVER() AS total_count
       FROM 
           (select * from job where employer_id = ?) AS j
@@ -1106,7 +1115,8 @@ const queryGetListJobApplication = async (employer_id) => {
       JOIN 
           user_jobseeker AS e ON e.jobseeker_id = ljaj.jobseeker_id 
       JOIN
-          profile_jobseeker AS p ON ljaj.jobseeker_id = p.profile_id`,[employer_id]);
+          profile_jobseeker AS p ON ljaj.jobseeker_id = p.profile_id
+      where ljaj.isreject=0;`,[employer_id]);
       return result;
 
   } catch (error) {
@@ -1127,8 +1137,8 @@ const queryGetListJobApplication = async (employer_id) => {
 const queryRejectJobApplication = async (employer_id, job_id, jobseeker_id) => {
   try {
 const [result] = await db.query(
-    `UPDATE logs_jobseeker_apply_job SET isreject = 1 WHERE employer_id = ? AND job_id = ? AND jobseeker_id = ?;`,
-    [employer_id, job_id, jobseeker_id]
+    `UPDATE logs_jobseeker_apply_job SET isreject = 1 WHERE job_id = ? AND jobseeker_id = ?;`,
+    [job_id, jobseeker_id]
   );
   if (result.affectedRows === 0) {
     throw new Error("Failed to update application status in database");
@@ -1376,6 +1386,7 @@ module.exports = {
   queryGetListJobForInvite,
   queryInviteJobseekerApply,
   queryGetListInvitaion,
+  queryDeleteInvitation,
   // queryGetListJobApplicationByJob,
 
   queryGetOverview,

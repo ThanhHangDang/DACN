@@ -777,7 +777,8 @@ const queryGetListJobApplication = async (profile_id) => {
       c.company_id,
       c.company_name,
       c.logo,
-      c.background
+      c.background,
+      1 as is_applied
       FROM
       (SELECT ja.*
        FROM logs_jobseeker_apply_job ja
@@ -934,7 +935,8 @@ const queryGetListJobSaving = async (profile_id) => {
       c.company_id,
       c.company_name,
       c.logo,
-      c.background
+      c.background,
+      1 as is_saved
     FROM
     (SELECT js.*
      FROM logs_jobseeker_save_job js

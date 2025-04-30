@@ -185,24 +185,24 @@ export const employerApi = createApi({
         console.log("redux receive rateCandidate", response);
         return response;
       },
-      invalidatesTags: ["ListCandidate", "Jobseekers","Jobseeker"],
+      invalidatesTags: ["ListCandidate", "Jobseekers","Jobseeker","ListInvitation","JobseekerApplied",],
     }),
 
 
 
 
-    getJobseekerApplied: builder.query({
+    getJobApplication: builder.query({
       query: ({ employer_id } ) => ({
         url: "/employer/job-applications",
         params: { employer_id } ,
       }),
       transformResponse: (response) => {
-        console.log("redux receive getJobseekerApplied", response);
-        return response;
+        // console.log("redux receive getJobseekerApplied", response);
+        return response.data;
       },
       providesTags: ["JobseekerApplied"],
     }),
-    deleteJobseekerApplied: builder.mutation({
+    rejectJobApplication: builder.mutation({
       query: ( { employer_id,job_id,jobseeker_id} ) => ({
         url: "/employer/job-application",
         method: "DELETE",
@@ -237,7 +237,32 @@ export const employerApi = createApi({
         // console.log("redux receive inviteCandidate", response);
         return response;
       },
-      invalidatesTags: ["Jobseeker","Jobseekers","Overview","JobForInvitation"],
+      invalidatesTags: ["Jobseeker","Jobseekers","Overview","JobForInvitation","ListInvitation"],
+    }),
+
+    deleteInvitation: builder.mutation({
+      query: ( { employer_id, jobseeker_id, job_id } ) => ({
+        url: "/employer/job-invitation",
+        method: "DELETE",
+        body: { employer_id, jobseeker_id,job_id } ,
+      }),
+      transformResponse: (response) => {
+        console.log("redux receive deleteInvitation", response);
+        return response;
+      },
+      invalidatesTags: ["Jobseeker","Jobseekers","Overview","ListInvitation"],
+    }),
+
+    getListInvitation: builder.query({
+      query: ( employer_id) => ({
+        url: "/employer/invitation",
+        params: { employer_id } ,
+      }),
+      transformResponse: (response) => {
+        console.log("redux receive inviteCandidate", response);
+        return response.data;
+      },
+      providesTags: ["ListInvitation"],
     }),
 })
 });
@@ -248,20 +273,27 @@ export const {
   useUpdateCompanyInforMutation,
   useAddCompanyInforMutation,
   useDeleteCompanyInforMutation,
+
   useGetJobByUserQuery,
   useAddJobMutation,
   useUpdateJobMutation,
   useDeleteJobMutation,
+
   useGetlistJobseekerQuery,
   useGetJobseekerDetailQuery,
+
   useGetListCandidateQuery,
   useAddCandidateMutation,
   useDeleteCandidateMutation,
   useRateCandidateMutation,
-  useGetJobseekerAppliedQuery,
-  useDeleteJobseekerAppliedMutation,
+
+  useGetJobApplicationQuery,  
+  useRejectJobApplicationMutation,
+
+
   useInviteCandidateApplyJobMutation,
-  useGetListJobForInvitationQuery
-  
+  useGetListJobForInvitationQuery,
+  useGetListInvitationQuery,
+  useDeleteInvitationMutation
 
 } = employerApi;

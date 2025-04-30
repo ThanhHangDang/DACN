@@ -8,6 +8,7 @@ import {
   useDeleteCandidateMutation,
   useGetListJobForInvitationQuery,
 } from "../../../redux_toolkit/employerApi.js";
+
 import formatSafeDate from "../../../utils/formatSafeDate.js";
 import InviteJobModal from "./InviteJobModal"; // Import modal component
 import { toast } from "react-toastify"; // Import toast nếu cần thông báo
@@ -417,7 +418,7 @@ const CandidateDetail = ({
 
           <div className="card">
             {ratingData ? (
-              <Rating ratingData={ratingData} profile_id={basic?.profile_id} />
+              <Rating ratingData={ratingData} profile_id={basic?.profile_id}  />
             ) : (
               <div className="card-body text-center text-muted">
                 Không có dữ liệu đánh giá
@@ -429,6 +430,7 @@ const CandidateDetail = ({
 
       {/* Modal component */}
       <InviteJobModal
+
         show={showInviteModal}
         onHide={() => setShowInviteModal(false)}
         onSubmit={handleInviteSubmit}

@@ -127,13 +127,19 @@ export default function YourCVwithUs() {
 
   const handleUpdateCarreerTarget = async () => {
     try {
-      await updateItemProfile({
+    const responese =   await updateItemProfile({
         type: "Basic",
         data: {
           profile_id: userInformation?.profile_id,
           career_target: careerTarget,
         },
       }).unwrap();
+      if (responese?.success) {
+        toast.success("Cập nhật mục tiêu nghề nghiệp thành công!");
+      }
+      else {
+        toast.error("Cập nhật mục tiêu nghề nghiệp thất bại!");
+      }
     } catch (error) {
       console.error("Error adding Carreer Target:", error);
       toast.error("Update Carreer Target thất bại!");

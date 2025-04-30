@@ -389,7 +389,7 @@ const queryGetListJobOfCompany = async (companyId) => {
           JOIN catalog_tags cta on cta.tag_id = js.skill_id) AS job_skills,
         COUNT(*) OVER() AS total_count
       FROM 
-          (select * from job where status_ = 1 and employer_id = ?) as j
+          (select * from job where status_ = 1 and employer_id = ? and date_expi >=NOW()) as j
       JOIN
           company c ON J.employer_id = c.company_id
       JOIN

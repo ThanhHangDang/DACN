@@ -31,6 +31,7 @@ export default function Register() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setDataRegister((prev) => ({ ...prev, [name]: value }));
+    console.log("change", name, value);
   };
 
   const handleBlur = (e) => {

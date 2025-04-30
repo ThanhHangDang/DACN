@@ -1,8 +1,40 @@
 import { NavLink } from "react-router-dom";
 import JobCard from "../JobCard.js";
 import "./MainCategorySection.css";
-
+import { useSelector } from "react-redux";
+import { useAddJobSavingMutation,useDeleteJobSavingMutation } from "../../../../redux_toolkit/jobseekerApi.js";
+import {toast} from "react-toastify";
 const RecentJobSection = ({ job }) => {
+  const { isLogin, user } = useSelector((state) => state.auth);
+  const [addJobSaving] = useAddJobSavingMutation();
+  const [deleteJobSaving] = useDeleteJobSavingMutation();
+  const handleSaveJob = async (jobId) => {
+    try {
+      const response = await addJobSaving({profile_id: user?.id, job_id: jobId });
+      if (response?.data?.success) {
+        toast.success("Lưu việc làm thành công!");
+      } else {
+        console.error("Lưu việc làm thất bại!");
+      }
+    } catch (error) {
+      console.error("Error saving job:", error);
+    }
+  }
+
+  const handleRemoveSaveJob = async (jobId) => {
+    try {
+      const response = await deleteJobSaving({profile_id: user?.id, job_id: jobId });
+      if (response?.data?.success) {
+        toast.success("Xóa việc làm khỏi danh sách lưu thành công!");        
+      } else {
+        console.error("Xóa việc làm khỏi danh sách lưu thất bại!");
+      }
+    } catch (error) {
+      console.error("Error removing saved job:", error);
+    }
+  }
+
+
   return (
     <div className="container my-5">
       <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
@@ -25,7 +57,7 @@ const RecentJobSection = ({ job }) => {
 
       <div>
         {job?.map((item, index) => {
-          return <JobCard key={index} job={item} />;
+          return <JobCard key={index} job={item} handleSaveJob = {handleSaveJob} handleRemoveSaveJob = {handleRemoveSaveJob}/>;
         })}
       </div>
     </div>

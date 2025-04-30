@@ -58,8 +58,8 @@ const CompanyBackground = ({ company }) => {
         <div
           className="profile-header position-relative mb-4 shadow-sm"
           style={
-            company.background
-              ? { backgroundImage: `url(${company.background})` }
+            company?.background
+              ? { backgroundImage: `url(${company?.background})` }
               : {}
           }
         >
@@ -77,7 +77,7 @@ const CompanyBackground = ({ company }) => {
         <div className="text-center">
           <div className="position-relative d-inline-block">
             <img
-              src={company.logo}
+              src={company?.logo}
               className="rounded-circle profile-pic"
               alt="ProfilePicture"
             />
@@ -88,8 +88,8 @@ const CompanyBackground = ({ company }) => {
               <i className="bi bi-camera"></i>
             </button>
           </div>
-          <h3 className="mt-3 mb-1">{company.company_name}</h3>
-          <p className="text-muted mb-3">{company.industry_name}</p>
+          <h3 className="mt-3 mb-1">{company?.company_name}</h3>
+          <p className="text-muted mb-3">{company?.industry_name}</p>
         </div>
       </div>
     </>

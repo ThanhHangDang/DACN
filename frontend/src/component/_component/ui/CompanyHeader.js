@@ -1,6 +1,13 @@
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import LoginModal from "./LoginModal";
 import { NavLink } from "react-router-dom";
+import {
+  useAddFollowingCompanyMutation,
+  useDeleteFollowingCompanyMutation,
+  useGetFollowingCompanyQuery,
+} from "../../../redux_toolkit/jobseekerApi";
+import { toast } from "react-toastify";
 export default function ComPanyHeard({
   companyInformation,
   heightBg = "250px",
@@ -8,14 +15,48 @@ export default function ComPanyHeard({
   showFollowButton = true,
 }) {
   const { isLogin, user } = useSelector((state) => state.auth);
-  const handdleSaveCompany = () => {
-    console.log(
-      "Jobseeker: ",
-      user?.id,
-      " lưu Job: ",
-      companyInformation?.company_id
-    );
+  const { data: listfollowCompany } = useGetFollowingCompanyQuery(user?.id);
+  console.log("list followCompany", listfollowCompany);
+  const [followed, setFollowed] = useState(false);
+  const [followCompany] = useAddFollowingCompanyMutation();
+  const [deleteFollowCompany] = useDeleteFollowingCompanyMutation();
+  const handdleFollowCompany = async () => {
+    if (user?.role === 3 && user?.id) {
+      const response = await followCompany({
+        profile_id: user?.id,
+        company_id: companyInformation?.company_id,
+      });
+      console.log("response", response);
+      if (response?.data?.success) {
+        toast.success("Theo dõi công ty thành công!");
+        setFollowed(true);
+      } else toast.error("Theo dõi công ty thất bại!");
+    }
   };
+  const handdleUnFollowCompany = async () => {
+    if (user?.role === 3 && user?.id&& followed) {
+      const response = await deleteFollowCompany({
+        profile_id: user?.id,
+        company_id: companyInformation?.company_id,
+      });
+      console.log("response", response);
+      if (response?.data?.success) {
+        toast.success("Bỏ theo dõi công ty thành công!");
+        setFollowed(true);
+      } else toast.error("Bỏ theo dõi công ty thất bại!");
+    }
+  };
+  useEffect(() => {
+    if (Array.isArray(listfollowCompany))
+    {
+      setFollowed(false);
+      for (const item of listfollowCompany) {
+        if (item?.company_id === companyInformation?.company_id) {
+          setFollowed(true);
+          break;
+        } 
+      }
+  }}, [listfollowCompany]);
 
   return (
     <div className="card">
@@ -75,12 +116,18 @@ export default function ComPanyHeard({
                 </p>
                 {showFollowButton &&
                   (user?.role === 3 ? (
+                    followed? (<button
+                      className="btn btn-danger me-2"
+                      onClick={handdleUnFollowCompany}
+                    >
+                      Bỏ theo dõi
+                    </button>):(
                     <button
                       className="btn btn-primary me-2"
-                      onClick={handdleSaveCompany}
+                      onClick={handdleFollowCompany}
                     >
                       + Theo dõi
-                    </button>
+                    </button>)
                   ) : (
                     <button
                       className="btn btn-primary me-2"

@@ -27,7 +27,6 @@ export const categoryApi = createApi({
           url:`/category/category-city`,
           params:  {nation} }),
         transformResponse: (response) => {
-          console.log("redux receive getCities", response);
           return response.data;        },   
       }),
     getDistricts: builder.query({
@@ -41,7 +40,6 @@ export const categoryApi = createApi({
     getLevels: builder.query({
       query: () => '/category/category-level',
       transformResponse: (response) => {
-        console.log("redux receive getLevels", response);
         return response.data;        },
     }),
     getScales: builder.query({

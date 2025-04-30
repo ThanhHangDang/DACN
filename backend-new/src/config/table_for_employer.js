@@ -13,9 +13,9 @@ module.exports = {
     tableName: 'company',
     key: ['company_id'],
     fields: ['company_id', 'company_name', 'logo', 'scale_id', 'industry_id', 
-             'phone_number', 'count_follower', 'describle'],
+              'count_follower', 'describle'],
     updateItem: ['company_name', 'logo', 'scale_id', 'industry_id', 
-                 'phone_number', 'describle','background'],
+                 , 'describle','background'],
     addItem: []
   },
   

@@ -5,8 +5,9 @@ import { useSelector, useDispatch } from "react-redux";
 // import { getPostDetails } from "../../redux/actions/postAction.js";
 import {
   useGetJobDetailQuery,
-  useGetRelatedJobsQuery,
+  useGetRelatedJobsQuery,  
 } from "../../../redux_toolkit/guestApi.js";
+import { useAddJobApplyMutation,useDeleteJobSavingMutation,useAddJobSavingMutation, useGetJobApplyQuery,useGetJobsavingQuery } from "../../../redux_toolkit/jobseekerApi.js";
 import formatDateToDDMMYYYY from "../../../utils/formatDate.js";
 import calculateDaysRemaining from "../../../utils/calculateDaysRemaining.js";
 import CompanyHeader from "../../../component/_component/ui/CompanyHeader.js";
@@ -14,47 +15,136 @@ import TitleComponent from "../../_component/ui/TitleComponent.js";
 import { toast } from "react-toastify";
 import LoginModal from "../../_component/ui/LoginModal.js";
 import { format } from "date-fns";
+import { get } from "jquery";
+import { use } from "react";
+import { ca } from "date-fns/locale";
 
 export default function WorkDetail() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
+  console.log("user", user);
   const { id } = useParams();
-
+  const [addJobApply] = useAddJobApplyMutation();
+  const [addJobSaving] = useAddJobSavingMutation();
+  const [deleteJobSaving] = useDeleteJobSavingMutation();
   const formatNumberToTr = (number) => `${(number / 1e6).toFixed(0)}tr`;
+  const [saved, setSaved] = React.useState(false);
+  const [applied, setApplied] = React.useState(false);
 
   const {
     data: postDetail,
-    isLoading,
-    refetch,
+    isLoading
   } = useGetJobDetailQuery(id, {
     refetchOnMountOrArgChange: true,
-  });
+  }) ;
 
+  const { data: jobApply } = useGetJobApplyQuery(user?.id, {
+    skip: !user?.id,})||[];
+  const { data: jobSaving } = useGetJobsavingQuery(user?.id, {
+    skip: !user?.id,})||[];
+console.log("jobApply", jobApply);
+console.log("jobSaving", jobSaving);
   const { data: relatedJobs, isLoading: isLoadingRelatedJobs } =
     useGetRelatedJobsQuery(id);
-  console.log("postDetail", postDetail);
-  console.log("relatedJobs", relatedJobs);
 
-  const handleSaveJob = () => {
-    console.log("Jobseeker: ", user?.id, " lưu Job: ", postDetail?.job_id);
+  const handleSaveJob = async () => {
+    try {
+      if (user?.role === 3) {
+        // Check if jobSaving is an array before using .some()
+        if (Array.isArray(jobSaving) && jobSaving.some((item) => item.job_id === postDetail?.job_id)) {
+          toast.error("Bạn đã lưu công việc này rồi!");
+          return;
+        }
+        const response = await addJobSaving({
+          job_id: postDetail?.job_id,
+          profile_id: user?.id,
+        }).unwrap();
+        if (response?.success) {
+          toast.success("Lưu công việc thành công!");
+        } else {
+          toast.error("Lưu công việc thất bại!");
+        }
+      } else {
+        toast.error("Vui lòng đăng nhập để lưu công việc!");
+      }
+    }
+    catch (error) {
+      console.error("Error saving job:", error);
+      toast.error("Đã xảy ra lỗi khi lưu việc làm!");
+    }
   };
 
-  const handleApplyJob = () => {
-    console.log(
-      "Jobseeker: ",
-      user?.id,
-      " handdleApplyJob: ",
-      postDetail?.job_id
-    );
+  const handleDeleteJobSaving = async () => {
+    try {
+      if (user?.role === 3) {
+        // Check if jobSaving is an array before using .some()
+        if (!Array.isArray(jobSaving) || !jobSaving.some((item) => item.job_id === postDetail?.job_id)) {
+          toast.error("Bạn chưa lưu công việc này!");
+          return;
+        }
+        const response = await deleteJobSaving({
+          job_id: postDetail?.job_id,
+          profile_id: user?.id,
+        }).unwrap();
+        if (response?.success) {
+          toast.success("Xóa công việc thành công!");
+        } else {
+          toast.error("Xóa công việc thất bại!");
+        }
+      } else {
+        toast.error("Vui lòng đăng nhập để xóa công việc!");
+      }
+    }
+    catch (error) {
+      console.error("Error deleting job saving:", error);
+      toast.error("Đã xảy ra lỗi khi xóa việc làm!");
+    }
+  };
+
+  const handleApplyJob = async () => {
+    try {
+      if (user?.role === 3) {
+        if (!Array.isArray(jobApply) ||jobApply?.some((item) => item.job_id === postDetail?.job_id)) {
+          toast.error("Bạn đã ứng tuyển công việc này rồi!");
+          return;
+        }
+        const response = await addJobApply({
+          job_id: postDetail?.job_id,
+          profile_id: user?.id,
+        }).unwrap();
+        if (response?.success) {
+          toast.success("Ứng tuyển thành công!");
+        } else {
+          toast.error("Ứng tuyển thất bại!");
+        }
+      } else {
+        toast.error("Vui lòng đăng nhập để ứng tuyển!");
+      }
+    }
+    catch (error) {
+      console.error("Error applying for job:", error);
+      toast.error("Đã xảy ra lỗi khi ứng tuyển!");
+    }
+
   };
 
   useEffect(() => {
-    if (user?.role === 2) {
-      toast.error("Vui lòng đăng nhập vai trò người tìm việc!");
-      navigate("/");
+    if (user?.role === 3) {
+      // Check if jobSaving is an array before using .some()
+      setSaved(Array.isArray(jobSaving) && jobSaving.some((item) => item.job_id === postDetail?.job_id));
+      
+      // Check if jobApply is an array before using .some()
+      setApplied(Array.isArray(jobApply) && jobApply.some((item) => item.job_id === postDetail?.job_id));
     }
-  }, [navigate, user]);
+  }, [user, jobSaving, jobApply, postDetail]);  
+
+  // useEffect( () => {
+  //   if (user?.role === 2) {
+  //     toast.error("Vui lòng đăng nhập vai trò người tìm việc!");
+  //     navigate("/");
+  //   }
+  // }, [navigate, user]);
 
   return (
     <>
@@ -104,18 +194,37 @@ export default function WorkDetail() {
                 </p>
                 {user?.role === 3 ? (
                   <>
-                    <button
-                      className="btn btn-danger me-2"
-                      onClick={handleApplyJob}
-                    >
-                      Ứng tuyển
-                    </button>
-                    <button
-                      className="btn btn-outline-secondary"
-                      onClick={handleSaveJob}
-                    >
-                      Lưu
-                    </button>
+                    {applied ? (
+                      <button
+                        className="btn btn-danger me-2"
+                        disabled
+                      >
+                        Đã ứng tuyển
+                      </button>
+                    ) : (
+                      <button
+                        className="btn btn-danger me-2"
+                        onClick={handleApplyJob}
+                      >
+                        Ứng tuyển
+                      </button>
+                    )}
+                    
+                    {saved ? (
+                      <button
+                        className="btn btn-outline-danger"
+                        onClick={handleDeleteJobSaving}
+                      >
+                        Bỏ Lưu
+                      </button>
+                    ) : (
+                      <button
+                        className="btn btn-outline-secondary"
+                        onClick={handleSaveJob}
+                      >
+                        Lưu
+                      </button>
+                    )}
                   </>
                 ) : (
                   <>

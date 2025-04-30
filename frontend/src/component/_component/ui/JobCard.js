@@ -4,7 +4,8 @@ import { NavLink } from "react-router-dom";
 import LoginModal from "./LoginModal.js";
 import { useDispatch, useSelector } from "react-redux";
 
-const JobCard = ({ job }) => {
+const JobCard = ({ job , handleSaveJob , handleRemoveSaveJob , icon = {added:"bi bi-bookmark-fill",noneadd:"bi bi-bookmark" }, is_hide_icon}) => {
+   const { user } = useSelector((state) => state.auth);
   const getRelativeTimeString = (dateString) => {
     try {
       const date = new Date(dateString);
@@ -14,12 +15,19 @@ const JobCard = ({ job }) => {
       return dateString; // Trả về date_post gốc nếu có lỗi
     }
   };
-
-  const { user } = useSelector((state) => state.auth);
-  const handleSaveJob = () => {
-    console.log("Jobseeker: ", user?.id, " lưu Job: ", job?.job_id);
+  const handleSaveClick = (id) => {
+    if (handleSaveJob) {
+      return () => handleSaveJob(id);
+    }
+    return () => {}; // Empty function if not provided
   };
 
+  const handleRemoveClick = (id) => {
+    if (handleRemoveSaveJob) {
+      return () => handleRemoveSaveJob(id);
+    }
+    return () => {}; // Empty function if not provided
+  };
   return (
     <div className="card mb-3 shadow-sm job-card">
       <LoginModal title="Bạn cần đăng nhập"/>
@@ -29,15 +37,17 @@ const JobCard = ({ job }) => {
             {" "}
             {getRelativeTimeString(job?.date_post)}
           </span>
-          {user?.role === 3 ? (
-            <i className="bi bi-bookmark" onClick={handleSaveJob}></i>
+          {is_hide_icon? (<i></i>):(user?.role === 3 ? (
+            job?.is_saved ? (
+            <i className={icon.added} onClick={handleRemoveClick(job.job_id)}></i>):
+            ( <i className="bi bi-bookmark" onClick={handleSaveClick(job.job_id)}></i>)
           ) : (
             <i
               className="bi bi-bookmark"
               data-bs-toggle="modal"
               data-bs-target="#LoginModal"
             ></i>
-          )}
+          ))}
         </div>
         <div className="d-flex justify-content-start">
           <div>
@@ -77,13 +87,6 @@ const JobCard = ({ job }) => {
             </div>
           </div>
         </div>
-
-        {/* <NavLink
-          to={`/post-detail/${job?.job_id}`}
-          className="btn btn-success btn-sm"
-        >
-          Job Details
-        </NavLink> */}
       </div>
     </div>
   );

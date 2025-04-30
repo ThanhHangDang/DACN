@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 
 import { useSelector, useDispatch } from "react-redux";
 import { logout, checkLoginStatus } from "../../redux_toolkit/AuthSlice.js";
-
+import { toast } from "react-toastify"; 
 import NotificationHeader from "./ui/NotificationHeader.js";
 
 const Header = () => {
@@ -15,8 +15,23 @@ const Header = () => {
 
   console.log("header check ", isLogin, user);
 
-  const handleLogout = () => {
-    dispatch(logout());
+  const handleLogout =async  () => {
+    try 
+{
+      const response = await dispatch(logout());
+      console.log("Logout response", response);
+      if (response.success) {
+        navigate("/"); // Redirect to home page on success
+      }
+      else
+      {
+        toast.error("Đăng xuất thất bại, vui lòng thử lại!");      
+      }
+    }
+    catch (error) {
+      console.error("Logout error", error);
+      toast.error("Đăng xuất thất bại, vui lòng thử lại!");
+    }
   };
 
   const handleViewProfile = () => {

@@ -1,12 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import calculateDaysRemaining from "../../../utils/calculateDaysRemaining.js";
+import { useGetCompanyInformationQuery, useGetJobByUserQuery } from "../../../redux_toolkit/guestApi.js";
 import {
-  useGetCompanyInformationQuery,
-  useGetJobByUserQuery,
-} from "../../../redux_toolkit/guestApi.js";
+  useGetCompanyReviewQuery,
+  useAddFollowingCompanyMutation,
+  useDeleteFollowingCompanyMutation,
+  useGetJobApplyQuery,
+  useAddJobApplyMutation,
+  useAddCompanyReviewMutation,
+  useDeleteCompanyReviewMutation,
+} from "../../../redux_toolkit/jobseekerApi.js";
 import { useGetCitiesQuery } from "../../../redux_toolkit/CategoryApi.js";
 import CompanyHeader from "../../_component/ui/CompanyHeader.js";
 import TitleComponent from "../../_component/ui/TitleComponent.js";
@@ -14,43 +20,76 @@ import { toast } from "react-toastify";
 
 export default function CompanyDetail() {
   const navigate = useNavigate();
+  const { isLogin, user } = useSelector((state) => state.auth);
+  const [applyJob] = useAddJobApplyMutation();
+  const [addFollowingCompany] = useAddFollowingCompanyMutation();
+  const [deleteFollowingCompany] = useDeleteFollowingCompanyMutation();
+  const [addReviewCompany] = useAddCompanyReviewMutation();
+  const [deleteReviewCompany] = useDeleteCompanyReviewMutation();
+  const { data: jobApply, refetch: refetchJobApply } = useGetJobApplyQuery(user?.id, { skip: !isLogin }); // Add refetch function
+  const formatNumberToTr = (number) => `${(number / 1e6).toFixed(0)}tr`;
   const { companyId } = useParams();
   const { data: city } = useGetCitiesQuery(84); // 84 là mã quốc gia Việt Nam
   const { data: companyInformation } = useGetCompanyInformationQuery(companyId);
-  console.log("companyInformation", companyInformation);
   const { data } = useGetJobByUserQuery(companyId);
   const postsByUser = data?.jobs || [];
-  const formatNumberToTr = (number) => `${(number / 1e6).toFixed(0)}tr`;
 
-  const { isLogin, user } = useSelector((state) => state.auth);
-
-  //Filter
+  // Filter
   const [keyword, setKeyWord] = useState("");
   const [keyLocation, setKeyLocation] = useState("");
 
-  //Client Pagination
+  // Client Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 5;
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const appliedJobIds = jobApply?.map((item) => item.job_id) || [];
 
-  const filteredPosts = postsByUser.filter((post) => {
-    const matchKeyword = String(post.title || "")
-      .toUpperCase()
-      .includes((keyword || "").toUpperCase());
+  const handleApplyJob = async (id) => {
+    try {
+      if (user?.role === 3) {
+        const response = await applyJob({ profile_id: user?.id, job_id: id }).unwrap();
 
-    const matchLocation =
-      keyLocation === "" || String(post.city_id) === String(keyLocation);
-
-    return matchKeyword && matchLocation;
-  });
-
-  const currentPosts = filteredPosts.slice(indexOfFirstPost, indexOfLastPost);
-  const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
-
-  const handleApplyJob = (id) => {
-    console.log("Jobseeker: ", user?.id, " handdleApplyJob: ", id);
+        if (response?.success) {
+          toast.success("Ứng tuyển thành công!");
+          
+          // No need to modify a local copy since we're using useMemo
+          // Simply refetch the data to update the appliedJobIds
+          refetchJobApply();
+        } else {
+          toast.error("Ứng tuyển thất bại!");
+        }
+      } else {
+        toast.error("Vui lòng đăng nhập để ứng tuyển!");
+      }
+    } catch (error) {
+      console.error("Error applying for job:", error);
+      toast.error("Đã xảy ra lỗi khi ứng tuyển!");
+    }
   };
+
+  const processedJobs = useMemo(() => {
+    return postsByUser.map((job) => ({
+      ...job,
+      is_apply: appliedJobIds.includes(job.job_id),
+    }));
+  }, [postsByUser, appliedJobIds]);
+
+  const filteredJobs = useMemo(() => {
+    return processedJobs.filter((post) => {
+      const matchKeyword = String(post.title || "")
+        .toUpperCase()
+        .includes((keyword || "").toUpperCase());
+
+      const matchLocation =
+        keyLocation === "" || String(post.city_id) === String(keyLocation);
+
+      return matchKeyword && matchLocation;
+    });
+  }, [processedJobs, keyword, keyLocation]);
+
+  const currentJobs = filteredJobs.slice(indexOfFirstPost, indexOfLastPost);
+  const totalPages = Math.ceil(filteredJobs.length / postsPerPage);
 
   useEffect(() => {
     if (user?.role === 2) {
@@ -124,11 +163,10 @@ export default function CompanyDetail() {
                       </option>
                     ))}
                   </select>
-                  {/* <button className="btn btn-success">Tìm kiếm</button> */}
                 </div>
                 <div className="list-group">
-                  {filteredPosts.length > 0 ? (
-                    currentPosts.map((option) => (
+                  {processedJobs.length > 0 ? (
+                    currentJobs.map((option) => (
                       <div
                         className="list-group-item d-flex justify-content-between align-items-center"
                         key={option.job_id}
@@ -140,7 +178,7 @@ export default function CompanyDetail() {
                             </NavLink>
                           </h6>
                           <p className="text-muted mb-0">
-                            {option.city_name} |{" "}
+                            {option.work_location_name} |{" "}
                             {calculateDaysRemaining(option.date_expi) > 0
                               ? `Còn ${calculateDaysRemaining(
                                   option.date_expi
@@ -159,12 +197,18 @@ export default function CompanyDetail() {
                                 )} đ/tháng`}
                           </span>
                           {user?.role === 3 ? (
-                            <button
-                              className="btn btn-outline-success btn-sm ms-3"
-                              onClick={() => handleApplyJob(option.job_id)}
-                            >
-                              Ứng tuyển
-                            </button>
+                            option.is_apply ? (
+                              <button className="btn btn-outline-danger btn-sm ms-3">
+                                Đã Ứng tuyển
+                              </button>
+                            ) : (
+                              <button
+                                className="btn btn-outline-success btn-sm ms-3"
+                                onClick={() => handleApplyJob(option.job_id)}
+                              >
+                                Ứng tuyển
+                              </button>
+                            )
                           ) : (
                             <button
                               className="btn btn-outline-success btn-sm ms-3"
@@ -259,6 +303,7 @@ export default function CompanyDetail() {
                               <div className="card-body d-flex flex-column  align-items-center">
                                 <i
                                   className={`fa ${item.benefit_icon} me-2`}
+                                  style={{ color: '#2DA5F6' }}
                                 ></i>
                                 <p className="card-text fw-bold m-0">
                                   {item.benefit_name}

@@ -3,7 +3,9 @@ import { formatDistanceToNow, parseISO, set } from "date-fns";
 import { ca, vi } from "date-fns/locale"; //
 import {useRateCandidateMutation} from "../../../redux_toolkit/employerApi.js";
 import { toast } from "react-toastify";
+
 const Rating = ({ratingData,profile_id}) => {
+ 
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   console.log("profile_id",profile_id);

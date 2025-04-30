@@ -32,7 +32,7 @@ export default function Login() {
     setErrors((prev) => ({ ...prev, [name]: error })); // Update error state
   };
 
-  const submitLogin = (e) => {
+  const submitLogin = async (e) => {
     e.preventDefault();
 
     let newErrors = {};
@@ -52,8 +52,12 @@ export default function Login() {
     if (hasError) {
       return; // Prevent submission if there are validation errors
     }
-
-    dispatch(loginUser(dataLogin)); // Proceed with login if no errors
+    const response = await dispatch(loginUser(dataLogin)); // Dispatch login action
+    console.log("response", response);
+    if (response.success) {
+      // toast.success("Đăng nhập thành công!");
+      navigate("/"); // Redirect to home page on success
+    }
   };
 
   useEffect(() => {
