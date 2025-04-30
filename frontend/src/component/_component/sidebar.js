@@ -62,21 +62,6 @@ const SidebarLayout = ({ data = [] }) => {
             </NavLink>
           ))}
         </div>
-
-        {/* <div className="profile-section mt-auto p-4">
-          <div className="d-flex align-items-center">
-            <img
-              src="https://randomuser.me/api/portraits/women/70.jpg"
-              style={{ height: "60px" }}
-              className="rounded-circle"
-              alt="Profile"
-            />
-            <div className="ms-3 profile-info">
-              <h6 className="text-white mb-0">Alex Morgan</h6>
-              <small className="text-muted">Admin</small>
-            </div>
-          </div>
-        </div> */}
       </nav>
 
       <main className="main-content">

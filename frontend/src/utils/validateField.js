@@ -1,4 +1,4 @@
-export function validateField(name, value) {
+export function validateField(name, value, formValues = {}) {
   if (value.trim() === "") {
     return `${name} không được để trống`;
   }
@@ -27,6 +27,22 @@ export function validateField(name, value) {
     case "password":
       if (value.length < 8) {
         return "Mật khẩu phải có ít nhất 8 ký tự";
+      }
+      break;
+    case "startDate":
+      if (
+        formValues.endDate &&
+        new Date(value) >= new Date(formValues.endDate)
+      ) {
+        return "Ngày bắt đầu phải trước ngày kết thúc";
+      }
+      break;
+    case "endDate":
+      if (
+        formValues.startDate &&
+        new Date(formValues.startDate) >= new Date(value)
+      ) {
+        return "Ngày kết thúc phải sau ngày bắt đầu";
       }
       break;
     default:

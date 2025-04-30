@@ -328,14 +328,15 @@ export default function JobSeekerProfile() {
               <form>
                 <div className="row mb-3">
                   <div className="col-md-6">
-                    <label htmlFor="fullname" className="form-label">
+                    <label htmlFor="name" className="form-label">
                       Họ và tên
                     </label>
                     <input
                       type="text"
-                      id="fullname"
+                      id="name"
                       placeholder="Họ và tên"
                       className="form-control"
+                      required
                       value={updateProfileData.full_name}
                       onChange={(e) => {
                         setUpdateProfileData({
@@ -373,10 +374,15 @@ export default function JobSeekerProfile() {
                     <input
                       type="number"
                       min="0"
+                      step="1"
                       className="form-control"
                       id="expr"
-                      placeholder="Nhập mức lương mong muốn"
-                      value={updateProfileData.year_exp}
+                      placeholder="Nhập năm kinh nghiệm"
+                      value={
+                        updateProfileData.year_exp < 0
+                          ? 0
+                          : updateProfileData.year_exp
+                      }
                       onChange={(e) =>
                         setUpdateProfileData({
                           ...updateProfileData,
@@ -657,11 +663,7 @@ export default function JobSeekerProfile() {
                     <select
                       className="form-select"
                       id="field"
-                      value={
-                        expectedJob.city_id
-                          ? expectedJob.city_id
-                          : userInformation?.city_id
-                      }
+                      value={expectedJob.city_id}
                       onChange={(e) =>
                         setExpectedJob({
                           ...expectedJob,
@@ -689,9 +691,9 @@ export default function JobSeekerProfile() {
                     id="postTitle"
                     placeholder="Nhập mức lương mong muốn"
                     value={
-                      expectedJob.salary_expect
-                        ? expectedJob.salary_expect
-                        : userInformation?.salary_expect
+                      expectedJob.salary_expect < 0
+                        ? 0
+                        : expectedJob.salary_expect
                     }
                     onChange={(e) =>
                       setExpectedJob({
@@ -805,7 +807,7 @@ export default function JobSeekerProfile() {
                   </button>
                 </h5>
                 <p className="card-text text-muted">
-                  <i className="fas fa-briefcase" />
+                  {/* <i className="fa fa-briefcase" /> */}
                   {userInformation?.title}
                 </p>
                 <div className="row">
