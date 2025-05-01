@@ -132,16 +132,14 @@ export default function JobSeekerAccountSetting() {
         >
           <div>
             <p className="mb-1 fw-bold">
-              Username: <span className="fw-normal">{user?.username}</span>
+              Tên đăng nhập: <span className="fw-normal">{user?.username}</span>
             </p>
             <p className="mb-0 fw-bold">
-              Password: <span className="fw-normal">******</span>
+              Mật khẩu: <span className="fw-normal">******</span>
             </p>
           </div>
           <div>
-            <p className="mb-0 text-muted">
-              Ngày tạo: {user?.create_date}
-            </p>
+            <p className="mb-0 text-muted">Ngày tạo: {user?.create_date}</p>
           </div>
         </div>
       </div>

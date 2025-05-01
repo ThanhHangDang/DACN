@@ -148,9 +148,7 @@ const CandidateDetail = ({
                 basic?.is_open_for_job === 0 ? "bg-danger" : "bg-success"
               }`}
             >
-              {basic?.is_open_for_job === 0
-                ? "Not Openning"
-                : "Opening for Job"}
+              {basic?.is_open_for_job === 0 ? "Hoạt động" : "Đang tìm việc"}
             </span>
           </div>
           <div className="text-muted small mt-2">
@@ -233,7 +231,7 @@ const CandidateDetail = ({
           {/* Experience*/}
           <div className="card mb-4">
             <div className="card-body">
-              <h6>Experience</h6>
+              <h6>Kinh nghiệm làm việc</h6>
 
               <div className="row small text-muted">
                 {experience_info?.map((item, index) => {
@@ -242,17 +240,17 @@ const CandidateDetail = ({
                       <p className="fw-bold mb-1">{item.exp_title}</p>
 
                       <p className="mb-1">
-                        Comapany: <strong>{item.exp_company}</strong>
+                        Công ty: <strong>{item.exp_company}</strong>
                       </p>
                       <p className="mb-1">
                         Mô tả: <strong>{item.exp_description}</strong>
                       </p>
                       <p>
-                        From:{" "}
+                        Từ:{" "}
                         <strong>
                           {formatSafeDate(item.exp_from, "MM/yyyy")}
                         </strong>{" "}
-                        To:{" "}
+                        Đến:{" "}
                         <strong>
                           {" "}
                           {formatSafeDate(item.exp_to, "MM/yyyy")}
@@ -267,22 +265,22 @@ const CandidateDetail = ({
 
           <div className="card mb-4">
             <div className="card-body">
-              <h6>Education</h6>
+              <h6>Học vấn</h6>
 
               <div className="row small text-muted">
                 {education_info?.map((item, index) => {
                   return (
                     <div key={index} className="m-2">
                       <p className="mb-1">
-                        <strong>University:</strong> {item.school}
+                        <strong>Trường:</strong> {item.school}
                       </p>
                       <p className="mb-1">
-                        <strong>Major:</strong> {item.major}
+                        <strong>Chuyên ngành:</strong> {item.major}
                       </p>
                       <p className="mb-1">
-                        From:{" "}
+                        Từ:{" "}
                         <strong>{formatSafeDate(item.from_, "MM/yyyy")}</strong>{" "}
-                        To:{" "}
+                        Đến:{" "}
                         <strong> {formatSafeDate(item.to_, "MM/yyyy")}</strong>
                       </p>
                     </div>
@@ -294,7 +292,7 @@ const CandidateDetail = ({
 
           <div className="card mb-4">
             <div className="card-body">
-              <h6>Project</h6>
+              <h6>Dự án</h6>
 
               <div className="row small text-muted">
                 {project_info?.map((item, index) => {
@@ -306,11 +304,11 @@ const CandidateDetail = ({
                           Mô tả: <strong>{item.project_description}</strong>
                         </p>
                         <p>
-                          From:{" "}
+                          Từ:{" "}
                           <strong>
                             {formatSafeDate(item.project_from, "MM/yyyy")}
                           </strong>{" "}
-                          To:{" "}
+                          Đến:{" "}
                           <strong>
                             {formatSafeDate(item.project_to, "MM/yyyy")}
                           </strong>
@@ -325,7 +323,7 @@ const CandidateDetail = ({
 
           <div className="card mb-4">
             <div className="card-body">
-              <h6>Skill</h6>
+              <h6>Kỹ năng</h6>
 
               <div className="small text-muted">
                 {skill_info.map((item) => (
@@ -343,7 +341,7 @@ const CandidateDetail = ({
 
           <div className="card mb-4">
             <div className="card-body">
-              <h6>Language</h6>
+              <h6>Ngoại ngữ</h6>
 
               <div className="small text-muted">
                 {language_info.map((item) => (
@@ -361,17 +359,17 @@ const CandidateDetail = ({
 
           <div className="card mb-4">
             <div className="card-body">
-              <h6>Certification</h6>
+              <h6>Chứng chỉ</h6>
 
               <div className="row small text-muted">
                 {certification_info?.map((item, index) => {
                   return (
                     <div key={index} className="m-2">
                       <p className="mb-1">
-                        <strong>Certification:</strong> {item.certification}
+                        <strong>Chứng chỉ:</strong> {item.certification}
                       </p>
                       <p className="mb-1">
-                        <strong>Month:</strong>{" "}
+                        <strong>Ngày cấp:</strong>{" "}
                         {formatSafeDate(item.month, "MM/yyyy")}
                       </p>
                     </div>
@@ -422,7 +420,7 @@ const CandidateDetail = ({
 
           <div className="card">
             {ratingData ? (
-              <Rating ratingData={ratingData} profile_id={basic?.profile_id}  />
+              <Rating ratingData={ratingData} profile_id={basic?.profile_id} />
             ) : (
               <div className="card-body text-center text-muted">
                 Không có dữ liệu đánh giá
@@ -434,7 +432,6 @@ const CandidateDetail = ({
 
       {/* Modal component */}
       <InviteJobModal
-
         show={showInviteModal}
         onHide={() => setShowInviteModal(false)}
         onSubmit={handleInviteSubmit}

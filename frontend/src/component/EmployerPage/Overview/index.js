@@ -6,7 +6,7 @@ import LineChartComponent from "../../../component/_component/ui/LineChart.js";
 import { useGetOverviewMutation } from "../../../redux_toolkit/employerApi.js";
 export default function EmployerOverview() {
   const { isLogin, user } = useSelector((state) => state.auth);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const [getOverviewData] = useGetOverviewMutation();
   const [dataValue, setDataValue] = useState(null);
   const [labelTitle, setLabelTitle] = useState(null);
@@ -41,14 +41,14 @@ export default function EmployerOverview() {
   };
   const getDataOverview = async () => {
     try {
-      if (rangeLabel!== null) {
-      const response = await getOverviewData({
-        employer_id: user?.id,
-        days: rangeLabel,
-      }).unwrap();
-      console.log("Overview data:", response);
-      setOverviewData(response);
-    }
+      if (rangeLabel !== null) {
+        const response = await getOverviewData({
+          employer_id: user?.id,
+          days: rangeLabel,
+        }).unwrap();
+        console.log("Overview data:", response);
+        setOverviewData(response);
+      }
     } catch (error) {
       console.error("Error fetching overview data:", error);
     }
@@ -82,7 +82,7 @@ export default function EmployerOverview() {
   return (
     <>
       <div className="bg-light rounded-2 me-2 my-2 p-2">
-        <h3>Tổng quan Employer</h3>
+        <h3>Tổng quan </h3>
       </div>
 
       <div className="bg-light rounded-2 me-2 my-2 p-2">
@@ -137,7 +137,7 @@ export default function EmployerOverview() {
             <h6 className="fw-bold">Lịch sử hoạt động</h6>
           </div>
         </div>
-        
+
         {overviewData?.chart ? (
           <div
             className="d-flex justify-content-center"
@@ -149,23 +149,22 @@ export default function EmployerOverview() {
               dataValue={dataValue}
             />
             <div>
-            <select
-              className="form-select form-select-sm w-auto"
-              value={days}
-              onChange={(e) => {
-                setDays(parseInt(e.target.value));
-              }}
-            >
-              <option value={7}>7 ngày</option>
-              <option value={14}>14 ngày</option>
-              <option value={30}>30 ngày</option>
-            </select>
+              <select
+                className="form-select form-select-sm w-auto"
+                value={days}
+                onChange={(e) => {
+                  setDays(parseInt(e.target.value));
+                }}
+              >
+                <option value={7}>7 ngày</option>
+                <option value={14}>14 ngày</option>
+                <option value={30}>30 ngày</option>
+              </select>
             </div>
           </div>
         ) : (
           <div className="text-center py-3">Đang tải dữ liệu...</div>
         )}
-   
       </div>
     </>
   );

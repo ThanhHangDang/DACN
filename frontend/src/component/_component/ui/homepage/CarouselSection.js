@@ -62,9 +62,11 @@ const HeroSection = ({ generalInfo }) => {
     >
       {/* Heading */}
       <div className="container">
-        <h1 className="display-4 fw-bold mb-3">Find Your Dream Job Today!</h1>
+        <h1 className="display-4 fw-bold mb-3">
+          Tìm Công Việc Mơ Ước Của Bạn Ngay Hôm Nay!
+        </h1>
         <p className="lead text-white-50 mb-4">
-          Connecting Talent with Opportunity: Your Gateway to Career Success
+          Gắn kết đam mê với cơ hội – Cùng bạn vươn tới đỉnh cao sự nghiệp
         </p>
 
         <div className="d-flex justify-content-center">
@@ -117,7 +119,7 @@ const HeroSection = ({ generalInfo }) => {
               className="btn btn-success rounded-0 rounded-end px-4 d-none d-md-flex align-items-center"
               onClick={handleSearch}
             >
-              <i className="bi bi-search me-2"></i> Search Job
+              <i className="bi bi-search me-2"></i> Tìm kiếm
             </button>
 
             {/* Button nhỏ */}
