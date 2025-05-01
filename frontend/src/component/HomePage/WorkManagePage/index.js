@@ -240,15 +240,15 @@ const JobListing = () => {
     }
   }, [navigate, user]);
 
-  // useEffect(() => {
-  //   if (titleFromUrl) {
-  //     setFilter((prevFilter) => ({
-  //       ...prevFilter,
-  //       title: titleFromUrl,
-  //       active_page: 1,
-  //     }));
-  //   }
-  // }, [titleFromUrl]);
+  useEffect(() => {
+    if (titleFromUrl) {
+      setFilter((prevFilter) => ({
+        ...prevFilter,
+        title: titleFromUrl,
+        active_page: 1,
+      }));
+    }
+  }, [titleFromUrl]);
 
 
   
