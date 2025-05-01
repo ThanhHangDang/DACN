@@ -69,7 +69,7 @@ const JobListing = () => {
   const [searchParams,setSearchParams] = useSearchParams();
   const titleFromUrl = searchParams.get("title");
 
-  const initialMaxSalary = 20000000; // 20 triệu là giá trị mặc định
+  const initialMaxSalary = 5000000; // 20 triệu là giá trị mặc định
 
   const [tempFilter, setTempFilter] = useState({
     title: titleFromUrl || "",
@@ -158,14 +158,21 @@ const JobListing = () => {
   const { data: cata_industry } = useGetIndustriesQuery();
   const { data: cata_jobFunction } = useGetJobFunctionQuery();
   const cata_jobtype = [
-    { id: 1, name: "Full time" },
-    { id: 2, name: "Part time" },
+    { id: 1, name: "Toàn thời gian", value: "full-time" },
+    { id: 2, name: "Bán thời gian", value: "part-time" },
   ];
-  const sort_by = [
-    "Tin mới cập nhật",
-    "Tin được quan tâm nhất",
-    "Mức lương cao nhất",
+  // const sort_by = [
+  //   "Tin mới cập nhật",
+  //   "Tin được quan tâm nhất",
+  //   "Mức lương cao nhất",
+  // ];
+  const sort_by = [{name: "Tin mới cập nhật", value: "date_post"},
+    {name: "Tin được quan tâm nhất", value: "views"},
+    {name: "Mức lương cao nhất", value: "salary_max"}
   ];
+    
+
+
   const year_exp_arr = [
     { id: 1, name: "Dưới 1 năm", value: 0 },
     { id: 2, name: "Từ 1 đến 3 năm", value: 1 },
@@ -175,19 +182,17 @@ const JobListing = () => {
   ];
 
   const { data = {}, isLoading, error, refetch } = useGetJobSearchQuery(filter);
-  const { jobs = [], totalWorksPages = 1 } = data || {};
+  const { jobs = [], totalWorksPages = 1,total_count=0 } = data || {};
 
   // console.log("jobs", data);  
   const [processedJobs, setProcessedJobs] = useState([]);
   useEffect(() => {
-    if (jobs && jobs.length > 0) {
-      const listsavingids = listsaving?.map((item) => item.job_id) || [];
-      
+    if (jobs) {
+      const listsavingids = listsaving?.map((item) => item.job_id) || [];      
       const updatedJobs = jobs.map((item) => ({
         ...item,
         is_saved: listsavingids.includes(item.job_id)
       }));
-
       setProcessedJobs(updatedJobs);
     }
   }, [listsaving, jobs]);
@@ -230,15 +235,15 @@ const JobListing = () => {
     }
   }, [navigate, user]);
 
-  // useEffect(() => {
-  //   if (titleFromUrl) {
-  //     setFilter((prevFilter) => ({
-  //       ...prevFilter,
-  //       title: titleFromUrl,
-  //       active_page: 1,
-  //     }));
-  //   }
-  // }, [titleFromUrl]);
+  useEffect(() => {
+    if (titleFromUrl) {
+      setFilter((prevFilter) => ({
+        ...prevFilter,
+        title: titleFromUrl,
+        active_page: 1,
+      }));
+    }
+  }, [titleFromUrl]);
 
 
   
@@ -361,11 +366,11 @@ const JobListing = () => {
                     className="form-check-input"
                     type="checkbox"
                     id={`jobtype-${type.id}`}
-                    checked={tempFilter.working_type === type.name}
+                    checked={tempFilter.working_type === type.value}
                     onChange={(e) => {
                       setTempFilter({
                         ...tempFilter,
-                        working_type: e.target.checked ? type.name : "",
+                        working_type: e.target.checked ? type.value : "",
                       });
                     }}
                   />
@@ -504,7 +509,7 @@ const JobListing = () => {
 
           <div className="col-lg-9">
             <div className="d-flex justify-content-between align-items-center mb-3">
-              <div className="text-muted small">Showing 6-6 of 10 results</div>
+              <div className="text-muted small">Hiển thị {Math.min(filter?.paging_size,total_count)} trên tổng số {total_count} kết quả</div>
               <select
                 className="form-select form-select-sm w-auto"
                 onChange={(e) => {
@@ -515,10 +520,10 @@ const JobListing = () => {
                 }}
                 value={filter.sort_by || ""}
               >
-                <option value="">Sắp xếp theo</option>
+                {/* <option value="">Sắp xếp theo</option> */}
                 {sort_by.map((sort, index) => (
-                  <option key={index} value={sort}>
-                    {sort}
+                  <option key={index} value={sort.value}>
+                    {sort.name}
                   </option>
                 ))}
               </select>

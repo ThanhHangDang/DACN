@@ -35,7 +35,7 @@ const getPublicJobDetail = async (req, res, next) => {
 const getListJobBySearch = async (req, res, next) => {
       try {
       const searchData = req.query;
-      console.log("searchData", searchData);
+      // console.log("searchData", searchData);
       if (!searchData) {
         return next(new ApiError("Thiếu thông tin filter", 400));
       }
@@ -47,7 +47,7 @@ const getListJobBySearch = async (req, res, next) => {
       const totalWorksPages = Math.ceil(total_count / paging_size);
 
       return res.success(
-        {jobs: data || [], totalWorksPages},
+        {jobs: data || [], totalWorksPages,total_count},
         "Tìm kiếm bài đăng thành công"
       );
     } catch (err) {

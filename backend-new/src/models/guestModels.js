@@ -214,17 +214,14 @@ const queryGetListJobBySearch = async (searchData) => {
       industry_id = null,
       job_function_id = null,
       work_location = null,
-      salary = null,
+      salary_expect = null,
       level_id = null,
-      require_marital_status = null,
-      require_gender = null,
-      require_age_min = null,
-      require_age_max = null,
-      require_education = null,
+      working_type= null,
+      skills = null,
       require_experience = null,
-      date_from = null,
       paging_size = 10,
       active_page = 1,
+      sort_by = "date_post",
       ...prop
     } = searchData;
 
@@ -283,7 +280,11 @@ const queryGetListJobBySearch = async (searchData) => {
       conditions.push("j.title LIKE ?");
       values.push(title2);
     }
-
+    if (skills) {
+      query += ` JOIN
+        (SELECT * FROM job_require_skill js WHERE js.skill_id IN (?)) AS js ON j.job_id = js.job_id`;
+      values.push(skills); 
+    }
     if (industry_id) {
       conditions.push("j.industry_id = ?");
       values.push(industry_id);
@@ -292,61 +293,58 @@ const queryGetListJobBySearch = async (searchData) => {
       conditions.push("j.job_function_id = ?");
       values.push(job_function_id);
     }
+    if (working_type) {
+      conditions.push("j.working_type = ?");
+      values.push(working_type);
+    }
     if (work_location) {
       conditions.push("j.work_location = ?");
       values.push(work_location);
     }
-    const currentDate = new Date().toISOString().split("T")[0];
     if (status_) {
-      conditions.push("j.date_expi >= ?");
-      values.push(currentDate);
+      conditions.push("j.date_expi >= NOW()");
     }
-    if (date_from) {
-      conditions.push("j.date_post >= ?");
-      values.push(date_from);
-    }
-    if (salary) {
+    if (salary_expect) {
       conditions.push("j.salary_max >= ?");
-      values.push(salary);
+      values.push(salary_expect);
     }
     if (level_id) {
       conditions.push("j.level_id = ?");
       values.push(level_id);
     }
+
     if (require_experience) {
-      conditions.push("j.require_experience >= ?");
-      values.push(require_experience);
-    }
-    if (require_age_max) {
-      conditions.push("j.require_age_max <= ?");
-      values.push(require_age_max);
-    }
-    if (require_age_min) {
-      conditions.push("j.require_age_min >= ?");
-      values.push(require_age_min);
-    }
-    if (require_gender) {
-      conditions.push("j.require_gender = ?");
-      values.push(require_gender);
-    }
-    if (require_marital_status) {
-      conditions.push("j.require_marital_status = ?");
-      values.push(require_marital_status);
-    }
-    if (require_education) {
-      conditions.push("j.require_education >= ?");
-      values.push(require_education);
+      switch (require_experience) { 
+        case '1':
+          conditions.push("j.require_experience <= ?");
+          values.push(1);
+          break;
+        case '2':
+          conditions.push("j.require_experience >= 1");
+          conditions.push("j.require_experience <= 3");
+          break;
+        case '3':
+          conditions.push("j.require_experience >= 3");
+          conditions.push("j.require_experience <= 5");
+          break;
+        case '4':
+          conditions.push("j.require_experience >= 5");
+          break;
+        case '5':
+          conditions.push("j.require_experience >= 10");
+          break;
+        default:
+          break;
+      } 
     }
     if (conditions.length > 0) {
       query += " WHERE " + conditions.join(" AND ");
     }
-    query += ` ORDER BY j.date_post DESC
+    query += ` ORDER BY ${sort_by} DESC
     LIMIT ? OFFSET ?;`;
     values.push(Number(paging_size));
     values.push((Number(active_page) - 1) * Number(paging_size));
     const [result] = await db.query(query, values);
-    // console.log("query", query);
-    // console.log("values", values);
     return result;
   } catch (error) {
     console.error("Error fetching jobs by search:", error);
