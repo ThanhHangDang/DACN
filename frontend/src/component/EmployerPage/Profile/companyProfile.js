@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useSelector  } from "react-redux";
+import { useSelector } from "react-redux";
 import {
   useGetIndustriesQuery,
   useGetScalesQuery,
   useGetCitiesQuery,
-  useGetBenefitsQuery
+  useGetBenefitsQuery,
 } from "../../../redux_toolkit/CategoryApi.js";
 import {
   useGetCompanyInforQuery,
@@ -16,14 +16,12 @@ import CompanyBackground from "../../../component/_component/ui/employer/Company
 import { toast } from "react-toastify";
 
 export default function CompanyProfile() {
-
   const { isLogin, user } = useSelector((state) => state.auth);
   const id = user?.id;
   const { data: industry } = useGetIndustriesQuery();
   const { data: scale } = useGetScalesQuery();
   const { data: cities } = useGetCitiesQuery(84); // 84 for Vietnam
-  const {data: benefits} = useGetBenefitsQuery();
-
+  const { data: benefits } = useGetBenefitsQuery();
 
   const { data, isLoading, refetch } = useGetCompanyInforQuery(id, {
     skip: !id // Skip query if id is undefined
@@ -37,37 +35,36 @@ export default function CompanyProfile() {
   const [deleteCompanyInfo, { isLoading: isDeleting }] =
     useDeleteCompanyInforMutation();
 
-    const [isAddingBenefit, setIsAddingBenefit] = useState(false);
-    const [isUpdatingBenefit, setIsUpdatingBenefit] = useState(false);
-    const [isDeletingBenefit, setIsDeletingBenefit] = useState(false);
-    const [updateCompany, setUpdateCompany] = useState({
-      company_name: "",
-      phone_number: "",
-      scale_id: "",
-      industry_id: "",
-      describle: "",
-      company_location: [],
-      company_benefits: [],
-    });
+  const [isAddingBenefit, setIsAddingBenefit] = useState(false);
+  const [isUpdatingBenefit, setIsUpdatingBenefit] = useState(false);
+  const [isDeletingBenefit, setIsDeletingBenefit] = useState(false);
+  const [updateCompany, setUpdateCompany] = useState({
+    company_name: "",
+    phone_number: "",
+    scale_id: "",
+    industry_id: "",
+    describle: "",
+    company_location: [],
+    company_benefits: [],
+  });
 
-    // New location state
-    const [newLocation, setNewLocation] = useState({
-      address: "",
-      city_id: "",
-    });
+  // New location state
+  const [newLocation, setNewLocation] = useState({
+    address: "",
+    city_id: "",
+  });
 
   // Edit location state
-    const [editLocation, setEditLocation] = useState(null);
+  const [editLocation, setEditLocation] = useState(null);
 
   // New benefit state
-    const [newBenefit, setNewBenefit] = useState({
-      benefit_id: "",
-      benefit_value: "",
-    });
+  const [newBenefit, setNewBenefit] = useState({
+    benefit_id: "",
+    benefit_value: "",
+  });
 
   // Edit benefit state
-    const [editBenefit, setEditBenefit] = useState(null);
-
+  const [editBenefit, setEditBenefit] = useState(null);
 
   // Update state when company data changes
   useEffect(() => {
@@ -364,6 +361,11 @@ export default function CompanyProfile() {
                 })
               }
             />
+            {updateCompany.company_name === "" && (
+              <div className="alert alert-danger mt-2">
+                <p>Tên công ty không được để trống</p>
+              </div>
+            )}
           </div>
 
           {/* Điện thoại */}
@@ -372,7 +374,7 @@ export default function CompanyProfile() {
               Điện thoại <span className="text-danger">*</span>
             </label>
             <input
-              type="text"
+              type="number"
               className="form-control"
               placeholder="Ví dụ: 0981868099"
               value={updateCompany.phone_number}
@@ -384,6 +386,11 @@ export default function CompanyProfile() {
               //   })
               // }
             />
+            {updateCompany.phone_number === "" && (
+              <div className="alert alert-danger mt-2">
+                <p>Số điện thoại không được để trống</p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -409,6 +416,11 @@ export default function CompanyProfile() {
                 </option>
               ))}
             </select>
+            {updateCompany.industry_id === "" && (
+              <div className="alert alert-danger mt-2">
+                <p>Hãy chọn lĩnh vực công ty.</p>
+              </div>
+            )}
           </div>
 
           <div className="col-md-6">
@@ -454,7 +466,13 @@ export default function CompanyProfile() {
           <button
             className="btn btn-primary"
             onClick={handleupdateCompanyInfo}
-            disabled={isUpdating}
+            disabled={
+              updateCompany.company_name !== "" &&
+              updateCompany.phone_number !== "" &&
+              updateCompany.industry_id !== ""
+                ? false
+                : true
+            }
           >
             {isUpdating ? "Đang cập nhật..." : "Cập nhật thông tin công ty"}
           </button>
@@ -626,15 +644,17 @@ export default function CompanyProfile() {
                             style={{ minWidth: "24px" }} ></i>
                     </div>
                     <h6 className="card-title">{benefit.benefit_name}</h6>
-                    <p className="card-text small text-muted">{benefit.benefit_value}</p>
+                    <p className="card-text small text-muted">
+                      {benefit.benefit_value}
+                    </p>
                     <div className="mt-auto d-flex gap-2">
-                      <button 
+                      <button
                         className="btn btn-outline-primary btn-sm"
                         onClick={() => setEditBenefit(benefit)}
                       >
                         <i className="bi bi-pencil"></i> Sửa
                       </button>
-                      <button 
+                      <button
                         className="btn btn-outline-danger btn-sm"
                         onClick={() => handleDeleteBenefit(benefit.benefit_id)}
                         disabled={isDeletingBenefit}
@@ -647,7 +667,9 @@ export default function CompanyProfile() {
               </div>
             ))
           ) : (
-            <div className="alert alert-info">Chưa có phúc lợi nào được thêm</div>
+            <div className="alert alert-info">
+              Chưa có phúc lợi nào được thêm
+            </div>
           )}
         </div>
 
@@ -709,10 +731,12 @@ export default function CompanyProfile() {
                 className="form-select"
                 value={newBenefit?.benefit_id || ""}
                 onChange={(e) => {
-                  const selectedBenefit = benefits?.find(b => b.benefit_id.toString() === e.target.value);
+                  const selectedBenefit = benefits?.find(
+                    (b) => b.benefit_id.toString() === e.target.value
+                  );
                   if (selectedBenefit) {
                     setNewBenefit({
-                      benefit_id: selectedBenefit.benefit_id
+                      benefit_id: selectedBenefit.benefit_id,
                     });
                   }
                 }}
@@ -740,7 +764,10 @@ export default function CompanyProfile() {
                 placeholder="Ví dụ: Bảo hiểm sức khỏe toàn diện"
                 value={newBenefit?.benefit_value || ""}
                 onChange={(e) =>
-                  setNewBenefit({ ...newBenefit, benefit_value: e.target.value })
+                  setNewBenefit({
+                    ...newBenefit,
+                    benefit_value: e.target.value,
+                  })
                 }
                 disabled={!newBenefit?.benefit_id}
               />
@@ -750,7 +777,11 @@ export default function CompanyProfile() {
             <button
               className="btn btn-primary btn-sm mt-2"
               onClick={handleAddBenefit}
-              disabled={isAddingBenefit || !newBenefit?.benefit_id || !newBenefit?.benefit_value}
+              disabled={
+                isAddingBenefit ||
+                !newBenefit?.benefit_id ||
+                !newBenefit?.benefit_value
+              }
             >
               <i className="bi bi-plus-circle"></i>{" "}
               {isAddingBenefit ? "Đang thêm..." : "Thêm phúc lợi"}

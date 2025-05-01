@@ -10,6 +10,7 @@ import {
   useGetEducationQuery,
 } from "../../../redux_toolkit/CategoryApi.js"; //useGetBenefitsQuery, useGetNationsQuery,useGetLevelsQuery,  useGetScalesQuery,useGetDistrictsQuery,
 import { toast } from "react-toastify";
+import { validateField } from "../../../utils/validateField";
 
 import {
   useGetJobByUserQuery,
@@ -125,7 +126,9 @@ export default function EmployerPost() {
     }));
   };
 
-  const handleAddPost = async () => {
+  const handleAddPost = async (e) => {
+    e.preventDefault(); // Ngăn chặn hành vi mặc định của form
+
     try {
       console.log("newPost: ", newPost);
       const processedData = {
@@ -306,6 +309,41 @@ export default function EmployerPost() {
     }
   };
 
+  //Validate post
+  const [validPost, setValidPost] = useState(false);
+  const [errorsPost, setErrorsPost] = useState({
+    title: "",
+    working_time: "",
+    work_location: "",
+    address: "",
+    describle: "",
+  });
+  const handleBlurPost = (e) => {
+    const { name, value } = e.target;
+    const errorMessage = validateField(name, value);
+    setErrorsPost((prevErrors) => ({
+      ...prevErrors,
+      [name]: errorMessage,
+    }));
+  };
+  useEffect(() => {
+    const requiredFields = [
+      "title",
+      "working_time",
+      "work_location",
+      "address",
+      "describle",
+    ];
+
+    const allFieldsFilled = requiredFields.every(
+      (field) => newPost[field] && newPost[field].trim() !== ""
+    );
+
+    const noErrors = Object.values(errorsPost).every((err) => err === "");
+
+    setValidPost(allFieldsFilled && noErrors);
+  }, [newPost, errorsPost]);
+
   useEffect(() => {
     if (!isLogin || user?.role !== 2) {
       navigate("/login");
@@ -323,35 +361,42 @@ export default function EmployerPost() {
         // aria-hidden="true"
       >
         <div className="modal-dialog modal-lg">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="modalTitle">
-                Thêm Bài Đăng
-              </h5>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              />
-            </div>
-            <div className="modal-body">
-              <form>
+          <form onSubmit={handleAddPost}>
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="modalTitle">
+                  Thêm Bài Đăng
+                </h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                />
+              </div>
+              <div className="modal-body">
                 <div className="row mb-3">
                   <div className="">
-                    <label htmlFor="postTitle" className="form-label">
-                      Tiêu đề bài đăng*
+                    <label htmlFor="title" className="form-label">
+                      Tiêu đề bài đăng
                     </label>
                     <input
                       type="text"
                       className="form-control"
-                      id="postTitle"
+                      id="title"
+                      name="title"
                       placeholder="Nhập tiêu đề bài đăng"
                       value={newPost.title}
                       onChange={(e) =>
                         setNewPost({ ...newPost, title: e.target.value })
                       }
+                      onBlur={handleBlurPost}
                     />
+                    {errorsPost.title && (
+                      <div className="alert alert-danger mt-2">
+                        {errorsPost.title}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="row">
@@ -449,12 +494,13 @@ export default function EmployerPost() {
                   </div>
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="benefits" className="form-label">
+                  <label htmlFor="describle" className="form-label">
                     Mô tả công việc
                   </label>
                   <textarea
                     className="form-control"
-                    id="benefits"
+                    id="describle"
+                    name="describle"
                     rows={3}
                     placeholder="Nhập mô tả công việc"
                     value={newPost.describle.replace(/%00endl/g, "\n")}
@@ -464,16 +510,41 @@ export default function EmployerPost() {
                         describle: e.target.value.replace(/\n/g, "%00endl"),
                       })
                     }
+                    onBlur={handleBlurPost}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
-                        e.preventDefault(); // Ngăn không cho xuống dòng (đối với textarea) hoặc submit form
-                        setNewPost((prev) => ({
-                          ...prev,
-                          describle: prev.describle + "%00endl",
-                        }));
+                        e.preventDefault(); // Ngăn textarea xuống dòng
+
+                        const textarea = e.target;
+                        const start = textarea.selectionStart;
+                        const end = textarea.selectionEnd;
+
+                        setNewPost((prev) => {
+                          const currentValue = prev.describle || "";
+                          const newValue =
+                            currentValue.slice(0, start) +
+                            "%00endl" +
+                            currentValue.slice(end);
+
+                          // Cập nhật lại vị trí con trỏ sau render
+                          setTimeout(() => {
+                            textarea.selectionStart = textarea.selectionEnd =
+                              start + "%00endl".length;
+                          }, 0);
+
+                          return {
+                            ...prev,
+                            describle: newValue,
+                          };
+                        });
                       }
                     }}
                   />
+                  {errorsPost.describle && (
+                    <div className="alert alert-danger mt-2">
+                      {errorsPost.describle}
+                    </div>
+                  )}
                 </div>
 
                 <div className="row">
@@ -748,34 +819,43 @@ export default function EmployerPost() {
 
                 <div className="row mb-3">
                   <div className="">
-                    <label htmlFor="postTitle" className="form-label">
+                    <label htmlFor="working_time" className="form-label">
                       Thời gian làm việc
                     </label>
                     <input
                       type="text"
                       className="form-control"
-                      id="postTitle"
+                      id="working_time"
+                      name="working_time"
                       placeholder="Nhập thời gian làm việc"
                       value={newPost?.working_time}
                       onChange={(e) =>
                         setNewPost({ ...newPost, working_time: e.target.value })
                       }
+                      onBlur={handleBlurPost}
                     />
+                    {errorsPost.working_time && (
+                      <div className="alert alert-danger mt-2">
+                        {errorsPost.working_time}
+                      </div>
+                    )}
                   </div>
                 </div>
 
                 <div className="col-md-6 mb-3">
-                  <label htmlFor="endYear" className="form-label">
+                  <label htmlFor="work_location" className="form-label">
                     Khu vực làm việc*
                   </label>
                   <select
                     className="form-select"
-                    id="field_worklocation"
+                    id="work_location"
+                    name="work_location"
                     value={newPost.work_location || ""}
-                    // selected={newPost?.work_location}
-                    onChange={(e) =>
-                      setNewPost({ ...newPost, work_location: e.target.value })
-                    }
+                    selected={newPost?.work_location}
+                    onChange={(e) => {
+                      setNewPost({ ...newPost, work_location: e.target.value });
+                      handleBlurPost(e);
+                    }}
                     required
                   >
                     <option value="" disabled>
@@ -787,37 +867,50 @@ export default function EmployerPost() {
                       </option>
                     ))}
                   </select>
+                  {newPost.work_location === "" && (
+                    <div className="alert alert-danger mt-2">
+                      <p>Vui lòng chọn khu vực làm việc.</p>
+                    </div>
+                  )}
                 </div>
 
                 <div className="row mb-3">
                   <div className="">
-                    <label htmlFor="postTitle" className="form-label">
-                      Địa điểm làm việc*
+                    <label htmlFor="address" className="form-label">
+                      Địa điểm làm việc
                     </label>
                     <input
                       type="text"
                       className="form-control"
-                      id="postTitle"
+                      id="address"
+                      name="address"
                       placeholder="Nhập Địa điểm làm việc"
                       value={newPost.address}
                       onChange={(e) =>
                         setNewPost({ ...newPost, address: e.target.value })
                       }
+                      onBlur={handleBlurPost}
                     />
+                    {errorsPost.address && (
+                      <div className="alert alert-danger mt-2">
+                        {errorsPost.address}
+                      </div>
+                    )}
                   </div>
                 </div>
 
                 <div className="row mb-3">
                   <div className="">
-                    <label htmlFor="postTitle" className="form-label">
+                    <label htmlFor="more_requirement" className="form-label">
                       Yêu cầu khác
                     </label>
                     <textarea
                       rows={3}
                       type="text"
                       className="form-control"
-                      id="postTitle"
-                      placeholder="Nhập yêu cầu khác"
+                      id="more_requirement"
+                      name="more_requirement"
+                      placeholder="Nhập yêu cầu khác nếu có"
                       value={newPost.more_requirement.replace(/%00endl/g, "\n")}
                       onChange={(e) =>
                         setNewPost({
@@ -828,40 +921,75 @@ export default function EmployerPost() {
                           ),
                         })
                       }
+                      // onBlur={handleBlurPost}
+                      // onKeyDown={(e) => {
+                      //   if (e.key === "Enter") {
+                      //     e.preventDefault(); // Ngăn không cho xuống dòng (đối với textarea) hoặc submit form
+                      //     setNewPost((prev) => ({
+                      //       ...prev,
+                      //       more_requirement: prev.more_requirement + "%00endl",
+                      //     }));
+                      //   }
+                      // }}
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
-                          e.preventDefault(); // Ngăn không cho xuống dòng (đối với textarea) hoặc submit form
-                          setNewPost((prev) => ({
-                            ...prev,
-                            more_requirement: prev.more_requirement + "%00endl",
-                          }));
+                          e.preventDefault(); // Ngăn không cho xuống dòng
+
+                          const textarea = e.target;
+                          const start = textarea.selectionStart;
+                          const end = textarea.selectionEnd;
+
+                          setNewPost((prev) => {
+                            const currentValue = prev.more_requirement || "";
+                            const newValue =
+                              currentValue.slice(0, start) +
+                              "%00endl" +
+                              currentValue.slice(end);
+
+                            // Cập nhật lại vị trí con trỏ sau khi render
+                            setTimeout(() => {
+                              textarea.selectionStart = textarea.selectionEnd =
+                                start + "%00endl".length;
+                            }, 0);
+
+                            return {
+                              ...prev,
+                              more_requirement: newValue,
+                            };
+                          });
                         }
                       }}
                     />
+                    {/* {errorsPost.more_requirement && (
+                      <div className="alert alert-danger mt-2">
+                        {errorsPost.more_requirement}
+                      </div>
+                    )} */}
                   </div>
                 </div>
-              </form>
-            </div>
+              </div>
 
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Hủy
-              </button>
-              <button
-                type="button"
-                className="btn btn-primary"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-                onClick={handleAddPost}
-              >
-                {isAddPost === true ? "Đăng bài" : "Cập nhật bài đăng"}
-              </button>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                  // onClick={handleAddPost}
+                  disabled={!validPost}
+                >
+                  {isAddPost === true ? "Đăng bài" : "Cập nhật bài đăng"}
+                </button>
+              </div>
             </div>
-          </div>
+          </form>
         </div>
       </div>
       {/* End modal thêm bài đăng */}
@@ -921,7 +1049,37 @@ export default function EmployerPost() {
           className="btn btn-success float-end me-3 my-2"
           data-bs-toggle="modal"
           data-bs-target="#addPostModal"
-          onClick={() => setIsAddPost(true)}
+          onClick={() => {
+            setIsAddPost(true);
+            setNewPost({
+              job_id: "0",
+              employer_id: user?.id,
+              title: "",
+              date_post: new Date().toISOString(),
+              industry_id: 20,
+              job_function_id: 1,
+              status_: 1,
+              level_id: 1,
+              quantity: 1,
+              salary_min: 500000,
+              salary_max: 1000000,
+              working_type: "full-time",
+              working_time: "",
+              work_location: "",
+              address: "",
+              describle: "",
+              more_requirement: "",
+              require_experience: 0,
+              require_age_min: 18,
+              require_age_max: 18,
+              require_gender: "Không yêu cầu",
+              require_marital_status: "Không yêu cầu",
+              require_education: 1,
+              require_skill: [],
+              require_language: [],
+              require_certification: [],
+            });
+          }}
         >
           + Đăng tin tuyển dụng
         </button>
@@ -973,7 +1131,7 @@ export default function EmployerPost() {
                         require_age_min: post.require_age_min,
                         require_age_max: post.require_age_max,
                         address: post.address,
-                        work_location: post.work_location,
+                        work_location: post.city_id,
                       });
                       setIsAddPost(false);
                     }}
