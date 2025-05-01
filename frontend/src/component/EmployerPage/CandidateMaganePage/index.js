@@ -110,8 +110,12 @@ export default function CandidatesMaganePage() {
       job_function_id: currentFilterValues.job_function_id || "",
       level_id: currentFilterValues.level_id || "",
       year_exp: currentFilterValues.year_exp || "",
-      age_min: currentFilterValues.age_min ? Number(currentFilterValues.age_min) : "",
-      age_max: currentFilterValues.age_max ? Number(currentFilterValues.age_max) : "",
+      age_min: currentFilterValues.age_min
+        ? Number(currentFilterValues.age_min)
+        : "",
+      age_max: currentFilterValues.age_max
+        ? Number(currentFilterValues.age_max)
+        : "",
       gender: currentFilterValues.gender || "",
       education_id: currentFilterValues.education_id || "",
       language_id: currentFilterValues.language_id || "",
@@ -341,8 +345,10 @@ export default function CandidatesMaganePage() {
   return (
     <>
       <TitleComponent
-        title={"Our Candidates"}
-        description={"Choose the right candidate for your company!"}
+        title={"Danh Sách Ứng Viên"}
+        description={
+          "Tài năng phù hợp là tài sản quý giá nhất của mỗi doanh nghiệp."
+        }
       />
       <div>
         <div className="container-fluid p-3 mt-3">
@@ -396,11 +402,13 @@ export default function CandidatesMaganePage() {
                   }
                 >
                   <option value="">Chọn trình độ học vấn</option>
-                  {educations?.filter((option) => option.education_id > 1).map((edu) => (
-                    <option key={edu.education_id} value={edu.education_id}>
-                      Tối thiểu {edu.education_title}
-                    </option>
-                  ))}
+                  {educations
+                    ?.filter((option) => option.education_id > 1)
+                    .map((edu) => (
+                      <option key={edu.education_id} value={edu.education_id}>
+                        Tối thiểu {edu.education_title}
+                      </option>
+                    ))}
                 </select>
 
                 {/* Years of experience filter */}
@@ -436,9 +444,9 @@ export default function CandidatesMaganePage() {
                 >
                   <option value="">Tất cả cấp bậc</option>
                   {levels?.map((option) => (
-                        <option value={option.level_id} key={option.level_id}>
-                          {option.level_name}
-                        </option>
+                    <option value={option.level_id} key={option.level_id}>
+                      {option.level_name}
+                    </option>
                   ))}
                 </select>
                 {/* Age range filter */}
@@ -485,10 +493,6 @@ export default function CandidatesMaganePage() {
                     Đến: <strong>{values[1]}</strong> tuổi
                   </small>
                 </div>
-
-
-
-
 
                 {/* Gender filter */}
                 <h6 className="fw-bold mt-3">Giới tính</h6>
@@ -542,9 +546,6 @@ export default function CandidatesMaganePage() {
                     </label>
                   </div>
                 </div>
-
-
-
 
                 {/* Apply filters button */}
                 <button

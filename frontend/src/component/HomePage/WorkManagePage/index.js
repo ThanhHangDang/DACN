@@ -9,7 +9,11 @@ import {
   useGetIndustriesQuery,
   useGetJobFunctionQuery,
 } from "../../../redux_toolkit/CategoryApi";
-import {useGetJobsavingQuery, useAddJobSavingMutation,useDeleteJobSavingMutation } from "../../../redux_toolkit/jobseekerApi.js";
+import {
+  useGetJobsavingQuery,
+  useAddJobSavingMutation,
+  useDeleteJobSavingMutation,
+} from "../../../redux_toolkit/jobseekerApi.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import JobCard from "../../../component/_component/ui/JobCard.js";
@@ -22,10 +26,9 @@ const JobListing = () => {
   const [deleteJobSaving] = useDeleteJobSavingMutation();
 
   const { isLogin, user } = useSelector((state) => state.auth);
-  const {data: listsaving} = useGetJobsavingQuery( user?.id,{skip:!user  }); 
+  const { data: listsaving } = useGetJobsavingQuery(user?.id, { skip: !user });
 
-
-  const [searchParams,setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const titleFromUrl = searchParams.get("title");
 
   const [filter, setFilter] = useState({
@@ -54,7 +57,11 @@ const JobListing = () => {
     { id: 1, name: "Full time" },
     { id: 2, name: "Part time" },
   ];
-  const sort_by = ["Tin mới cập nhật", "Tin được quan tâm nhất", "Mức lương cao nhất"];
+  const sort_by = [
+    "Tin mới cập nhật",
+    "Tin được quan tâm nhất",
+    "Mức lương cao nhất",
+  ];
   const year_exp_arr = [
     { id: 1, name: "Dưới 1 năm", value: 0 },
     { id: 2, name: "Từ 1 đến 3 năm", value: 1 },
@@ -72,20 +79,23 @@ const JobListing = () => {
   useEffect(() => {
     if (jobs && jobs.length > 0) {
       const listsavingids = listsaving?.map((item) => item.job_id) || [];
-      
+
       // Tạo mảng mới với thuộc tính is_saved
       const updatedJobs = jobs.map((item) => ({
-        ...item,  // Sao chép tất cả thuộc tính hiện có
-        is_saved: listsavingids.includes(item.job_id)
+        ...item, // Sao chép tất cả thuộc tính hiện có
+        is_saved: listsavingids.includes(item.job_id),
       }));
-      
+
       setProcessedJobs(updatedJobs);
     }
   }, [listsaving, jobs]);
 
   const handleSaveJob = async (jobId) => {
     try {
-      const response = await addJobSaving({profile_id: user?.id, job_id: jobId });
+      const response = await addJobSaving({
+        profile_id: user?.id,
+        job_id: jobId,
+      });
       if (response?.data?.success) {
         toast.success("Lưu việc làm thành công!");
       } else {
@@ -94,19 +104,22 @@ const JobListing = () => {
     } catch (error) {
       console.error("Error saving job:", error);
     }
-  }
+  };
   const handleRemoveSaveJob = async (jobId) => {
     try {
-      const response = await deleteJobSaving({profile_id: user?.id, job_id: jobId });
+      const response = await deleteJobSaving({
+        profile_id: user?.id,
+        job_id: jobId,
+      });
       if (response?.data?.success) {
-        toast.success("Xóa việc làm khỏi danh sách lưu thành công!");        
+        toast.success("Xóa việc làm khỏi danh sách lưu thành công!");
       } else {
         console.error("Xóa việc làm khỏi danh sách lưu thất bại!");
       }
     } catch (error) {
       console.error("Error removing saved job:", error);
     }
-  }
+  };
 
   useEffect(() => {
     if (user?.role === 2) {
@@ -136,8 +149,8 @@ const JobListing = () => {
   return (
     <>
       <TitleComponent
-        title={"Our Works"}
-        description={"Let choose a right work for you!"}
+        title={"Danh Sách Việc Làm"}
+        description={"Bắt đầu hành trình sự nghiệp của bạn ngay hôm nay!"}
       />
       <div className="container-fluid p-3 mt-3">
         <div className="row">
@@ -222,7 +235,9 @@ const JobListing = () => {
                   </option>
                 ))}
               </select>
-              <h6 className="fw-bold mb-2">Tìm kiếm mức độ yêu cầu kinh nghiệm</h6>
+              <h6 className="fw-bold mb-2">
+                Tìm kiếm mức độ yêu cầu kinh nghiệm
+              </h6>
               <select
                 className="form-select mb-3"
                 onChange={(e) =>
@@ -318,7 +333,12 @@ const JobListing = () => {
               </select>
             </div>
             {processedJobs.map((job, index) => (
-              <JobCard job={job} key={index} handleSaveJob = {handleSaveJob} handleRemoveSaveJob = {handleRemoveSaveJob}/>
+              <JobCard
+                job={job}
+                key={index}
+                handleSaveJob={handleSaveJob}
+                handleRemoveSaveJob={handleRemoveSaveJob}
+              />
             ))}
 
             <nav className="d-flex justify-content-center mt-4">

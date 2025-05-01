@@ -18,21 +18,22 @@ export default function ListCompany() {
   const [searchTitle, setSearchTitle] = useState(""); // Lưu giá trị tìm kiếm tạm thời
   const [selectedIndustry, setSelectedIndustry] = useState(""); // Lưu ngành nghề tạm thời
   const [selectedCity, setSelectedCity] = useState(""); // Lưu thành phố tạm thời
-  
+
   const [search, setSearch] = useState({
-    paging_size: 12, 
+    paging_size: 12,
     active_page: page,
-    industry_id: "", 
-    city_id: "", 
-    title: "", 
+    industry_id: "",
+    city_id: "",
+    title: "",
   });
-  
+
   // Add more detailed query information
   const {
     data,
     isLoading: companiesLoading,
     isError,
-    error,refetch
+    error,
+    refetch,
   } = useGetCompanyBySearchQuery(search);
   const { data: industries } = useGetIndustriesQuery();
   const { data: cities } = useGetCitiesQuery(84); // 84 là mã quốc gia Việt Nam
@@ -41,34 +42,34 @@ export default function ListCompany() {
     companies: [],
     totalPages: 1,
   };
-  
+
   // Xử lý sự kiện tìm kiếm
   const handleSearch = (e) => {
     e.preventDefault();
     // Reset về trang đầu tiên khi tìm kiếm mới
     setPage(1);
-    
+
     // Tạo object mới chỉ chứa các giá trị không rỗng
     const newSearchParams = {
       paging_size: 12,
-      active_page: 1
+      active_page: 1,
     };
-    
+
     // Chỉ thêm các params có giá trị
     if (searchTitle) newSearchParams.title = searchTitle;
     if (selectedIndustry) newSearchParams.industry_id = selectedIndustry;
     if (selectedCity) newSearchParams.city_id = selectedCity;
-    
+
     // Cập nhật state search với các giá trị mới
     setSearch(newSearchParams);
   };
-  
+
   // Cập nhật search state khi page thay đổi
   useEffect(() => {
     // Giữ nguyên các tham số tìm kiếm hiện tại, chỉ cập nhật số trang
-    setSearch(prevSearch => ({
+    setSearch((prevSearch) => ({
       ...prevSearch,
-      active_page: page
+      active_page: page,
     }));
   }, [page]);
 
@@ -121,7 +122,7 @@ export default function ListCompany() {
   return (
     <>
       <TitleComponent
-        title={"Our Companies"}
+        title={"Danh Sách Công Ty"}
         description={
           "Chúng tôi kết nối doanh nghiệp, giúp tìm kiếm đối tác và nhà cung cấp tiềm năng. Đội ngũ chuyên nghiệp và công nghệ hiện đại, cam kết mang đến giải pháp tối ưu cho bạn. Hãy để chúng tôi hỗ trợ bạn phát triển!"
         }
@@ -139,7 +140,7 @@ export default function ListCompany() {
         </nav>
 
         <h2 className="fw-bold mb-3">Khám Phá Văn Hoá Công Ty</h2>
-        
+
         <form onSubmit={handleSearch} className="mb-4">
           <div className="row g-3 mb-3">
             <div className="col-md-6">
@@ -154,21 +155,24 @@ export default function ListCompany() {
               </div>
             </div>
             <div className="col-md-3">
-              <select 
+              <select
                 className="form-select"
                 value={selectedIndustry}
                 onChange={(e) => setSelectedIndustry(e.target.value)}
               >
                 <option value="">Tất cả lĩnh vực</option>
                 {industries?.map((industry) => (
-                  <option value={industry.industry_id} key={industry.industry_id}>
+                  <option
+                    value={industry.industry_id}
+                    key={industry.industry_id}
+                  >
                     {industry.industry_name}
                   </option>
                 ))}
               </select>
             </div>
             <div className="col-md-3">
-              <select 
+              <select
                 className="form-select"
                 value={selectedCity}
                 onChange={(e) => setSelectedCity(e.target.value)}

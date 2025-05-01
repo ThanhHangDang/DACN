@@ -4,8 +4,7 @@ import { ca, vi } from "date-fns/locale"; //
 import { useRateCandidateMutation } from "../../../redux_toolkit/employerApi.js";
 import { toast } from "react-toastify";
 
-const Rating = ({ratingData,profile_id}) => {
- 
+const Rating = ({ ratingData, profile_id }) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   console.log("profile_id", profile_id);
@@ -60,7 +59,7 @@ const Rating = ({ratingData,profile_id}) => {
 
   return (
     <div className="container mt-1 mb-2">
-      <h2 className="mb-3">Rating</h2>
+      <h2 className="mb-3">Đánh giá chung</h2>
       <div className="card">
         <div className="card-body">
           <div className="row">
@@ -86,7 +85,7 @@ const Rating = ({ratingData,profile_id}) => {
                 ))}
               </div>
               <h6 className="text-muted">
-                Based on {ratingData.total_ratings} reviews
+                Dựa trên {ratingData.total_ratings} đánh giá
               </h6>
             </div>
             <div className="col-md-8">
@@ -166,7 +165,7 @@ const Rating = ({ratingData,profile_id}) => {
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title" id="ratingModalLabel">
-                Write a Review
+                Viết nhận xét
               </h5>
               <button
                 type="button"
@@ -178,7 +177,7 @@ const Rating = ({ratingData,profile_id}) => {
             <div className="modal-body">
               <form>
                 <div className="mb-3">
-                  <label className="form-label">Your Rating</label>
+                  <label className="form-label me-2">Đánh giá</label>
                   <div className="star-rating">
                     {[5, 4, 3, 2, 1].map((num) => (
                       <i
@@ -199,7 +198,7 @@ const Rating = ({ratingData,profile_id}) => {
                 </div>
                 <div className="mb-3">
                   <label htmlFor="review" className="form-label">
-                    Your Review
+                    Nhận xét
                   </label>
                   <textarea
                     className="form-control"
@@ -221,7 +220,7 @@ const Rating = ({ratingData,profile_id}) => {
                 className="btn btn-secondary"
                 data-bs-dismiss="modal"
               >
-                Close
+                Hủy
               </button>
               <button
                 type="button"

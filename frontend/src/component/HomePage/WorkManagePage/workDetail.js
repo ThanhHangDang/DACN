@@ -5,9 +5,15 @@ import { useSelector, useDispatch } from "react-redux";
 // import { getPostDetails } from "../../redux/actions/postAction.js";
 import {
   useGetJobDetailQuery,
-  useGetRelatedJobsQuery,  
+  useGetRelatedJobsQuery,
 } from "../../../redux_toolkit/guestApi.js";
-import { useAddJobApplyMutation,useDeleteJobSavingMutation,useAddJobSavingMutation, useGetJobApplyQuery,useGetJobsavingQuery } from "../../../redux_toolkit/jobseekerApi.js";
+import {
+  useAddJobApplyMutation,
+  useDeleteJobSavingMutation,
+  useAddJobSavingMutation,
+  useGetJobApplyQuery,
+  useGetJobsavingQuery,
+} from "../../../redux_toolkit/jobseekerApi.js";
 import formatDateToDDMMYYYY from "../../../utils/formatDate.js";
 import calculateDaysRemaining from "../../../utils/calculateDaysRemaining.js";
 import CompanyHeader from "../../../component/_component/ui/CompanyHeader.js";
@@ -32,19 +38,20 @@ export default function WorkDetail() {
   const [saved, setSaved] = React.useState(false);
   const [applied, setApplied] = React.useState(false);
 
-  const {
-    data: postDetail,
-    isLoading
-  } = useGetJobDetailQuery(id, {
+  const { data: postDetail, isLoading } = useGetJobDetailQuery(id, {
     refetchOnMountOrArgChange: true,
-  }) ;
+  });
 
-  const { data: jobApply } = useGetJobApplyQuery(user?.id, {
-    skip: !user?.id,})||[];
-  const { data: jobSaving } = useGetJobsavingQuery(user?.id, {
-    skip: !user?.id,})||[];
-console.log("jobApply", jobApply);
-console.log("jobSaving", jobSaving);
+  const { data: jobApply } =
+    useGetJobApplyQuery(user?.id, {
+      skip: !user?.id,
+    }) || [];
+  const { data: jobSaving } =
+    useGetJobsavingQuery(user?.id, {
+      skip: !user?.id,
+    }) || [];
+  console.log("jobApply", jobApply);
+  console.log("jobSaving", jobSaving);
   const { data: relatedJobs, isLoading: isLoadingRelatedJobs } =
     useGetRelatedJobsQuery(id);
 
@@ -52,7 +59,10 @@ console.log("jobSaving", jobSaving);
     try {
       if (user?.role === 3) {
         // Check if jobSaving is an array before using .some()
-        if (Array.isArray(jobSaving) && jobSaving.some((item) => item.job_id === postDetail?.job_id)) {
+        if (
+          Array.isArray(jobSaving) &&
+          jobSaving.some((item) => item.job_id === postDetail?.job_id)
+        ) {
           toast.error("Bạn đã lưu công việc này rồi!");
           return;
         }
@@ -68,8 +78,7 @@ console.log("jobSaving", jobSaving);
       } else {
         toast.error("Vui lòng đăng nhập để lưu công việc!");
       }
-    }
-    catch (error) {
+    } catch (error) {
       console.error("Error saving job:", error);
       toast.error("Đã xảy ra lỗi khi lưu việc làm!");
     }
@@ -79,7 +88,10 @@ console.log("jobSaving", jobSaving);
     try {
       if (user?.role === 3) {
         // Check if jobSaving is an array before using .some()
-        if (!Array.isArray(jobSaving) || !jobSaving.some((item) => item.job_id === postDetail?.job_id)) {
+        if (
+          !Array.isArray(jobSaving) ||
+          !jobSaving.some((item) => item.job_id === postDetail?.job_id)
+        ) {
           toast.error("Bạn chưa lưu công việc này!");
           return;
         }
@@ -95,8 +107,7 @@ console.log("jobSaving", jobSaving);
       } else {
         toast.error("Vui lòng đăng nhập để xóa công việc!");
       }
-    }
-    catch (error) {
+    } catch (error) {
       console.error("Error deleting job saving:", error);
       toast.error("Đã xảy ra lỗi khi xóa việc làm!");
     }
@@ -105,7 +116,10 @@ console.log("jobSaving", jobSaving);
   const handleApplyJob = async () => {
     try {
       if (user?.role === 3) {
-        if (!Array.isArray(jobApply) ||jobApply?.some((item) => item.job_id === postDetail?.job_id)) {
+        if (
+          !Array.isArray(jobApply) ||
+          jobApply?.some((item) => item.job_id === postDetail?.job_id)
+        ) {
           toast.error("Bạn đã ứng tuyển công việc này rồi!");
           return;
         }
@@ -121,23 +135,27 @@ console.log("jobSaving", jobSaving);
       } else {
         toast.error("Vui lòng đăng nhập để ứng tuyển!");
       }
-    }
-    catch (error) {
+    } catch (error) {
       console.error("Error applying for job:", error);
       toast.error("Đã xảy ra lỗi khi ứng tuyển!");
     }
-
   };
 
   useEffect(() => {
     if (user?.role === 3) {
       // Check if jobSaving is an array before using .some()
-      setSaved(Array.isArray(jobSaving) && jobSaving.some((item) => item.job_id === postDetail?.job_id));
-      
+      setSaved(
+        Array.isArray(jobSaving) &&
+          jobSaving.some((item) => item.job_id === postDetail?.job_id)
+      );
+
       // Check if jobApply is an array before using .some()
-      setApplied(Array.isArray(jobApply) && jobApply.some((item) => item.job_id === postDetail?.job_id));
+      setApplied(
+        Array.isArray(jobApply) &&
+          jobApply.some((item) => item.job_id === postDetail?.job_id)
+      );
     }
-  }, [user, jobSaving, jobApply, postDetail]);  
+  }, [user, jobSaving, jobApply, postDetail]);
 
   // useEffect( () => {
   //   if (user?.role === 2) {
@@ -149,7 +167,7 @@ console.log("jobSaving", jobSaving);
   return (
     <>
       <LoginModal />
-      <TitleComponent title={"Work Detail"} description={""} />
+      <TitleComponent title={"Chi Tiết Việc Làm"} description={""} />
       <div className="container my-5">
         <nav aria-label="breadcrumb mt-3">
           <ol className="breadcrumb">
@@ -195,10 +213,7 @@ console.log("jobSaving", jobSaving);
                 {user?.role === 3 ? (
                   <>
                     {applied ? (
-                      <button
-                        className="btn btn-danger me-2"
-                        disabled
-                      >
+                      <button className="btn btn-danger me-2" disabled>
                         Đã ứng tuyển
                       </button>
                     ) : (
@@ -209,7 +224,7 @@ console.log("jobSaving", jobSaving);
                         Ứng tuyển
                       </button>
                     )}
-                    
+
                     {saved ? (
                       <button
                         className="btn btn-outline-danger"

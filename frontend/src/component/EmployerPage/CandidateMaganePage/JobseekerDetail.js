@@ -39,8 +39,10 @@ export default function EmployeeDetail() {
   return (
     <>
       <TitleComponent
-        title={"Candicate Detail"}
-        description={"Let choose a right Candicate for your Camany!"}
+        title={"Thông Tin Ứng Viên"}
+        description={
+          "Tài năng phù hợp không chỉ đáp ứng nhu cầu – mà còn nâng tầm tổ chức của bạn."
+        }
       />
       <CandidateDetail
         basic={basic}

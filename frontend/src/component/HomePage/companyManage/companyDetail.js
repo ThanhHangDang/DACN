@@ -3,7 +3,10 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import calculateDaysRemaining from "../../../utils/calculateDaysRemaining.js";
-import { useGetCompanyInformationQuery, useGetJobByUserQuery } from "../../../redux_toolkit/guestApi.js";
+import {
+  useGetCompanyInformationQuery,
+  useGetJobByUserQuery,
+} from "../../../redux_toolkit/guestApi.js";
 import {
   useGetCompanyReviewQuery,
   useAddFollowingCompanyMutation,
@@ -26,7 +29,10 @@ export default function CompanyDetail() {
   const [deleteFollowingCompany] = useDeleteFollowingCompanyMutation();
   const [addReviewCompany] = useAddCompanyReviewMutation();
   const [deleteReviewCompany] = useDeleteCompanyReviewMutation();
-  const { data: jobApply, refetch: refetchJobApply } = useGetJobApplyQuery(user?.id, { skip: !isLogin }); // Add refetch function
+  const { data: jobApply, refetch: refetchJobApply } = useGetJobApplyQuery(
+    user?.id,
+    { skip: !isLogin }
+  ); // Add refetch function
   const formatNumberToTr = (number) => `${(number / 1e6).toFixed(0)}tr`;
   const { companyId } = useParams();
   const { data: city } = useGetCitiesQuery(84); // 84 là mã quốc gia Việt Nam
@@ -48,11 +54,14 @@ export default function CompanyDetail() {
   const handleApplyJob = async (id) => {
     try {
       if (user?.role === 3) {
-        const response = await applyJob({ profile_id: user?.id, job_id: id }).unwrap();
+        const response = await applyJob({
+          profile_id: user?.id,
+          job_id: id,
+        }).unwrap();
 
         if (response?.success) {
           toast.success("Ứng tuyển thành công!");
-          
+
           // No need to modify a local copy since we're using useMemo
           // Simply refetch the data to update the appliedJobIds
           refetchJobApply();
@@ -104,7 +113,7 @@ export default function CompanyDetail() {
 
   return (
     <>
-      <TitleComponent title={"Company Detail"} description={""} />
+      <TitleComponent title={"Chi Tiết Công Ty"} description={""} />
       <div className="container my-4">
         <nav aria-label="breadcrumb">
           <ol className="breadcrumb mt-3">
@@ -303,7 +312,7 @@ export default function CompanyDetail() {
                               <div className="card-body d-flex flex-column  align-items-center">
                                 <i
                                   className={`fa ${item.benefit_icon} me-2`}
-                                  style={{ color: '#2DA5F6' }}
+                                  style={{ color: "#2DA5F6" }}
                                 ></i>
                                 <p className="card-text fw-bold m-0">
                                   {item.benefit_name}

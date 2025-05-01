@@ -20,9 +20,8 @@ export default function Footer() {
               <li>
                 <i className="bi bi-geo-alt-fill"></i>
                 <span>
-                  123 Business Avenue, Suite 100
-                  <br />
-                  New York, NY 10001
+                  268 Đ. Lý Thường Kiệt, <br />
+                  Phường 14, Quận 10, Hồ Chí Minh
                 </span>
               </li>
               <li>

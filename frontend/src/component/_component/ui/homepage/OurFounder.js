@@ -1,5 +1,6 @@
 export default function FounderSection() {
-  const url = "https://png.pngtree.com/png-clipart/20190924/original/pngtree-user-vector-avatar-png-image_4830521.jpg";
+  const url =
+    "https://png.pngtree.com/png-clipart/20190924/original/pngtree-user-vector-avatar-png-image_4830521.jpg";
   const testimonials = [
     {
       name: "Thanh Hang Dang",
@@ -31,10 +32,11 @@ export default function FounderSection() {
     <section className="py-5" style={{ backgroundColor: "#e8f4f3" }}>
       <div className="container">
         <div className="text-center mb-5">
-          <h2 className="fw-bold">Our Founders</h2>
+          <h2 className="fw-bold">Niềm tin và xác thực</h2>
           <p className="text-muted mx-auto" style={{ maxWidth: "600px" }}>
-            At eu lobortis pretium tincidunt amet lacus ut aenean aliquet.
-            Blandit a massa elementum id...
+            Mỗi giấc mơ lớn đều bắt đầu từ một niềm tin nhỏ – rằng ai cũng xứng
+            đáng có cơ hội để phát triển sự nghiệp và sống đúng với giá trị của
+            mình...
           </p>
         </div>
 
