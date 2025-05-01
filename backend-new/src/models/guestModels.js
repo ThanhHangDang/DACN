@@ -224,7 +224,7 @@ const queryGetListJobBySearch = async (searchData) => {
       require_experience = null,
       date_from = null,
       paging_size = 10,
-      page = 1,
+      active_page = 1,
       ...prop
     } = searchData;
 
@@ -343,8 +343,10 @@ const queryGetListJobBySearch = async (searchData) => {
     query += ` ORDER BY j.date_post DESC
     LIMIT ? OFFSET ?;`;
     values.push(Number(paging_size));
-    values.push((Number(page) - 1) * Number(paging_size));
+    values.push((Number(active_page) - 1) * Number(paging_size));
     const [result] = await db.query(query, values);
+    // console.log("query", query);
+    // console.log("values", values);
     return result;
   } catch (error) {
     console.error("Error fetching jobs by search:", error);

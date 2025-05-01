@@ -43,19 +43,24 @@ export const checkLoginStatus = createAsyncThunk('auth/check',
 );
 
 export const logout = createAsyncThunk(
-    'auth/logout',
-    async (_, { rejectWithValue }) => {
-      try {
-        const response = await axios.delete(`${domain}/auth/logout`, { 
-          withCredentials: true 
-        });
-        localStorage.removeItem('token'); // Remove token from local storage
-        return response.data;
-      } catch (error) {
-        return rejectWithValue('Logout failed');
-      }
+  'auth/logout',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.delete(`${domain}/auth/logout`, { 
+        withCredentials: true 
+      });
+      
+      // Always remove token regardless of response to ensure user is logged out locally
+      localStorage.removeItem('token');
+      
+      return response.data;
+    } catch (error) {
+      // Still remove token even if API call fails
+      localStorage.removeItem('token');
+      return rejectWithValue(error.response?.data?.message || 'Đăng xuất thất bại');
     }
-  );
+  }
+);
   
   export const registerUser = createAsyncThunk(
     'auth/register',

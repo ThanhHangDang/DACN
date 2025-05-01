@@ -35,6 +35,7 @@ const getPublicJobDetail = async (req, res, next) => {
 const getListJobBySearch = async (req, res, next) => {
       try {
       const searchData = req.query;
+      console.log("searchData", searchData);
       if (!searchData) {
         return next(new ApiError("Thiếu thông tin filter", 400));
       }

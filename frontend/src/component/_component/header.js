@@ -9,28 +9,27 @@ import NotificationHeader from "./ui/NotificationHeader.js";
 const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  
   // Lấy state từ Redux
   const { isLogin, user } = useSelector((state) => state.auth);
 
   console.log("header check ", isLogin, user);
 
-  const handleLogout =async  () => {
-    try 
-{
-      const response = await dispatch(logout());
-      console.log("Logout response", response);
-      if (response.success) {
-        navigate("/"); // Redirect to home page on success
+  const handleLogout = async () => {
+    try {
+      const result = await dispatch(logout()).unwrap();
+      if (result.success) {
+      toast.success("Đăng xuất thành công!");
+      navigate("/");
       }
-      else
-      {
-        toast.error("Đăng xuất thất bại, vui lòng thử lại!");      
+      else{
+        toast.error(result.message || "Đăng xuất thất bại, vui lòng thử lại!");
       }
-    }
-    catch (error) {
+    } catch (error) {
       console.error("Logout error", error);
-      toast.error("Đăng xuất thất bại, vui lòng thử lại!");
+      // Still navigate away since we've removed the token in the action
+      toast.error(error || "Đăng xuất thất bại, vui lòng thử lại!");
+      navigate("/");
     }
   };
 
@@ -46,35 +45,6 @@ const Header = () => {
     }
   };
 
-  const renderProfile = () => {
-    return isLogin ? (
-      <>
-        <li>
-          <button className="dropdown-item" onClick={handleViewProfile}>
-            Hồ sơ của bạn
-          </button>
-        </li>
-        <li>
-          <button className="dropdown-item" onClick={handleLogout}>
-            Đăng xuất
-          </button>
-        </li>
-      </>
-    ) : (
-      <>
-        <li>
-          <NavLink className="dropdown-item" to="/login">
-            Đăng nhập
-          </NavLink>
-        </li>
-        <li>
-          <NavLink className="dropdown-item" to="/register">
-            Đăng ký
-          </NavLink>
-        </li>
-      </>
-    );
-  };
 
   useEffect(() => {
     dispatch(checkLoginStatus());
