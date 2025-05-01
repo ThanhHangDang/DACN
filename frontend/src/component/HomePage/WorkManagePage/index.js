@@ -10,7 +10,7 @@ import {
   useGetJobFunctionQuery,
   useGetBenefitsQuery,
   useGetLevelsQuery,
-  useGetTagsQuery
+  useGetTagsQuery,
 } from "../../../redux_toolkit/CategoryApi";
 import {
   useGetJobsavingQuery,
@@ -31,12 +31,12 @@ const maxSalary = 200000000; // 50 triệu
 const salaryToSliderValue = (salary) => {
   if (salary <= minSalary) return 0;
   if (salary >= maxSalary) return 100;
-  
+
   // Tính toán theo hàm logarit
   const minLog = Math.log(minSalary);
   const maxLog = Math.log(maxSalary);
   const scale = (maxLog - minLog) / 100;
-  
+
   return Math.round((Math.log(salary) - minLog) / scale);
 };
 
@@ -44,14 +44,14 @@ const salaryToSliderValue = (salary) => {
 const sliderValueToSalary = (value) => {
   if (value <= 0) return minSalary;
   if (value >= 100) return maxSalary;
-  
+
   const minLog = Math.log(minSalary);
   const maxLog = Math.log(maxSalary);
   const scale = (maxLog - minLog) / 100;
-  
+
   // Tính giá trị chính xác
   const exactSalary = Math.exp(minLog + scale * value);
-  
+
   // Làm tròn theo bước 100.000 VNĐ (100000)
   return Math.round(exactSalary / 500000) * 500000;
 };
@@ -62,11 +62,11 @@ const JobListing = () => {
   const [deleteJobSaving] = useDeleteJobSavingMutation();
 
   const { isLogin, user } = useSelector((state) => state.auth);
-  const {data: listsaving} = useGetJobsavingQuery( user?.id,{skip:!user  }); 
-  const {data: cata_benefit} = useGetBenefitsQuery();
-  const {data: cata_level} = useGetLevelsQuery();
-  const {data: cata_tag} = useGetTagsQuery();
-  const [searchParams,setSearchParams] = useSearchParams();
+  const { data: listsaving } = useGetJobsavingQuery(user?.id, { skip: !user });
+  const { data: cata_benefit } = useGetBenefitsQuery();
+  const { data: cata_level } = useGetLevelsQuery();
+  const { data: cata_tag } = useGetTagsQuery();
+  const [searchParams, setSearchParams] = useSearchParams();
   const titleFromUrl = searchParams.get("title");
 
   const initialMaxSalary = 5000000; // 20 triệu là giá trị mặc định
@@ -76,7 +76,7 @@ const JobListing = () => {
     industry_id: "",
     job_function_id: "",
     work_location: "",
-    salary_expect: "", 
+    salary_expect: "",
     level_id: "",
     working_type: "",
     skills: [],
@@ -86,61 +86,66 @@ const JobListing = () => {
   });
 
   const [filter, setFilter] = useState({
-    ...tempFilter
+    ...tempFilter,
   });
-  
+
   const [skillInput, setSkillInput] = useState("");
   const [filteredSkills, setFilteredSkills] = useState([]);
 
-  const [sliderValue, setSliderValue] = useState(salaryToSliderValue(initialMaxSalary));
+  const [sliderValue, setSliderValue] = useState(
+    salaryToSliderValue(initialMaxSalary)
+  );
   const [displaySalary, setDisplaySalary] = useState(initialMaxSalary);
 
   const applyFilters = () => {
     // Khi áp dụng bộ lọc mới, luôn đặt lại trang về 1
-    setFilter({...tempFilter, active_page: 1});
+    setFilter({ ...tempFilter, active_page: 1 });
   };
 
   // Cập nhật hàm handleSkillToggle để kiểm tra giới hạn
   const handleSkillToggle = (skillId) => {
-    setTempFilter(prev => {
+    setTempFilter((prev) => {
       const skills = [...prev.skills];
       const index = skills.indexOf(skillId);
-      
+
       // Nếu kỹ năng chưa được chọn và đã đạt giới hạn 3 kỹ năng
       if (index === -1 && skills.length >= 3) {
         toast.warning("Bạn chỉ có thể chọn tối đa 3 kỹ năng!");
         return prev; // Không thêm kỹ năng mới
       }
-      
+
       // Thêm hoặc xóa kỹ năng như bình thường
       if (index === -1) {
         skills.push(skillId);
       } else {
         skills.splice(index, 1);
       }
-      
-      return {...prev, skills};
+
+      return { ...prev, skills };
     });
   };
-  
+
   // Cập nhật hàm handleSkillInputChange để kiểm tra nếu đã đạt giới hạn
   const handleSkillInputChange = (e) => {
     const value = e.target.value;
     setSkillInput(value);
-    
+
     // Nếu đã đạt giới hạn kỹ năng, hiển thị thông báo và không tiếp tục tìm kiếm
     if (tempFilter.skills.length >= 3 && value.trim() !== "") {
-      toast.info("Bạn đã chọn tối đa 3 kỹ năng. Vui lòng xóa bớt để thêm kỹ năng mới.");
+      toast.info(
+        "Bạn đã chọn tối đa 3 kỹ năng. Vui lòng xóa bớt để thêm kỹ năng mới."
+      );
       setFilteredSkills([]);
       return;
     }
-    
+
     if (value.trim() === "") {
       setFilteredSkills([]);
     } else {
-      const filtered = cata_tag?.filter(
-        skill => skill.tags_content.toLowerCase().includes(value.toLowerCase())
-      ) || [];
+      const filtered =
+        cata_tag?.filter((skill) =>
+          skill.tags_content.toLowerCase().includes(value.toLowerCase())
+        ) || [];
       setFilteredSkills(filtered.slice(0, 5));
     }
   };
@@ -148,10 +153,10 @@ const JobListing = () => {
   const handleSalaryChange = (e) => {
     const value = parseInt(e.target.value);
     const salary = sliderValueToSalary(value);
-    
+
     setSliderValue(value);
     setDisplaySalary(salary);
-    setTempFilter({...tempFilter, salary_expect: salary});
+    setTempFilter({ ...tempFilter, salary_expect: salary });
   };
 
   const { data: cata_city } = useGetCitiesQuery(84);
@@ -184,14 +189,14 @@ const JobListing = () => {
   const { data = {}, isLoading, error, refetch } = useGetJobSearchQuery(filter);
   const { jobs = [], totalWorksPages = 1,total_count=0 } = data || {};
 
-  // console.log("jobs", data);  
+  // console.log("jobs", data);
   const [processedJobs, setProcessedJobs] = useState([]);
   useEffect(() => {
     if (jobs) {
       const listsavingids = listsaving?.map((item) => item.job_id) || [];      
       const updatedJobs = jobs.map((item) => ({
         ...item,
-        is_saved: listsavingids.includes(item.job_id)
+        is_saved: listsavingids.includes(item.job_id),
       }));
       setProcessedJobs(updatedJobs);
     }
@@ -235,15 +240,15 @@ const JobListing = () => {
     }
   }, [navigate, user]);
 
-  useEffect(() => {
-    if (titleFromUrl) {
-      setFilter((prevFilter) => ({
-        ...prevFilter,
-        title: titleFromUrl,
-        active_page: 1,
-      }));
-    }
-  }, [titleFromUrl]);
+  // useEffect(() => {
+  //   if (titleFromUrl) {
+  //     setFilter((prevFilter) => ({
+  //       ...prevFilter,
+  //       title: titleFromUrl,
+  //       active_page: 1,
+  //     }));
+  //   }
+  // }, [titleFromUrl]);
 
 
   
@@ -272,14 +277,14 @@ const JobListing = () => {
                   }
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
-                      setFilter({...tempFilter, active_page: 1});
+                      setFilter({ ...tempFilter, active_page: 1 });
                     }
                   }}
                 />
                 <button
                   className="btn btn-outline-success"
                   type="button"
-                  onClick={() => setFilter({...tempFilter, active_page: 1})}
+                  onClick={() => setFilter({ ...tempFilter, active_page: 1 })}
                 >
                   <i className="bi bi-search"></i>
                 </button>
@@ -403,7 +408,7 @@ const JobListing = () => {
               </select>
 
               <h6 className="fw-bold mt-3">
-                Kỹ năng công việc 
+                Kỹ năng công việc
                 <span className="text-muted fs-6 ms-2">
                   ({tempFilter.skills.length}/3)
                 </span>
@@ -419,46 +424,49 @@ const JobListing = () => {
                     disabled={tempFilter.skills.length >= 3} // Disable input khi đạt giới hạn
                   />
                 </div>
-                
+
                 {filteredSkills.length > 0 && tempFilter.skills.length < 3 && (
-                  <div className="border rounded p-2 mb-3" style={{maxHeight: '150px', overflowY: 'auto'}}>
+                  <div
+                    className="border rounded p-2 mb-3"
+                    style={{ maxHeight: "150px", overflowY: "auto" }}
+                  >
                     {filteredSkills.map((skill) => (
-                      <div 
-                        key={skill.tag_id} 
+                      <div
+                        key={skill.tag_id}
                         className="d-flex align-items-center py-1 border-bottom cursor-pointer"
                         onClick={() => {
                           handleSkillToggle(skill.tag_id);
                           setSkillInput("");
                           setFilteredSkills([]);
                         }}
-                        style={{cursor: 'pointer'}}
+                        style={{ cursor: "pointer" }}
                       >
                         <span>{skill.tags_content}</span>
                       </div>
                     ))}
                   </div>
                 )}
-                
+
                 {tempFilter.skills.length === 3 && skillInput === "" && (
                   <div className="alert alert-info py-1 small">
                     Bạn đã chọn tối đa 3 kỹ năng. Xóa bớt để thêm kỹ năng mới.
                   </div>
                 )}
-                
+
                 {tempFilter.skills.length > 0 && (
                   <div className="d-flex flex-wrap gap-1 mt-2">
-                    {tempFilter.skills.map(skillId => {
-                      const skill = cata_tag?.find(s => s.tag_id === skillId);
+                    {tempFilter.skills.map((skillId) => {
+                      const skill = cata_tag?.find((s) => s.tag_id === skillId);
                       return (
-                        <span 
-                          key={skillId} 
+                        <span
+                          key={skillId}
                           className="badge bg-success d-flex align-items-center"
                         >
                           {skill?.tags_content}
-                          <i 
+                          <i
                             className="bi bi-x-circle ms-1"
                             onClick={() => handleSkillToggle(skillId)}
-                            style={{cursor: 'pointer'}}
+                            style={{ cursor: "pointer" }}
                           ></i>
                         </span>
                       );
@@ -469,41 +477,40 @@ const JobListing = () => {
 
               <h6 className="fw-bold mt-3">Mức lương mong muốn</h6>
               <div className="mb-2 position-relative">
-                <input 
-                  type="range" 
-                  className="form-range mb-2" 
-                  min="0" 
-                  max="100" 
+                <input
+                  type="range"
+                  className="form-range mb-2"
+                  min="0"
+                  max="100"
                   step="1"
                   value={sliderValue}
                   onChange={handleSalaryChange}
                 />
                 <div className="d-flex justify-content-between small text-muted">
-                  <span>{(minSalary/1000000).toFixed(1)} triệu</span>
-                  <span>{(maxSalary/1000000).toFixed(1)} triệu</span>
+                  <span>{(minSalary / 1000000).toFixed(1)} triệu</span>
+                  <span>{(maxSalary / 1000000).toFixed(1)} triệu</span>
                 </div>
-                
+
                 {/* Tooltip hiển thị giá trị khi di chuyển thanh trượt - với định dạng tiền tệ */}
-                <div 
-                  className="position-absolute bg-primary text-white px-2 py-1 rounded small" 
+                <div
+                  className="position-absolute bg-primary text-white px-2 py-1 rounded small"
                   style={{
                     left: `${sliderValue}%`,
-                    top: '-30px',
-                    transform: 'translateX(-50%)',
-                    zIndex: 10
+                    top: "-30px",
+                    transform: "translateX(-50%)",
+                    zIndex: 10,
                   }}
                 >
-                  {(displaySalary/1000000).toFixed(1)} triệu
+                  {(displaySalary / 1000000).toFixed(1)} triệu
                 </div>
               </div>
 
-              <button 
+              <button
                 className="btn btn-outline-success btn-sm mt-2 w-100"
                 onClick={applyFilters}
               >
                 Áp dụng bộ lọc
               </button>
-
             </div>
           </div>
 
@@ -515,8 +522,8 @@ const JobListing = () => {
                 onChange={(e) => {
                   // Áp dụng ngay lập tức cả tempFilter và filter
                   const sortBy = e.target.value;
-                  setTempFilter(prev => ({...prev, sort_by: sortBy}));
-                  setFilter(prev => ({...prev, sort_by: sortBy}));
+                  setTempFilter((prev) => ({ ...prev, sort_by: sortBy }));
+                  setFilter((prev) => ({ ...prev, sort_by: sortBy }));
                 }}
                 value={filter.sort_by || ""}
               >
@@ -529,18 +536,30 @@ const JobListing = () => {
               </select>
             </div>
             {processedJobs.map((job, index) => (
-              <JobCard job={job} key={index} handleSaveJob={handleSaveJob} handleRemoveSaveJob={handleRemoveSaveJob} />
+              <JobCard
+                job={job}
+                key={index}
+                handleSaveJob={handleSaveJob}
+                handleRemoveSaveJob={handleRemoveSaveJob}
+              />
             ))}
 
             <nav className="d-flex justify-content-center mt-4">
               <ul className="pagination pagination-sm">
                 {/* Nút Previous/Trước */}
-                <li className={`page-item ${filter.active_page <= 1 ? 'disabled' : ''}`}>
-                  <button 
-                    className="page-link" 
+                <li
+                  className={`page-item ${
+                    filter.active_page <= 1 ? "disabled" : ""
+                  }`}
+                >
+                  <button
+                    className="page-link"
                     onClick={() => {
                       if (filter.active_page > 1) {
-                        setFilter(prev => ({...prev, active_page: prev.active_page - 1}));
+                        setFilter((prev) => ({
+                          ...prev,
+                          active_page: prev.active_page - 1,
+                        }));
                       }
                     }}
                   >
@@ -551,24 +570,30 @@ const JobListing = () => {
                 {/* Các nút số trang */}
                 {[...Array(totalWorksPages)].map((_, index) => {
                   const pageNumber = index + 1;
-                  
+
                   // Hiển thị trang đầu, trang cuối và các trang xung quanh trang hiện tại
                   if (
-                    pageNumber === 1 || 
-                    pageNumber === totalWorksPages || 
-                    (pageNumber >= filter.active_page - 1 && pageNumber <= filter.active_page + 1)
+                    pageNumber === 1 ||
+                    pageNumber === totalWorksPages ||
+                    (pageNumber >= filter.active_page - 1 &&
+                      pageNumber <= filter.active_page + 1)
                   ) {
                     return (
-                      <li 
-                        key={pageNumber} 
-                        className={`page-item ${filter.active_page === pageNumber ? 'active' : ''}`}
+                      <li
+                        key={pageNumber}
+                        className={`page-item ${
+                          filter.active_page === pageNumber ? "active" : ""
+                        }`}
                       >
-                        <button 
-                          className="page-link" 
+                        <button
+                          className="page-link"
                           onClick={() => {
                             const newPage = pageNumber;
                             // Chỉ cập nhật filter, không cập nhật tempFilter
-                            setFilter(prev => ({...prev, active_page: newPage}));
+                            setFilter((prev) => ({
+                              ...prev,
+                              active_page: newPage,
+                            }));
                           }}
                         >
                           {pageNumber}
@@ -576,29 +601,40 @@ const JobListing = () => {
                       </li>
                     );
                   }
-                  
+
                   // Hiển thị dấu "..." khi có khoảng cách giữa các trang
                   if (
-                    (pageNumber === filter.active_page - 2 && pageNumber > 1) || 
-                    (pageNumber === filter.active_page + 2 && pageNumber < totalWorksPages)
+                    (pageNumber === filter.active_page - 2 && pageNumber > 1) ||
+                    (pageNumber === filter.active_page + 2 &&
+                      pageNumber < totalWorksPages)
                   ) {
                     return (
-                      <li key={`ellipsis-${pageNumber}`} className="page-item disabled">
+                      <li
+                        key={`ellipsis-${pageNumber}`}
+                        className="page-item disabled"
+                      >
                         <button className="page-link">...</button>
                       </li>
                     );
                   }
-                  
+
                   return null;
                 })}
 
                 {/* Nút Next/Tiếp */}
-                <li className={`page-item ${filter.active_page >= totalWorksPages ? 'disabled' : ''}`}>
-                  <button 
-                    className="page-link" 
+                <li
+                  className={`page-item ${
+                    filter.active_page >= totalWorksPages ? "disabled" : ""
+                  }`}
+                >
+                  <button
+                    className="page-link"
                     onClick={() => {
                       if (filter.active_page < totalWorksPages) {
-                        setFilter(prev => ({...prev, active_page: prev.active_page + 1}));
+                        setFilter((prev) => ({
+                          ...prev,
+                          active_page: prev.active_page + 1,
+                        }));
                       }
                     }}
                   >
