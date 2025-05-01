@@ -1,106 +1,61 @@
 import React, { useEffect, useState } from "react";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useGetNotificationQuery, useUpdateReadNotificationMutation } from "../../../redux_toolkit/jobseekerApi";
+import { ca } from "date-fns/locale";
 
-import { useNavigate } from "react-router-dom";
-
-import { useSelector, useDispatch } from "react-redux";
-// import { getNotificationByUserID } from "../../../redux/actions/notificationAction.js"; // import
-import { useGetNotificationByUserIDQuery } from "../../../redux_toolkit/notificationApi";
 export default function JobSeekerNotification() {
-  const dispatch = useDispatch();
   const { isLogin, user } = useSelector((state) => state.auth);
-  // const { notification } = useSelector((state) => state.notification);
-  const { data: notification } = useGetNotificationByUserIDQuery(user?.id, {
+
+  const { data: notificationData, refetch } = useGetNotificationQuery(user?.id, {
     skip: !user?.id, // Skip the query if user ID is not available
   });
+  console.log("notificationData", notificationData);
+  const [updateReadNotification] = useUpdateReadNotificationMutation();
 
   const navigate = useNavigate();
 
-  const notificationData = [
-    {
-      notification_id: 1,
-      recipient_id: 1,
-      notification_type: "Theo dõi", //Theo dõi
-      entity_id: 1,
-      entity_name: "Kèo banh Cầu Xéo",
-      entity_logo: "",
-      is_read: false,
-      content: "đã nhắc đến bạn và những người khác ở một bình luận trong",
-      created_at: "1 giờ",
-    },
-    {
-      notification_id: 2,
-      recipient_id: 1,
-      notification_type: "Lưu hồ sơ", //Lưu hồ sơ
-      entity_id: 1,
-      entity_name: "Kèo banh Cầu Xéo",
-      entity_logo: "",
-      is_read: false,
-      content: "đã nhắc đến bạn và những người khác ở một bình luận trong",
-      created_at: "2 giờ",
-    },
-    {
-      notification_id: 3,
-      recipient_id: 1,
-      notification_type: "Hủy theo dõi", //Hủy theo dõi
-      entity_id: 1,
-      entity_name: "Kèo banh Cầu Xéo",
-      entity_logo: "",
-      is_read: true,
-      content: "đã nhắc đến bạn và những người khác ở một bình luận trong",
-      created_at: "3 ngày",
-    },
-    {
-      notification_id: 4,
-      recipient_id: 1,
-      notification_type: "Hủy lưu hồ sơ", //Hủy lưu hồ sơ
-      entity_id: 1,
-      entity_name: "Kèo banh Cầu Xéo",
-      entity_logo: "",
-      is_read: true,
-      content: "đã nhắc đến bạn và những người khác ở một bình luận trong",
-      created_at: "3 ngày",
-    },
-    {
-      notification_id: 5,
-      recipient_id: 1,
-      notification_type: "Ứng tuyển", //Hủy lưu hồ sơ
-      entity_id: 1,
-      entity_name: "Kèo banh Cầu Xéo",
-      entity_logo: "",
-      is_read: true,
-      content: "đã nhắc đến bạn và những người khác ở một bình luận trong",
-      created_at: "3 ngày",
-    },
-    {
-      notification_id: 6,
-      recipient_id: 1,
-      notification_type: "Thông báo hệ thống", //Thông báo từ hệ thống
-      entity_id: 1,
-      entity_name: "Kèo banh Cầu Xéo",
-      entity_logo: "",
-      is_read: false,
-      content: "đã nhắc đến bạn và những người khác ở một bình luận trong",
-      created_at: "3 ngày",
-    },
-  ];
+  const handleReadNotification = async (notification_id) => {
+    if (isUpdating) return; // Prevent multiple calls
+
+    setIsUpdating(true);
+    try {
+      console.log("Sending update request with:", {
+        profile_id: user?.id,
+        notification_id: notification_id
+      });
+
+      const response = await updateReadNotification({
+        profile_id: user?.id,
+        notification_id: notification_id
+      }).unwrap();
+
+      if (response.success) {
+        console.log("Notification updated successfully:", response);
+        // Trigger a refetch of notifications to update the UI
+        refetch();
+      } else {
+        console.error("Failed to update notification:", response);
+      }
+    } catch (error) {
+      console.error("Error updating notification:", error);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   const [openItem, setOpenItem] = useState(null);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const toggle = (id) => {
     setOpenItem(openItem === id ? null : id);
-  };
-
-  const handleChangeIsRead = (id) => {
-    // Call API to change is_read status
-    console.log("Change is_read status for notification ID:", id);
   };
 
   useEffect(() => {
     if (!isLogin || user?.role !== 3) {
       navigate("/login");
     }
-    // dispatch(getNotificationByUserID(user?.id)); // dispatch
-  }, [navigate, isLogin, user]);
+  }, [isLogin, navigate, user]);
 
   return (
     <div>
@@ -108,7 +63,7 @@ export default function JobSeekerNotification() {
         <h3>Thông báo của bạn</h3>
       </div>
 
-      {notificationData.length > 0 ? (
+      {notificationData?.length > 0 ? (
         <div className="accordion" id="faqAccordion">
           {notificationData?.map((item, index) => (
             <div
@@ -121,17 +76,21 @@ export default function JobSeekerNotification() {
                     openItem === item.notification_id ? "" : "collapsed"
                   } ${item.is_read ? "" : "bg-secondary"}`}
                   type="button"
-                  onClick={() => {
-                    toggle(item.notification_id);
-                    if (item.is_read === false) {
-                      handleChangeIsRead(item.notification_id);
+                  onClick={async () => {
+                    console.log("Button clicked for notification:", item.notification_id);
+                    console.log("Current is_read status:", item.is_read);
+
+                    // First update the read status if needed
+                    if (!item.is_read) {
+                      await handleReadNotification(item.notification_id);
                     }
+
+                    // Then toggle the accordion
+                    toggle(item.notification_id);
                   }}
                   aria-expanded={openItem === item.notification_id}
+                  disabled={isUpdating}
                 >
-                  {/* <span className="me-3 text-primary fw-bold">
-                  {item.notification_id}
-                </span>{" "} */}
                   {item.notification_type}
                 </button>
               </h2>
@@ -146,46 +105,7 @@ export default function JobSeekerNotification() {
                       className="img-fluid me-2 rounded-1 me-3"
                       style={{ width: 80, height: 80 }}
                     />
-
-                    {(() => {
-                      if (item.notification_type === "Thông báo hệ thống") {
-                        return (
-                          <p className="m-0">
-                            Bạn nhận được thông báo từ hệ thông.
-                          </p>
-                        );
-                      } else if (item.notification_type === "Theo dõi") {
-                        return (
-                          <p className="m-0">
-                            {item.entity_name} đã theo dõi bạn.
-                          </p>
-                        );
-                      } else if (item.notification_type === "Lưu hồ sơ") {
-                        return (
-                          <p className="m-0">
-                            {item.entity_name} đã lưu hồ sơ của bạn.
-                          </p>
-                        );
-                      } else if (item.notification_type === "Hủy theo dõi") {
-                        return (
-                          <p className="m-0">
-                            {item.entity_name} đã hủy theo dõi bạn.
-                          </p>
-                        );
-                      } else if (item.notification_type === "Lưu công việc") {
-                        return (
-                          <p className="m-0">
-                            {item.entity_name} đã lưu công việc của bạn.
-                          </p>
-                        );
-                      } else {
-                        return (
-                          <p className="m-0">
-                            {item.entity_name} đã {item.notification_type} bạn.
-                          </p>
-                        );
-                      }
-                    })()}
+                    content: {item?.content} && entity_name: {item?.entity_name} && type_name: {item?.type_name}
                   </div>
 
                   <div className="d-flex flex-column align-items-center">

@@ -327,6 +327,13 @@ const queryGetJobseekerDetail = async (employer_id, jobseeker_id) => {
         throw new Error("Failed to insert logs into database");
       }
     }
+    // THÊM NOTIFICATION CHO JOBSEEKER
+    const [id] = await db.query(
+      `INSERT INTO notification (recipient_id, notification_type, entity_id, content,created_at) VALUES (?, ?, ?, ?,?)`,
+    [jobseeker_id, "employer_view_jobseeker", employer_id, `Bạn vừa được nhà tuyển dụng xem hồ sơ`,create_at]
+    );
+    if (!id.insertId)
+      throw new Error("Failed to insert notification into database");
     await connection.commit(); // Cam kết giao dịch
     return {
       ...jobseeker_detail[0],
@@ -1361,6 +1368,64 @@ const queryGetOverview = async (employer_id, days) => {
     throw error;
   }
 };
+
+const queryGetNotification = async (employer_id) => {
+try {
+const [result] = await db.query(
+  `SELECT 
+  notification_id,
+  notification_type,
+  is_read,
+  CASE  
+        WHEN notification_type = 'review' THEN "Có lượt mới đánh giá công ty"
+        WHEN notification_type = 'follow' THEN "Có lượt mới theo dõi công ty"
+        WHEN notification_type = 'application' THEN "Có ứng viên mới ứng tuyển"
+  END AS type_name,
+  content,
+  is_read,
+  create_at,
+  CASE  
+        WHEN notification_type = 'review' THEN "Anonymous"
+        ELSE p.full_name
+  END AS entity_name,
+  CASE  
+        WHEN notification_type = 'review' THEN "Anonymous"
+        ELSE notification.entity_id
+  END AS entity_id,
+  CASE  
+        WHEN notification_type = 'review' THEN "Anonymous"
+        ELSE uj.avatar
+  END AS entity_logo
+FROM notification 
+LEFT JOIN user_jobseeker uj ON uj.jobseeker_id = notification.entity_id
+LEFT JOIN profile_jobseeker p ON p.profile_id = notification.entity_id  
+WHERE recipient_id = ? 
+ORDER BY create_at DESC;`,[employer_id]
+);
+return result;
+
+
+}
+catch (error) {
+  console.error("Error in queryGetNotification:", error);
+  throw error;
+};
+};
+
+const queryUpdateReadNotification = async (employer_id, notification_id) => {
+  try {
+    console.log(" queryUpdateReadNotification employer_id", employer_id);
+    const [result] = await db.query(
+      `UPDATE notification SET is_read = 1 WHERE recipient_id = ? AND notification_id = ?;`,
+      [employer_id, notification_id]
+    );
+    return result.affectedRows > 0; // Trả về true nếu cập nhật thành công
+  } catch (error) {
+    console.error("Error updating notification:", error);
+    throw error; // Ném lại lỗi để xử lý ở nơi gọi hàm
+  }
+}
+
 module.exports = {
   queryGetListJobseekerBySearch,
   queryGetJobseekerDetail,
@@ -1390,4 +1455,6 @@ module.exports = {
   // queryGetListJobApplicationByJob,
 
   queryGetOverview,
+  queryGetNotification,
+  queryUpdateReadNotification
 };

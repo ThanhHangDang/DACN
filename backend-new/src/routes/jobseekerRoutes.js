@@ -19,7 +19,9 @@ const {
   getListJobSaving,
   addJobSaving,
   deleteJobSaving,
-  getJobsSuggestion
+  getJobsSuggestion,
+  getNotification,
+  updateReadNotification
 } = require("../controllers/jobseekerControllers.js");
 
 const { upload } = require("../middlewares/imageUpload.js");
@@ -51,6 +53,10 @@ jobseekerRoutes.delete("/job-saving", deleteJobSaving); // xóa việc làm đã
 
 jobseekerRoutes.post("/overview", getOverview); // xóa việc làm đã lưu
 jobseekerRoutes.get("/jobs-suggestion", getJobsSuggestion); // xóa việc làm đã lưu
+
+
+jobseekerRoutes.get("/notification", getNotification); // lấy danh sách thông báo
+jobseekerRoutes.put("/notification", updateReadNotification); // dùng để đánh dấu đã đọc thông báo
 
 module.exports = jobseekerRoutes;
 

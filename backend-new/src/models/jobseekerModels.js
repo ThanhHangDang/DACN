@@ -1267,6 +1267,54 @@ const queryGetJobsSuggestion = async (profile_id) => {
   }
 }
 
+
+
+const queryGetNotification = async (jobseeker_id) => {
+  try {
+  const [result] = await db.query(
+    `SELECT 
+    notification_id,
+    notification_type,
+    is_read,
+    CASE  
+          WHEN notification_type = 'viewprofile' THEN "Có nhà tuyển dụng xem hồ sơ của bạn"
+          WHEN notification_type = 'invitation' THEN "Có nhà tuyển dụng mời bạn ứng tuyển"
+          WHEN notification_type = 'newjob' THEN "Công ty bạn theo dõi có công việc mới"
+    END AS type_name,
+    content,
+    is_read,
+    created_at,
+    c.company_name AS entity_name,
+    entity_id,
+    c.logo AS entity_logo
+  FROM notification 
+  LEFT JOIN company c ON c.company_id = notification.entity_id
+  WHERE recipient_id = ? 
+  ORDER BY created_at DESC;`,[jobseeker_id]
+  );
+  return result;
+  
+  
+  }
+  catch (error) {
+    console.error("Error in queryGetNotification:", error);
+    throw error;
+  };
+  };
+  
+  const queryUpdateReadNotification = async (jobseeker_id, notification_id) => {
+    try {
+      const [result] = await db.query(
+        `UPDATE notification SET is_read = 1 WHERE recipient_id = ? AND notification_id = ?;`,
+        [jobseeker_id, notification_id]
+      );
+      return result.affectedRows > 0; // Trả về true nếu cập nhật thành công
+    } catch (error) {
+      console.error("Error updating notification:", error);
+      throw error; // Ném lại lỗi để xử lý ở nơi gọi hàm
+    }
+  }
+  
 module.exports = {
   queryJobseekerGetJobDetail,
   queryGetItemProfile,
@@ -1287,5 +1335,8 @@ module.exports = {
   queryAddJobSaving,
   queryDeleteJobSaving,
   queryGetOverview,
-  queryGetJobsSuggestion
+  queryGetJobsSuggestion,
+
+  queryGetNotification,
+  queryUpdateReadNotification
 };

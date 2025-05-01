@@ -24,7 +24,9 @@ const {
   getOverview,
   getListJobForInvite,
   getListInvitaion,
-  deleteInvitation
+  deleteInvitation,
+  getNotification,
+  updateReadNotification
 } = require("../controllers/employerControllers.js");
 
 const { upload } = require("../middlewares/imageUpload.js");
@@ -61,6 +63,10 @@ employerRoutes.post("/job-invitation", inviteCandidateApply);
 employerRoutes.delete("/job-invitation", deleteInvitation); // xóa lời mời ứng tuyển của ứng viên
 
 employerRoutes.post("/overview", getOverview); // lấy thông tin tổng quan của công ty); 
+
+employerRoutes.get("/notification", getNotification); // lấy danh sách thông báo
+employerRoutes.put("/notification", updateReadNotification); // dùng để đánh dấu đã đọc thông báo
+
 module.exports = employerRoutes ;
 
 

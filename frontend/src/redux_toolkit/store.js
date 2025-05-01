@@ -7,7 +7,7 @@ import { categoryApi } from './CategoryApi.js';
 import { guestApi } from './guestApi'; 
 import {jobseekerApi} from './jobseekerApi.js';
 import {employerApi} from './employerApi.js';
-import {notificationApi} from './notificationApi.js';
+// import {notificationApi} from './notificationApi.js';
 import { setupListeners } from '@reduxjs/toolkit/query';
 
 const persistConfig = {
@@ -22,7 +22,7 @@ const rootReducer = combineReducers({
   [guestApi.reducerPath]: guestApi.reducer,
   [jobseekerApi.reducerPath]: jobseekerApi.reducer,
   [employerApi.reducerPath]: employerApi.reducer,
-  [notificationApi.reducerPath]: notificationApi.reducer,
+  // [notificationApi.reducerPath]: notificationApi.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -36,7 +36,7 @@ const store = configureStore({
       },
     }).concat(categoryApi.middleware, guestApi.middleware, jobseekerApi.middleware, 
       employerApi.middleware,
-       notificationApi.middleware
+      //  notificationApi.middleware
     ),
 });
 setupListeners(store.dispatch);

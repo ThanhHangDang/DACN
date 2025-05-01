@@ -264,6 +264,28 @@ export const employerApi = createApi({
       },
       providesTags: ["ListInvitation"],
     }),
+
+    getNotification: builder.query({
+      query: (employer_id) => ({
+          url: '/employer/notification',
+          params: { employer_id },
+      }),
+      transformResponse: (response) => {
+          return response.data;
+      },
+      providesTags: ['Notification'],
+  }),
+  updateReadNotification: builder.mutation({
+      query: ({ employer_id, notification_id }) => ({
+          url: '/employer/notification',
+          method: 'PUT',
+          body: { employer_id,        notification_id            },
+      }),
+      transformResponse: (response) => {
+          return response;
+      },
+      invalidatesTags: ['Notification'],
+  }),
 })
 });
 
@@ -294,6 +316,10 @@ export const {
   useInviteCandidateApplyJobMutation,
   useGetListJobForInvitationQuery,
   useGetListInvitationQuery,
-  useDeleteInvitationMutation
+  useDeleteInvitationMutation,
+
+
+  useGetNotificationQuery,
+  useUpdateReadNotificationMutation
 
 } = employerApi;

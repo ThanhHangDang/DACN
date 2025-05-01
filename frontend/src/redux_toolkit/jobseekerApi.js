@@ -237,6 +237,38 @@ export const jobseekerApi = createApi({
             }),
             invalidatesTags: ['CV'],
         }),
+
+        getNotification: builder.query({
+            query: (profile_id) => ({
+                url: '/jobseeker/notification',
+                params: { profile_id },
+            }),
+            transformResponse: (response) => {
+                return response.data;
+            },
+            providesTags: ['Notification'],
+        }),
+        getNotification: builder.query({
+            query: (profile_id) => ({
+                url: '/jobseeker/notification',
+                params: { profile_id },
+            }),
+            transformResponse: (response) => {
+                return response.data;
+            },
+            providesTags: ['Notification'],
+        }),
+        updateReadNotification: builder.mutation({
+            query: ({ profile_id, notification_id }) => ({
+                url: '/jobseeker/notification',
+                method: 'PUT',
+                body: { profile_id, notification_id  },
+            }),
+            transformResponse: (response) => {
+                return response;
+            },
+            invalidatesTags: ['Notification'],
+        }),
     })   
 });
 
@@ -267,5 +299,9 @@ export const {
 
     useGetProfileCVQuery,
     useAddProfileCVMutation,
-    useDeleteProfileCVMutation        
+    useDeleteProfileCVMutation,   
+    
+    useGetNotificationQuery,
+    useUpdateReadNotificationMutation
+
 } = jobseekerApi;

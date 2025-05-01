@@ -21,7 +21,9 @@ const {
   queryAddJobSaving,
   queryDeleteJobSaving,
   queryGetOverview,
-  queryGetJobsSuggestion
+  queryGetJobsSuggestion,
+  queryGetNotification,
+  queryUpdateReadNotification
 } = require("../models/jobseekerModels.js");
 
 const jobseekerGetJobDetail = async (req, res, next) => {
@@ -510,6 +512,54 @@ const getJobsSuggestion = async (req, res, next) => {
   }
 };
 
+const getNotification = async (req, res, next) => {
+  try {
+    const { profile_id } = req.query;
+    
+    if (!profile_id) {
+      return next(new ApiError("Thiếu ID công ty", 400));
+    }
+    
+    // Kiểm tra quyền
+    // if (req.session?.userLogin?.company_id !== parseInt(company_id)) {
+    //   return next(new ApiError("Không có quyền truy cập dữ liệu này", 403));
+    // }
+    
+    const data = await queryGetNotification(profile_id);
+    
+    return res.success(
+       data || [] ,
+      "Lấy danh sách thông báo thành công"
+    );
+  } catch (err) {
+    return next(new ApiError("Lỗi khi lấy danh sách thông báo", 500));
+  }
+}
+
+const updateReadNotification = async (req, res, next) => {
+  try {
+    const { profile_id, notification_id } = req.body;
+    
+    if (!profile_id || !notification_id) {
+      return next(new ApiError("Thiếu ID công ty/ thông báo", 400));
+    }
+    
+    // Kiểm tra quyền
+    // if (req.session?.userLogin?.company_id !== parseInt(company_id)) {
+    //   return next(new ApiError("Không có quyền thực hiện hành động này", 403));
+    // }
+    
+    const result = await queryUpdateReadNotification(profile_id, notification_id);
+    
+    if (!result) {
+      return next(new ApiError("Cập nhật thông báo thất bại", 500));
+    }    
+    return res.success({ }, "Cập nhật thông báo thành công");
+  } catch (err) {
+    return next(new ApiError("Lỗi khi cập nhật thông báo", 500));
+  } 
+
+}
 
 module.exports = {
   jobseekerGetJobDetail,
@@ -537,5 +587,9 @@ module.exports = {
   deleteJobSaving,
 
   getOverview,
-  getJobsSuggestion
+  getJobsSuggestion,
+
+
+  getNotification,
+  updateReadNotification
 };
