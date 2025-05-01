@@ -13,6 +13,8 @@ import {
   useGetTagsQuery,
 } from "../../../redux_toolkit/CategoryApi.js";
 import formatDateToDDMMYYYY from "../../../utils/formatDate.js";
+import { validateField } from "../../../utils/validateField";
+
 const formatDateForInput = (dateString) => {
   if (!dateString) return "";
 
@@ -70,9 +72,8 @@ export default function YourCVwithUs() {
   const { data: edu } = useGetEducationQuery();
   const { data: tags } = useGetTagsQuery();
   const { data: lang } = useGetLanguagesQuery();
-  console.log("listLanguage: ", listLanguage);
   const [experience, setExperience] = useState({
-    profile_experience_id: "",
+    profile_experience_id: "deCheckValidation",
     exp_title: "",
     exp_company: "",
     exp_from: "",
@@ -81,7 +82,7 @@ export default function YourCVwithUs() {
   });
 
   const [education, setEducation] = useState({
-    profile_education_id: "",
+    profile_education_id: "deCheckValidation",
     major: "",
     school: "",
     from_: "",
@@ -116,7 +117,7 @@ export default function YourCVwithUs() {
   const [languageAdd, setLanguageAdd] = useState([]);
 
   const [certification, setCertification] = useState({
-    profile_certifications_id: "",
+    profile_certifications_id: "deCheckValidation",
     certifications: "",
     month_: "",
   });
@@ -140,7 +141,24 @@ export default function YourCVwithUs() {
     }
   };
 
-  const handleAddExperience = async () => {
+  const handleAddExperience = async (e) => {
+    e.preventDefault(); // Ngăn chặn hành vi mặc định của form
+    let newErrors = {};
+    let hasError = false;
+
+    // Validate both username and password
+    Object.keys(experience).forEach((key) => {
+      const error = validateField(key, experience[key]);
+      if (error) {
+        hasError = true;
+      }
+      newErrors[key] = error;
+    });
+    setErrorsExperience(newErrors);
+    if (hasError) {
+      toast.error("Vui lòng nhập đầy đủ các trường!"); // Prevent submission if there are validation errors
+    }
+
     try {
       if (isAdd) {
         await addItemProfile({
@@ -157,7 +175,7 @@ export default function YourCVwithUs() {
       }
 
       setExperience({
-        profile_experience_id: "",
+        profile_experience_id: "deCheckValidation",
         exp_title: "",
         exp_company: "",
         exp_from: "",
@@ -170,7 +188,23 @@ export default function YourCVwithUs() {
     }
   };
 
-  const handleAddEducation = async () => {
+  const handleAddEducation = async (e) => {
+    e.preventDefault(); // Ngăn chặn hành vi mặc định của form
+    let newErrors = {};
+    let hasError = false;
+
+    Object.keys(education).forEach((key) => {
+      const error = validateField(key, education[key]);
+      if (error) {
+        hasError = true;
+      }
+      newErrors[key] = error;
+    });
+    setErrorsEducation(newErrors);
+    if (hasError) {
+      toast.error("Vui lòng nhập đầy đủ các trường!"); // Prevent submission if there are validation errors
+    }
+
     try {
       if (isAdd) {
         await addItemProfile({
@@ -186,12 +220,12 @@ export default function YourCVwithUs() {
         toast.success("Update Education thành công!");
       }
       setEducation({
-        profile_education_id: "",
+        profile_education_id: "deCheckValidation",
         major: "",
         school: "",
         from_: "",
-        endYear: "",
         to_: "",
+        education_id: "1",
       });
     } catch (error) {
       console.error("Error adding education:", error);
@@ -199,7 +233,23 @@ export default function YourCVwithUs() {
     }
   };
 
-  const handleAddProject = async () => {
+  const handleAddProject = async (e) => {
+    e.preventDefault(); // Ngăn chặn hành vi mặc định của form
+    let newErrors = {};
+    let hasError = false;
+
+    Object.keys(project).forEach((key) => {
+      const error = validateField(key, project[key]);
+      if (error) {
+        hasError = true;
+      }
+      newErrors[key] = error;
+    });
+    setErrorsProject(newErrors);
+    if (hasError) {
+      toast.error("Vui lòng nhập đầy đủ các trường!"); // Prevent submission if there are validation errors
+    }
+
     try {
       if (isAdd) {
         await addItemProfile({
@@ -215,7 +265,7 @@ export default function YourCVwithUs() {
         toast.success("Update Project thành công!");
       }
       setProject({
-        profile_project_id: "",
+        profile_project_id: "deCheckValidation",
         project_name: "",
         project_from: "",
         project_to: "",
@@ -290,7 +340,23 @@ export default function YourCVwithUs() {
     }
   };
 
-  const handleAddCertification = async () => {
+  const handleAddCertification = async (e) => {
+    e.preventDefault(); // Ngăn chặn hành vi mặc định của form
+    let newErrors = {};
+    let hasError = false;
+
+    Object.keys(certification).forEach((key) => {
+      const error = validateField(key, certification[key]);
+      if (error) {
+        hasError = true;
+      }
+      newErrors[key] = error;
+    });
+    setErrorsCertification(newErrors);
+    if (hasError) {
+      toast.error("Vui lòng nhập đầy đủ các trường!"); // Prevent submission if there are validation errors
+    }
+
     try {
       if (isAdd) {
         await addItemProfile({
@@ -314,7 +380,7 @@ export default function YourCVwithUs() {
       }
 
       setCertification({
-        profile_certifications_id: "", // Reset ID khi hoàn thành
+        profile_certifications_id: "deCheckValidation", // Reset ID khi hoàn thành
         certifications: "",
         month_: "",
       });
@@ -334,6 +400,158 @@ export default function YourCVwithUs() {
       toast.error("Xóa thất bại!");
     }
   };
+
+  //Validate Career Target
+  const [validCareerTarget, setValidCareerTarget] = useState(false);
+  const [errorsCareerTarget, setErrorsCareerTarget] = useState({
+    careerTarget: "",
+  });
+  const handleBlurCareerTarget = (e) => {
+    const { name, value } = e.target;
+    const error = validateField(name, value);
+    setErrorsCareerTarget((prev) => ({
+      ...prev,
+      [name]: error,
+    }));
+  };
+  useEffect(() => {
+    const noErrors = Object.values(errorsCareerTarget).every(
+      (err) => err === ""
+    );
+    setValidCareerTarget(noErrors);
+  }, [errorsCareerTarget]);
+
+  //Validate Experience
+  const [validExperience, setValidExperience] = useState(false);
+  const [errorsExperience, setErrorsExperience] = useState({
+    exp_title: "",
+    exp_company: "",
+    exp_from: "",
+    exp_to: "",
+    exp_description: "",
+  });
+  const [expFromTo, setExpFromTo] = useState({
+    exp_from: "",
+    exp_to: "",
+  });
+
+  const handleBlurExperience = (e) => {
+    const { name, value } = e.target;
+    if (name === "exp_from" || name === "exp_to") {
+      setExpFromTo((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+
+    console.log("expFromTo: ", expFromTo);
+
+    const error = validateField(name, value, expFromTo);
+    setErrorsExperience((prev) => ({
+      ...prev,
+      [name]: error,
+    }));
+  };
+
+  useEffect(() => {
+    // Enable submit button if no errors and fields are filled
+    const allFieldsFilled = Object.values(experience).every(
+      (val) => val !== ""
+    );
+    const noErrors = Object.values(errorsExperience).every((err) => err === "");
+    setValidExperience(allFieldsFilled && noErrors);
+  }, [experience, errorsExperience]);
+
+  //Validate Education
+  const [validEducation, setValidEducation] = useState(false);
+  const [errorsEducation, setErrorsEducation] = useState({
+    major: "",
+    school: "",
+    from_: "",
+    to_: "",
+  });
+  const [eduFromTo, setEduFromTo] = useState({
+    from_: "",
+    to_: "",
+  });
+  const handleBlurEducation = (e) => {
+    const { name, value } = e.target;
+    if (name === "from_" || name === "to_") {
+      setEduFromTo((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+    const error = validateField(name, value, eduFromTo);
+    setErrorsEducation((prev) => ({
+      ...prev,
+      [name]: error,
+    }));
+  };
+  useEffect(() => {
+    // Enable submit button if no errors and fields are filled
+    const allFieldsFilled = Object.values(education).every((val) => val !== "");
+    const noErrors = Object.values(errorsEducation).every((err) => err === "");
+    setValidEducation(allFieldsFilled && noErrors);
+  }, [education, errorsEducation]);
+
+  //Validate Project
+  const [validProject, setValidProject] = useState(false);
+  const [errorsProject, setErrorsProject] = useState({
+    project_name: "",
+    project_from: "",
+    project_to: "",
+    project_description: "",
+  });
+  const [projectFromTo, setProjectFromTo] = useState({
+    project_from: "",
+    project_to: "",
+  });
+  const handleBlurProject = (e) => {
+    const { name, value } = e.target;
+    if (name === "project_from" || name === "project_to") {
+      setProjectFromTo((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+    const error = validateField(name, value, projectFromTo);
+    setErrorsProject((prev) => ({
+      ...prev,
+      [name]: error,
+    }));
+  };
+  useEffect(() => {
+    // Enable submit button if no errors and fields are filled
+    const allFieldsFilled = Object.values(project).every((val) => val !== "");
+    const noErrors = Object.values(errorsProject).every((err) => err === "");
+    setValidProject(allFieldsFilled && noErrors);
+  }, [project, errorsProject]);
+
+  //Validate Certification
+  const [validCertification, setValidCertification] = useState(false);
+  const [errorsCertification, setErrorsCertification] = useState({
+    certifications: "",
+    month_: "",
+  });
+  const handleBlurCertification = (e) => {
+    const { name, value } = e.target;
+    const error = validateField(name, value);
+    setErrorsCertification((prev) => ({
+      ...prev,
+      [name]: error,
+    }));
+  };
+  useEffect(() => {
+    // Enable submit button if no errors and fields are filled
+    const allFieldsFilled = Object.values(certification).every(
+      (val) => val !== ""
+    );
+    const noErrors = Object.values(errorsCertification).every(
+      (err) => err === ""
+    );
+    setValidCertification(allFieldsFilled && noErrors);
+  }, [certification, errorsCertification]);
 
   return (
     <div>
@@ -367,7 +585,8 @@ export default function YourCVwithUs() {
                   <textarea
                     type="text"
                     className="form-control"
-                    id="benefits"
+                    id="careerTarget"
+                    name="careerTarget"
                     rows={4}
                     placeholder="Nhập mục tiêu nghề nghiệp"
                     value={careerTarget.replace(/%00endl/g, "\n")}
@@ -377,10 +596,32 @@ export default function YourCVwithUs() {
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         e.preventDefault();
-                        setCareerTarget((prev) => (prev || "") + "%00endl");
+                        const textarea = e.target;
+                        const start = textarea.selectionStart;
+                        const end = textarea.selectionEnd;
+                        const valueWithPlaceholder = careerTarget || "";
+
+                        const newValue =
+                          valueWithPlaceholder.slice(0, start) +
+                          "%00endl" +
+                          valueWithPlaceholder.slice(end);
+
+                        setCareerTarget(newValue);
+
+                        // Cập nhật lại vị trí con trỏ sau khi chèn
+                        setTimeout(() => {
+                          textarea.selectionStart = textarea.selectionEnd =
+                            start + "%00endl".length;
+                        }, 0);
                       }
                     }}
+                    onBlur={handleBlurCareerTarget}
                   />
+                  {errorsCareerTarget.careerTarget && (
+                    <div className="alert alert-danger mt-2">
+                      {errorsCareerTarget.careerTarget}
+                    </div>
+                  )}
                 </div>
               </form>
             </div>
@@ -399,6 +640,7 @@ export default function YourCVwithUs() {
                 data-bs-dismiss="modal"
                 aria-label="Close"
                 onClick={handleUpdateCarreerTarget}
+                disabled={!validCareerTarget}
               >
                 Cập nhật
               </button>
@@ -417,20 +659,20 @@ export default function YourCVwithUs() {
         // aria-hidden="true"
       >
         <div className="modal-dialog modal-lg">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="modalTitle">
-                Thêm kinh nghiệm
-              </h5>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              />
-            </div>
-            <div className="modal-body">
-              <form>
+          <form onSubmit={handleAddExperience}>
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="modalTitle">
+                  Thêm kinh nghiệm
+                </h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                />
+              </div>
+              <div className="modal-body">
                 <div className="row mb-3">
                   <div className="col-md-7">
                     <label htmlFor="postTitle" className="form-label">
@@ -440,7 +682,8 @@ export default function YourCVwithUs() {
                       value={experience.exp_title || ""} // Thêm || "" để tránh lỗi undefined
                       type="text"
                       className="form-control"
-                      id="postTitle"
+                      id="exp_title"
+                      name="exp_title"
                       placeholder="Nhập công việc"
                       onChange={(e) => {
                         setExperience({
@@ -448,7 +691,13 @@ export default function YourCVwithUs() {
                           exp_title: e.target.value,
                         });
                       }}
+                      onBlur={handleBlurExperience}
                     />
+                    {errorsExperience.exp_title && (
+                      <div className="alert alert-danger mt-2">
+                        {errorsExperience.exp_title}
+                      </div>
+                    )}
                   </div>
                   <div className="col-md-5">
                     <label htmlFor="postTitle" className="form-label">
@@ -458,7 +707,8 @@ export default function YourCVwithUs() {
                       value={experience.exp_company}
                       type="text"
                       className="form-control"
-                      id="postTitle"
+                      id="exp_company"
+                      name="exp_company"
                       placeholder="Nhập công ty"
                       onChange={(e) => {
                         setExperience({
@@ -466,7 +716,13 @@ export default function YourCVwithUs() {
                           exp_company: e.target.value,
                         });
                       }}
+                      onBlur={handleBlurExperience}
                     />
+                    {errorsExperience.exp_company && (
+                      <div className="alert alert-danger mt-2">
+                        {errorsExperience.exp_company}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="row">
@@ -479,14 +735,17 @@ export default function YourCVwithUs() {
                       type="date"
                       min="1960"
                       className="form-control"
-                      id="startYear"
+                      id="exp_from"
+                      name="exp_from"
                       placeholder="Nhập năm bắt đầu"
                       onChange={(e) => {
                         setExperience({
                           ...experience,
                           exp_from: e.target.value,
                         });
+                        handleBlurExperience(e);
                       }}
+                      onBlur={handleBlurExperience}
                     />
                   </div>
                   <div className="col-md-4 mb-3">
@@ -498,16 +757,33 @@ export default function YourCVwithUs() {
                       type="date"
                       min="1960"
                       className="form-control"
-                      id="endYear"
+                      id="exp_to"
+                      name="exp_to"
                       placeholder="Nhập năm kết thúc"
                       onChange={(e) => {
                         setExperience({
                           ...experience,
                           exp_to: e.target.value,
                         });
+                        handleBlurExperience(e);
                       }}
+                      onBlur={handleBlurExperience}
                     />
                   </div>
+                  {(errorsExperience.exp_from && (
+                    <div className="d-flex">
+                      <div className="col alert alert-danger mt-2">
+                        {errorsExperience.exp_from}
+                      </div>
+                    </div>
+                  )) ||
+                    (errorsExperience.exp_to && (
+                      <div className="d-flex">
+                        <div className="col alert alert-danger mt-2">
+                          {errorsExperience.exp_to}
+                        </div>
+                      </div>
+                    ))}
                 </div>
 
                 <div className="mb-3">
@@ -517,39 +793,48 @@ export default function YourCVwithUs() {
                   <textarea
                     value={experience.exp_description}
                     className="form-control"
-                    id="benefits"
+                    id="exp_description"
+                    name="exp_description"
                     rows={4}
                     placeholder="Nhập mô tả công việc"
+                    required
                     onChange={(e) => {
                       setExperience({
                         ...experience,
                         exp_description: e.target.value,
                       });
                     }}
+                    onBlur={handleBlurExperience}
                   />
+                  {errorsExperience.exp_description && (
+                    <div className="alert alert-danger mt-2">
+                      {errorsExperience.exp_description}
+                    </div>
+                  )}
                 </div>
-              </form>
-            </div>
+              </div>
 
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Hủy
-              </button>
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={handleAddExperience}
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              >
-                Cập nhật
-              </button>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  onClick={handleAddExperience}
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                  disabled={!validExperience}
+                >
+                  Cập nhật
+                </button>
+              </div>
             </div>
-          </div>
+          </form>
         </div>
       </div>
       {/* End modal thêm kinh nghiệm */}
@@ -563,50 +848,64 @@ export default function YourCVwithUs() {
         // aria-hidden="true"
       >
         <div className="modal-dialog modal-lg">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="modalTitle">
-                Thêm học vấn
-              </h5>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              />
-            </div>
-            <div className="modal-body">
-              <form>
+          <form onSubmit={handleAddEducation}>
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="modalTitle">
+                  Thêm học vấn
+                </h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                />
+              </div>
+              <div className="modal-body">
                 <div className="row mb-3">
                   <div className="col-md-7">
-                    <label htmlFor="postTitle" className="form-label">
+                    <label htmlFor="major" className="form-label">
                       Chuyên ngành
                     </label>
                     <input
                       value={education.major}
                       type="text"
                       className="form-control"
-                      id="postTitle"
+                      id="major"
+                      name="major"
                       placeholder="Nhập chuyên ngành"
                       onChange={(e) => {
                         setEducation({ ...education, major: e.target.value });
                       }}
+                      onBlur={handleBlurEducation}
                     />
+                    {errorsEducation.major && (
+                      <div className="alert alert-danger mt-2">
+                        {errorsEducation.major}
+                      </div>
+                    )}
                   </div>
                   <div className="col-md-5">
-                    <label htmlFor="postTitle" className="form-label">
+                    <label htmlFor="school" className="form-label">
                       Trường
                     </label>
                     <input
                       value={education.school}
                       type="text"
                       className="form-control"
-                      id="postTitle"
+                      id="school"
+                      name="school"
                       placeholder="Nhập Trường Đại học"
                       onChange={(e) => {
                         setEducation({ ...education, school: e.target.value });
                       }}
+                      onBlur={handleBlurEducation}
                     />
+                    {errorsEducation.school && (
+                      <div className="alert alert-danger mt-2">
+                        {errorsEducation.school}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="row">
@@ -625,25 +924,23 @@ export default function YourCVwithUs() {
                         });
                       }}
                     >
-                      {edu?.map((option) => (
-                        <option
-                          value={option.education_id}
-                          key={option.education_id}
-                        >
+                      {edu?.map((option, index) => (
+                        <option value={option.education_id} key={index}>
                           {option.education_title}
                         </option>
                       ))}
                     </select>
                   </div>
                   <div className="col-md-4 mb-3">
-                    <label htmlFor="startYear" className="form-label">
+                    <label htmlFor="from_" className="form-label">
                       Từ
                     </label>
                     <input
                       value={education.from_}
                       type="date"
                       className="form-control"
-                      id="startYear"
+                      id="from_"
+                      name="from_"
                       placeholder="Nhập năm bắt đầu"
                       min="1960"
                       onChange={(e) => {
@@ -651,48 +948,68 @@ export default function YourCVwithUs() {
                           ...education,
                           from_: e.target.value,
                         });
+                        handleBlurEducation(e);
                       }}
+                      onBlur={handleBlurEducation}
                     />
                   </div>
                   <div className="col-md-4 mb-3">
-                    <label htmlFor="endYear" className="form-label">
+                    <label htmlFor="to_" className="form-label">
                       Đến
                     </label>
                     <input
                       value={education.to_}
                       type="date"
                       className="form-control"
-                      id="endYear"
+                      id="to_"
+                      name="to_"
                       placeholder="Nhập năm kết thúc"
                       min="1960"
                       onChange={(e) => {
                         setEducation({ ...education, to_: e.target.value });
+                        handleBlurEducation(e);
                       }}
+                      onBlur={handleBlurEducation}
                     />
                   </div>
+                  {(errorsEducation.from_ && (
+                    <div className="d-flex">
+                      <div className="col alert alert-danger mt-2">
+                        {errorsEducation.from_}
+                      </div>
+                    </div>
+                  )) ||
+                    (errorsEducation.to_ && (
+                      <div className="d-flex">
+                        <div className="col alert alert-danger mt-2">
+                          {errorsEducation.to_}
+                        </div>
+                      </div>
+                    ))}
                 </div>
-              </form>
-            </div>
+              </div>
 
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Hủy
-              </button>
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={handleAddEducation}
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              >
-                Cập nhật
-              </button>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  // onClick={handleAddEducation}
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                  disabled={!validEducation}
+                >
+                  Cập nhật
+                </button>
+              </div>
             </div>
-          </div>
+          </form>
         </div>
       </div>
       {/* End modal thêm học vấn */}
@@ -706,30 +1023,31 @@ export default function YourCVwithUs() {
         // aria-hidden="true"
       >
         <div className="modal-dialog modal-lg">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="modalTitle">
-                Thêm dự án
-              </h5>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              />
-            </div>
-            <div className="modal-body">
-              <form>
+          <form onSubmit={handleAddProject}>
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="modalTitle">
+                  Thêm dự án
+                </h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                />
+              </div>
+              <div className="modal-body">
                 <div className="row mb-3">
                   <div className="">
-                    <label htmlFor="postTitle" className="form-label">
+                    <label htmlFor="project_name" className="form-label">
                       Dự án
                     </label>
                     <input
                       value={project.project_name}
                       type="text"
                       className="form-control"
-                      id="postTitle"
+                      id="project_name"
+                      name="project_name"
                       placeholder="Nhập dự án"
                       onChange={(e) => {
                         setProject({
@@ -737,56 +1055,83 @@ export default function YourCVwithUs() {
                           project_name: e.target.value,
                         });
                       }}
+                      onBlur={handleBlurProject}
                     />
+                    {errorsProject.project_name && (
+                      <div className="alert alert-danger mt-2">
+                        {errorsProject.project_name}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="row">
                   <div className="col-md-4 mb-3">
-                    <label htmlFor="startYear" className="form-label">
+                    <label htmlFor="project_from" className="form-label">
                       Từ
                     </label>
                     <input
                       value={project.project_from}
                       type="date"
                       className="form-control"
-                      id="startYear"
+                      id="project_from"
+                      name="project_from"
                       placeholder="Nhập năm bắt đầu"
                       onChange={(e) => {
                         setProject({
                           ...project,
                           project_from: e.target.value,
                         });
+                        handleBlurProject(e);
                       }}
+                      onBlur={handleBlurProject}
                     />
                   </div>
                   <div className="col-md-4 mb-3">
-                    <label htmlFor="endYear" className="form-label">
+                    <label htmlFor="project_to" className="form-label">
                       Đến
                     </label>
                     <input
                       value={project.project_to}
                       type="date"
                       className="form-control"
-                      id="endYear"
+                      id="project_to"
+                      name="project_to"
                       placeholder="Nhập năm kết thúc"
                       onChange={(e) => {
                         setProject({
                           ...project,
                           project_to: e.target.value,
                         });
+                        handleBlurProject(e);
                       }}
+                      onBlur={handleBlurProject}
                     />
                   </div>
+                  {(errorsProject.project_from && (
+                    <div className="d-flex">
+                      <div className="col alert alert-danger mt-2">
+                        {errorsProject.project_from}
+                      </div>
+                    </div>
+                  )) ||
+                    (errorsProject.project_to && (
+                      <div className="d-flex">
+                        <div className="col alert alert-danger mt-2">
+                          {errorsProject.project_to}
+                        </div>
+                      </div>
+                    ))}
                 </div>
 
                 <div className="mb-3">
-                  <label htmlFor="benefits" className="form-label">
+                  <label htmlFor="project_description" className="form-label">
                     Mô tả
                   </label>
                   <textarea
                     value={project.project_description}
                     className="form-control"
-                    id="benefits"
+                    id="project_description"
+                    name="project_description"
                     rows={4}
                     placeholder="Nhập mô tả dự án"
                     // defaultValue={""}
@@ -796,30 +1141,37 @@ export default function YourCVwithUs() {
                         project_description: e.target.value,
                       });
                     }}
+                    onBlur={handleBlurProject}
                   />
+                  {errorsProject.project_description && (
+                    <div className="alert alert-danger mt-2">
+                      {errorsProject.project_description}
+                    </div>
+                  )}
                 </div>
-              </form>
-            </div>
+              </div>
 
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Hủy
-              </button>
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={handleAddProject}
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              >
-                Cập nhật
-              </button>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  // onClick={handleAddProject}
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                  disabled={!validProject}
+                >
+                  Cập nhật
+                </button>
+              </div>
             </div>
-          </div>
+          </form>
         </div>
       </div>
       {/* End modal thêm dự án */}
@@ -875,9 +1227,9 @@ export default function YourCVwithUs() {
                               .toLowerCase()
                               .includes(skillInput.toLowerCase())
                           )
-                          .map((skill) => (
+                          .map((skill, index) => (
                             <li
-                              key={skill.tag_id}
+                              key={index}
                               className="list-group-item list-group-item-action ms-2 mr-2"
                               onClick={() => handleAddSkillOptions(skill)}
                             >
@@ -886,9 +1238,9 @@ export default function YourCVwithUs() {
                           ))}
                     </ul>
                     <div className="mt-2">
-                      {skillAdd?.map((skill) => (
+                      {skillAdd?.map((skill, index) => (
                         <span
-                          key={skill.tag_id}
+                          key={index}
                           className="badge bg-primary me-2"
                           style={{ cursor: "pointer" }}
                           onClick={() => handleRemoveSkill(skill)}
@@ -950,13 +1302,14 @@ export default function YourCVwithUs() {
             <div className="modal-body">
               <form>
                 <div className="mb-3">
-                  <label htmlFor="jobTitle" className="form-label">
+                  <label htmlFor="language" className="form-label">
                     Ngoại ngữ
                   </label>
                   <input
                     type="text"
                     className="form-control"
-                    id="jobTitle"
+                    id="language"
+                    name="language"
                     placeholder="Nhập ngoại ngữ"
                     value={languageInput}
                     onChange={(e) => setLanguageInput(e.target.value)}
@@ -974,11 +1327,11 @@ export default function YourCVwithUs() {
                           .toLowerCase()
                           .includes(languageInput.toLowerCase())
                       )
-                      .map((language) => (
+                      .map((language, index) => (
                         <>
                           {languageInput !== "" && (
                             <li
-                              key={language.language_id}
+                              key={index}
                               className="list-group-item list-group-item-action ms-2 mr-2"
                               onClick={() => handleAddLanguageOptions(language)}
                             >
@@ -989,9 +1342,9 @@ export default function YourCVwithUs() {
                       ))}
                   </ul>
                   <div className="mt-2">
-                    {languageAdd?.map((language) => (
+                    {languageAdd?.map((language, index) => (
                       <span
-                        key={language.language_id}
+                        key={index}
                         className="badge bg-primary me-2"
                         style={{ cursor: "pointer" }}
                         onClick={() => {
@@ -1039,29 +1392,30 @@ export default function YourCVwithUs() {
         // aria-hidden="true"
       >
         <div className="modal-dialog modal-lg">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="modalTitle">
-                Thêm chứng chỉ
-              </h5>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              />
-            </div>
-            <div className="modal-body">
-              <form>
+          <form onSubmit={handleAddCertification}>
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="modalTitle">
+                  Thêm chứng chỉ
+                </h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                />
+              </div>
+              <div className="modal-body">
                 <div className="mb-3">
-                  <label htmlFor="jobTitle" className="form-label">
+                  <label htmlFor="certifications" className="form-label">
                     Chứng chỉ
                   </label>
                   <input
                     value={certification?.certifications || ""}
                     type="text"
                     className="form-control"
-                    id="jobTitle"
+                    id="certifications"
+                    name="certifications"
                     placeholder="Nhập chứng chỉ"
                     onChange={(e) => {
                       setCertification({
@@ -1069,18 +1423,25 @@ export default function YourCVwithUs() {
                         certifications: e.target.value,
                       });
                     }}
+                    onBlur={handleBlurCertification}
                   />
+                  {errorsCertification.certifications && (
+                    <div className="alert alert-danger mt-2">
+                      {errorsCertification.certifications}
+                    </div>
+                  )}
                 </div>
 
                 <div className="mb-3 col-md-4">
-                  <label htmlFor="jobTitle" className="form-label">
+                  <label htmlFor="month_" className="form-label">
                     Ngày cấp
                   </label>
                   <input
                     value={certification.month_}
                     type="date"
                     className="form-control"
-                    id="jobTitle"
+                    id="month_"
+                    name="month_"
                     placeholder="Nhập chứng chỉ"
                     onChange={(e) => {
                       setCertification({
@@ -1088,30 +1449,38 @@ export default function YourCVwithUs() {
                         month_: e.target.value,
                       });
                     }}
+                    onBlur={handleBlurCertification}
                   />
+                  {errorsCertification.month_ && (
+                    <div className="alert alert-danger mt-2">
+                      {errorsCertification.month_}
+                    </div>
+                  )}
                 </div>
-              </form>
-            </div>
+              </div>
 
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Hủy
-              </button>
-              <button
-                type="button"
-                className="btn btn-primary"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-                onClick={handleAddCertification}
-              >
-                Cập nhật
-              </button>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                  // onClick={handleAddCertification}
+                  onClick={handleAddCertification}
+                  disabled={!validCertification}
+                >
+                  Cập nhật
+                </button>
+              </div>
             </div>
-          </div>
+          </form>
         </div>
       </div>
       {/* End modal thêm chứng chỉ */}
@@ -1304,7 +1673,7 @@ export default function YourCVwithUs() {
           onClick={() => {
             setIsAdd(true);
             setExperience({
-              profile_experience_id: "",
+              profile_experience_id: "deCheckValidation",
               exp_title: "",
               exp_company: "",
               exp_from: "",
@@ -1312,6 +1681,7 @@ export default function YourCVwithUs() {
               exp_description: "",
             });
             // setModalUpdateID("");
+            setValidExperience(false);
           }}
         >
           <i className="bi bi-plus-circle me-2"></i>
@@ -1383,12 +1753,12 @@ export default function YourCVwithUs() {
           onClick={() => {
             setIsAdd(true);
             setEducation({
-              profile_education_id: "",
+              profile_education_id: "deCheckValidation",
               major: "",
-              education_id: "",
               school: "",
               from_: "",
               to_: "",
+              education_id: "1",
             });
             setModalUpdateID("");
           }}
@@ -1465,7 +1835,7 @@ export default function YourCVwithUs() {
           onClick={() => {
             setIsAdd(true);
             setProject({
-              profile_project_id: "",
+              profile_project_id: "deCheckValidation",
               project_name: "",
               project_from: "",
               project_to: "",
@@ -1620,7 +1990,7 @@ export default function YourCVwithUs() {
           onClick={() => {
             setIsAdd(true); // Thêm dòng này
             setCertification({
-              profile_certifications_id: "", // Thêm dòng này
+              profile_certifications_id: "deCheckValidation", // Thêm dòng này
               certifications: "",
               month_: "",
             });

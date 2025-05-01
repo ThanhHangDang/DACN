@@ -18,6 +18,7 @@ import {
   useUpdateItemProfileMutation,
 } from "../../../redux_toolkit/jobseekerApi.js";
 import { toast } from "react-toastify";
+import { validateField } from "../../../utils/validateField";
 
 // Hàm chuyển đổi định dạng ngày tháng cho input date
 const formatDateForInput = (dateString) => {
@@ -101,6 +102,43 @@ export default function JobSeekerProfile() {
   });
 
   const [image, setImage] = useState(null);
+
+  //Validate form data
+  const [validProfile, setValidProfile] = useState(false);
+  const [errorsProfile, setErrorsProfile] = useState({
+    name: "",
+    title: "",
+    address: "",
+    expr: "",
+  });
+  const handleBlurProfile = (e) => {
+    const { name, value } = e.target;
+    const error = validateField(name, value); // Validate each field
+    setErrorsProfile((prev) => ({ ...prev, [name]: error })); // Update error state
+  };
+
+  const [validExpectedJob, setValidExpectedJob] = useState(false);
+  const [errorsExpectedJob, setErrorsExpectedJob] = useState({
+    // city_id: "",
+    expectedSalary: "",
+  });
+  const handleBlurExpectedJob = (e) => {
+    const { name, value } = e.target;
+    const error = validateField(name, value); // Validate each field
+    setErrorsExpectedJob((prev) => ({ ...prev, [name]: error })); // Update error state
+  };
+
+  useEffect(() => {
+    const noErrors = Object.values(errorsProfile).every((err) => err === "");
+    setValidProfile(noErrors);
+  }, [errorsProfile]);
+
+  useEffect(() => {
+    const noErrors = Object.values(errorsExpectedJob).every(
+      (err) => err === ""
+    );
+    setValidExpectedJob(noErrors);
+  }, [errorsExpectedJob]);
 
   // Kiểm tra đăng nhập
   useEffect(() => {
@@ -334,6 +372,7 @@ export default function JobSeekerProfile() {
                     <input
                       type="text"
                       id="name"
+                      name="name"
                       placeholder="Họ và tên"
                       className="form-control"
                       required
@@ -344,7 +383,13 @@ export default function JobSeekerProfile() {
                           full_name: e.target.value,
                         });
                       }}
+                      onBlur={handleBlurProfile}
                     />
+                    {errorsProfile.name && (
+                      <div className="alert alert-danger mt-2">
+                        {errorsProfile.name}
+                      </div>
+                    )}
                   </div>
 
                   <div className="col-md-6">
@@ -354,6 +399,7 @@ export default function JobSeekerProfile() {
                     <input
                       type="text"
                       id="title"
+                      name="title"
                       placeholder="Chức vụ"
                       className="form-control"
                       value={updateProfileData.title}
@@ -363,7 +409,13 @@ export default function JobSeekerProfile() {
                           title: e.target.value,
                         });
                       }}
+                      onBlur={handleBlurProfile}
                     />
+                    {errorsProfile.title && (
+                      <div className="alert alert-danger mt-2">
+                        {errorsProfile.title}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="row mb-3">
@@ -377,6 +429,7 @@ export default function JobSeekerProfile() {
                       step="1"
                       className="form-control"
                       id="expr"
+                      name="expr"
                       placeholder="Nhập năm kinh nghiệm"
                       value={
                         updateProfileData.year_exp < 0
@@ -389,7 +442,13 @@ export default function JobSeekerProfile() {
                           year_exp: e.target.value,
                         })
                       }
+                      onBlur={handleBlurProfile}
                     />
+                    {errorsProfile.expr && (
+                      <div className="alert alert-danger mt-2">
+                        {errorsProfile.expr}
+                      </div>
+                    )}
                   </div>
 
                   <div className="col-md-6">
@@ -570,6 +629,7 @@ export default function JobSeekerProfile() {
                     <input
                       type="text"
                       id="address"
+                      name="address"
                       placeholder="Địa chỉ liên lạc"
                       className="form-control"
                       value={updateProfileData.address}
@@ -579,6 +639,7 @@ export default function JobSeekerProfile() {
                           address: e.target.value,
                         });
                       }}
+                      onBlur={handleBlurProfile}
                     />
                   </div>
                   <div className="col-md-4">
@@ -623,7 +684,7 @@ export default function JobSeekerProfile() {
                 type="button"
                 className="btn btn-primary"
                 onClick={handleUpdateProfile}
-                disabled={isUpdatingJob}
+                disabled={isUpdatingJob || !validProfile}
                 data-bs-dismiss="modal"
                 aria-label="Close"
               >
@@ -657,12 +718,12 @@ export default function JobSeekerProfile() {
               <form>
                 <div className="row mb-3">
                   <div className="col-md-6">
-                    <label htmlFor="field" className="form-label">
+                    <label htmlFor="city" className="form-label">
                       Nơi làm việc
                     </label>
                     <select
                       className="form-select"
-                      id="field"
+                      id="city"
                       value={expectedJob.city_id}
                       onChange={(e) =>
                         setExpectedJob({
@@ -680,7 +741,7 @@ export default function JobSeekerProfile() {
                   </div>
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="postTitle" className="form-label">
+                  <label htmlFor="expectedSalary" className="form-label">
                     Mức lương mong muốn (VNĐ)
                   </label>
                   <input
@@ -688,7 +749,8 @@ export default function JobSeekerProfile() {
                     step="1000000"
                     min="1000000"
                     className="form-control"
-                    id="postTitle"
+                    id="expectedSalary"
+                    name="expectedSalary"
                     placeholder="Nhập mức lương mong muốn"
                     value={
                       expectedJob.salary_expect < 0
@@ -701,7 +763,13 @@ export default function JobSeekerProfile() {
                         salary_expect: e.target.value,
                       })
                     }
+                    onBlur={handleBlurExpectedJob}
                   />
+                  {errorsExpectedJob.expectedSalary && (
+                    <div className="alert alert-danger mt-2">
+                      {errorsExpectedJob.expectedSalary}
+                    </div>
+                  )}
                 </div>
               </form>
             </div>
@@ -718,7 +786,7 @@ export default function JobSeekerProfile() {
                 type="button"
                 className="btn btn-primary"
                 onClick={handleUpdateExpectedJob}
-                disabled={isUpdatingJob}
+                disabled={isUpdatingJob || !validExpectedJob}
                 data-bs-dismiss="modal"
                 aria-label="Close"
               >
