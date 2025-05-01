@@ -279,18 +279,18 @@ const JobListing = () => {
                 </div>
               ))}
 
-              <h6 className="fw-bold mt-3">Experience Level</h6>
+              <h6 className="fw-bold mt-3">Kinh nghiệm</h6>
 
-              <h6 className="fw-bold mt-3">Date Posted</h6>
+              <h6 className="fw-bold mt-3">Ngày đăng</h6>
 
               <h6 className="fw-bold mt-3">Mức lương mong muốn</h6>
               <input type="range" className="form-range mb-2" />
               <div className="d-flex justify-content-between small">
-                <span>$0</span>
-                <span>$99999</span>
+                <span>0 VNĐ</span>
+                <span>99999999999999 VNĐ</span>
               </div>
               <button className="btn btn-outline-success btn-sm mt-2">
-                Apply
+                Ứng tuyển
               </button>
 
               <h6 className="fw-bold mt-3">Tags</h6>
@@ -309,14 +309,16 @@ const JobListing = () => {
               </div>
             </div>
             <div className="mt-4 p-3 text-center bg-secondary text-white rounded shadow-sm">
-              <h5 className="fw-bold">WE ARE HIRING</h5>
-              <p className="mb-0">Apply Today!</p>
+              <h5 className="fw-bold">CHÚNG TÔI ĐANG TUYỂN DỤNG</h5>
+              <p className="mb-0">Ứng tuyển ngay!</p>
             </div>
           </div>
 
           <div className="col-lg-9">
             <div className="d-flex justify-content-between align-items-center mb-3">
-              <div className="text-muted small">Showing 6-6 of 10 results</div>
+              <div className="text-muted small">
+                Hiển thị 6-6 trên 10 Kết quả
+              </div>
               <select
                 className="form-select form-select-sm w-auto"
                 onChange={(e) =>
