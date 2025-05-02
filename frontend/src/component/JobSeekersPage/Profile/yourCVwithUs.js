@@ -600,7 +600,6 @@ export default function YourCVwithUs() {
                     }
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
-                        e.preventDefault();
                         const textarea = e.target;
                         const start = textarea.selectionStart;
                         const end = textarea.selectionEnd;
@@ -612,6 +611,12 @@ export default function YourCVwithUs() {
                           valueWithPlaceholder.slice(end);
 
                         setCareerTarget(newValue);
+
+                        // Cập nhật lại vị trí con trỏ sau khi chèn
+                        setTimeout(() => {
+                          textarea.selectionStart = textarea.selectionEnd =
+                            start + "%00endl".length;
+                        }, 0);
                       }
                     }}
                     onBlur={handleBlurCareerTarget}

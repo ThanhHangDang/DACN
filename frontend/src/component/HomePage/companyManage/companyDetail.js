@@ -20,6 +20,7 @@ import { useGetCitiesQuery } from "../../../redux_toolkit/CategoryApi.js";
 import CompanyHeader from "../../_component/ui/CompanyHeader.js";
 import TitleComponent from "../../_component/ui/TitleComponent.js";
 import { toast } from "react-toastify";
+import Rating from "../../_component/ui/RatingSection.js";
 
 export default function CompanyDetail() {
   const navigate = useNavigate();
@@ -99,6 +100,9 @@ export default function CompanyDetail() {
 
   const currentJobs = filteredJobs.slice(indexOfFirstPost, indexOfLastPost);
   const totalPages = Math.ceil(filteredJobs.length / postsPerPage);
+
+  //RatingData gọi từ API
+  const ratingData = {};
 
   useEffect(() => {
     if (user?.role === 2) {
@@ -256,6 +260,14 @@ export default function CompanyDetail() {
                   )}
                 </div>
               </div>
+            </div>
+
+            <div className="card mt-2">
+              <Rating
+                ratingData={ratingData}
+                profile_id={companyId}
+                isRateCompany={true}
+              />
             </div>
           </div>
 
