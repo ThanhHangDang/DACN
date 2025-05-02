@@ -4,8 +4,14 @@ import { NavLink } from "react-router-dom";
 import LoginModal from "./LoginModal.js";
 import { useDispatch, useSelector } from "react-redux";
 
-const JobCard = ({ job , handleSaveJob , handleRemoveSaveJob , icon = {added:"bi bi-bookmark-fill",noneadd:"bi bi-bookmark" }, is_hide_icon}) => {
-   const { user } = useSelector((state) => state.auth);
+const JobCard = ({
+  job,
+  handleSaveJob,
+  handleRemoveSaveJob,
+  icon = { added: "bi bi-bookmark-fill", noneadd: "bi bi-bookmark" },
+  is_hide_icon,
+}) => {
+  const { user } = useSelector((state) => state.auth);
   const getRelativeTimeString = (dateString) => {
     try {
       const date = new Date(dateString);
@@ -30,24 +36,34 @@ const JobCard = ({ job , handleSaveJob , handleRemoveSaveJob , icon = {added:"bi
   };
   return (
     <div className="card mb-3 shadow-sm job-card">
-      <LoginModal title="Bạn cần đăng nhập"/>
+      <LoginModal title="Bạn cần đăng nhập" />
       <div className="card-body">
         <div className="d-flex justify-content-between">
           <span className="text-success small fw-semibold">
             {" "}
             {getRelativeTimeString(job?.date_post)}
           </span>
-          {is_hide_icon? (<i></i>):(user?.role === 3 ? (
+          {is_hide_icon ? (
+            <i></i>
+          ) : user?.role === 3 ? (
             job?.is_saved ? (
-            <i className={icon.added} onClick={handleRemoveClick(job.job_id)}></i>):
-            ( <i className="bi bi-bookmark" onClick={handleSaveClick(job.job_id)}></i>)
+              <i
+                className={icon.added}
+                onClick={handleRemoveClick(job.job_id)}
+              ></i>
+            ) : (
+              <i
+                className="bi bi-bookmark"
+                onClick={handleSaveClick(job.job_id)}
+              ></i>
+            )
           ) : (
             <i
               className="bi bi-bookmark"
               data-bs-toggle="modal"
               data-bs-target="#LoginModal"
             ></i>
-          ))}
+          )}
         </div>
         <div className="d-flex justify-content-start">
           <div>
@@ -78,7 +94,7 @@ const JobCard = ({ job , handleSaveJob , handleRemoveSaveJob , icon = {added:"bi
                 {job?.working_type}
               </span>
               <span className="badge bg-light text-dark">
-                {job?.salary_max} - {job?.salary_min}
+                {job?.salary_min} - {job?.salary_max}
               </span>
               <span className="badge bg-light text-dark">
                 <i className="bi bi-geo-alt-fill me-1"></i>
