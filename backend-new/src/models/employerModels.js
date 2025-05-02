@@ -324,7 +324,8 @@ const queryGetJobseekerDetail = async (employer_id, jobseeker_id) => {
         [employer_id, jobseeker_id, create_at]
       );
       if (logs.affectedRows === 0) {
-        throw new Error("Failed to insert logs into database");
+        // throw new Error("Failed to insert logs into database");
+        return null;
       }
     }
     // THÊM NOTIFICATION CHO JOBSEEKER
@@ -333,7 +334,8 @@ const queryGetJobseekerDetail = async (employer_id, jobseeker_id) => {
     [jobseeker_id, "employer_view_jobseeker", employer_id, `Bạn vừa được nhà tuyển dụng xem hồ sơ`,create_at]
     );
     if (!id.insertId)
-      throw new Error("Failed to insert notification into database");
+      // throw new Error("Failed to insert notification into database");
+      return null;
     await connection.commit(); // Cam kết giao dịch
     return {
       ...jobseeker_detail[0],
@@ -347,7 +349,8 @@ const queryGetJobseekerDetail = async (employer_id, jobseeker_id) => {
       await connection.rollback();
     }
     console.error("Error getting jobseeker detail:", error);
-    throw error;
+    // throw error;
+    return null;
   } finally {
     // Chỉ release khi connection đã được khởi tạo
     if (connection) {

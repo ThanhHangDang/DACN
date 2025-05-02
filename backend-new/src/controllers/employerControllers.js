@@ -192,7 +192,7 @@ const updateJobByUser = async (req, res, next) => {
 const deleteJobByUser = async (req, res, next) => {
   try {
     
-    const { employer_id,job_id } = req.query;
+    const { employer_id,job_id } = req.body;
     // console.log("deleteJobByUser", req.query);
     if (!job_id || !employer_id) {
       return next(new ApiError("Thiếu thông tin ID bài đăng hoặc nhà tuyển dụng", 400));

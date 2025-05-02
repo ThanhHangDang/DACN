@@ -6,7 +6,7 @@ const queryget_All_employer = async () => {
     c.employer_id,
     c.employer_name,
     c.logo,
-    c.scale,
+    c.scale_id,
     c.industry_id,
     c.phone_number,
     c.describle,
@@ -22,7 +22,7 @@ FROM
 JOIN 
     employer AS e ON c.employer_id = e.employer_id
 LEFT JOIN 
-    catalog_scale AS s ON c.scale = s.scale_id
+    catalog_scale AS s ON c.scale_id = s.scale_id
 LEFT JOIN 
     catalog_industry AS i ON c.industry_id = i.industry_id
 LEFT JOIN 
@@ -53,7 +53,7 @@ const queryget_Employer_bysearch = async (searchData,paging) => {
     u.username,
     u.email,
     u.phone_number,
-    u.create_date,
+    u.create_at,
     u.is_online,
     c.company_name,
     c.logo,
@@ -69,11 +69,10 @@ const queryget_Employer_bysearch = async (searchData,paging) => {
     FROM user_employer ue
 JOIN user_ u ON ue.employer_id = u.user_id
 LEFT JOIN company c ON ue.employer_id = c.company_id
-LEFT JOIN catalog_scale s ON c.scale = s.scale_id
+LEFT JOIN catalog_scale s ON c.scale_id = s.scale_id
 LEFT JOIN catalog_industry i ON c.industry_id = i.industry_id
 LEFT JOIN company_location cloc ON c.company_id = cloc.company_id
-LEFT JOIN catalog_district d ON cloc.district_id = d.district_id
-LEFT JOIN catalog_city cl ON d.city_id = cl.city_id
+LEFT JOIN catalog_city cl ON cloc.city_id = cl.city_id
 LEFT JOIN company_benefit cb ON c.company_id = cb.company_id
 left join catalog_benefit ctb on ctb.benefit_id= cb.benefit_id
 `;
@@ -94,7 +93,7 @@ if (work_location) {
   conditions.push(`cl.city_name = ?`);
   values.push(work_location);}
 if (scale_id) {
-  conditions.push(`c.scale = ?`);
+  conditions.push(`c.scale_id = ?`);
   values.push(scale_id);}
 if (employer_status) {
   conditions.push(`ue.status_ = ?`);
@@ -103,7 +102,7 @@ if (conditions.length > 0) {
   query += ` WHERE ${conditions.join(' AND ')}`;
 }
 query += `
-GROUP BY ue.employer_id, u.username, u.email, u.phone_number, u.create_date, u.is_online, 
+GROUP BY ue.employer_id, u.username, u.email, u.phone_number, u.create_at, u.is_online, 
          c.company_name, c.logo, c.phone_number, c.count_follower, c.describle, 
          s.scale_min, s.scale_max, i.industry_name, cl.city_name
          LIMIT ? OFFSET ?;`;

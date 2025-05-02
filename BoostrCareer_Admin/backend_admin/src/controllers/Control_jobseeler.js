@@ -49,6 +49,10 @@ const get_jobseeker_bysearch = async (req, res) => {
       const totalPages = Math.ceil(total_count / paging_size);
       return res.status(200).json({ jobseekers, totalPages });
     }
+    else
+    {
+      return res.status(200).json({jobs:[],totalPages:0 });
+    }
     
   } catch (error) {
     console.log("Get Leading jobseeker error:", error);

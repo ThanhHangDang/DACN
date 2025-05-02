@@ -28,7 +28,7 @@ const getWorkBySearch = async (req, res) => {
   const {searchData,paging} = req.body;
   // console.log("dang Search Job ", req.body);
   const paging_size = Number(paging.paging_size);
-  console.log("dang Search Job ", paging);
+  console.log("dang Search Job ", searchData);
   try {
     const data = await queryGetWorkBySearch(searchData,paging);
     if (data) {
@@ -39,6 +39,10 @@ const getWorkBySearch = async (req, res) => {
       const totalPages = Math.ceil(total_count / paging_size);
       console.log("totalPages ", totalPages);
       return res.status(200).json({jobs:data,totalPages });
+    }
+    else
+    {
+      return res.status(200).json({jobs:[],totalPages:0 });
     }
   } catch (error) {
     console.log("Get Work By Search error:", error);

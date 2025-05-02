@@ -26,9 +26,9 @@ LEFT JOIN
 LEFT JOIN
     company c ON e.employer_id = c.company_id
 LEFT JOIN
-    catalog_industry ind ON j.industry = ind.industry_id
+    catalog_industry ind ON j.industry_id = ind.industry_id
 LEFT JOIN
-    catalog_job_function func ON j.job_function = func.job_function_id
+    catalog_job_function func ON j.job_function_id = func.job_function_id
 LEFT JOIN
     catalog_city loc ON j.work_location = loc.city_id
 LEFT JOIN
@@ -71,8 +71,8 @@ const queryGetWorkBySearch = async (searchData,paging) => {
     title,
     industry = null,
     job_function = null,
-    employer_id = null,
-    citi_id = null,
+    company_name = null,
+    work_location = null,
     salary_max = null,
     salary_min = null,
     level_id = null,
@@ -101,19 +101,19 @@ const queryGetWorkBySearch = async (searchData,paging) => {
       COUNT(*) OVER() AS total_count
   FROM 
       job j
-  LEFT JOIN 
+  JOIN 
       user_employer e ON j.employer_id = e.employer_id
-  LEFT JOIN 
+  JOIN 
       user_ u ON e.employer_id = u.user_id
-  LEFT JOIN 
+  JOIN 
       company c ON e.employer_id = c.company_id
-  LEFT JOIN 
-      catalog_industry ind ON j.industry = ind.industry_id
-  LEFT JOIN 
-      catalog_job_function func ON j.job_function = func.job_function_id
-  LEFT JOIN 
+  JOIN 
+      catalog_industry ind ON j.industry_id = ind.industry_id
+  JOIN 
+      catalog_job_function func ON j.job_function_id = func.job_function_id
+  JOIN 
       catalog_city loc ON j.work_location = loc.city_id
-  LEFT JOIN 
+  JOIN 
       catalog_level lvl ON j.level_id = lvl.level_id
   LEFT JOIN 
       catalog_education edu ON j.require_education = edu.education_id
@@ -127,25 +127,26 @@ const queryGetWorkBySearch = async (searchData,paging) => {
   }
 
   if (industry) {
-    conditions.push("industry = ?");
+    conditions.push("j.industry_id = ?");
     values.push(industry);
   }
   if (job_function) {
-    conditions.push("job_function = ?");
+    conditions.push("j.job_function_id = ?");
     values.push(job_function);
   }
-  if (employer_id) {
-    conditions.push("employer_id = ?");
-    values.push(employer_id);
+  if (company_name) {
+    const company_name2 = `%${company_name}%`;
+    conditions.push("c.company_name LIKE ?");    
+    values.push(company_name2);
   }
-  if (citi_id) {
-    conditions.push("citi_id = ?");
-    values.push(citi_id);
+  if (work_location) {
+    conditions.push("j.work_location = ?");
+    values.push(work_location);
   }
   const currentDate = new Date().toISOString().split("T")[0];
   if (status_) {
-    conditions.push("date_expi >= ?");
-    values.push(currentDate);
+    conditions.push("j.status_ = ?");
+    values.push(status_);
   }
   if (date_from) {
     conditions.push("date_post >= ?");
@@ -164,12 +165,32 @@ const queryGetWorkBySearch = async (searchData,paging) => {
     values.push(salary_min);
   }
   if (level_id) {
-    conditions.push("level_id = ?");
+    conditions.push("j.level_id = ?");
     values.push(level_id);
   }
   if (require_experience) {
-    conditions.push("industry >= ?");
-    values.push(require_experience);
+    switch (require_experience) {
+      case "0":
+        break;
+      case "1":
+        conditions.push("require_experience <=1");
+        break;
+      case "2":
+        conditions.push("require_experience >= 1 AND require_experience <= 3");
+        break;
+      case "3":
+        conditions.push("require_experience >= 3 AND require_experience <= 5");
+        break;
+      case "4":
+        conditions.push("require_experience >= 5 AND require_experience <= 10");
+        break;
+      case "5":
+        conditions.push("require_experience >=10");
+        break;
+      default:
+        break;
+    }    
+    // values.push(require_experience);
   }
   if (conditions.length > 0) {
     query += " WHERE " + conditions.join(" AND ");
@@ -179,6 +200,8 @@ const queryGetWorkBySearch = async (searchData,paging) => {
   LIMIT ? OFFSET ?;`;
   values.push(Number(paging_size));
   values.push((Number(active_page)-1)*Number(paging_size));
+  console.log("query", query);
+  console.log("values", values);
   const [result] = await db.query(query, values);
   return result;
 };

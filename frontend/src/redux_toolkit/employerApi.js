@@ -104,7 +104,7 @@ export const employerApi = createApi({
       query: ({ employer_id, job_id }) => ({
         url: `/employer/job`,
         method: "DELETE",
-        params: { employer_id, job_id },
+        body: { employer_id, job_id },
       }),
       transformResponse: (response) => {
         console.log("redux receive deleteJob", response);

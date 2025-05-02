@@ -39,6 +39,10 @@ const get_Employer_bysearch = async (req, res) => {
       const totalPages = Math.ceil(total_count / paging_size);
       return res.status(200).json({employers:data,totalPages });
     }
+    else
+    {
+      return res.status(200).json({jobs:[],totalPages:0 });
+    }
   } catch (error) {
     console.log("Get Employer By Search error:", error);
     res.status(500);
