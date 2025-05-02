@@ -1,15 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useGetNotificationQuery, useUpdateReadNotificationMutation } from "../../../redux_toolkit/jobseekerApi";
-import { ca } from "date-fns/locale";
+import {
+  useGetNotificationQuery,
+  useUpdateReadNotificationMutation,
+} from "../../../redux_toolkit/jobseekerApi";
+import { ca, vi } from "date-fns/locale";
+import { formatDistanceToNow } from "date-fns";
 
 export default function JobSeekerNotification() {
   const { isLogin, user } = useSelector((state) => state.auth);
 
-  const { data: notificationData, refetch } = useGetNotificationQuery(user?.id, {
-    skip: !user?.id, // Skip the query if user ID is not available
-  });
+  const { data: notificationData, refetch } = useGetNotificationQuery(
+    user?.id,
+    {
+      skip: !user?.id, // Skip the query if user ID is not available
+    }
+  );
   console.log("notificationData", notificationData);
   const [updateReadNotification] = useUpdateReadNotificationMutation();
 
@@ -22,12 +29,12 @@ export default function JobSeekerNotification() {
     try {
       console.log("Sending update request with:", {
         profile_id: user?.id,
-        notification_id: notification_id
+        notification_id: notification_id,
       });
 
       const response = await updateReadNotification({
         profile_id: user?.id,
-        notification_id: notification_id
+        notification_id: notification_id,
       }).unwrap();
 
       if (response.success) {
@@ -77,7 +84,10 @@ export default function JobSeekerNotification() {
                   } ${item.is_read ? "" : "bg-secondary"}`}
                   type="button"
                   onClick={async () => {
-                    console.log("Button clicked for notification:", item.notification_id);
+                    console.log(
+                      "Button clicked for notification:",
+                      item.notification_id
+                    );
                     console.log("Current is_read status:", item.is_read);
 
                     // First update the read status if needed
@@ -91,7 +101,10 @@ export default function JobSeekerNotification() {
                   aria-expanded={openItem === item.notification_id}
                   disabled={isUpdating}
                 >
-                  {item.notification_type}
+                  {item.notification_type} từ{" "}
+                  {item?.entity_name === "Anonymous"
+                    ? "Người dùng ẩn danh"
+                    : item?.entity_name}
                 </button>
               </h2>
               {openItem === item.notification_id && (
@@ -99,17 +112,27 @@ export default function JobSeekerNotification() {
                   <div className="d-flex align-items-center">
                     <img
                       src={
-                        item?.entity_logo || "/img/notification/thong-bao.png"
+                        item?.entity_logo
+                          ? item?.entity_logo === "Anonymous"
+                            ? "/img/notification/thong-bao.png"
+                            : item?.entity_logo
+                          : "/img/notification/thong-bao.png"
                       }
                       alt="Logo"
                       className="img-fluid me-2 rounded-1 me-3"
                       style={{ width: 80, height: 80 }}
                     />
-                    content: {item?.content} && entity_name: {item?.entity_name} && type_name: {item?.type_name}
+                    Nội dung: {item?.content} từ: {item?.entity_name} <br />
+                    Loại thông báo: {item?.type_name}
                   </div>
 
                   <div className="d-flex flex-column align-items-center">
-                    <p className="text-secondary">{item.created_at}</p>
+                    <p className="text-secondary">
+                      {formatDistanceToNow(new Date(item.create_at), {
+                        addSuffix: true,
+                        locale: vi,
+                      })}
+                    </p>
                   </div>
                 </div>
               )}

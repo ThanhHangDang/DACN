@@ -128,7 +128,7 @@ export default function YourCVwithUs() {
 
   const handleUpdateCarreerTarget = async () => {
     try {
-    const responese =   await updateItemProfile({
+      const responese = await updateItemProfile({
         type: "Basic",
         data: {
           profile_id: userInformation?.profile_id,
@@ -137,8 +137,7 @@ export default function YourCVwithUs() {
       }).unwrap();
       if (responese?.success) {
         toast.success("Cập nhật mục tiêu nghề nghiệp thành công!");
-      }
-      else {
+      } else {
         toast.error("Cập nhật mục tiêu nghề nghiệp thất bại!");
       }
     } catch (error) {
@@ -613,12 +612,6 @@ export default function YourCVwithUs() {
                           valueWithPlaceholder.slice(end);
 
                         setCareerTarget(newValue);
-
-                        // Cập nhật lại vị trí con trỏ sau khi chèn
-                        setTimeout(() => {
-                          textarea.selectionStart = textarea.selectionEnd =
-                            start + "%00endl".length;
-                        }, 0);
                       }
                     }}
                     onBlur={handleBlurCareerTarget}
