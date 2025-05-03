@@ -56,7 +56,7 @@ export default function EmployerPost() {
     work_location: "",
     address: "",
     describle: "",
-    more_requirement: "",
+    more_requirements: "",
     require_experience: 0,
     require_age_min: 18,
     require_age_max: 18,
@@ -172,7 +172,7 @@ export default function EmployerPost() {
             level_id: 1,
             working_type: "full-time",
             working_time: "",
-            more_requirement: "",
+            more_requirements: "",
             require_certification: [],
           });
         } else {
@@ -208,7 +208,7 @@ export default function EmployerPost() {
             level_id: 1,
             working_type: "full-time",
             working_time: "",
-            more_requirement: "",
+            more_requirements: "",
             require_certification: [],
           });
         } else {
@@ -874,21 +874,21 @@ export default function EmployerPost() {
 
                 <div className="row mb-3">
                   <div className="">
-                    <label htmlFor="more_requirement" className="form-label">
+                    <label htmlFor="more_requirements" className="form-label">
                       Yêu cầu khác
                     </label>
                     <textarea
                       rows={3}
                       type="text"
                       className="form-control"
-                      id="more_requirement"
-                      name="more_requirement"
+                      id="more_requirements"
+                      name="more_requirements"
                       placeholder="Nhập yêu cầu khác nếu có"
-                      value={newPost.more_requirement.replace(/%00endl/g, "\n")}
+                      value={newPost.more_requirements.replace(/%00endl/g, "\n")}
                       onChange={(e) =>
                         setNewPost({
                           ...newPost,
-                          more_requirement: e.target.value.replace(
+                          more_requirements: e.target.value.replace(
                             /\n/g,
                             "%00endl"
                           ),
@@ -998,7 +998,7 @@ export default function EmployerPost() {
               work_location: "",
               address: "",
               describle: "",
-              more_requirement: "",
+              more_requirements: "",
               require_experience: 0,
               require_age_min: 18,
               require_age_max: 18,
@@ -1058,6 +1058,7 @@ export default function EmployerPost() {
                         require_experience: post.require_experience
                           ? post.require_experience
                           : [],
+                          more_requirements: post.more_requirements,
                         // require_skill: post.job_skills,
                         require_skill: post.job_skills
                           ? post.job_skills.map((s) => ({

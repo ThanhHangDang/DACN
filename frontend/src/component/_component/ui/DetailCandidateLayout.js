@@ -148,7 +148,7 @@ const CandidateDetail = ({
                 basic?.is_open_for_job === 0 ? "bg-danger" : "bg-success"
               }`}
             >
-              {basic?.is_open_for_job === 0 ? "Hoạt động" : "Đang tìm việc"}
+              {basic?.is_open_for_job === 0 ? "Chưa tìm việc" : "Đang tìm việc"}
             </span>
           </div>
           <div className="text-muted small mt-2">
