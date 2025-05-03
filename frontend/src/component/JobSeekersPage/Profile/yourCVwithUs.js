@@ -595,29 +595,8 @@ export default function YourCVwithUs() {
                     rows={4}
                     placeholder="Nhập mục tiêu nghề nghiệp"
                     value={careerTarget.replace(/%00endl/g, "\n")}
-                    onChange={(e) =>
-                      setCareerTarget(e.target.value.replace(/\n/g, "%00endl"))
-                    }
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        const textarea = e.target;
-                        const start = textarea.selectionStart;
-                        const end = textarea.selectionEnd;
-                        const valueWithPlaceholder = careerTarget || "";
-
-                        const newValue =
-                          valueWithPlaceholder.slice(0, start) +
-                          "%00endl" +
-                          valueWithPlaceholder.slice(end);
-
-                        setCareerTarget(newValue);
-
-                        // Cập nhật lại vị trí con trỏ sau khi chèn
-                        setTimeout(() => {
-                          textarea.selectionStart = textarea.selectionEnd =
-                            start + "%00endl".length;
-                        }, 0);
-                      }
+                    onChange={(e) => {
+                      setCareerTarget(e.target.value.replace(/\n/g, "%00endl"));
                     }}
                     onBlur={handleBlurCareerTarget}
                   />

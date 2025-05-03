@@ -42,6 +42,8 @@ export default function WorkDetail() {
     refetchOnMountOrArgChange: true,
   });
 
+  console.log("adsdsad detail", postDetail);
+
   const { data: jobApply } =
     useGetJobApplyQuery(user?.id, {
       skip: !user?.id,
