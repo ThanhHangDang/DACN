@@ -126,9 +126,8 @@ export default function EmployerPost() {
     }));
   };
 
-  const handleAddPost = async (e) => {
-    e.preventDefault(); // Ngăn chặn hành vi mặc định của form
-
+  const handleAddPost = async () => {
+    // e.preventDefault(); // Ngăn chặn hành vi mặc định của form
     try {
       console.log("newPost: ", newPost);
       const processedData = {
@@ -143,6 +142,7 @@ export default function EmployerPost() {
       };
 
       console.log("Dữ liệu đã xử lý:", processedData);
+      console.log("chạy");
       if (isAddPost) {
         const response = await postNewWork(processedData);
         if (response?.data?.success) {
@@ -179,6 +179,7 @@ export default function EmployerPost() {
           toast.error("Thêm bài đăng thất bại!");
         }
       } else {
+        console.log("chạy");
         const response = await editPostByUser(processedData);
         if (response?.data?.success) {
           toast.success("Cập nhật  bài đăng thành công!");
@@ -378,7 +379,7 @@ export default function EmployerPost() {
                 <div className="row mb-3">
                   <div className="">
                     <label htmlFor="title" className="form-label">
-                      Tiêu đề bài đăng
+                      Tiêu đề bài đăng*
                     </label>
                     <input
                       type="text"
@@ -792,7 +793,7 @@ export default function EmployerPost() {
                 <div className="row mb-3">
                   <div className="">
                     <label htmlFor="working_time" className="form-label">
-                      Thời gian làm việc
+                      Thời gian làm việc*
                     </label>
                     <input
                       type="text"
@@ -907,11 +908,11 @@ export default function EmployerPost() {
                   Hủy
                 </button>
                 <button
-                  type="submit"
+                  type="button"
                   className="btn btn-primary"
                   data-bs-dismiss="modal"
                   aria-label="Close"
-                  // onClick={handleAddPost}
+                  onClick={handleAddPost}
                   disabled={!validPost}
                 >
                   {isAddPost === true ? "Đăng bài" : "Cập nhật bài đăng"}
@@ -1054,12 +1055,16 @@ export default function EmployerPost() {
                         salary_min: post.salary_min,
                         salary_max: post.salary_max,
                         describle: post.describle,
-                        require_experience: post.require_experience,
+                        require_experience: post.require_experience
+                          ? post.require_experience
+                          : [],
                         // require_skill: post.job_skills,
-                        require_skill: post.job_skills.map((s) => ({
-                          tag_id: s.skill_id,
-                          tags_content: s.skill_name,
-                        })),
+                        require_skill: post.job_skills
+                          ? post.job_skills.map((s) => ({
+                              tag_id: s.skill_id,
+                              tags_content: s.skill_name,
+                            }))
+                          : [],
                         require_language: post.languages,
                         working_time: post.working_time,
                         require_age_min: post.require_age_min,
@@ -1067,6 +1072,7 @@ export default function EmployerPost() {
                         address: post.address,
                         work_location: post.city_id,
                       });
+                      console.log(post.city_id);
                       setIsAddPost(false);
                     }}
                   >
