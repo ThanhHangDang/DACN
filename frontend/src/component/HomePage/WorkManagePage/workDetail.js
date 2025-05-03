@@ -212,55 +212,56 @@ export default function WorkDetail() {
                   {postDetail?.views} lượt xem •{" "}
                   {postDetail?.work_location_name}
                 </p>
-                {user?.role === 3 ? (
-                  <>
-                    {applied ? (
-                      <button className="btn btn-danger me-2" disabled>
-                        Đã ứng tuyển
-                      </button>
-                    ) : (
+                {user?.role !== 2 &&
+                  (user?.role === 3 ? (
+                    <>
+                      {applied ? (
+                        <button className="btn btn-danger me-2" disabled>
+                          Đã ứng tuyển
+                        </button>
+                      ) : (
+                        <button
+                          className="btn btn-danger me-2"
+                          onClick={handleApplyJob}
+                        >
+                          Ứng tuyển
+                        </button>
+                      )}
+
+                      {saved ? (
+                        <button
+                          className="btn btn-outline-danger"
+                          onClick={handleDeleteJobSaving}
+                        >
+                          Bỏ Lưu
+                        </button>
+                      ) : (
+                        <button
+                          className="btn btn-outline-secondary"
+                          onClick={handleSaveJob}
+                        >
+                          Lưu
+                        </button>
+                      )}
+                    </>
+                  ) : (
+                    <>
                       <button
                         className="btn btn-danger me-2"
-                        onClick={handleApplyJob}
+                        data-bs-toggle="modal"
+                        data-bs-target="#LoginModal"
                       >
                         Ứng tuyển
                       </button>
-                    )}
-
-                    {saved ? (
-                      <button
-                        className="btn btn-outline-danger"
-                        onClick={handleDeleteJobSaving}
-                      >
-                        Bỏ Lưu
-                      </button>
-                    ) : (
                       <button
                         className="btn btn-outline-secondary"
-                        onClick={handleSaveJob}
+                        data-bs-toggle="modal"
+                        data-bs-target="#LoginModal"
                       >
                         Lưu
                       </button>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <button
-                      className="btn btn-danger me-2"
-                      data-bs-toggle="modal"
-                      data-bs-target="#LoginModal"
-                    >
-                      Ứng tuyển
-                    </button>
-                    <button
-                      className="btn btn-outline-secondary"
-                      data-bs-toggle="modal"
-                      data-bs-target="#LoginModal"
-                    >
-                      Lưu
-                    </button>
-                  </>
-                )}
+                    </>
+                  ))}
 
                 <hr />
 
