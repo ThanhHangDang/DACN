@@ -26,7 +26,6 @@ import YourApply from "./component/JobSeekersPage/MyWork/yourApply.js";
 import SavedWork from "./component/JobSeekersPage/MyWork/savedWork.js";
 // import Invitation from "./component/JobSeekersPage/MyWork/invitation.js";
 
-
 import EmployerPage from "./component/EmployerPage/index.js";
 import EmployerOverview from "./component/EmployerPage/Overview/index.js";
 import EmployerProfile from "./component/EmployerPage/Profile/index.js";
@@ -109,9 +108,9 @@ function App() {
                 path="/employer-manage-saving-candidate"
                 Component={EmployerManageCandidate}
               />
-              <Route 
-              path="/employer-manage-invitation"
-              Component={EmployerManageInvitation}
+              <Route
+                path="/employer-manage-invitation"
+                Component={EmployerManageInvitation}
               />
             </Route>
             <Route path="/employer-post" Component={EmployerPost} />

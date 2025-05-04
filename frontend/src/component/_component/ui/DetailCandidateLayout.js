@@ -161,6 +161,16 @@ const CandidateDetail = ({
           </div>
         </div>
         <div className="ms-auto">
+          {basic.cv_name && basic.cv_link && (
+            <a
+              className="btn btn-success me-2"
+              href={basic.cv_link}
+              download={basic.cv_name}
+            >
+              Tải CV
+            </a>
+          )}
+
           <button
             className="btn btn-primary me-2"
             onClick={handleSendInviteJob}
