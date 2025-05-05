@@ -1,44 +1,41 @@
 import React, { useState, useRef } from "react";
+import {
+  useGetProfileCVQuery,
+  useShowHideProfileCVMutation,
+  useDeleteProfileCVMutation,
+  useAddProfileCVMutation,
+} from "../../../redux_toolkit/jobseekerApi.js";
+import { useSelector } from "react-redux";
+import { toast } from "react-toastify"; // Import toast nếu cần thông báo
 
 export default function YourCV() {
-  const dataCV = [
-    {
-      cv_id: 1,
-      profile_id: 1,
-      cv_name: "ThanhHangDang_intern.pdf",
-      cv_link: "abc.html",
-      create_at: "2025-04-07 16:10:29",
-      isactive: 1,
-    },
-    {
-      cv_id: 2,
-      profile_id: 1,
-      cv_name: "ThanhHangDang_intern.pdf",
-      cv_link: "abc.html",
-      create_at: "2025-04-07 16:10:29",
-      isactive: 0,
-    },
-  ];
+  const { user } = useSelector((state) => state.auth);
+  const { data: dataCV } = useGetProfileCVQuery({
+    profile_id: user?.id,
+  });
+  const [showHideProfileCV] = useShowHideProfileCVMutation();
+  const [deleteProfileCV] = useDeleteProfileCVMutation();
+  const [addProfileCV] = useAddProfileCVMutation();
 
   //Ẩn hiện cv
-  const handleShowCV = (profile_id, cv_id) => {
-    console.log(
-      "Truyển vào item.profile_id: ",
-      profile_id,
-      " và item.cv_id: ",
-      cv_id,
-      " ở ngay chỗ nút click. Lưu ý chỗ này cần set lại cho tất cả CV có profile_id trùng và khác cv_id gửi lên thành isactive = 0"
-    );
-  };
-
-  const handleHideCV = (profile_id, cv_id) => {
-    console.log(
-      "Truyển vào item.profile_id: ",
-      profile_id,
-      " và item.cv_id: ",
-      cv_id,
-      " ở ngay chỗ nút click. "
-    );
+  const handleShowHideCV = async (profile_id, cv_id, type) => {
+    try {
+      const response = await showHideProfileCV({
+        profile_id: profile_id,
+        cv_id: cv_id,
+        type: type,
+      }).unwrap();
+      if (response.success) {
+        // setSaveStatus(true);
+        toast.success(
+          `Đã ${type === "show" ? "hiện CV" : "ẩn CV"} thành công!`
+        );
+      } else {
+        toast.error(`Đã ${type === "show" ? "hiện CV" : "ẩn CV"} thất bại!`);
+      }
+    } catch (error) {
+      console.error("Error show hide cv:", error);
+    }
   };
 
   //Xóa cv
@@ -46,8 +43,22 @@ export default function YourCV() {
     profile_id: "",
     cv_id: "",
   });
-  const handleDeleteCVItem = () => {
-    console.log("CV cần xóa", cvItem);
+  const handleDeleteCVItem = async () => {
+    console.log(cvItem.profile_id);
+    try {
+      const response = await deleteProfileCV({
+        profile_id: cvItem.profile_id,
+        cv_id: cvItem.cv_id,
+      }).unwrap();
+      if (response.success) {
+        // setSaveStatus(true);
+        toast.success(`Đã xóa CV thành công!`);
+      } else {
+        toast.error(`Đã xóa CV thất bại!`);
+      }
+    } catch (error) {
+      console.error("Error delete cv:", error);
+    }
   };
 
   //Upload cv
@@ -57,11 +68,21 @@ export default function YourCV() {
       cvInputRef.current.click();
     }
   };
-  const handleCVChange = (event) => {
+  const handleCVChange = async (event) => {
     const cv = event.target.files[0];
     console.log("assadsaxasx", cv);
     if (cv) {
       console.log("Cần gửi cv này lên server: ", cv);
+      try {
+        await addProfileCV({
+          profile_id: user?.id,
+          file: cv,
+        }).unwrap();
+        toast.success("Upload cv thành công!");
+      } catch (error) {
+        console.error("Upload cv error:", error);
+        toast.error("Upload cv thất bại!");
+      }
     }
   };
 
@@ -134,24 +155,40 @@ export default function YourCV() {
               key={index}
               className="card rounded-2 p-2 d-flex flex-row justify-content-between m-1 shadow-sm"
             >
-              <div className="d-flex flex-column">
-                <span>
-                  <i className="bi bi-paperclip"></i> {item.cv_name || "Tên CV"}
-                </span>
-                <span>Tải lên: {item.create_at || "Chưa có ngày"}</span>
+              <div className="d-flex flex-row align-items-center ">
+                <div className="d-flex flex-column">
+                  <span>
+                    <i className="bi bi-paperclip"></i>{" "}
+                    {item.cv_name || "Tên CV"}
+                  </span>
+                  <span>Tải lên: {item.create_at || "Chưa có ngày"}</span>
+                </div>
+                {item?.isactive === 1 && (
+                  <div className="">
+                    <i
+                      class="fa fa-check fa-lg ms-3 text-success"
+                      aria-hidden="true"
+                    ></i>
+                  </div>
+                )}
               </div>
+
               <div className="d-flex align-items-center gap-2">
                 <button
                   className="btn btn-success"
                   disabled={item?.isactive === 1 && true}
-                  onClick={() => handleShowCV(item.profile_id, item.cv_id)}
+                  onClick={() =>
+                    handleShowHideCV(item.profile_id, item.cv_id, "show")
+                  }
                 >
                   Hiện
                 </button>
                 <button
                   className="btn btn-secondary"
                   disabled={item?.isactive === 0 && true}
-                  onClick={() => handleHideCV(item.profile_id, item.cv_id)}
+                  onClick={() =>
+                    handleShowHideCV(item.profile_id, item.cv_id, "hide")
+                  }
                 >
                   Ẩn
                 </button>

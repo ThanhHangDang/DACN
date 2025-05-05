@@ -10,6 +10,7 @@ const {
   addResume,
   getResume,
   deleteResume,
+  showHideResume,
   getListJobApplication,
   applyToJob,
   addCompanyReview,
@@ -21,7 +22,7 @@ const {
   deleteJobSaving,
   getJobsSuggestion,
   getNotification,
-  updateReadNotification
+  updateReadNotification,
 } = require("../controllers/jobseekerControllers.js");
 
 const { upload } = require("../middlewares/imageUpload.js");
@@ -32,11 +33,16 @@ jobseekerRoutes.get("/profile", getItemProfile);
 jobseekerRoutes.post("/profile", addItemProfile);
 jobseekerRoutes.put("/profile", updateItemProfile);
 jobseekerRoutes.delete("/profile", deleteItemProfile);
-jobseekerRoutes.post("/avatar-imagine", upload.single("image"), updateJobseekerProfileImage);
+jobseekerRoutes.post(
+  "/avatar-imagine",
+  upload.single("image"),
+  updateJobseekerProfileImage
+);
 
 jobseekerRoutes.post("/profile-cv", upload.single("resume"), addResume);
 jobseekerRoutes.get("/profile-cv", getResume);
 jobseekerRoutes.delete("/profile-cv", deleteResume);
+jobseekerRoutes.post("/show-hide-profile-cv", showHideResume);
 
 jobseekerRoutes.post("/job", jobseekerGetJobDetail);
 jobseekerRoutes.get("/job-applications", getListJobApplication); // lấy
@@ -54,14 +60,7 @@ jobseekerRoutes.delete("/job-saving", deleteJobSaving); // xóa việc làm đã
 jobseekerRoutes.post("/overview", getOverview); // xóa việc làm đã lưu
 jobseekerRoutes.get("/jobs-suggestion", getJobsSuggestion); // xóa việc làm đã lưu
 
-
 jobseekerRoutes.get("/notification", getNotification); // lấy danh sách thông báo
 jobseekerRoutes.put("/notification", updateReadNotification); // dùng để đánh dấu đã đọc thông báo
 
 module.exports = jobseekerRoutes;
-
-
-
-
-
-
