@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { formatDistanceToNow, parseISO, set } from "date-fns";
 import { ca, vi } from "date-fns/locale"; //
-import { useRateCandidateMutation } from "../../../redux_toolkit/employerApi.js";
+import { useRateCandidateMutation,
+  useGetCompanyReviewQuery,
+  useAddCompanyReviewMutation,
+  useDeleteCompanyReviewMutation,
+ } from "../../../redux_toolkit/employerApi.js";
 import { toast } from "react-toastify";
 import LoginModal from "./LoginModal.js";
 import { useDispatch, useSelector } from "react-redux";
 
 const Rating = ({ ratingData, profile_id, isRateCompany }) => {
+    const [addReviewCompany] = useAddCompanyReviewMutation();
+    const [deleteReviewCompany] = useDeleteCompanyReviewMutation();
+
+
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   console.log("profile_id", profile_id);
@@ -60,8 +68,41 @@ const Rating = ({ ratingData, profile_id, isRateCompany }) => {
     }
   };
 
-  const handleRateCompany = () => {
-    console.log("abc");
+  const handleRateCompany = async () => {
+    try {
+      if (!ratingData?.employer_score) {
+        const response = await RateCandidate({
+          type: "insert",
+          application_id: profile_id,
+          employer_id: ratingData.employer_id,
+          rating,
+          content: comment,
+        }).unwrap(); // Gọi API để đánh giá ứng viên
+        if (!response.success) {
+          toast.error("Đánh giá không thành công. Vui lòng thử lại sau.");
+        } else {
+          toast.success("Đánh giá thành công!");
+        }
+      } else {
+        const response = await RateCandidate({
+          type: "update",
+          application_id: profile_id,
+          employer_id: ratingData.employer_id,
+          rating,
+          content: comment,
+        }).unwrap(); // Gọi API để đánh giá ứng viên
+        if (!response.success) {
+          toast.error(
+            "Cập nhật đánh giá không thành công. Vui lòng thử lại sau."
+          );
+        } else {
+          toast.success("Cập nhật đánh giá thành công!");
+        }
+      }
+    } catch (error) {
+      console.error("Error rating candidate:", error);
+      toast.error("Đánh giá không thành công. Vui lòng thử lại sau.");
+    }
   };
 
   return (

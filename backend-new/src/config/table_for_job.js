@@ -23,7 +23,7 @@ module.exports = {
       'job_function_id', 'work_location', 'address', 'working_type', 'working_time', 
       'quantity', 'describle', 'salary_max', 'salary_min', 'level_id', 
       'require_marital_status', 'require_gender', 'require_age_min', 'require_age_max', 
-      'require_education', 'require_experience', 'more_requirements', 'lastUpdateOn'
+      'require_education', 'require_experience', 'more_requirements', 'lastUpdateOn', 'created_at'
     ]
   },
   job_require_skill: {

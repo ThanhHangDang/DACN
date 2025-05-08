@@ -8,13 +8,7 @@ import {
   useGetJobByUserQuery,
 } from "../../../redux_toolkit/guestApi.js";
 import {
-  useGetCompanyReviewQuery,
-  useAddFollowingCompanyMutation,
-  useDeleteFollowingCompanyMutation,
-  useGetJobApplyQuery,
-  useAddJobApplyMutation,
-  useAddCompanyReviewMutation,
-  useDeleteCompanyReviewMutation,
+  useAddJobApplyMutation,useGetJobApplyQuery
 } from "../../../redux_toolkit/jobseekerApi.js";
 import { useGetCitiesQuery } from "../../../redux_toolkit/CategoryApi.js";
 import CompanyHeader from "../../_component/ui/CompanyHeader.js";
@@ -24,21 +18,20 @@ import Rating from "../../_component/ui/RatingSection.js";
 
 export default function CompanyDetail() {
   const navigate = useNavigate();
+  const { companyId } = useParams();
   const { isLogin, user } = useSelector((state) => state.auth);
   const [applyJob] = useAddJobApplyMutation();
-  const [addFollowingCompany] = useAddFollowingCompanyMutation();
-  const [deleteFollowingCompany] = useDeleteFollowingCompanyMutation();
-  const [addReviewCompany] = useAddCompanyReviewMutation();
-  const [deleteReviewCompany] = useDeleteCompanyReviewMutation();
   const { data: jobApply, refetch: refetchJobApply } = useGetJobApplyQuery(
     user?.id,
     { skip: !isLogin }
-  ); // Add refetch function
+  ); // A
   const formatNumberToTr = (number) => `${(number / 1e6).toFixed(0)}tr`;
-  const { companyId } = useParams();
   const { data: city } = useGetCitiesQuery(84); // 84 là mã quốc gia Việt Nam
   const { data: companyInformation } = useGetCompanyInformationQuery(companyId);
   const { data } = useGetJobByUserQuery(companyId);
+  const {score_distribution,review_details} = companyInformation || {};
+  console.log("companyInformation",companyInformation);
+  const ratingData = {};
   const postsByUser = data?.jobs || [];
 
   // Filter
@@ -63,8 +56,6 @@ export default function CompanyDetail() {
         if (response?.success) {
           toast.success("Ứng tuyển thành công!");
 
-          // No need to modify a local copy since we're using useMemo
-          // Simply refetch the data to update the appliedJobIds
           refetchJobApply();
         } else {
           toast.error("Ứng tuyển thất bại!");
@@ -102,7 +93,7 @@ export default function CompanyDetail() {
   const totalPages = Math.ceil(filteredJobs.length / postsPerPage);
 
   //RatingData gọi từ API
-  const ratingData = {};
+
 
   useEffect(() => {
     if (user?.role === 2) {
@@ -264,7 +255,7 @@ export default function CompanyDetail() {
 
             <div className="card mt-2">
               <Rating
-                ratingData={ratingData}
+                ratingData={{score_distribution,review_details}}
                 profile_id={companyId}
                 isRateCompany={true}
               />
