@@ -196,7 +196,6 @@ const Rating = ({ ratingData, profile_id, isRateCompany }) => {
                       <div className="d-flex justify-content-between align-items-center mb-1">
                         <span>{item.score || 0} stars</span>
                         <small className="text-muted">
-                          {/* {(item.count_ratings / ratingData.total_ratings) * 100}% */}
                           {item.count_ratings}
                         </small>
                       </div>
@@ -233,6 +232,7 @@ const Rating = ({ ratingData, profile_id, isRateCompany }) => {
 
             <p className="mb-2">{ratingData?.employer_coment}</p>
           </div>
+
           <div className="text-center mt-4">
             {user?.role ? (
               <button

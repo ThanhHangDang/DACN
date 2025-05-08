@@ -15,6 +15,7 @@ import CompanyHeader from "../../_component/ui/CompanyHeader.js";
 import TitleComponent from "../../_component/ui/TitleComponent.js";
 import { toast } from "react-toastify";
 import Rating from "../../_component/ui/RatingSection.js";
+import CompanyRating from "../../_component/ui/CompanyRatingSection.js";
 
 export default function CompanyDetail() {
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ export default function CompanyDetail() {
   console.log("companyInformation",companyInformation);
   const ratingData = {};
   const postsByUser = data?.jobs || [];
-
+  console.log("Cinfo: ", companyInformation);
   // Filter
   const [keyword, setKeyWord] = useState("");
   const [keyLocation, setKeyLocation] = useState("");
@@ -91,9 +92,6 @@ export default function CompanyDetail() {
 
   const currentJobs = filteredJobs.slice(indexOfFirstPost, indexOfLastPost);
   const totalPages = Math.ceil(filteredJobs.length / postsPerPage);
-
-  //RatingData gọi từ API
-
 
   useEffect(() => {
     if (user?.role === 2) {
@@ -254,10 +252,10 @@ export default function CompanyDetail() {
             </div>
 
             <div className="card mt-2">
-              <Rating
-                ratingData={{score_distribution,review_details}}
-                profile_id={companyId}
-                isRateCompany={true}
+              <CompanyRating
+                reviewDetail={companyInformation?.review_details}
+                averageScore={companyInformation?.average_score}
+                profile_id={companyInformation?.company_id}
               />
             </div>
           </div>
