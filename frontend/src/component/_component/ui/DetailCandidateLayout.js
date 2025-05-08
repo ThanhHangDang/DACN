@@ -12,7 +12,6 @@ import {
 import formatSafeDate from "../../../utils/formatSafeDate.js";
 import InviteJobModal from "./InviteJobModal"; // Import modal component
 import { toast } from "react-toastify"; // Import toast nếu cần thông báo
-import { use } from "react";
 
 const CandidateDetail = ({
   basic,
